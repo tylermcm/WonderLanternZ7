@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "components": {
+    "z7-qemu": {
+      "url": "https://github.com/WonderLantern/z7-qemu",
+      "commit": "97abf0b81cd3211f8374a38987a0beaf4549b90f",
+      "license": "GPL-2.0-or-later; component notices retained",
+      "local_changes": "Explicit patched firmware admission, native DISP input and exception diagnostics"
+    },
+    "z7-firmware-extensions": {
+      "url": "https://github.com/totwoto02/z7-firmware-extensions",
+      "commit": "96d03002220ecb0da9e387f88361632b9c3daa54",
+      "license": "LicenseRef-Wonder-Lantern-Community; component notices retained",
+      "local_changes": "Z7 sound config, fallback, callback, Setup identity, page hierarchy and layout corrections"
+    }
+  },
+  "layout": "Vendored source snapshots, not Git submodules. This is a modified independent research workspace."
+}

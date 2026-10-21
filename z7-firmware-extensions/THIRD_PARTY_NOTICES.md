@@ -1,0 +1,26 @@
+# 许可证与第三方说明
+
+## 本项目代码
+
+除以下声音实现文件外，本项目原创代码与文档采用 [MIT License](LICENSE)：
+
+- `src/z30_extensions/features/shutter_sound.py`
+- `src/z30_extensions/features/sound_audio.py`
+- `src/z30_extensions/features/sound_ui.py`
+- `src/z30_extensions/features/sound_layout.py`
+
+上述文件采用 [Wonder Lantern Community License](licenses/Wonder-Lantern.txt)。该许可证允许使用、修改和免费分发，禁止收费分发，并要求公开分发的修改版本提供同许可证源码。完整条件以随附许可证为准。由于包含收费分发限制，该部分不是 OSI 意义上的开放源代码许可。
+
+## Wonder-Lantern
+
+[Wonder-Lantern](https://github.com/vic2349/Wonder-Lantern) 是自定义电子快门声音功能的参考项目。本项目提供面向 Z30 的独立实现，不包含其 Z6 固件、SHCORE 二进制或示例音频，也不是官方 Wonder-Lantern 发布。
+
+随附许可证保留其原始名称与版权声明；本项目声音实现的版权归本项目贡献者所有。
+
+## Nikon 固件
+
+原厂固件和原厂资源由使用者自行提供。菜单模板在构建时从匹配输入读取，仓库不附完整固件或模板镜像。代码中的原字节窗口用于校验补丁目标，零填充位置用于匹配输入的解码。本项目许可证不授予 Nikon 固件、资源或商标的权利。
+
+## 依赖
+
+Keystone 和 Unicorn 通过 Python 依赖安装，各自保留其许可证。本仓库不分发这些依赖的二进制，也不包含第三方固件工具的 XOR 表或密钥工具实现。

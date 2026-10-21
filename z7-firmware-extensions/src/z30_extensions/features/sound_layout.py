@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: LicenseRef-Wonder-Lantern-Community
+# Copyright (c) 2026 Z30 Firmware Extensions contributors
+# See licenses/Wonder-Lantern.txt and THIRD_PARTY_NOTICES.md.
+"""Private sound page and state contracts; no Camera Status UI is included."""
+from ..platform.z30_120 import BASE
+
+STATE_ANCHOR = 0xC1832D24  # Unused page-0 RAM pointer anchors sound state.
+SETUP_OBJECT = 0xC1837160
+SETUP_META_SOURCE = 0x11FF71AC
+PAGE_INDEX = 955
+FILES_INDEX = PAGE_INDEX + 1
+SWITCH_INDEX = PAGE_INDEX + 2
+PAGE_OFFSET = 64
+WAV_OFFSET = 128
+PCM_OFFSET = 17472
+MAX_DATA = 17280
+STATE_SIZE = PCM_OFFSET + MAX_DATA * 12
+FILES_OFFSET = STATE_SIZE
+SWITCH_OFFSET = STATE_SIZE + 44
+NEW_SIZE = STATE_SIZE + 88
+MAGIC = 0x5A33534E
+BUSY, ENABLED, LENGTH, SELECTED, PENDING, RESULT = 32, 36, 40, 44, 48, 52
+SUCCESS = 0x04370080
+ROOT_IDS = (0x2222, 0x2224, 0x2226, 0x224E)
+FILE_IDS = (0x2250, 0x2265, 0x22B1, 0x1810, 0x1844)
+SWITCH_IDS = (0x1846, 0x23F6)
+ENTRY_ID = 0x2333

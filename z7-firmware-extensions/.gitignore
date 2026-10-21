@@ -1,0 +1,66 @@
+# Locally supplied firmware, extracted modules and generated install packages.
+*.bin
+*.BIN
+*.bi
+*.BI
+*.zip
+*.ZIP
+*.img
+*.IMG
+*.rom
+*.ROM
+*.patch.json
+
+# Local audio and private media; examples are generated from source.
+*.wav
+*.WAV
+*.jpg
+*.JPG
+*.jpeg
+*.png
+*.mp4
+
+# Inputs, build products, research dumps and vendor caches.
+/inputs/
+/output/
+/outputs/
+/build/
+/dist/
+/analysis/
+/reference/
+/deliverables/
+/vendor/
+*.asm
+*.dll
+*.DLL
+*.lib
+*.exe
+*.pdf
+
+# Python and local configuration.
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.env
+.env.*
+.vscode/
+.idea/
+*.log
+*.tmp
+Thumbs.db
+Desktop.ini
+
+# Private notes, credentials and publication exclusions.
+/docs/roadmap.md
+/docs/verification-*.json
+*.pem
+*.key
+*.p12
+*.pfx
+.credentials*

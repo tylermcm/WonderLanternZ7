@@ -1,0 +1,5 @@
+# Versions used for the successful October 20, 2026 Linux lab run.
+numpy==2.5.4
+Pillow==12.3.0
+keystone-engine==0.9.2
+unicorn==2.1.4

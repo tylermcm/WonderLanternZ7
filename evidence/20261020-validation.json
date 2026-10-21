@@ -1,0 +1,367 @@
+{
+  "date": "2026-10-20",
+  "scope": "Assisted QEMU and offline checks; no physical camera, file playback, update acceptance or recovery validation",
+  "upstream_tests": {
+    "run": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "stock_container_sha256": "07cf19513ada5b770caec4cfc3531a6734c48aede28dcec037f0f8374ef441a2",
+  "candidates": {
+    "full": {
+      "main_bytes": 33064940,
+      "sha256": "1d456c84709650e90cc6decd0877a9a51d4692bacc5477fa21ea28fba67cfb76",
+      "reproducible": true,
+      "sound_hook_verification": {
+        "passed": true,
+        "checks": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "checks": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "checks": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "checks": 20
+      },
+      "gate_verification": {
+        "passed": true,
+        "executions": 1024
+      }
+    },
+    "liveview-dual": {
+      "main_bytes": 33052156,
+      "sha256": "b15532154d9bff9aea4649b8977f2c9ed737aba4256a7cc5e40880024761b9ff",
+      "reproducible": true,
+      "gate_verification": {
+        "passed": true,
+        "executions": 1024
+      }
+    },
+    "m900": {
+      "main_bytes": 33052120,
+      "sha256": "806c026b3c1aed197326ad8cc7e78692016b488d863264b6ce3a7f24d28038db",
+      "reproducible": true
+    },
+    "shutter-sound": {
+      "main_bytes": 33064840,
+      "sha256": "0fe02a264926fe215484fd233b994d26fbdf9e6e4b2358df30027b8d82a93c0d",
+      "reproducible": true,
+      "sound_hook_verification": {
+        "passed": true,
+        "checks": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "checks": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "checks": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "checks": 20
+      }
+    }
+  },
+  "runs": {
+    "full_menu": {
+      "checks": [
+        {
+          "name": "Setup sound row selected",
+          "passed": true
+        },
+        {
+          "name": "Sound page opens",
+          "passed": true
+        },
+        {
+          "name": "Sound title renders",
+          "passed": true
+        },
+        {
+          "name": "Enabled choices open",
+          "passed": true
+        },
+        {
+          "name": "Enabled title renders",
+          "passed": true
+        },
+        {
+          "name": "OFF returns to sound page",
+          "passed": true
+        },
+        {
+          "name": "ON without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Enabled back returns to sound page",
+          "passed": true
+        },
+        {
+          "name": "File choices open",
+          "passed": true
+        },
+        {
+          "name": "File title renders",
+          "passed": true
+        },
+        {
+          "name": "Missing file remains in choices",
+          "passed": true
+        },
+        {
+          "name": "Preview without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Reload without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Sound back returns to Setup",
+          "passed": true
+        },
+        {
+          "name": "Sound page reopens with retained selection",
+          "passed": true
+        },
+        {
+          "name": "Reopened sound page returns to Setup",
+          "passed": true
+        },
+        {
+          "name": "Custom menu returns to processed live view",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "sound_menu": {
+      "checks": [
+        {
+          "name": "Setup sound row selected",
+          "passed": true
+        },
+        {
+          "name": "Sound page opens",
+          "passed": true
+        },
+        {
+          "name": "Sound title renders",
+          "passed": true
+        },
+        {
+          "name": "Enabled choices open",
+          "passed": true
+        },
+        {
+          "name": "Enabled title renders",
+          "passed": true
+        },
+        {
+          "name": "OFF returns to sound page",
+          "passed": true
+        },
+        {
+          "name": "ON without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Enabled back returns to sound page",
+          "passed": true
+        },
+        {
+          "name": "File choices open",
+          "passed": true
+        },
+        {
+          "name": "File title renders",
+          "passed": true
+        },
+        {
+          "name": "Missing file remains in choices",
+          "passed": true
+        },
+        {
+          "name": "Preview without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Reload without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Sound back returns to Setup",
+          "passed": true
+        },
+        {
+          "name": "Sound page reopens with retained selection",
+          "passed": true
+        },
+        {
+          "name": "Reopened sound page returns to Setup",
+          "passed": true
+        },
+        {
+          "name": "Custom menu returns to processed live view",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "general_ui": {
+      "checks": [
+        {
+          "name": "native0_source_dimensions",
+          "passed": true
+        },
+        {
+          "name": "native0_actual_dma",
+          "passed": true
+        },
+        {
+          "name": "functional_isp_completed",
+          "passed": true
+        },
+        {
+          "name": "native_processed_source_scanned",
+          "passed": true
+        },
+        {
+          "name": "photo_has_scene_detail",
+          "passed": true
+        },
+        {
+          "name": "native_no_card_icon_red",
+          "passed": true
+        },
+        {
+          "name": "pause_acknowledged",
+          "passed": true
+        },
+        {
+          "name": "paused_image_stable",
+          "passed": true
+        },
+        {
+          "name": "paused_dma_stable",
+          "passed": true
+        },
+        {
+          "name": "resume_acknowledged",
+          "passed": true
+        },
+        {
+          "name": "resume_processing_continues",
+          "passed": true
+        },
+        {
+          "name": "menu_1_visible",
+          "passed": true
+        },
+        {
+          "name": "menu_1_returned_processed_photo",
+          "passed": true
+        },
+        {
+          "name": "menu_1_same_session",
+          "passed": true
+        },
+        {
+          "name": "menu_2_visible",
+          "passed": true
+        },
+        {
+          "name": "menu_2_returned_processed_photo",
+          "passed": true
+        },
+        {
+          "name": "menu_2_same_session",
+          "passed": true
+        },
+        {
+          "name": "menu_3_visible",
+          "passed": true
+        },
+        {
+          "name": "menu_3_returned_processed_photo",
+          "passed": true
+        },
+        {
+          "name": "menu_3_same_session",
+          "passed": true
+        },
+        {
+          "name": "returned_to_running_guest",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "candidate_input": {
+      "checks": [
+        {
+          "name": "stock",
+          "passed": true
+        },
+        {
+          "name": "full",
+          "passed": true
+        },
+        {
+          "name": "liveview-dual",
+          "passed": true
+        },
+        {
+          "name": "shutter-sound",
+          "passed": true
+        },
+        {
+          "name": "m900",
+          "passed": true
+        },
+        {
+          "name": "candidate_needs_explicit_mode",
+          "passed": true
+        },
+        {
+          "name": "candidate_needs_stock",
+          "passed": true
+        },
+        {
+          "name": "stock_length_truncation",
+          "passed": true
+        },
+        {
+          "name": "tampered_instruction",
+          "passed": true
+        },
+        {
+          "name": "tampered_tail",
+          "passed": true
+        },
+        {
+          "name": "wrong_report_hash",
+          "passed": true
+        },
+        {
+          "name": "wrong_model",
+          "passed": true
+        },
+        {
+          "name": "wrong_stock_container",
+          "passed": true
+        }
+      ],
+      "passed": true
+    }
+  }
+}
