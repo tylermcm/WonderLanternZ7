@@ -12,7 +12,7 @@ def _config_code(f, parser=0x1006B794):
     call = lambda name: invoke(f[name])
     return f"""
         push {{r0,r1,r4,lr}}; mov r4,r0;
-        {c('r0',0xa21ab994)} ldrb r1,[r0,#28]; cmp r1,#18; bne stock;
+        {c('r0',0xa21ab994)} ldrb r1,[r0,#28]; cmp r1,#{OWNED_AUDIO_KIND}; bne stock;
         ldr r1,[r0,#32]; {c('r2',(f['complete'] | 1))} cmp r1,r2; bne stock;
         {call('get')} cmp r0,#0; beq stock;
         ldr r1,[r0,#{LENGTH}]; cmp r1,#0; beq stock;
@@ -43,7 +43,7 @@ def add(plan):
     sizes = {'get': 128, 'cas': 96, 'validate': 384, 'convert': 192,
              'load': 1024, 'start': 448, 'stop': 192, 'trigger': 384,
              'complete': 384, 'open': 192, 'config': 320, 'data': 320,
-             'shot': 192, 'ensure': 512, 'labels': 1024, 'render': 512,
+             'shot': 192, 'capture': 192, 'ensure': 512, 'labels': 1024, 'render': 512,
              'action': 768, 'row': 256, 'getter': 256, 'route': 320, 'setup_init': 128}
     f = {name: plan.alloc(bytes(size)) for name, size in sizes.items()}
     tables = {i: plan.alloc(bytes(32)) for i in (PAGE_INDEX, FILES_INDEX, SWITCH_INDEX)}
@@ -61,6 +61,11 @@ def add(plan):
     fixed = plan.alloc(struct.pack('<15I', *[strings[k] for k in
         ('entry', 'title', 'enable', 'file', 'preview', 'reload', 'off', 'on', 'root', 'one', 'two', 'three', 'four', 'switch', 'files')]))
     errors = plan.alloc(struct.pack('<8I', *[strings[k] for k in ('title', 'missing', 'read', 'invalid', 'close', 'busy', 'queue', 'audio')]))
+    shot_labels = [plan.alloc(text.encode() + b'\0') for text in
+                   ('Waiting for capture', 'Photo mode required', 'Silent mode required',
+                    'Capture audio busy', 'Capture sound queued', 'Capture callback seen',
+                    'Completion callback seen')]
+    shot_labels = plan.alloc(struct.pack('<7I', *shot_labels))
     file_ids = plan.alloc(struct.pack('<5I', *FILE_IDS))
     switch_ids = plan.alloc(struct.pack('<2I', *SWITCH_IDS))
     # Native full-page Setup submenus share the menu shell as their parent.
@@ -75,14 +80,14 @@ def add(plan):
                                                 0, 0, 0, 0, 0, metas[i])) for i in (FILES_INDEX, SWITCH_INDEX)}
     codes = audio_code(f, path_table, anchor_table)
     codes.update(ui_code(f, strings, fixed, file_names, errors, file_ids, switch_ids,
-                         anchor_table, template, child_templates))
+                         anchor_table, template, child_templates, shot_labels))
     codes['config'] = _config_code(f)
     c = constant
     call = lambda name: invoke(f[name])
     # Z7 data entry is 2-byte aligned, so the hook displaces ten bytes.
     # Reconstruct the real prologue in the fallback and resume at adds r5,#0x10.
     def _guard(else_label):
-        return f"""{c('r0',0xa21ab994)} ldrb r1,[r0,#28]; cmp r1,#18; bne {else_label};
+        return f"""{c('r0',0xa21ab994)} ldrb r1,[r0,#28]; cmp r1,#{OWNED_AUDIO_KIND}; bne {else_label};
             ldr r1,[r0,#32]; {c('r2',(f['complete'] | 1))} cmp r1,r2; bne {else_label};
             {call('get')} cmp r0,#0; beq {else_label}; ldr r1,[r0,#{LENGTH}]; cmp r1,#0; beq {else_label};"""
     codes['data'] = f"""
@@ -225,7 +230,7 @@ def add(plan):
                              'count': count, 'controls': hex(control_address), 'layout': hex(layout_address),
                              'geometry': hex(geometry), 'back_icon': True, 'header_object_id': hex(HEADER_OBJECT_ID)}
     for site, name, length in ((0x1040389A, 'row', 10), (0x103FCCC2, 'getter', 12),
-                               (0x10072728, 'shot', 8), (DATA_ENTRY, 'data', 10),
+                               (DATA_ENTRY, 'data', 10),
                                (0x1048B3FA, 'route', 12)):
         expected = im.read(site, length)
         plan.edit(site, jump(site, f[name], length), 'Z7 sound hook: ' + name, expected)
@@ -240,6 +245,19 @@ def add(plan):
     plan.edit(cave, trampoline, 'Z7 sound config trampoline')
     bl = assemble('bl ' + hex(cave), CONFIG_CALL_SITE, 4)
     plan.edit(CONFIG_CALL_SITE, bl, 'Z7 sound config call', CONFIG_CALL_SITE_EXPECTED)
+    # Both native paths converge at BLX R2, including a branch into the old
+    # eight-byte hook window. Keep all argument setup and its interior target
+    # intact; use a nearby checked veneer for the out-of-range appended code.
+    if im.read(SHOT_CAVE, 16) != bytes(16):
+        raise ValueError('Sound shot trampoline cave is not free')
+    plan.edit(SHOT_CAVE, jump(SHOT_CAVE, f['shot'], 16), 'Z7 shared shot callback veneer')
+    plan.edit(SHOT_CALL_SITE, assemble('b.w ' + hex(SHOT_CAVE), SHOT_CALL_SITE, 4),
+              'Z7 shared shot callback branch', SHOT_CALL_EXPECTED)
+    if im.read(CAPTURE_CAVE, 16) != bytes(16):
+        raise ValueError('Normal capture trampoline cave is not free')
+    plan.edit(CAPTURE_CAVE, jump(CAPTURE_CAVE, f['capture'], 16), 'Z7 normal capture callback veneer')
+    plan.edit(CAPTURE_CALL_SITE, assemble('b.w ' + hex(CAPTURE_CAVE), CAPTURE_CALL_SITE, 4),
+              'Z7 normal capture callback branch', CAPTURE_CALL_EXPECTED)
 
     plan.features['shutter_sound'] = {
         'functions': {k: hex(v | 1) for k, v in f.items()}, 'code_sizes': code_sizes,
@@ -247,9 +265,18 @@ def add(plan):
         'setup_object': hex(SETUP_OBJECT), 'leaf_template_index': hex(LEAF_TEMPLATE_INDEX),
         'menu_shell_parent': hex(page_host),
         'native_page_cleanup': hex(NATIVE_PAGE_CLEANUP),
+        'native_audio_state': hex(NATIVE_AUDIO_STATE),
+        'native_audio_formats': hex(NATIVE_AUDIO_FORMATS),
+        'owned_audio_kind': OWNED_AUDIO_KIND,
+        'silent_photography_property': SILENT_PHOTOGRAPHY_PROPERTY,
         'settings_count': setup_count, 'source_events': hex(source_map_addr),
         'activation_events': [hex(x) for x in ACTIVATION_EVENTS],
         'cave': {'address': hex(cave), 'trampoline_size': len(trampoline)},
+        'shot_hook': {'site': hex(SHOT_CALL_SITE), 'veneer': hex(SHOT_CAVE),
+                      'stock_epilogue': '0x100726c4', 'trigger_event': None,
+                      'diagnostic_status_offset': SHOT_STATUS},
+        'capture_hook': {'site': hex(CAPTURE_CALL_SITE), 'veneer': hex(CAPTURE_CAVE),
+                         'stock_resume': '0x100726ae', 'trigger_event': '0x04190001'},
         'default_enabled': False, 'settings_persistence': 'RAM only; reset at reboot',
         'sample_format': '8 kHz, mono, signed 16-bit, canonical 44-byte WAV, <=1.08 seconds',
         'card_type': 'CFexpress/XQD (A:)',

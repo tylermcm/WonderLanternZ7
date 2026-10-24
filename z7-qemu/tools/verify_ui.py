@@ -31,7 +31,11 @@ def main():
     parser.add_argument('--menu',action='store_true',help='Verify three native MENU roundtrips')
     parser.add_argument('--url',default=URL,help='Running local WonderLantern UI URL')
     parser.add_argument('--output',type=Path,default=OUT)
+    parser.add_argument('--menu-return-timeout',type=float,default=60,
+                        help='Seconds per native MENU return attempt; pixel and ISP checks remain required')
     args=parser.parse_args()
+    if not 1 <= args.menu_return_timeout <= 300:
+        parser.error('--menu-return-timeout must be 1..300 seconds')
     URL=args.url.rstrip('/')
     OUT=args.output.resolve()
     if not URL.startswith('http://127.0.0.1:'):
@@ -39,7 +43,8 @@ def main():
     if OUT.exists():
         parser.error('Use a new --output directory to preserve earlier verification')
     OUT.mkdir(parents=True)
-    report = {'url': URL, 'checks': [], 'screenshots_are_qemu_output': True}
+    report = {'url': URL, 'checks': [], 'screenshots_are_qemu_output': True,
+              'menu_return_timeout_seconds':args.menu_return_timeout,'menu_roundtrips':[]}
     def check(name, value):
         report['checks'].append({'name': name, 'passed': bool(value)})
         assert value, name
@@ -61,15 +66,17 @@ def main():
         check('functional_isp_completed',s['device_evidence']['isp_batches']>0)
         check('native_processed_source_scanned',s['device_evidence']['processed_buffer_scanned'])
         initial_image=Image.open(io.BytesIO(get('/api/frame'))).convert('RGB')
+        initial_image.save(OUT/'reference-viewfinder.png')
         region=(140,260,880,570)
         reference=initial_image.crop(region)
         check('photo_has_scene_detail',max(ImageStat.Stat(reference).stddev)>15)
         red_pixels=sum(1 for r,g,b in initial_image.crop((110,45,190,120)).getdata()
                        if r>180 and r>g*2 and r>b*2)
         check('native_no_card_icon_red',red_pixels>20)
-        def matches_scene():
+        def scene_rms():
             current=Image.open(io.BytesIO(get('/api/frame'))).convert('RGB').crop(region)
-            return max(ImageStat.Stat(ImageChops.difference(current,reference)).rms)<3
+            return max(ImageStat.Stat(ImageChops.difference(current,reference)).rms)
+        def matches_scene(): return scene_rms()<3
         token=re.search(r"const token='([^']+)'",get('/').decode()).group(1)
         def action(action,key=None):
             request=Request(URL+'/api/action',data=json.dumps(dict(action=action,key=key)).encode(),
@@ -96,6 +103,8 @@ def main():
                 screenshot(f'menu-{cycle}.png')
                 check(f'menu_{cycle}_visible',not matches_scene())
                 before=state()['device_evidence']['isp_batches']
+                started=time.monotonic()
+                attempts=[]
                 # MENU can first move focus from an item to the sidebar.
                 # Two presses at most are needed to close that native page.
                 returned=None
@@ -103,12 +112,22 @@ def main():
                     action('key','menu')
                     try:
                         returned=wait(lambda s:s['device_evidence']['isp_batches']>before+5
-                                      and matches_scene(),12)
+                                      and matches_scene(),args.menu_return_timeout)
+                        attempts.append({'attempt':attempt+1,'returned':True})
                         break
                     except TimeoutError:
-                        pass
+                        observed=state()
+                        attempts.append({'attempt':attempt+1,'returned':False,
+                            'isp_batches':observed['device_evidence']['isp_batches'],
+                            'scene_rms':scene_rms()})
+                elapsed=round(time.monotonic()-started,3)
+                report['menu_roundtrips'].append({'cycle':cycle,'attempts':attempts,
+                    'elapsed_seconds':elapsed,'isp_batches_before':before,
+                    'isp_batches_after':state()['device_evidence']['isp_batches'],
+                    'final_scene_rms':scene_rms()})
                 check(f'menu_{cycle}_returned_processed_photo',returned is not None)
                 check(f'menu_{cycle}_same_session',returned['session']==report['session'])
+                print(f'Native MENU roundtrip {cycle} passed in {elapsed:.1f}s',flush=True)
                 screenshot(f'returned-viewfinder-{cycle}.png')
         screenshot('viewfinder.png')
         report['final_state']=state()

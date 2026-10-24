@@ -1,0 +1,430 @@
+{
+  "schema": 1,
+  "status": "not_cleared_for_further_hardware_installation",
+  "scope": "Initial source and evidence-gap inventory; not a completed native interface audit",
+  "candidate_sha256": "9e636d645281ee9f92cb150b6dcc8d771b21ff95c47e45f538d951a1d932420b",
+  "base_model": "Original Nikon Z7 C 3.80",
+  "direct_literal_native_call_targets": [
+    {
+      "address": "0x1006b794",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 166
+        }
+      ]
+    },
+    {
+      "address": "0x1006b94a",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 177
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/shutter_sound_z7.py",
+          "line": 97
+        }
+      ]
+    },
+    {
+      "address": "0x100a2d78",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "address": "0x1016fe38",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 98
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 99
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "address": "0x1016fe4a",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 106
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 107
+        }
+      ]
+    },
+    {
+      "address": "0x1016fef2",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 125
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 127
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "address": "0x10170a1c",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 18
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 19
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 21
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 23
+        }
+      ]
+    },
+    {
+      "address": "0x10170a80",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 69
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 100
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 17
+        }
+      ]
+    },
+    {
+      "address": "0x101bfc1c",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 115
+        }
+      ]
+    },
+    {
+      "address": "0x1027bfcc",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 67
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "address": "0x102d8562",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "address": "0x102d8566",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "address": "0x102d85f2",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 75
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 84
+        }
+      ]
+    },
+    {
+      "address": "0x102d86d8",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "address": "0x103fac5a",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 111
+        }
+      ]
+    },
+    {
+      "address": "0x103faebe",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "address": "0x103fb32e",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "address": "0x103fb344",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 70
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 72
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 75
+        }
+      ]
+    },
+    {
+      "address": "0x103fbb5c",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 31
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 35
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 40
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 41
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 42
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 46
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 52
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 55
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 56
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 57
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "address": "0x103fcf0e",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "address": "0x103fcf5c",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "address": "0x10402bc2",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 90
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "address": "0x10404c42",
+      "references": [
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_audio_z7.py",
+          "line": 159
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 89
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 91
+        },
+        {
+          "file": "z7-firmware-extensions/src/z30_extensions/features/sound_ui_z7.py",
+          "line": 101
+        }
+      ]
+    }
+  ],
+  "direct_literal_native_call_target_count": 23,
+  "legacy_translation_tables_not_referenced_by_generated_routine_sources": [
+    "NATIVE",
+    "GLOBALS"
+  ],
+  "patch_edits": [
+    {
+      "name": "Z7 sound config trampoline",
+      "offset": "0xd804",
+      "bytes": 14
+    },
+    {
+      "name": "Z7 shared shot callback veneer",
+      "offset": "0xd814",
+      "bytes": 16
+    },
+    {
+      "name": "Z7 normal capture callback veneer",
+      "offset": "0xd824",
+      "bytes": 16
+    },
+    {
+      "name": "Z7 sound config call",
+      "offset": "0x4bd54",
+      "bytes": 4
+    },
+    {
+      "name": "Z7 sound hook: data",
+      "offset": "0x4bfe6",
+      "bytes": 10
+    },
+    {
+      "name": "Read extended M flag as enabled",
+      "offset": "0x50234",
+      "bytes": 8
+    },
+    {
+      "name": "Z7 normal capture callback branch",
+      "offset": "0x526a8",
+      "bytes": 4
+    },
+    {
+      "name": "Z7 shared shot callback branch",
+      "offset": "0x5272e",
+      "bytes": 4
+    },
+    {
+      "name": "Histogram DISP gate",
+      "offset": "0x34d58c",
+      "bytes": 8
+    },
+    {
+      "name": "Histogram DISP gate",
+      "offset": "0x3cbb6c",
+      "bytes": 14
+    },
+    {
+      "name": "Z7 sound hook: getter",
+      "offset": "0x3dccc2",
+      "bytes": 12
+    },
+    {
+      "name": "Z7 sound hook: row",
+      "offset": "0x3e389a",
+      "bytes": 10
+    },
+    {
+      "name": "Z7 sound hook: route",
+      "offset": "0x46b3fa",
+      "bytes": 12
+    },
+    {
+      "name": "Seed Z7 sound entry before settings rows",
+      "offset": "0x64d41c",
+      "bytes": 4
+    },
+    {
+      "name": "Histogram visibility masks",
+      "offset": "0x1ea361c",
+      "bytes": 36
+    },
+    {
+      "name": "Z7 sound settings entry tables",
+      "offset": "0x1ef0860",
+      "bytes": 8
+    },
+    {
+      "name": "Z7 settings row count with sound",
+      "offset": "0x1ef0868",
+      "bytes": 4
+    }
+  ],
+  "limits": [
+    "Literal call inventory omits dynamic callback targets and addresses embedded in assembly strings.",
+    "A listed call target has not thereby been independently audited.",
+    "Existing offline tests leave controlled ABI, lifetime, file I/O, scheduling and hardware boundaries.",
+    "No firmware, card, camera or emulator state was changed by this audit."
+  ]
+}

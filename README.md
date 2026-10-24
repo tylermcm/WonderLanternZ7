@@ -4,10 +4,16 @@ Independent, modified research workspace for **Nikon Z7 C 3.80** firmware
 extensions and assisted QEMU execution. Start with [HANDOFF.md](HANDOFF.md)
 when continuing on another computer.
 
-The corrected full firmware passes 21 general UI checks and 17 sound-submenu
-checks. The sound-only preset also passes the same 17 submenu checks. This
-establishes selected emulator behavior. Camera installation, real WAV playback,
-capture, recording and recovery remain unverified.
+The owner has installed experimental builds and confirmed audible WAV Preview.
+**Automatic shutter sound is still faulty:** the latest tested build repeats
+audio during live view. Keep Shutter sound Enabled **OFF**; further candidate
+staging and flash recommendations are on hold pending the [port audit](PORT_AUDIT.md).
+There is no verified emergency recovery route.
+
+Earlier assisted-emulator runs passed 21 general UI checks and 17 sound-submenu
+checks for each sound-capable preset. Those results establish selected emulator
+behavior; they do not clear the capture-trigger defect or establish physical
+capture timing, recording, recovery or compatibility with other camera models.
 
 ## Contents
 
@@ -16,6 +22,16 @@ capture, recording and recovery remain unverified.
 - `tools/`: local build, validation, setup and launch helpers.
 - [HANDOFF.md](HANDOFF.md): laptop setup, results, next steps and known gaps.
 - [SOUND_MENU_FIX.md](SOUND_MENU_FIX.md): fault analysis and corrected addresses.
+- [AUDIO_PLAYBACK_FIX.md](AUDIO_PLAYBACK_FIX.md): WAV specification check and corrected Z7 playback admission.
+- [FLASH_ASSESSMENT.md](FLASH_ASSESSMENT.md): private EG preparation, updater evidence and hardware recovery limits.
+- [SHUTTER_TRIGGER_FIX.md](SHUTTER_TRIGGER_FIX.md): capture-hook correction and diagnostics after working Preview but silent capture.
+- [CAPTURE_START_FIX.md](CAPTURE_START_FIX.md): normal-callback correction after the silent/mechanical diagnostic comparison.
+- [SILENT_PROPERTY_FIX.md](SILENT_PROPERTY_FIX.md): verified native Z7 silent-mode property and tests through the original getter.
+- [PORT_AUDIT.md](PORT_AUDIT.md): current flash hold and independent Z7 evidence gaps after the owner's port-safety concern.
+- [LIVEVIEW_SOUND_REGRESSION.md](LIVEVIEW_SOUND_REGRESSION.md): reproduced unwanted admission and owner-confirmed OFF containment.
+- [CAPTURE_EVENT_TRACE.md](CAPTURE_EVENT_TRACE.md): original callback execution and stock live-view counterexamples.
+- [STILL_FILE_TRACE.md](STILL_FILE_TRACE.md): record-bearing file notification as a backward-tracing anchor; no replacement hook selected.
+- [SPLASH_SCREEN_FEASIBILITY.md](SPLASH_SCREEN_FEASIBILITY.md): private stock resource findings and the proposed startup image approach.
 - [LAB_REPORT.md](LAB_REPORT.md): complete lab history.
 - [UPSTREAMS.json](UPSTREAMS.json): original repository and commit provenance.
 - `evidence/`: source-only validation summary; no firmware or camera screenshots.
@@ -24,7 +40,28 @@ The two component directories are vendored source snapshots, **not submodules**.
 Their upstream licenses and notices remain in place. This repository is a modified
 research workspace and does not claim to be an official WonderLantern release.
 
-## Quick setup
+## Windows app
+
+The lab also supports native Windows using an isolated MSYS2/UCRT64 build.
+It does not require WSL. After setup, double-click `Start-Z7.cmd` to open the
+local browser app, or run `./Run-Z7.ps1` from PowerShell.
+
+For a fresh build, obtain the official `Z_7_0380.bin` in Downloads and use
+Python 3.12+:
+
+```powershell
+.\Setup-Z7.ps1
+# Or select an unregistered Python explicitly:
+.\Setup-Z7.ps1 -PythonPath C:\path\to\python.exe
+```
+
+The helper checks the firmware hash, creates a private Python environment,
+downloads a digest-checked MSYS2 environment under `.private/toolchain/`,
+builds the hash-checked QEMU source and all four firmware presets, and checks
+the native host contracts and candidate admission. It preserves existing firmware and build directories.
+See [WINDOWS_BUILD.md](WINDOWS_BUILD.md) for rebuilding and validation commands.
+
+## Linux / WSL setup
 
 Use Linux or WSL with Python 3.12+. In an already installed Ubuntu environment:
 

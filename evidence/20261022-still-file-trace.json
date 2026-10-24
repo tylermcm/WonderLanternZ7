@@ -1,0 +1,193 @@
+{
+  "schema": 1,
+  "audit_only": true,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "evidence_checks_passed": true,
+  "checks": [
+    {
+      "name": "kind0-success-original-registered-dispatch-result",
+      "passed": true
+    },
+    {
+      "name": "kind0-success-return-matches-notification-admission",
+      "passed": true
+    },
+    {
+      "name": "kind1-success-original-registered-dispatch-result",
+      "passed": true
+    },
+    {
+      "name": "kind1-success-return-matches-notification-admission",
+      "passed": true
+    },
+    {
+      "name": "kind3-success-original-registered-dispatch-result",
+      "passed": true
+    },
+    {
+      "name": "kind3-success-return-matches-notification-admission",
+      "passed": true
+    },
+    {
+      "name": "prior-failure-original-registered-dispatch-result",
+      "passed": true
+    },
+    {
+      "name": "prior-failure-return-matches-notification-admission",
+      "passed": true
+    },
+    {
+      "name": "finalize-failure-original-registered-dispatch-result",
+      "passed": true
+    },
+    {
+      "name": "finalize-failure-return-matches-notification-admission",
+      "passed": true
+    },
+    {
+      "name": "flush-failure-original-registered-dispatch-result",
+      "passed": true
+    },
+    {
+      "name": "flush-failure-return-matches-notification-admission",
+      "passed": true
+    },
+    {
+      "name": "native-record-comparison-ignores-kind-but-distinguishes-number-and-slot",
+      "passed": true
+    },
+    {
+      "name": "native-record-field-getters-match-constructor",
+      "passed": true
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "kind0-success",
+      "record_id": "0x3200020",
+      "return_value": 0,
+      "notifications": [
+        {
+          "event": "0x41e0002",
+          "packet": [
+            52428832,
+            1,
+            0
+          ]
+        }
+      ],
+      "controlled_file_boundaries": [
+        "0x103f7e32",
+        "0x103f7a4c",
+        "0x1031f0ee",
+        "0x103f7efc"
+      ]
+    },
+    {
+      "name": "kind1-success",
+      "record_id": "0x3200021",
+      "return_value": 0,
+      "notifications": [
+        {
+          "event": "0x41e0002",
+          "packet": [
+            52428833,
+            1,
+            0
+          ]
+        }
+      ],
+      "controlled_file_boundaries": [
+        "0x103f7e32",
+        "0x103f7a4c",
+        "0x1031f0ee",
+        "0x103f7efc"
+      ]
+    },
+    {
+      "name": "kind3-success",
+      "record_id": "0x3200023",
+      "return_value": 0,
+      "notifications": [
+        {
+          "event": "0x41e0002",
+          "packet": [
+            52428835,
+            0,
+            0
+          ]
+        }
+      ],
+      "controlled_file_boundaries": [
+        "0x103f7e32",
+        "0x103f7a4c",
+        "0x1031f0ee",
+        "0x103f7efc"
+      ]
+    },
+    {
+      "name": "prior-failure",
+      "record_id": "0x3200020",
+      "return_value": 3,
+      "notifications": [],
+      "controlled_file_boundaries": [
+        "0x103f7b98",
+        "0x103f7e32",
+        "0x103f7a4c",
+        "0x1031f0ee",
+        "0x103f7efc"
+      ]
+    },
+    {
+      "name": "finalize-failure",
+      "record_id": "0x3200020",
+      "return_value": 3,
+      "notifications": [],
+      "controlled_file_boundaries": [
+        "0x103f7e32",
+        "0x103f7a4c",
+        "0x1031f0ee",
+        "0x103f7efc"
+      ]
+    },
+    {
+      "name": "flush-failure",
+      "record_id": "0x3200020",
+      "return_value": 3,
+      "notifications": [],
+      "controlled_file_boundaries": [
+        "0x103f7e32",
+        "0x103f7a4c",
+        "0x1031f0ee",
+        "0x103f7efc"
+      ]
+    }
+  ],
+  "native_record_comparison": {
+    "input_fields": [
+      "slot",
+      "group",
+      "number",
+      "kind"
+    ],
+    "same_group_number_different_kind": 1,
+    "different_number": 0,
+    "different_slot": 0
+  },
+  "candidate_cleared": false,
+  "per_photo_trigger_identified": false,
+  "scope": "Original stock finalization wrapper, callback registration/dispatch, packed record constructor/getters/comparison execute in Unicorn.",
+  "limitations": [
+    "File handles, operation results and record fields are supplied unit inputs; file/device operations are controlled boundaries.",
+    "Numeric kind values are not identified here as JPEG/NEF or other formats.",
+    "File-finalization notification can follow the exposure; actual latency/cadence and per-photo cardinality are unmeasured.",
+    "No proof of correct behavior for multi-format/duplicate/replayed files, bursts, cancellation, cardless capture or card removal.",
+    "No sensor exposure, physical audio, installation acceptance or recovery evidence; no new firmware or hook generated."
+  ],
+  "evidence_check_count": 14,
+  "date_local": "2026-10-22",
+  "firmware_source_changed": false,
+  "firmware_built_or_staged": false,
+  "camera_or_card_mutated": false,
+  "document": "STILL_FILE_TRACE.md"
+}

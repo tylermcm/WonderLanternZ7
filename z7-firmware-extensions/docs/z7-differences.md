@@ -86,7 +86,7 @@ sound hook 窗口、sound 事件映射、成功码、config 内联调用、heade
 | --- | --- | --- | --- |
 | CMOS | DX / 约 2090 万像素 | FX / 约 4570 万像素 | 声音、菜单和 DISP 门控不直接操作 CMOS。本次移植不修改 ISP/RAW/CMOS 参数；图像管线相关功能不在范围内。 |
 | 存储卡 | SD | CFexpress/XQD Type B | 主卡路径仍为 `A:\`；文件 API 成功码从 0x04370080 改为 0x04390080；report 中 `card_type` 已改为 CFexpress/XQD。 |
-| 快门 | Z30 以电子快门为主 | Z7 同时有机械快门和电子快门 | shot 回调在 Z7 中整体后移且多一条指令：Z30 `0x10072598` -> Z7 `0x10072728`，continuation 为 `0x10072731`；已修正。 |
+| 快门 | Z30 以电子快门为主 | Z7 同时有机械快门和电子快门 | Independent correction: hook the shared callback at `0x1007272E` through a checked veneer; the earlier `0x10072728` window contained another native branch target. See the root capture investigation; physical triggering remains unresolved. |
 | 音频/扬声器 | Z30 硬件音频路径 | Z7 硬件音频路径 | 使用 Z7 自己的 native 音频函数映射；尚未在真实 Z7 扬声器上验证。 |
 | 显示屏/UI 几何 | Z30 屏幕布局 | Z7 更高分辨率屏幕 | 已检查 Z7 native geometry tables：2/4/5 行页面仍存在 72..702 等同类矩形，硬编码几何可复用。 |
 | CPU/内存/中断 | EXPEED 6 平台 | EXPEED 6 平台但布局不同 | 已通过 Z7 page table、SCATTER、native 函数映射适配。 |

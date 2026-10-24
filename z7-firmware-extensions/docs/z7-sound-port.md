@@ -76,7 +76,7 @@ Z7 页面表布局与 Z30 一致：44 字节/页。`page 0` 是空闲状态锚�
 | Z30 | Z7 | 用途 |
 | --- | --- | --- |
 | 0xC21C0E28 | 0xA21AB994 | 音频选择状态 |
-| 0xC1885A50 | 0xA188D1A0 | 音频文件/字段表 |
+| 0xC1885A50 | 0xA188D190 | 音频 busy 状态；格式表另在 +0x10，即 0xA188D1A0 |
 | 0xC2006594 | 0xA200DA5C | UI page/value 表 |
 | 0xC1832D24 | 0xA1833548 | page table / state anchor |
 
@@ -141,3 +141,12 @@ python patch.py full --source "Z_7_0380.bin" --output "output/EG16100380_full.BI
 - `validate` / `convert` 已用 Unicorn 对 PCM WAV 做离线执行验证。
 
 仍未完成真实相机上的菜单显示、扬声器播放和 CFexpress/XQD 文件读取物理验证。
+
+## 独立修改版播放准入修正（2026-10-21）
+
+机主已报告更新后可见声音入口、可加载 SHUTTER.WAV，但预听无声并显示 Sound busy。
+检查发现 busy 检查错误读取了格式表首字节 2；应读取 0xA188D190 的状态字节。
+另原请求 type 18 不满足 Z7 原厂的 [0,18) 范围。当前独立修改版改用 type 17，
+且配置和数据替换仍同时校验私有完成回调，其他原厂请求不变。
+详见根目录 `AUDIO_PLAYBACK_FIX.md` 的 WAV 规格核验、旧版失败/新版通过的指令测试
+和硬件验证边界。本修正尚未证明真实扬声器播放或恢复能力。

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "scope": "Source publication checks on native Windows and offline probes of the existing private candidate; no new firmware build or camera/card access",
+  "root_host_tests": {"passed": 8, "failed": 0},
+  "qemu_python_tests": {"passed": 11, "failed": 0},
+  "synthetic_renderer_contracts": {"passed": 270, "failed": 0},
+  "synthetic_isp_contracts": {"passed": 398, "failed": 0},
+  "firmware_free_qmp_realization": {"passed": true, "transport": "localhost-tcp", "status": "prelaunch"},
+  "synthetic_patch_container_tests": {"passed": 14, "failed": 0},
+  "existing_image_probes": {
+    "native_callback_evidence": {"passed": 24, "failed": 0},
+    "still_file_evidence": {"passed": 14, "failed": 0},
+    "selected_callback_property_contracts": {"passed": 60, "failed": 0},
+    "known_retrigger_defect": {
+      "off_checks_passed": 2,
+      "required_no_photo_rejections_failed": 2,
+      "defect_remains_open": true
+    }
+  },
+  "qemu_publication_inventory": {"passed": true, "reviewed_files": 45, "component_has_independent_git_history": false},
+  "environment_note": "The first sandboxed attempt could not write synthetic RAW fixtures in its temporary folder. The complete native host suite passed after rerunning with the required host access.",
+  "sanitizers_run": false,
+  "full_firmware_rebuild_or_integration_tests_run": false,
+  "physical_camera_test_run": false,
+  "candidate_cleared": false,
+  "recovery_verified": false
+}

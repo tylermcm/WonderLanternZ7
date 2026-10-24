@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 """Local interactive Z7 GUI. Original firmware keys through diagnostic GDB calls.
 
-Runs under WSL with standard Python only. The browser sees live QMP screenshots.
+Runs under Linux/WSL or native Windows. The browser sees live QMP screenshots.
 Only the worker owns QMP/RSP; HTTP requests enqueue bounded, named operations.
 """
 from pathlib import Path
@@ -40,8 +40,8 @@ SYSTEM_REPORT = bytes.fromhex('0001000002000000000000000000000000000000020000000
 # ID_SW name table at file 0061ae8c and following entries (40-byte stride).
 KEYS = {'right': 34, 'left': 35, 'up': 36, 'down': 37,
         'menu': 67, 'play': 68, 'delete': 69, 'i': 72, 'ok': 74, 'disp': 83}
-LABELS = {'right': '右', 'left': '左 / 返回', 'up': '上', 'down': '下',
-          'menu': 'MENU', 'play': '回放', 'delete': '删除', 'i': 'i', 'ok': 'OK', 'disp': 'DISP'}
+LABELS = {'right': 'Right', 'left': 'Left / back', 'up': 'Up', 'down': 'Down',
+          'menu': 'MENU', 'play': 'Play', 'delete': 'Delete', 'i': 'i', 'ok': 'OK', 'disp': 'DISP'}
 
 
 def ppm_pixels(data):
@@ -138,7 +138,7 @@ class Camera:
         self.token = secrets.token_urlsafe(24)
         self.lock = threading.Lock()
         self.requests = queue.Queue(maxsize=16)
-        self.state = {'phase': 'booting', 'message': '正在启动虚拟相机', 'busy': True,
+        self.state = {'phase': 'booting', 'message': 'Starting the virtual camera', 'busy': True,
                       'frame': 0, 'last_key': None, 'completed_action': 0, 'error': None,
                       'no_lens_simulation': self.exmcu_no_lens,
                       'orientation_fixture': self.orientation_fixture,
@@ -173,12 +173,12 @@ class Camera:
 
     def submit(self, action, key=None):
         if action not in ('key', 'pause', 'resume', 'restart', 'shooting', 'menu-profile', 'stop') or (action == 'key' and key not in KEYS):
-            raise ValueError('未知按键或操作')
+            raise ValueError('Unknown key or action')
         with self.lock:
             if self.state['phase'] == 'booting':
-                raise RuntimeError('相机正在启动，请稍候')
+                raise RuntimeError('The camera is starting; please wait')
             if action == 'key' and self.state['phase'] != 'running':
-                raise RuntimeError('请先恢复运行')
+                raise RuntimeError('Resume the camera first')
             self.sequence += 1
             item = {'id': self.sequence, 'action': action, 'key': key}
             self.requests.put_nowait(item)
@@ -232,7 +232,7 @@ class Camera:
         index = KEYS[name]
         values[index//32] = 1 << (index%32)
         values[4] = 10   # Original AO press duration: 10*10 virtual milliseconds.
-        return self.call(packet, '按键：'+LABELS[name], 0x105230a6,
+        return self.call(packet, 'Key: '+LABELS[name], 0x105230a6,
                          struct.pack('<8I', *values), [('scratch', 0), 5, ('scratch', 20)])
 
     def boot(self, enter_menu=True, announce_ready=True):
@@ -253,7 +253,7 @@ class Camera:
             'raw_bits': 12, 'raw_cfa': 'RGGB',
             'raw_batches': 0, 'isp_batches': 0, 'lcd_frames_observed': 0,
             'processed_buffer_scanned': False} if self.photo_liveview else {}
-        self.update(phase='booting', message='正在加载原固件', busy=True, error=None, frame=0,
+        self.update(phase='booting', message='Loading firmware', busy=True, error=None, frame=0,
                     capture=None, profile=self.profile, idle_timeout_override=None)
         with self.lock:
             self.png = self.previous_pixels = None
@@ -289,6 +289,8 @@ class Camera:
         self.live_log = self.frame_spool/f'qemu-{self.boot_count}.log'
         self.console = self.live_log.open('w')
         env = dict(os.environ, Z7_MMIO_QUIET='1')
+        if os.name == 'nt' and build.get('native_runtime_path'):
+            env['PATH'] = build['native_runtime_path'] + os.pathsep + env.get('PATH', '')
         env.pop('Z7_IMAGE_CONFIG_RECORD', None)
         env.pop('Z7_IMAGE_PROCESS_TEST', None)
         env.pop('Z7_ISP_DISABLE_CACHE', None)
@@ -347,32 +349,33 @@ class Camera:
         env.pop('Z7_GPU_ICON_DUMP_DIR', None)
         if getattr(self, 'gpu_icon_dump', None):
             env['Z7_GPU_ICON_DUMP_DIR'] = str(self.gpu_icon_dump)
-        self.proc = subprocess.Popen(command, stdout=self.console, stderr=subprocess.STDOUT, env=env)
+        options = dict(creationflags=subprocess.CREATE_NO_WINDOW) if os.name == 'nt' else {}
+        self.proc = subprocess.Popen(command, stdout=self.console, stderr=subprocess.STDOUT, env=env, **options)
         self.remote = Remote(port)
         self.remote.command('qSupported:multiprocess+;xmlRegisters=arm')
         self.remote.command('qXfer:features:read:target.xml:0,fff')
         self.remote.command('Hg0'); self.remote.command('?')
         self.remote.sock.settimeout(30)
         self.monitor = QMP(qmp)
-        self.update(message='初始化图像内存')
+        self.update(message='Initializing image memory')
         packet = self.run_to(0x103f9ce2)
-        packet = self.call(packet, '初始化图像内存', 0x10123432, bytes(12), [('scratch', 0)])
+        packet = self.call(packet, 'Initializing image memory', 0x10123432, bytes(12), [('scratch', 0)])
         packet = self.run_to(0x100531b8)
-        packet = self.call(packet, '加载电源报告', 0x101f9cca, bytes(64), [0x43090010, ('scratch', 0)])
-        packet = self.call(packet, '初始化系统状态', 0x10058b90, SYSTEM_REPORT, [0x03040002, ('scratch', 0)])
+        packet = self.call(packet, 'Loading the power report', 0x101f9cca, bytes(64), [0x43090010, ('scratch', 0)])
+        packet = self.call(packet, 'Initializing system state', 0x10058b90, SYSTEM_REPORT, [0x03040002, ('scratch', 0)])
         packet = self.run_to(0x102699ec)
         power = bytearray(self.remote.memory(0xa1f90bf0, 0x30))
         struct.pack_into('<I', power, 0, struct.unpack_from('<I', power)[0] | 0x200)
-        packet = self.call(packet, '接通虚拟电源', 0x101b493e, power, [('scratch', 0)])
+        packet = self.call(packet, 'Enabling virtual power', 0x101b493e, power, [('scratch', 0)])
         packet = self.run_to(0x100531bc)
-        packet = self.call(packet, '等待应用服务', 0x1005cbf8, bytes(8), [0xa1819748, 0])
+        packet = self.call(packet, 'Waiting for application services', 0x1005cbf8, bytes(8), [0xa1819748, 0])
         packet = self.run_to(0x100531bc)
         if enter_menu:
             self.key(packet, 'menu')
         self.continue_guest()
         if announce_ready:
             self.refresh()
-            self.update(phase='running', busy=False, message='正在绘制界面')
+            self.update(phase='running', busy=False, message='Drawing the camera display')
 
     def set_fixed_orientation(self, packet):
         """Use the firmware override API; this is not a physical IMU model."""
@@ -432,7 +435,7 @@ class Camera:
         control replies. It does not supply a complete sensor config or pixels.
         """
         self.boot(enter_menu=False, announce_ready=False)
-        self.update(phase='booting', busy=True, message='正在启动拍摄界面')
+        self.update(phase='booting', busy=True, message='Starting live view')
         self.pause()
         packet = self.run_to(0x100531bc)
         if self.photo_liveview:
@@ -455,18 +458,18 @@ class Camera:
                         'firmware_code_modified': False, 'motion_detection_implemented': False,
                         'applied_before_capture': True})
             for offset in (0x3dc, 0x3dd):
-                packet = self.call(packet, '加载取景诊断设置', 0x101c9a5e, bytes(8), [offset, 1])
+                packet = self.call(packet, 'Loading live-view diagnostic settings', 0x101c9a5e, bytes(8), [offset, 1])
         packet, _ = self.set_fixed_orientation(packet)
         self.audit({'kind': 'capture_diagnostic_assumptions',
                     'kept_data_ready_without_data': True,
                     'empty_correction_table': True, 'absent_sensor_calibration': True,
                     'photo_liveview_profile': self.photo_liveview,
                     'physical_sensor_configuration_verified': False})
-        packet = self.call(packet, '加载校正设置', 0x101c9a2c, bytes(8), [0x29e])
-        packet = self.call(packet, '选择空校正表', 0x101c9a5e, bytes(8), [0x29e, 1])
-        packet = self.call(packet, '持久数据诊断通知', 0x101e2c4e, bytes(8), [0x03020008, 0])
-        packet = self.call(packet, '拍摄模式通知', 0x1005d4c0, bytes(8), [0xa1819748, 0x05040016, 2])
-        packet = self.call(packet, '拍摄参数通知', 0x1015ba4a, bytes(8), [0x180c, 1])
+        packet = self.call(packet, 'Loading calibration settings', 0x101c9a2c, bytes(8), [0x29e])
+        packet = self.call(packet, 'Selecting the empty calibration table', 0x101c9a5e, bytes(8), [0x29e, 1])
+        packet = self.call(packet, 'Persistent-data diagnostic notification', 0x101e2c4e, bytes(8), [0x03020008, 0])
+        packet = self.call(packet, 'Shooting-mode notification', 0x1005d4c0, bytes(8), [0xa1819748, 0x05040016, 2])
+        packet = self.call(packet, 'Shooting-parameter notification', 0x1015ba4a, bytes(8), [0x180c, 1])
         for _ in range(16):
             packet = self.run_to(0x100531c2)
             packet = self.run_to(0x100531bc)
@@ -474,8 +477,8 @@ class Camera:
             if state['ready'] & 3 == 3 and state['stage'] == 0:
                 break
         else:
-            raise RuntimeError('拍摄应用未完成就绪处理')
-        packet = self.call(packet, '使用缺省校准分支', 0x10122912, bytes(8), [0])
+            raise RuntimeError('Shooting application did not become ready')
+        packet = self.call(packet, 'Using the default calibration branch', 0x10122912, bytes(8), [0])
         if self.capture_control_test:
             pointer = int.from_bytes(self.remote.memory(0xa18fa724, 4), 'little')
             original = self.remote.memory(pointer+0xbe014, 2)
@@ -490,7 +493,7 @@ class Camera:
             # Let guest tasks finish their first draw before publishing ready.
             packet = 'T05thread:'+result['return_cpu']+';'
             packet, _ = self.set_keep_awake(packet)
-            self.call(packet, '等待原厂界面绘制', 0x1017081e, bytes(8), [5000])
+            self.call(packet, 'Waiting for the native display', 0x1017081e, bytes(8), [5000])
         self.refresh_device_evidence()
         health = capture_health(self.remote, self.device_evidence or None)
         health['control_test'] = self.capture_control_test
@@ -498,7 +501,7 @@ class Camera:
         health['start_lv_action_completed'] = action_completed(result)
         self.audit({'kind': 'capture_start', 'result': result, 'health': health})
         if not health['start_lv_action_completed']:
-            raise RuntimeError('StartLV 动作未完成；详见本次运行日志')
+            raise RuntimeError('StartLV did not complete; see this session log')
         self.update(capture=health)
         self.refresh()
         (self.directory/'shooting-entry.png').write_bytes(self.png)
@@ -512,9 +515,9 @@ class Camera:
         if self.profile == 'shooting':
             if self.photo_liveview:
                 e = self.device_evidence
-                return f"取景实验 · RAW {e.get('raw_batches', 0)} 批 · 处理 {e.get('isp_batches', 0)} 批"
-            return '控制链实验 · RAW 0 帧' if self.capture_control_test else '运行中 · CMOS 未就绪'
-        return '运行中'
+                return f"Live-view experiment · RAW {e.get('raw_batches', 0)} batches · ISP {e.get('isp_batches', 0)} batches"
+            return 'Control experiment · RAW 0 frames' if self.capture_control_test else 'Running · CMOS not ready'
+        return 'Running'
 
     def refresh_device_evidence(self):
         """Read new device log lines only; counters never infer physical accuracy."""
@@ -572,18 +575,18 @@ class Camera:
     def refresh(self):
         refresh_started = time.perf_counter()
         if self.proc.poll() is not None:
-            raise RuntimeError(f'QEMU 已退出（{self.proc.returncode}）')
+            raise RuntimeError(f'QEMU exited ({self.proc.returncode})')
         status = self.monitor.command('query-status')
         if self.running and not status['running']:
-            raise RuntimeError('虚拟机已停止：'+status['status'])
+            raise RuntimeError('Guest stopped: '+status['status'])
         self.refresh_device_evidence()
         if not self.running and self.state.get('capture') is not None:
             # Publish a fresh paused observation instead of retaining boot state.
             health = dict(self.state['capture'])
             health.update(capture_health(self.remote, self.device_evidence or None))
             self.update(capture=health)
-        # High-frequency QMP scratch I/O stays on the Nikon Linux filesystem.
-        # Only changed PNGs and audit evidence go to the shared project drive.
+        # High-frequency QMP scratch I/O stays in host-local temporary storage.
+        # Only changed PNGs and audit evidence go to the project drive.
         path = self.frame_spool/'screen.ppm'
         self.monitor.command('screendump', {'filename': str(path)})
         w, h, pixels = ppm_pixels(path.read_bytes())
@@ -664,20 +667,20 @@ class Camera:
                         restart = True
                     elif action == 'stop':
                         self.close_guest()
-                        self.update(phase='stopped', message='已停止，可以重新启动')
+                        self.update(phase='stopped', message='Stopped; ready to restart')
                     elif action == 'pause' and self.running:
-                        self.pause(); self.update(phase='paused', message='已暂停')
+                        self.pause(); self.update(phase='paused', message='Paused')
                     elif action == 'resume' and self.proc and not self.running:
                         self.continue_guest()
-                        self.update(phase='running', message='运行中')
+                        self.update(phase='running', message='Running')
                     elif action == 'key' and self.running:
                         self.pause()
                         packet = self.run_to(0x100531bc)
                         self.key(packet, item['key'])
                         self.continue_guest()
-                        self.update(last_key=LABELS[item['key']], message='运行中')
+                        self.update(last_key=LABELS[item['key']], message='Running')
                     if restart:
-                        self.update(phase='booting', message='正在重新启动')
+                        self.update(phase='booting', message='Restarting')
                     elif self.proc:
                         # Publish the final paused/drawn frame before acknowledging
                         # the action; otherwise clients can observe one stale frame.
@@ -687,11 +690,11 @@ class Camera:
                     if self.running:
                         self.refresh()
                     elif self.proc.poll() is not None:
-                        raise RuntimeError(f'QEMU 已退出（{self.proc.returncode}）')
+                        raise RuntimeError(f'QEMU exited ({self.proc.returncode})')
             except Exception as error:
                 self.audit({'kind': 'error', 'error': str(error), 'traceback': traceback.format_exc(), 'incomplete_fixture': probe.ACTIVE_FIXTURE})
                 self.close_guest()
-                self.update(phase='error', message='运行已停止', busy=False, error=str(error))
+                self.update(phase='error', message='Session stopped', busy=False, error=str(error))
                 restart = False
                 # Keep the UI available so the user can review or restart.
 
@@ -742,8 +745,6 @@ def main():
         raw_default = a.raw_source or active_manifest('native0' if a.photo_liveview else 'unpacked')
     if a.photo_liveview and a.raw_source and a.raw_source.resolve() != active_manifest('native0'):
         p.error('--photo-liveview uses the checked active native0 source; update active_cmos.json to replace it')
-    if os.name == 'nt':
-        p.error('Run this launcher in Linux or an explicitly selected WSL distribution; see docs/build.md')
     ingress = a.raw_ingress_test or a.photo_liveview
     camera = Camera(a.port, a.profile, capture_control_test=a.capture_control_test or a.photo_liveview,
                     raw_source=raw_default, exmcu_no_lens=a.no_lens or a.photo_liveview,
@@ -799,13 +800,14 @@ def main():
                 item = camera.submit(data.get('action'), data.get('key'))
                 self.send(202, json.dumps(item).encode())
             except (ValueError, RuntimeError, queue.Full) as error:
-                self.send(409, json.dumps({'error': str(error) or '操作队列已满'}, ensure_ascii=False).encode())
+                self.send(409, json.dumps({'error': str(error) or 'Action queue is full'}, ensure_ascii=False).encode())
 
     server = http.server.ThreadingHTTPServer(('127.0.0.1', a.port), Handler)
     if not a.no_current:
         (PROJECT/'.local/sessions/current.json').write_text(json.dumps({
             'url': f'http://127.0.0.1:{a.port}', 'pid': os.getpid(), 'session': camera.stamp,
             'directory': str(camera.directory), 'profile': a.profile,
+            'firmware_path': str(FIRMWARE),
             'wsl_distribution': os.environ.get('WSL_DISTRO_NAME'),
             'raw_source': str(camera.raw_source.path) if camera.raw_source else None,
             'capture_control_test': camera.capture_control_test, 'no_lens_simulation': camera.exmcu_no_lens,

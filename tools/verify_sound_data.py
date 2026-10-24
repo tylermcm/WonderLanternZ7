@@ -18,6 +18,7 @@ from unicorn.arm_const import (
     UC_ARM_REG_R10, UC_ARM_REG_R11, UC_ARM_REG_SP, UC_ARM_REG_LR,
     UC_ARM_REG_CPSR,
 )
+from z30_extensions.features.sound_layout_z7 import OWNED_AUDIO_KIND
 
 BASE, SITE, CHECKPOINT = 0x10020000, 0x1006BFE6, 0x1006BFF2
 AUDIO, ANCHOR, MAGIC = 0xA21AB994, 0xA1833548, 0x5A33534E
@@ -77,9 +78,9 @@ def verify(stock, image, complete):
     cases = []
     for scenario in (
         dict(name='default-off', mode=0, owned=False, state=False),
-        dict(name='other-audio-callback', mode=18, owned=False, state=False),
-        dict(name='owned-callback-no-state', mode=18, owned=True, state=False),
-        dict(name='owned-callback-empty-state', mode=18, owned=True, state=True),
+        dict(name='other-audio-callback', mode=OWNED_AUDIO_KIND, owned=False, state=False),
+        dict(name='owned-callback-no-state', mode=OWNED_AUDIO_KIND, owned=True, state=False),
+        dict(name='owned-callback-empty-state', mode=OWNED_AUDIO_KIND, owned=True, state=True),
     ):
         native = execute(stock, scenario, complete)
         candidate = execute(image, scenario, complete)

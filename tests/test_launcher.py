@@ -25,7 +25,7 @@ class LauncherTests(unittest.TestCase):
     def test_linux_preserves_paths_and_candidate_validation(self):
         result = launch_z7.command(self.args(), host_os='posix', executable='/venv/bin/python')
         self.assertEqual(result[0], '/venv/bin/python')
-        self.assertIn('/tmp/project with spaces/build/full.main.bin', result)
+        self.assertIn(str((self.args().build_directory / 'full.main.bin').resolve()), result)
         self.assertIn('--candidate-report', result)
         self.assertIn('--stock-container', result)
 
@@ -33,6 +33,14 @@ class LauncherTests(unittest.TestCase):
         result = launch_z7.command(self.args(preset='stock', menu_only=True), host_os='posix')
         self.assertNotIn('--candidate-report', result)
         self.assertEqual(result[-2:], ['--profile', 'menu'])
+
+    def test_native_windows_preserves_paths_and_validation(self):
+        with patch.object(launch_z7, 'windows_to_wsl', side_effect=AssertionError('Native launch used WSL')):
+            result = launch_z7.command(self.args(native=True), host_os='nt', executable='C:/lab/python.exe')
+        self.assertEqual(result[0], 'C:/lab/python.exe')
+        self.assertIn('--candidate-report', result)
+        self.assertIn('--stock-container', result)
+        self.assertEqual(result[-1], '--photo-liveview')
 
     def test_wsl_interpreter_and_argument_boundaries(self):
         with patch.object(launch_z7, 'windows_to_wsl', side_effect=lambda path: '/mnt/c/Lab with spaces/' + path.name):

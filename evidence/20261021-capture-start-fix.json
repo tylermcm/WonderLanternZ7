@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "independent_modified_release": true,
+  "purpose": "Add the normal native capture callback omitted by the late-hook diagnostic; use late completion only for diagnostics",
+  "owner_control_comparison": {
+    "source": "owner reports in current camera session",
+    "installation_inferred_from_unique_diagnostic_heading": true,
+    "firmware_readback_verified": false,
+    "silent_photo": {
+      "custom_enabled": true,
+      "silent_photography": true,
+      "heading": "Waiting for capture",
+      "audible_custom_sound": false
+    },
+    "mechanical_control": {
+      "custom_enabled": true,
+      "silent_photography": false,
+      "owner_words": "says slient mode required",
+      "heading": "Silent mode required"
+    },
+    "interpretation": "Late hook and photo/silent gate reached for mechanical capture; no late-hook notification recorded for silent capture under the stated sequence."
+  },
+  "candidate": {
+    "filename": "EG161080.BIN",
+    "size": 33065322,
+    "sha256": "efcfbda40439354e8707a2c1e8c0b16b5e47a27c0fe8999110ca98eb9f15dc1c",
+    "main_sha256": "54ffcfa6d7f4389d0cc97f1758cf59112512df8fa09c9cbbc2a40b618e712814",
+    "crc_zero": true,
+    "independently_rebuilt": true
+  },
+  "existing_firmware_tests": {
+    "run": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "presets": {
+    "full": {
+      "reproducible": true,
+      "main_bytes": 33065320,
+      "main_sha256": "54ffcfa6d7f4389d0cc97f1758cf59112512df8fa09c9cbbc2a40b618e712814",
+      "sound_hook_verification": {
+        "passed": true,
+        "checks": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "checks": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "checks": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "checks": 20
+      },
+      "sound_playback_verification": {
+        "passed": true,
+        "checks": 18
+      },
+      "sound_shot_verification": {
+        "passed": true,
+        "checks": 48
+      }
+    },
+    "liveview-dual": {
+      "reproducible": true,
+      "main_bytes": 33052156,
+      "main_sha256": "b15532154d9bff9aea4649b8977f2c9ed737aba4256a7cc5e40880024761b9ff"
+    },
+    "m900": {
+      "reproducible": true,
+      "main_bytes": 33052120,
+      "main_sha256": "806c026b3c1aed197326ad8cc7e78692016b488d863264b6ce3a7f24d28038db"
+    },
+    "shutter-sound": {
+      "reproducible": true,
+      "main_bytes": 33065220,
+      "main_sha256": "6a8a8a844948d70b3887a7a3543dc77b2bbeac0e55a86fbe18b4841480159909",
+      "sound_hook_verification": {
+        "passed": true,
+        "checks": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "checks": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "checks": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "checks": 20
+      },
+      "sound_playback_verification": {
+        "passed": true,
+        "checks": 18
+      },
+      "sound_shot_verification": {
+        "passed": true,
+        "checks": 48
+      }
+    }
+  },
+  "candidate_admission_checks": 13,
+  "private_review_checks": 12,
+  "private_bundle_files_verified": 3,
+  "prior_image_checks": {
+    "passed": 37,
+    "total": 48,
+    "normal_callback_queue_missing": [
+      "normal-enabled1-absent0-callback1-queues-only-enabled-normal-capture",
+      "dispatch0-enabled1-absent0-callback1-queues-only-enabled-normal-capture",
+      "dispatch2-enabled1-absent0-callback1-queues-only-enabled-normal-capture"
+    ],
+    "note": "Other failures concern changed cue selection and new diagnostic requirements."
+  },
+  "staged_on_card": true,
+  "installed": true,
+  "hardware_capture_audio_passed": false,
+  "qemu_menu_pending": false,
+  "limits": [
+    "Property/controller helper/semaphore/callback/queue boundaries controlled in instruction tests.",
+    "Silent electronic exposure reachability and audible cue remain unverified on the camera.",
+    "No emergency recovery established."
+  ],
+  "qemu_menu": {
+    "completed": true,
+    "checks": 17,
+    "passed": 17,
+    "native_key_events": 30,
+    "error": null,
+    "camera_access": false
+  },
+  "card_staging": {
+    "timestamp_utc": "2026-10-22T04:10:34.2489705Z",
+    "device": "Sony QD-G240F",
+    "filename": "EG161080.BIN",
+    "bytes": 33065322,
+    "sha256": "efcfbda40439354e8707a2c1e8c0b16b5e47a27c0fe8999110ca98eb9f15dc1c",
+    "previous_sha256": "51dd7feb01e991d0cbce93e952ac42be98981dca510187e2767141ec8974dd9b",
+    "previous_backup_verified": true,
+    "wav_unchanged": true,
+    "complete_readback_verified": true
+  },
+  "hardware_follow_up": {
+    "source": "owner followed latest installation/test instructions and reported result in current session",
+    "installation_inferred_from_sequence": true,
+    "firmware_readback_verified": false,
+    "silent_photography_on_confirmed_by_test_sequence": true,
+    "heading": "Silent mode required",
+    "audible_shutter_sound": false,
+    "trigger_reachability_supported": true
+  }
+}

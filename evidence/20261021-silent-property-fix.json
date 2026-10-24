@@ -1,0 +1,171 @@
+{
+  "schema": 1,
+  "independent_modified_release": true,
+  "purpose": "Replace the copied Z30 silent-property key with the key queried by Nikon original Z7 Silent photography menu",
+  "native_z7_silent_property": "0x576",
+  "previous_port_property": "0x57B",
+  "native_menu_page": "0xB2",
+  "native_menu_constructor": "0x1049AC30",
+  "candidate": {
+    "filename": "EG161080.BIN",
+    "size": 33065322,
+    "sha256": "9e636d645281ee9f92cb150b6dcc8d771b21ff95c47e45f538d951a1d932420b",
+    "main_sha256": "f15aa7249edcb4a291de4096dd26f7a8c4c0932c0d5b3b24e4180eede187dd44",
+    "crc_zero": true,
+    "independently_rebuilt": true
+  },
+  "binary_diff_from_previous": {
+    "same_length": true,
+    "changed_bytes": 3,
+    "original_main_body_changed": 0,
+    "appended_code_changed": 1,
+    "crc_changed": 2
+  },
+  "existing_firmware_tests": {
+    "run": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "presets": {
+    "full": {
+      "reproducible": true,
+      "main_bytes": 33065320,
+      "main_sha256": "f15aa7249edcb4a291de4096dd26f7a8c4c0932c0d5b3b24e4180eede187dd44",
+      "sound_hook_verification": {
+        "passed": true,
+        "checks": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "checks": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "checks": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "checks": 20
+      },
+      "sound_playback_verification": {
+        "passed": true,
+        "checks": 18
+      },
+      "sound_shot_verification": {
+        "passed": true,
+        "checks": 60
+      }
+    },
+    "liveview-dual": {
+      "reproducible": true,
+      "main_bytes": 33052156,
+      "main_sha256": "b15532154d9bff9aea4649b8977f2c9ed737aba4256a7cc5e40880024761b9ff"
+    },
+    "m900": {
+      "reproducible": true,
+      "main_bytes": 33052120,
+      "main_sha256": "806c026b3c1aed197326ad8cc7e78692016b488d863264b6ce3a7f24d28038db"
+    },
+    "shutter-sound": {
+      "reproducible": true,
+      "main_bytes": 33065220,
+      "main_sha256": "e0fc56ebb032a9d24fafa4d327a6a4d879207702502ec83a8ce33374430d1e4f",
+      "sound_hook_verification": {
+        "passed": true,
+        "checks": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "checks": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "checks": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "checks": 20
+      },
+      "sound_playback_verification": {
+        "passed": true,
+        "checks": 18
+      },
+      "sound_shot_verification": {
+        "passed": true,
+        "checks": 60
+      }
+    }
+  },
+  "previous_image_regression": {
+    "passed": 47,
+    "total": 60,
+    "native_menu_selection_passed": true,
+    "contradictory_property_admission_query_failures": [
+      "z7-silent1-legacy0-capture-matches-native-menu",
+      "z7-silent1-legacy0-trigger-uses-native-z7-key",
+      "z7-silent0-legacy1-capture-matches-native-menu",
+      "z7-silent0-legacy1-trigger-uses-native-z7-key",
+      "z7-silent1-legacy2-capture-matches-native-menu",
+      "z7-silent1-legacy2-trigger-uses-native-z7-key",
+      "z7-silent2-legacy1-capture-matches-native-menu",
+      "z7-silent2-legacy1-trigger-uses-native-z7-key"
+    ]
+  },
+  "candidate_admission_checks": 13,
+  "private_review_checks": 12,
+  "private_bundle_files_verified": 3,
+  "qemu_menu": {
+    "rerun_for_this_candidate": false,
+    "baseline": "20261021-capture-start-02",
+    "baseline_passed_checks": 17,
+    "menu_and_preview_code_identical": true,
+    "scope": "Prior assisted menu result applies to its baseline; not a new QEMU run or hardware evidence"
+  },
+  "staged_on_card": true,
+  "installed": null,
+  "hardware_capture_audio_passed": false,
+  "limits": [
+    "Property RAM values, UI selection/state, controller helpers, semaphore, callbacks and queue boundaries controlled.",
+    "Original property getter, descriptor tables and Silent photography menu constructor actually executed.",
+    "Physical shutter cue and emergency recovery remain unverified."
+  ],
+  "card_staging": {
+    "timestamp_utc": "2026-10-22T04:38:20.7289892Z",
+    "device": "Sony QD-G240F",
+    "filename": "EG161080.BIN",
+    "bytes": 33065322,
+    "sha256": "9e636d645281ee9f92cb150b6dcc8d771b21ff95c47e45f538d951a1d932420b",
+    "previous_sha256": "efcfbda40439354e8707a2c1e8c0b16b5e47a27c0fe8999110ca98eb9f15dc1c",
+    "previous_backup_verified": true,
+    "wav_unchanged": true,
+    "complete_readback_verified": true
+  },
+  "port_audit_status": "not_cleared_for_further_hardware_installation",
+  "port_audit_document": "PORT_AUDIT.md",
+  "previous_candidate_owner_report": {
+    "source": "owner followed latest installation/test instructions and reported result in current session",
+    "installation_inferred_from_sequence": true,
+    "firmware_readback_verified": false,
+    "silent_photography_on_confirmed_by_test_sequence": true,
+    "heading": "Silent mode required",
+    "audible_shutter_sound": false,
+    "trigger_reachability_supported": true
+  },
+  "owner_report": {
+    "source": "owner report in current session after latest test sequence",
+    "installation_inferred_from_sequence": true,
+    "firmware_readback_verified": false,
+    "continuous_audio_in_live_view": true,
+    "heading": "Capture audio busy",
+    "menu_effect_wording_ambiguous": true,
+    "correct_photo_specific_audio": false,
+    "enabled_off_requested": true,
+    "hardware_off_confirmation": "owner_confirms_off_stops_repeating_sound",
+    "hardware_off_report_verbatim": "Yes, OFF stops it",
+    "exact_stop_timing_measured": false
+  },
+  "installation_status": "inferred_from_owner_test_sequence_without_readback",
+  "hardware_behavioral_test_result": "failed_uncommanded_live_view_playback",
+  "liveview_regression_audit": "evidence/20261021-liveview-retrigger-audit.json"
+}

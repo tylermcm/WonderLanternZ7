@@ -97,7 +97,9 @@ python patch.py shutter-sound --source "Z_7_0380.bin" --output "output/EG1610038
 python patch.py full --source "Z_7_0380.bin" --output "output/EG16100380_full.BIN"
 ```
 
-输出是完整 eg1610_038000.bi 模块（33,052,090 字节，末尾 2 字节为 CCITT CRC）。如果需要给 Z7 QEMU 使用，取输出的前 33,052,088 字节：
+输出是完整 eg1610_038000.bi 模块，末尾 2 字节为 CCITT CRC。原厂模块为
+33,052,090 字节；追加补丁后的模块更长。如果需要给 Z7 QEMU 使用，只去掉
+末尾 2 字节并保留全部追加代码，不能截断到原厂 33,052,088 字节：
 
 ```powershell
 $bytes = [IO.File]::ReadAllBytes('output/EG16100380_full.BIN')

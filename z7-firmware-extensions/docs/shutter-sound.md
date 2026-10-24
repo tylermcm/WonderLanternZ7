@@ -1,5 +1,12 @@
 # Z7 自定义电子快门声音
 
+**Independent port status, October 22, 2026:** shutter triggering has failed on
+the camera with repeating audio during live view. Enabled OFF stops the loop by
+owner report; leave it OFF. The capability description and earlier build notes
+below do not establish correct shutter behavior. Read the
+[native event trace](../../CAPTURE_EVENT_TRACE.md) and
+[port audit hold](../../PORT_AUDIT.md); no further flash is cleared.
+
 构建包含该功能后，设置菜单增加 `Shutter sound`。主菜单为：
 
 ```text
@@ -21,6 +28,20 @@ Enabled 打开 OFF / ON 选择页。Sound file 打开五个文件选择项。`*`
 录像和非静音照片不触发。Z7 同时具备机械快门和电子快门，因此该功能依赖 Z7 原生
 静音/电子快门回调；实际机械/电子快门组合需要在相机上验证。设置保存在 RAM，重开机
 恢复 OFF / None。
+
+Independent laptop correction (October 21, 2026): Preview WAV playback is now
+owner-reported working, but silent-photo triggering failed with all required
+settings confirmed. The next diagnostic build repairs the shared native callback
+hook and shows capture status in the sound-page title while Enabled is ON.
+See [the capture investigation](../../SHUTTER_TRIGGER_FIX.md) for the six titles
+and exact validation limits. That build has not established working capture sound.
+The subsequent normal-callback correction adds a seventh diagnostic title and
+queues sound from the normal notification, leaving the late hook diagnostic-only.
+See [the current correction](../../CAPTURE_START_FIX.md); physical silent-photo
+audio remains pending.
+The next independent correction uses the native Z7 Silent photography property
+0x576, replacing the Z30 key 0x57B. Tests now execute Nikon's original menu
+constructor and property getter; see [the property correction](../../SILENT_PROPERTY_FIX.md).
 
 Z7 使用 CFexpress/XQD 主卡，固件路径为：
 

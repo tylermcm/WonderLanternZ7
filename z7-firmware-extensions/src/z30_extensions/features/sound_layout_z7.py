@@ -21,7 +21,19 @@ SWITCH_OFFSET = STATE_SIZE + 44
 NEW_SIZE = STATE_SIZE + 88
 MAGIC = 0x5A33534E
 BUSY, ENABLED, LENGTH, SELECTED, PENDING, RESULT = 32, 36, 40, 44, 48, 52
+SHOT_STATUS = 116  # Unused state padding; does not overlap the WAV buffer.
+# Native Silent photography page 0xB2 constructor 0x1049AC30 queries 0x576.
+# It selects the native ON control only for value 1. 0x57B is the Z30 key.
+SILENT_PHOTOGRAPHY_PROPERTY = 0x576
 SUCCESS = 0x04390080
+
+# The native busy getter at 0x1006B540 reads the leading state byte.
+# The format descriptors begin 16 bytes later; their first word is 2, not idle.
+NATIVE_AUDIO_STATE = 0xA188D190
+NATIVE_AUDIO_FORMATS = NATIVE_AUDIO_STATE + 16
+# Consumer 0x1006BC46 checks type with the exclusive bound 0x12. Reuse the
+# last valid descriptor only for records carrying our own completion callback.
+OWNED_AUDIO_KIND = 17
 
 # Control IDs initially use the same values as Z30.  The Z7 builder scans the
 # stock page table and rejects collisions before writing an image.
@@ -75,7 +87,7 @@ NATIVE = {
 
 GLOBALS = {
     0xC21C0E28: 0xA21AB994,
-    0xC1885A50: 0xA188D1A0,
+    0xC1885A50: NATIVE_AUDIO_STATE,
     0xC2006594: 0xA200DA5C,
 }
 
@@ -84,6 +96,12 @@ GLOBALS = {
 CONFIG_CALL_SITE = 0x1006BD54
 CONFIG_CALL_SITE_EXPECTED = bytes.fromhex('fff71efd')
 CONFIG_CAVE = 0x1002D804
+SHOT_CAVE = CONFIG_CAVE + 16
+SHOT_CALL_SITE = 0x1007272E  # Shared BLX callback and following epilogue branch.
+SHOT_CALL_EXPECTED = bytes.fromhex('9047c8e7')
+CAPTURE_CAVE = SHOT_CAVE + 16
+CAPTURE_CALL_SITE = 0x100726A8  # Argument setup; keep the CBZ target at CMP intact.
+CAPTURE_CALL_EXPECTED = bytes.fromhex('69464046')
 DATA_ENTRY = 0x1006BFE6
 DATA_CONTINUATION = 0x1006BFEF
 HEADER_OBJECT_ID = 0x81A

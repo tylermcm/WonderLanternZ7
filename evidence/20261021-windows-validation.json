@@ -1,0 +1,406 @@
+{
+  "date": "2026-10-21",
+  "scope": "Native Windows assisted emulator and offline synthetic checks; no physical camera or card writes",
+  "independent_modified_workspace": true,
+  "host": {
+    "platform": "Windows x64",
+    "python": "3.12.14",
+    "toolchain": "Project-local MSYS2 UCRT64",
+    "qemu": "10.2.4",
+    "qemu_binary_sha256": "6baa517644017bcd2391ab6e2d8975cf5a26bdcc645fef95c2fbb684d023cb4a",
+    "upstream_archive_sha256": "821b545b92f165e57dddccac5077d76d4d436a226595b8813ad59306bbfd0746",
+    "windows_sanitizers_run": false
+  },
+  "upstream_tests": {
+    "run": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "launcher_tests": 5,
+  "raw_input_tests": 11,
+  "renderer_contracts": 270,
+  "isp_contracts": 398,
+  "firmware_free_smoke": {
+    "passed": true,
+    "transport": "localhost-tcp",
+    "qmp_status": "prelaunch"
+  },
+  "stock_container_sha256": "07cf19513ada5b770caec4cfc3531a6734c48aede28dcec037f0f8374ef441a2",
+  "candidates": {
+    "full": {
+      "main_bytes": 33064940,
+      "sha256": "1d456c84709650e90cc6decd0877a9a51d4692bacc5477fa21ea28fba67cfb76",
+      "appended_bytes": 12852,
+      "reproducible": true,
+      "sound_hook_verification": {
+        "passed": true,
+        "checks": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "checks": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "checks": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "checks": 20
+      },
+      "liveview_gate_executions": 1024
+    },
+    "liveview-dual": {
+      "main_bytes": 33052156,
+      "sha256": "b15532154d9bff9aea4649b8977f2c9ed737aba4256a7cc5e40880024761b9ff",
+      "appended_bytes": 68,
+      "reproducible": true,
+      "liveview_gate_executions": 1024
+    },
+    "m900": {
+      "main_bytes": 33052120,
+      "sha256": "806c026b3c1aed197326ad8cc7e78692016b488d863264b6ce3a7f24d28038db",
+      "appended_bytes": 32,
+      "reproducible": true
+    },
+    "shutter-sound": {
+      "main_bytes": 33064840,
+      "sha256": "0fe02a264926fe215484fd233b994d26fbdf9e6e4b2358df30027b8d82a93c0d",
+      "appended_bytes": 12752,
+      "reproducible": true,
+      "sound_hook_verification": {
+        "passed": true,
+        "checks": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "checks": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "checks": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "checks": 20
+      }
+    }
+  },
+  "candidate_input_checks": 13,
+  "general_ui": {
+    "checks": [
+      {
+        "name": "native0_source_dimensions",
+        "passed": true
+      },
+      {
+        "name": "native0_actual_dma",
+        "passed": true
+      },
+      {
+        "name": "functional_isp_completed",
+        "passed": true
+      },
+      {
+        "name": "native_processed_source_scanned",
+        "passed": true
+      },
+      {
+        "name": "photo_has_scene_detail",
+        "passed": true
+      },
+      {
+        "name": "native_no_card_icon_red",
+        "passed": true
+      },
+      {
+        "name": "pause_acknowledged",
+        "passed": true
+      },
+      {
+        "name": "paused_image_stable",
+        "passed": true
+      },
+      {
+        "name": "paused_dma_stable",
+        "passed": true
+      },
+      {
+        "name": "resume_acknowledged",
+        "passed": true
+      },
+      {
+        "name": "resume_processing_continues",
+        "passed": true
+      },
+      {
+        "name": "menu_1_visible",
+        "passed": true
+      },
+      {
+        "name": "menu_1_returned_processed_photo",
+        "passed": true
+      },
+      {
+        "name": "menu_1_same_session",
+        "passed": true
+      },
+      {
+        "name": "menu_2_visible",
+        "passed": true
+      },
+      {
+        "name": "menu_2_returned_processed_photo",
+        "passed": true
+      },
+      {
+        "name": "menu_2_same_session",
+        "passed": true
+      },
+      {
+        "name": "menu_3_visible",
+        "passed": true
+      },
+      {
+        "name": "menu_3_returned_processed_photo",
+        "passed": true
+      },
+      {
+        "name": "menu_3_same_session",
+        "passed": true
+      },
+      {
+        "name": "returned_to_running_guest",
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "cold_boot_seconds": 140.797,
+    "menu_return_timeout_seconds": 60,
+    "menu_roundtrips": [
+      {
+        "cycle": 1,
+        "attempts": [
+          {
+            "attempt": 1,
+            "returned": true
+          }
+        ],
+        "elapsed_seconds": 16.89,
+        "isp_batches_before": 871,
+        "isp_batches_after": 899,
+        "final_scene_rms": 0.0
+      },
+      {
+        "cycle": 2,
+        "attempts": [
+          {
+            "attempt": 1,
+            "returned": true
+          }
+        ],
+        "elapsed_seconds": 16.985,
+        "isp_batches_before": 917,
+        "isp_batches_after": 947,
+        "final_scene_rms": 0.0
+      },
+      {
+        "cycle": 3,
+        "attempts": [
+          {
+            "attempt": 1,
+            "returned": true
+          }
+        ],
+        "elapsed_seconds": 18.453,
+        "isp_batches_before": 963,
+        "isp_batches_after": 996,
+        "final_scene_rms": 0.0
+      }
+    ],
+    "same_session_verified": true
+  },
+  "sound_menus": {
+    "full": {
+      "checks": [
+        {
+          "name": "Setup sound row selected",
+          "passed": true
+        },
+        {
+          "name": "Sound page opens",
+          "passed": true
+        },
+        {
+          "name": "Sound title renders",
+          "passed": true
+        },
+        {
+          "name": "Enabled choices open",
+          "passed": true
+        },
+        {
+          "name": "Enabled title renders",
+          "passed": true
+        },
+        {
+          "name": "OFF returns to sound page",
+          "passed": true
+        },
+        {
+          "name": "ON without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Enabled back returns to sound page",
+          "passed": true
+        },
+        {
+          "name": "File choices open",
+          "passed": true
+        },
+        {
+          "name": "File title renders",
+          "passed": true
+        },
+        {
+          "name": "Missing file remains in choices",
+          "passed": true
+        },
+        {
+          "name": "Preview without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Reload without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Sound back returns to Setup",
+          "passed": true
+        },
+        {
+          "name": "Sound page reopens with retained selection",
+          "passed": true
+        },
+        {
+          "name": "Reopened sound page returns to Setup",
+          "passed": true
+        },
+        {
+          "name": "Custom menu returns to processed live view",
+          "passed": true
+        }
+      ],
+      "native_key_events": 30,
+      "passed": true,
+      "camera_access": false,
+      "cold_boot_seconds": 142.026
+    },
+    "shutter-sound": {
+      "checks": [
+        {
+          "name": "Setup sound row selected",
+          "passed": true
+        },
+        {
+          "name": "Sound page opens",
+          "passed": true
+        },
+        {
+          "name": "Sound title renders",
+          "passed": true
+        },
+        {
+          "name": "Enabled choices open",
+          "passed": true
+        },
+        {
+          "name": "Enabled title renders",
+          "passed": true
+        },
+        {
+          "name": "OFF returns to sound page",
+          "passed": true
+        },
+        {
+          "name": "ON without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Enabled back returns to sound page",
+          "passed": true
+        },
+        {
+          "name": "File choices open",
+          "passed": true
+        },
+        {
+          "name": "File title renders",
+          "passed": true
+        },
+        {
+          "name": "Missing file remains in choices",
+          "passed": true
+        },
+        {
+          "name": "Preview without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Reload without a file reports missing file",
+          "passed": true
+        },
+        {
+          "name": "Sound back returns to Setup",
+          "passed": true
+        },
+        {
+          "name": "Sound page reopens with retained selection",
+          "passed": true
+        },
+        {
+          "name": "Reopened sound page returns to Setup",
+          "passed": true
+        },
+        {
+          "name": "Custom menu returns to processed live view",
+          "passed": true
+        }
+      ],
+      "native_key_events": 30,
+      "passed": true,
+      "camera_access": false,
+      "cold_boot_seconds": 143.038
+    }
+  },
+  "browser_verification": {
+    "title": "WonderLantern Z7",
+    "english_controls_visible": true,
+    "native_display_visually_checked": true,
+    "pause_button_verified": true,
+    "final_state": "paused",
+    "launcher_reuse_verified": true,
+    "screenshot_private": true
+  },
+  "earlier_findings": [
+    {
+      "check": "Windows stdio batched QMP smoke",
+      "result": "Malformed replies despite clean realization/exit; smoke now uses sequential bounded TCP commands, matching the app"
+    },
+    {
+      "check": "General UI with original 12-second MENU-return deadline",
+      "result": "First cycle timed out; eventual returned scene matched the original reference. Final run records timing with a configurable 60-second bound and unchanged pixel, ISP-progress and same-session gates"
+    }
+  ],
+  "not_validated": [
+    "Physical-camera installation or same-version update acceptance",
+    "Boot recovery or rollback",
+    "Paid RAW-video upgrade compatibility",
+    "Real WAV/card/audio playback",
+    "Physical sensor, autofocus, recording or capture timing",
+    "ASan/UBSan on Windows",
+    "Actual Linux/WSL launch on this laptop"
+  ]
+}

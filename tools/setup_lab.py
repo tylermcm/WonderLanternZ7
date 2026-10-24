@@ -30,6 +30,12 @@ def main():
     if not python.exists():
         venv.EnvBuilder(with_pip=True).create(environment / 'venv')
     subprocess.run([str(python), '-m', 'pip', 'install', '-r', str(ROOT / 'requirements-lab.txt')], check=True)
+    # Candidate admission rebuilds the vendored patcher, including from direct
+    # interactive/probe commands. A clean venv must be able to import that source.
+    packages = Path(subprocess.check_output([str(python), '-c',
+        'import sysconfig; print(sysconfig.get_path("purelib"))'], text=True).strip())
+    (packages / 'wonderlantern-source.pth').write_text(
+        str(ROOT / 'z7-firmware-extensions/src') + '\n', encoding='utf-8')
     if not args.skip_qemu:
         subprocess.run([str(python), str(ROOT / 'z7-qemu/tools/build.py'),
                         '--work-dir', str(environment / 'qemu'), '--jobs', str(args.jobs)], check=True)

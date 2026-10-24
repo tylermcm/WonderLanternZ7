@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "scope": "Sanitized review of an original-firmware assisted-emulator observation; private packets and RAM excluded",
+  "stock_firmware": true,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "no_shutter_action_supplied": true,
+  "camera_access": false,
+  "card_access": false,
+  "distinct_callback_deliveries": 3,
+  "controller_event": "0x041F0001",
+  "consumer_event": "0x04190001",
+  "registered_callback": "0x1014708D",
+  "controller_modes": [0, 0, 0],
+  "capture_service_state_bytes": [9, 9, 9],
+  "distinct_packet_timestamps": true,
+  "breakpoint_stepped_before_rearming": true,
+  "assisted_model": {
+    "raw_batches": 24,
+    "isp_batches": 18,
+    "processed_buffer_scanned": false,
+    "display_settling_wait_skipped": true,
+    "display_ready_claimed": false,
+    "sensor_accuracy_claimed": false
+  },
+  "separate_capture_request_probe": {
+    "result": "timeout before an action was recorded",
+    "recorded_actions": 0,
+    "capture_inhibits_modified": false,
+    "sensor_completions_fabricated": false,
+    "positive_capture_evidence": false
+  },
+  "replacement_hook_selected": false,
+  "physical_photo_verified": false,
+  "candidate_cleared": false,
+  "firmware_built_or_staged": false
+}

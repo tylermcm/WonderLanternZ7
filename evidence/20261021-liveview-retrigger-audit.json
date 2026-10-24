@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "audit_only": true,
+  "passed": false,
+  "main_sha256": "f15aa7249edcb4a291de4096dd26f7a8c4c0932c0d5b3b24e4180eede187dd44",
+  "observations": {
+    "supplied_photo_transactions": 0,
+    "sequential_notifications": 3,
+    "sequential_queue_requests": 3,
+    "overlap_pending": 1,
+    "overlap_heading": "Capture audio busy",
+    "overlap_queue_requests_before_finish": 1,
+    "overlap_queue_requests_after_finish": 2,
+    "controlled_stop_requests": 2,
+    "compiled_off_clears_enabled": true,
+    "compiled_off_clears_pending": true,
+    "no_new_queue_after_off": true,
+    "idle_after_synthetic_finish": true,
+    "initially_disabled_queue_requests": 0
+  },
+  "requirements": [
+    {
+      "name": "notifications-without-independent-photo-must-not-queue",
+      "passed": false
+    },
+    {
+      "name": "notification-overlap-must-not-restart-without-photo",
+      "passed": false
+    },
+    {
+      "name": "compiled-off-clears-pending-and-blocks-future-queue",
+      "passed": true
+    },
+    {
+      "name": "initially-off-blocks-notifications",
+      "passed": true
+    }
+  ],
+  "scope": "Existing compiled native dispatcher, custom trigger/completion, UI OFF action, labels and original property getter.",
+  "limitations": [
+    "Synthetic controller notifications; no independently identified shutter transaction, real live-view frames or sensor exposure.",
+    "Started/finished packets and successful stop result are supplied unit inputs, not observed hardware completion behavior.",
+    "Property RAM, native callback, allocator, queue, controller helper/semaphore and UI boundaries are controlled by the fixture.",
+    "OFF blocks future admission in this sequence; it does not synchronously cancel the currently playing audio.",
+    "No installation acceptance, real timing/reentrancy, physical audio or recovery assurance."
+  ],
+  "owner_report": {
+    "continuous_audio_in_live_view": true,
+    "heading": "Capture audio busy",
+    "installation_inferred": true,
+    "firmware_readback_verified": false,
+    "hardware_off_confirmation": "owner_confirms_off_stops_repeating_sound",
+    "hardware_off_report_verbatim": "Yes, OFF stops it",
+    "exact_stop_timing_measured": false
+  },
+  "port_audit_status": "not_cleared_for_further_hardware_installation",
+  "firmware_source_changed": false,
+  "firmware_built_or_staged": false,
+  "camera_or_card_mutated": false
+}

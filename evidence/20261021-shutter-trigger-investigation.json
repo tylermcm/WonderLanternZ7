@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "independent_modified_release": true,
+  "purpose": "Repair shared native callback control flow and add diagnostics for owner-reported silent capture despite working WAV Preview",
+  "owner_report": {
+    "preview_audio_works": true,
+    "shutter_triggered_audio_works": false,
+    "enabled_on": true,
+    "wav_selected": true,
+    "silent_photography_on": true
+  },
+  "candidate": {
+    "filename": "EG161080.BIN",
+    "size": 33065098,
+    "sha256": "51dd7feb01e991d0cbce93e952ac42be98981dca510187e2767141ec8974dd9b",
+    "main_sha256": "735673919cdd39891e469819ba4cd0057619c240cd983d2b6f5447d6a14b7331",
+    "crc_zero": true,
+    "independently_rebuilt": true
+  },
+  "existing_firmware_tests": {
+    "run": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "presets": {
+    "full": {
+      "reproducible": true,
+      "main_bytes": 33065096,
+      "main_sha256": "735673919cdd39891e469819ba4cd0057619c240cd983d2b6f5447d6a14b7331",
+      "sound_hook_verification": {
+        "passed": true,
+        "count": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "count": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "count": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "count": 20
+      },
+      "sound_playback_verification": {
+        "passed": true,
+        "count": 18
+      },
+      "sound_shot_verification": {
+        "passed": true,
+        "count": 24
+      }
+    },
+    "liveview-dual": {
+      "reproducible": true,
+      "main_bytes": 33052156,
+      "main_sha256": "b15532154d9bff9aea4649b8977f2c9ed737aba4256a7cc5e40880024761b9ff"
+    },
+    "m900": {
+      "reproducible": true,
+      "main_bytes": 33052120,
+      "main_sha256": "806c026b3c1aed197326ad8cc7e78692016b488d863264b6ce3a7f24d28038db"
+    },
+    "shutter-sound": {
+      "reproducible": true,
+      "main_bytes": 33064996,
+      "main_sha256": "c88253e06b433f1c1e80879af043087273924d01b01de92bc4ae9f5eb78916cb",
+      "sound_hook_verification": {
+        "passed": true,
+        "count": 3
+      },
+      "sound_route_verification": {
+        "passed": true,
+        "count": 6
+      },
+      "sound_data_verification": {
+        "passed": true,
+        "count": 4
+      },
+      "sound_menu_verification": {
+        "passed": true,
+        "count": 20
+      },
+      "sound_playback_verification": {
+        "passed": true,
+        "count": 18
+      },
+      "sound_shot_verification": {
+        "passed": true,
+        "count": 24
+      }
+    }
+  },
+  "installed_regression": {
+    "native_callback_failures": [
+      "alternate-enabled1-absent0-callback1-preserves-native-callback-and-return",
+      "alternate-enabled0-absent0-callback1-preserves-native-callback-and-return",
+      "alternate-enabled0-absent1-callback1-preserves-native-callback-and-return"
+    ],
+    "note": "Other prior-image failures concern new diagnostic requirements, not additional demonstrated defects"
+  },
+  "candidate_admission_checks": 13,
+  "private_review_checks": 12,
+  "private_bundle_files_verified": 3,
+  "staged_on_card": true,
+  "installed": true,
+  "hardware_capture_audio_passed": false,
+  "limits": [
+    "Native properties, callback and queue boundaries controlled in offline tests.",
+    "No physical capture-event trace or shutter-triggered audio success.",
+    "No emergency recovery established."
+  ],
+  "qemu_menu_attempts": [
+    {
+      "attempt": 1,
+      "completed": false,
+      "checks": 0,
+      "error": "RuntimeError('Guest exited or stopped during diagnostic call: W02')",
+      "camera_access": false
+    },
+    {
+      "attempt": 2,
+      "completed": true,
+      "checks": 17,
+      "passed": 17,
+      "native_key_events": 30,
+      "error": null,
+      "camera_access": false
+    }
+  ],
+  "qemu_menu_retry_pending": false,
+  "card_staging": {
+    "timestamp_utc": "2026-10-22T03:39:54.9540966Z",
+    "device": "Sony QD-G240F",
+    "filename": "EG161080.BIN",
+    "bytes": 33065098,
+    "sha256": "51dd7feb01e991d0cbce93e952ac42be98981dca510187e2767141ec8974dd9b",
+    "previous_sha256": "770408b99ff547dd972486656285307b17e4ff2674937dbb50f144200233b7be",
+    "previous_backup_verified": true,
+    "wav_unchanged": true,
+    "complete_readback_verified": true
+  },
+  "hardware_follow_up": {
+    "source": "owner reports in current camera session",
+    "installation_inferred_from_unique_diagnostic_heading": true,
+    "firmware_readback_verified": false,
+    "silent_photo": {
+      "custom_enabled": true,
+      "silent_photography": true,
+      "heading": "Waiting for capture",
+      "audible_custom_sound": false
+    },
+    "mechanical_control": {
+      "custom_enabled": true,
+      "silent_photography": false,
+      "owner_words": "says slient mode required",
+      "heading": "Silent mode required"
+    },
+    "interpretation": "Late hook and photo/silent gate reached for mechanical capture; no late-hook notification recorded for silent capture under the stated sequence."
+  }
+}

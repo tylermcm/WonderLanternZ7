@@ -11,7 +11,7 @@ def audio_code(addresses, path_table, anchor_table):
     def call(name): return invoke(addresses[name])
     native = lambda address: invoke(address, thumb=address != 0x10170a1c)
     def guard(else_label):
-        return f"""{c('r0',0xa21ab994)} ldrb r1,[r0,#28]; cmp r1,#18; bne {else_label};
+        return f"""{c('r0',0xa21ab994)} ldrb r1,[r0,#28]; cmp r1,#{OWNED_AUDIO_KIND}; bne {else_label};
             ldr r1,[r0,#32]; {c('r2',addresses['complete']|1)} cmp r1,r2; bne {else_label};
             {call('get')} cmp r0,#0; beq {else_label}; ldr r1,[r0,#{LENGTH}]; cmp r1,#0; beq {else_label};"""
     codes['get']=f"""
@@ -99,7 +99,7 @@ def audio_code(addresses, path_table, anchor_table):
             movs r0,#36; movs r1,#0; {native(0x1016fe38)} mov r6,r0; cmp r6,#0; beq free_job;
             mov r0,r6; movs r1,#36; {native(0x10170a80)}
             movs r0,#1; str r0,[r6]; str r0,[r6,#24]; movs r0,#31; strb r0,[r6,#4];
-            movs r0,#18; strb r0,[r6,#28]; {c('r0',addresses['complete']|1)} str r0,[r6,#32];
+            movs r0,#{OWNED_AUDIO_KIND}; strb r0,[r6,#28]; {c('r0',addresses['complete']|1)} str r0,[r6,#32];
             str r6,[r5]; {c('r0',0x101bfa29)} str r0,[r5,#4]; movs r0,#0; str r0,[r5,#8];
             {c('r0',0x0418001e)} mov r1,r5; {native(0x100a2d78)} cmp r0,#0; beq free_record;
             movs r0,#0; str r0,[r4,#{RESULT}]; movs r0,#1; pop {{r4-r8,pc}};
@@ -121,12 +121,16 @@ def audio_code(addresses, path_table, anchor_table):
             push {{r4-r6,lr}}; {call('get')} mov r4,r0; cmp r4,#0; beq no;
             ldr r0,[r4,#{ENABLED}]; cmp r0,#1; bne no;
             ldr r0,[r4,#{LENGTH}]; cmp r0,#0; beq no;
+            movs r0,#1; str r0,[r4,#{SHOT_STATUS}];
             {c('r0',0x138d)} {native(0x1016fef2)} cmp r0,#0; bne no;
-            {c('r0',0x57b)} {native(0x1016fef2)} cmp r0,#1; bne no;
+            movs r0,#2; str r0,[r4,#{SHOT_STATUS}];
+            {c('r0',SILENT_PHOTOGRAPHY_PROPERTY)} {native(0x1016fef2)} cmp r0,#1; bne no;
+            movs r0,#3; str r0,[r4,#{SHOT_STATUS}];
             ldr r0,[r4,#{BUSY}]; cmp r0,#1; beq no;
             cmp r0,#0; bne pending;
-            {c('r0',0xa188d1a0)} ldrb r0,[r0]; cmp r0,#0; bne no;
+            {c('r0',NATIVE_AUDIO_STATE)} ldrb r0,[r0]; cmp r0,#0; bne no;
             add r0,r4,#{BUSY}; movs r1,#0; movs r2,#2; {call('cas')} cmp r0,#1; bne no;
+            movs r0,#4; str r0,[r4,#{SHOT_STATUS}];
             mov r0,r4; {call('start')} b done;
             pending: cmp r0,#4; bhi no;
             movs r0,#1; str r0,[r4,#{PENDING}]; mov r0,r4; {call('stop')} b done;
@@ -178,10 +182,29 @@ def audio_code(addresses, path_table, anchor_table):
         """
 
     codes['shot']=f"""
-            {c('r0',0x04190001)} mov r1,sp; adds r0,#3; blx r2;
+            push {{r0,r1}}; blx r2;
             push {{r0-r3,r12,lr}}; mrs r0,apsr; push {{r0,r1}};
-            {call('trigger')} pop {{r0,r1}}; msr apsr_nzcvq,r0;
-            pop {{r0-r3,r12,lr}}; {c('lr',0x10072731)}
-            .balign 4; ldr.w pc,[pc,#0]; .word 0x10072731;
+            ldr r0,[sp,#32]; {c('r1',0x04190004)} cmp r0,r1; bne other_event;
+            movs r0,#6; b record;
+            other_event: {c('r1',0x04190001)} cmp r0,r1; bne restore;
+            movs r0,#5;
+            record: push {{r0,r1}};
+            {call('get')} cmp r0,#0; beq recorded;
+            ldr r1,[r0,#{SHOT_STATUS}]; cmp r1,#0; bne recorded;
+            ldr r1,[sp]; str r1,[r0,#{SHOT_STATUS}];
+            recorded: add sp,#8;
+            restore: pop {{r0,r1}}; msr apsr_nzcvq,r0;
+            pop {{r0-r3,r12,lr}}; add sp,#8; {c('lr',0x10072731)}
+            .balign 4; ldr.w pc,[pc,#0]; .word 0x100726c5;
+        """
+    codes['capture']=f"""
+            mov r1,sp; mov r0,r8;
+            push {{r0,r1}}; blx r2;
+            push {{r0-r3,r12,lr}}; mrs r0,apsr; push {{r0,r1}};
+            ldr r0,[sp,#32]; {c('r1',0x04190001)} cmp r0,r1; bne restore;
+            {call('trigger')}
+            restore: pop {{r0,r1}}; msr apsr_nzcvq,r0;
+            pop {{r0-r3,r12,lr}}; add sp,#8; {c('lr',0x100726af)}
+            .balign 4; ldr.w pc,[pc,#0]; .word 0x100726af;
         """
     return codes

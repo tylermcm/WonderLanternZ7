@@ -1,0 +1,435 @@
+{
+  "schema": 1,
+  "independent_modified_release": true,
+  "purpose": "Reproduce and fix Z7 busy-address and request-type porting blockers; owner subsequently reports working WAV playback",
+  "stock_container_sha256": "07cf19513ada5b770caec4cfc3531a6734c48aede28dcec037f0f8374ef441a2",
+  "existing_firmware_tests": {
+    "run": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "wav_spec": {
+    "riff": "RIFF",
+    "riff_size": 14436,
+    "wave": "WAVE",
+    "fmt": "fmt ",
+    "fmt_size": 16,
+    "encoding": 1,
+    "channels": 1,
+    "sample_rate": 8000,
+    "byte_rate": 16000,
+    "block_align": 2,
+    "bits": 16,
+    "data_tag": "data",
+    "data_bytes": 14400,
+    "total_bytes": 14444,
+    "duration_seconds": 0.9,
+    "extra_chunks": false
+  },
+  "installed_old_playback_regression": {
+    "passed": false,
+    "checks": [
+      {
+        "name": "stock_metadata_is_not_busy_state",
+        "passed": true
+      },
+      {
+        "name": "native_accepts_kind_17",
+        "passed": true
+      },
+      {
+        "name": "native_rejects_kind_18",
+        "passed": true
+      },
+      {
+        "name": "idle_preview_queues_with_nonzero_format_metadata",
+        "passed": false
+      },
+      {
+        "name": "preview_works_while_enabled_off",
+        "passed": false
+      },
+      {
+        "name": "native_busy_blocks_preview",
+        "passed": true
+      },
+      {
+        "name": "idle_silent_shot_queues_with_nonzero_format_metadata",
+        "passed": false
+      },
+      {
+        "name": "native_busy_blocks_shot_trigger",
+        "passed": true
+      },
+      {
+        "name": "start_queues_expected_native_request",
+        "passed": true
+      },
+      {
+        "name": "queued_kind_is_within_native_exclusive_bound",
+        "passed": false
+      },
+      {
+        "name": "actual_native_consumer_reaches_config",
+        "passed": false
+      },
+      {
+        "name": "owned_config_supplies_format_and_complete_length",
+        "passed": true
+      },
+      {
+        "name": "owned_data_supplies_pcm_pointer_length_and_flags",
+        "passed": true
+      },
+      {
+        "name": "same_kind_foreign_callback_keeps_stock_config",
+        "passed": true
+      },
+      {
+        "name": "same_kind_foreign_callback_keeps_stock_audio_data",
+        "passed": true
+      },
+      {
+        "name": "native_started_packet_moves_to_playing",
+        "passed": true
+      },
+      {
+        "name": "native_finished_packet_releases_busy",
+        "passed": true
+      },
+      {
+        "name": "native_failure_packet_releases_busy_and_reports_error",
+        "passed": true
+      }
+    ],
+    "scope": "Actual compiled preview/trigger/start/config/data/callback code; stock initialized metadata, native exclusive bounds and consumer admission instructions.",
+    "limitations": "Controlled heap, property, UI, ready-state and queue boundaries; callbacks are synthetic unit inputs. No card I/O, physical audio, DSP execution or device completion evidence."
+  },
+  "candidates": {
+    "full": {
+      "main_size": 33064940,
+      "main_sha256": "596ecfdf8ea829b18d15734411c2f12c0d8dbdd6310c8f9aa0ed3d77023723d4",
+      "eg_size": 33064942,
+      "eg_sha256": "770408b99ff547dd972486656285307b17e4ff2674937dbb50f144200233b7be",
+      "reproducible": true,
+      "crc_residue": 0,
+      "playback_contracts": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "stock_metadata_is_not_busy_state",
+            "passed": true
+          },
+          {
+            "name": "native_accepts_kind_17",
+            "passed": true
+          },
+          {
+            "name": "native_rejects_kind_18",
+            "passed": true
+          },
+          {
+            "name": "idle_preview_queues_with_nonzero_format_metadata",
+            "passed": true
+          },
+          {
+            "name": "preview_works_while_enabled_off",
+            "passed": true
+          },
+          {
+            "name": "native_busy_blocks_preview",
+            "passed": true
+          },
+          {
+            "name": "idle_silent_shot_queues_with_nonzero_format_metadata",
+            "passed": true
+          },
+          {
+            "name": "native_busy_blocks_shot_trigger",
+            "passed": true
+          },
+          {
+            "name": "start_queues_expected_native_request",
+            "passed": true
+          },
+          {
+            "name": "queued_kind_is_within_native_exclusive_bound",
+            "passed": true
+          },
+          {
+            "name": "actual_native_consumer_reaches_config",
+            "passed": true
+          },
+          {
+            "name": "owned_config_supplies_format_and_complete_length",
+            "passed": true
+          },
+          {
+            "name": "owned_data_supplies_pcm_pointer_length_and_flags",
+            "passed": true
+          },
+          {
+            "name": "same_kind_foreign_callback_keeps_stock_config",
+            "passed": true
+          },
+          {
+            "name": "same_kind_foreign_callback_keeps_stock_audio_data",
+            "passed": true
+          },
+          {
+            "name": "native_started_packet_moves_to_playing",
+            "passed": true
+          },
+          {
+            "name": "native_finished_packet_releases_busy",
+            "passed": true
+          },
+          {
+            "name": "native_failure_packet_releases_busy_and_reports_error",
+            "passed": true
+          }
+        ],
+        "scope": "Actual compiled preview/trigger/start/config/data/callback code; stock initialized metadata, native exclusive bounds and consumer admission instructions.",
+        "limitations": "Controlled heap, property, UI, ready-state and queue boundaries; callbacks are synthetic unit inputs. No card I/O, physical audio, DSP execution or device completion evidence."
+      },
+      "other_sound_contract_counts": {
+        "sound_hook_verification": 3,
+        "sound_route_verification": 6,
+        "sound_data_verification": 4,
+        "sound_menu_verification": 20
+      },
+      "disp_gate_executions": 1024
+    },
+    "liveview-dual": {
+      "main_size": 33052156,
+      "main_sha256": "b15532154d9bff9aea4649b8977f2c9ed737aba4256a7cc5e40880024761b9ff",
+      "eg_size": 33052158,
+      "eg_sha256": "bc3a7acbe5880466308763b9e542d79daf66ab50b4c94ce20a3c2ad1ab95ef9b",
+      "reproducible": true,
+      "crc_residue": 0,
+      "disp_gate_executions": 1024
+    },
+    "m900": {
+      "main_size": 33052120,
+      "main_sha256": "806c026b3c1aed197326ad8cc7e78692016b488d863264b6ce3a7f24d28038db",
+      "eg_size": 33052122,
+      "eg_sha256": "58ba62b1ecd0d198bc884b8b28e12a605959c6cda64994aeeb9c073c1c739182",
+      "reproducible": true,
+      "crc_residue": 0
+    },
+    "shutter-sound": {
+      "main_size": 33064840,
+      "main_sha256": "f102edf00298c16b1fdce4228b9a97683b73bd0cf4971ff344a0cd3a7f01e00e",
+      "eg_size": 33064842,
+      "eg_sha256": "07e78fa397394d2cdbeadaa743d540e730de09b8835f78157f1755ca08ea681c",
+      "reproducible": true,
+      "crc_residue": 0,
+      "playback_contracts": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "stock_metadata_is_not_busy_state",
+            "passed": true
+          },
+          {
+            "name": "native_accepts_kind_17",
+            "passed": true
+          },
+          {
+            "name": "native_rejects_kind_18",
+            "passed": true
+          },
+          {
+            "name": "idle_preview_queues_with_nonzero_format_metadata",
+            "passed": true
+          },
+          {
+            "name": "preview_works_while_enabled_off",
+            "passed": true
+          },
+          {
+            "name": "native_busy_blocks_preview",
+            "passed": true
+          },
+          {
+            "name": "idle_silent_shot_queues_with_nonzero_format_metadata",
+            "passed": true
+          },
+          {
+            "name": "native_busy_blocks_shot_trigger",
+            "passed": true
+          },
+          {
+            "name": "start_queues_expected_native_request",
+            "passed": true
+          },
+          {
+            "name": "queued_kind_is_within_native_exclusive_bound",
+            "passed": true
+          },
+          {
+            "name": "actual_native_consumer_reaches_config",
+            "passed": true
+          },
+          {
+            "name": "owned_config_supplies_format_and_complete_length",
+            "passed": true
+          },
+          {
+            "name": "owned_data_supplies_pcm_pointer_length_and_flags",
+            "passed": true
+          },
+          {
+            "name": "same_kind_foreign_callback_keeps_stock_config",
+            "passed": true
+          },
+          {
+            "name": "same_kind_foreign_callback_keeps_stock_audio_data",
+            "passed": true
+          },
+          {
+            "name": "native_started_packet_moves_to_playing",
+            "passed": true
+          },
+          {
+            "name": "native_finished_packet_releases_busy",
+            "passed": true
+          },
+          {
+            "name": "native_failure_packet_releases_busy_and_reports_error",
+            "passed": true
+          }
+        ],
+        "scope": "Actual compiled preview/trigger/start/config/data/callback code; stock initialized metadata, native exclusive bounds and consumer admission instructions.",
+        "limitations": "Controlled heap, property, UI, ready-state and queue boundaries; callbacks are synthetic unit inputs. No card I/O, physical audio, DSP execution or device completion evidence."
+      },
+      "other_sound_contract_counts": {
+        "sound_hook_verification": 3,
+        "sound_route_verification": 6,
+        "sound_data_verification": 4,
+        "sound_menu_verification": 20
+      }
+    }
+  },
+  "candidate_admission_checks": {
+    "count": 13,
+    "passed": true
+  },
+  "private_review_native_checks": {
+    "count": 12,
+    "passed": true
+  },
+  "qemu_full_menu": {
+    "completed": true,
+    "checks": [
+      {
+        "name": "Setup sound row selected",
+        "passed": true
+      },
+      {
+        "name": "Sound page opens",
+        "passed": true
+      },
+      {
+        "name": "Sound title renders",
+        "passed": true
+      },
+      {
+        "name": "Enabled choices open",
+        "passed": true
+      },
+      {
+        "name": "Enabled title renders",
+        "passed": true
+      },
+      {
+        "name": "OFF returns to sound page",
+        "passed": true
+      },
+      {
+        "name": "ON without a file reports missing file",
+        "passed": true
+      },
+      {
+        "name": "Enabled back returns to sound page",
+        "passed": true
+      },
+      {
+        "name": "File choices open",
+        "passed": true
+      },
+      {
+        "name": "File title renders",
+        "passed": true
+      },
+      {
+        "name": "Missing file remains in choices",
+        "passed": true
+      },
+      {
+        "name": "Preview without a file reports missing file",
+        "passed": true
+      },
+      {
+        "name": "Reload without a file reports missing file",
+        "passed": true
+      },
+      {
+        "name": "Sound back returns to Setup",
+        "passed": true
+      },
+      {
+        "name": "Sound page reopens with retained selection",
+        "passed": true
+      },
+      {
+        "name": "Reopened sound page returns to Setup",
+        "passed": true
+      },
+      {
+        "name": "Custom menu returns to processed live view",
+        "passed": true
+      }
+    ],
+    "native_key_events": 30,
+    "startup_seconds": 119.072
+  },
+  "binary_diff_from_installed_full": {
+    "changed_bytes": 7,
+    "appended_code_bytes_changed": 5,
+    "crc_bytes_changed": 2,
+    "original_main_body_bytes_changed": 0
+  },
+  "corrected_firmware_staged_on_card": true,
+  "card_staging": {
+    "timestamp_utc": "2026-10-22T03:08:14.6689686Z",
+    "device": "Sony QD-G240F",
+    "filename": "EG161080.BIN",
+    "bytes": 33064942,
+    "sha256": "770408b99ff547dd972486656285307b17e4ff2674937dbb50f144200233b7be",
+    "complete_readback_verified": true,
+    "previous_firmware_backup_verified": true,
+    "wav_unchanged": true
+  },
+  "corrected_firmware_installed": true,
+  "hardware_audio_passed": true,
+  "hardware_result": {
+    "source": "owner report following corrected card staging and installation/Preview instructions",
+    "owner_words": "the wav actually works now!",
+    "audible_wav_playback_reported": true,
+    "exact_playback_mode": "Preview playback; owner subsequently distinguishes working audio from failed shutter replacement",
+    "corrected_installation_inferred_from_sequence": true,
+    "firmware_readback_verified": false,
+    "shutter_triggered_playback_verified": false,
+    "repeated_use_stability_verified": false,
+    "recovery_verified": false,
+    "capture_follow_up": {
+      "owner_words": "the audio works but replacing the shutter does not",
+      "enabled_on_confirmed": true,
+      "wav_selected_confirmed": true,
+      "silent_photography_on_confirmed": true,
+      "shutter_triggered_playback_passed": false
+    }
+  }
+}

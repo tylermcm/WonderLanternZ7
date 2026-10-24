@@ -4,8 +4,9 @@ import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import subprocess
+import sys
 import tarfile
 import urllib.request
 
@@ -25,8 +26,26 @@ def main():
     p.add_argument('--work-dir',type=Path,default=ROOT/'.build')
     p.add_argument('--archive',type=Path,help='Optional pre-downloaded original upstream tarball')
     p.add_argument('--jobs',type=int,default=4)
+    p.add_argument('--msys-root',type=Path,help='Native Windows MSYS2 root (UCRT64 dependencies required)')
     a = p.parse_args()
-    if os.name == 'nt': p.error('Build in Linux or an explicitly selected WSL distribution')
+    windows = os.name == 'nt'
+    if windows and not a.msys_root:
+        p.error('Use Linux/WSL or supply --msys-root for a native Windows build')
+    environment = dict(os.environ)
+    if windows:
+        msys = a.msys_root.resolve(strict=True)
+        environment.update(MSYSTEM='UCRT64', CHERE_INVOKING='yes')
+        environment['PATH'] = os.pathsep.join([str(msys/'ucrt64/bin'), str(msys/'usr/bin'), environment['PATH']])
+
+    def run(command, cwd=None):
+        if windows:
+            # The shell fragment is fixed; paths/options remain separate arguments.
+            executable = Path(command[0])
+            if executable.is_absolute():
+                path = PureWindowsPath(executable)
+                command = ['/' + path.drive[0].lower() + '/' + '/'.join(path.parts[1:]), *command[1:]]
+            command = [str(msys/'usr/bin/bash.exe'), '-lc', 'exec "$@"', 'wonderlantern-build', *command]
+        subprocess.run(command,cwd=cwd,env=environment,check=True)
     if os.environ.get('WSL_DISTRO_NAME') == 'ubuntu-noble':
         p.error('This coursework distribution is excluded; use ubuntu-noble-nikon')
     if not 1 <= a.jobs <= 64: p.error('--jobs must be 1..64')
@@ -51,19 +70,22 @@ def main():
                 return None
         with tarfile.open(archive,'r:xz') as t: t.extractall(work,filter=source_filter)
         marker.write_text(SHA256+'\n')
-    subprocess.run(['python3',str(ROOT/'qemu/prepare_source.py'),str(source)],check=True)
+    subprocess.run([sys.executable,str(ROOT/'qemu/prepare_source.py'),str(source)],check=True)
     build = work/'build'
     build.mkdir(exist_ok=True)
     options = ['--target-list=arm-softmmu','--without-default-devices','--disable-docs','--disable-tools','--disable-user','--disable-werror','--disable-gtk','--disable-sdl','--disable-vnc','--disable-opengl','--disable-guest-agent','--disable-slirp','--disable-rust','--disable-debug-info']
-    if not (build/'build.ninja').exists(): subprocess.run([str(source/'configure'),*options],cwd=build,check=True)
-    subprocess.run(['ninja','-j',str(a.jobs),'qemu-system-arm'],cwd=build,check=True)
-    binary = build/'qemu-system-arm'
+    if not (build/'build.ninja').exists(): run([str(source/'configure'),*options],cwd=build)
+    target = 'qemu-system-arm.exe' if windows else 'qemu-system-arm'
+    run(['ninja','-j',str(a.jobs),target],cwd=build)
+    binary = build/target
     manifest = dict(qemu_version=VERSION,upstream_archive_sha256=SHA256,binary=str(binary),binary_sha256=digest(binary),sources={name:digest(ROOT/name) for name in SOURCES},configure=options)
     manifest['generated_core_sources'] = {name:digest(source/name) for name in ['hw/intc/arm_gic.c','target/arm/helper.c','target/arm/tcg/op_helper.c']}
+    if windows:
+        manifest['native_runtime_path'] = str(msys/'ucrt64/bin')
     destination = ROOT/'.local/build-manifest.json'
     destination.parent.mkdir(exist_ok=True)
     destination.write_text(json.dumps(manifest,indent=2),encoding='utf-8')
-    subprocess.run([str(binary),'--version'],check=True)
+    subprocess.run([str(binary),'--version'],env=environment,check=True)
     print('Build manifest: '+str(destination),flush=True)
 
 if __name__ == '__main__': main()

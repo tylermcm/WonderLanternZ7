@@ -1,14 +1,15 @@
 <!-- SPDX-License-Identifier: GPL-2.0-or-later -->
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Z7 调试</title>
+<title>WonderLantern Z7</title>
 <style>
 :root{color-scheme:dark;font-family:Arial,"Microsoft YaHei",sans-serif;background:#111;color:#ddd;font-size:13px}
 *{box-sizing:border-box;border-radius:0}
 [hidden]{display:none!important}
 body{margin:0}
 main{max-width:916px;margin:12px auto;padding:0 12px}
+header{margin:18px 0 14px}h1{font-size:22px;font-weight:600;margin:0 0 6px}.help{color:#999;line-height:1.6;margin:12px 0}
 .layout{display:grid;grid-template-columns:minmax(0,720px) 160px;gap:12px;align-items:start}
 .screen{position:relative;aspect-ratio:3/2;background:#000;overflow:hidden}
 .screen img{display:block;width:100%;height:100%;object-fit:contain}
@@ -30,50 +31,52 @@ button:disabled{opacity:.35;cursor:default}
 @media(max-width:600px){main{margin:8px auto;padding:0 8px}.layout{grid-template-columns:1fr}aside{display:grid;grid-template-columns:140px 140px;gap:6px;align-items:start}.row{margin:0}.pad{grid-column:2;grid-row:1/4;margin:0}.tools{grid-column:1/-1;margin-top:6px}}
 </style>
 <main>
+<header><h1>WonderLantern Z7</h1><span>Independent firmware research · local assisted emulator</span></header>
 <div class="layout">
-<section aria-label="相机画面">
+<section aria-label="Camera display">
   <div class="screen">
-    <img id="frame" alt="虚拟相机实时画面" hidden>
-    <div class="placeholder" id="placeholder"><span id="boot-message">连接中…</span></div>
+    <img id="frame" alt="Live emulated camera display" hidden>
+    <div class="placeholder" id="placeholder"><span id="boot-message">Connecting…</span></div>
   </div>
-  <div class="status"><span id="status">启动中</span><span id="toast" aria-live="polite"></span></div>
+  <div class="status"><span id="status">Starting</span><span id="toast" aria-live="polite"></span></div>
   <div class="status" id="raw-input" hidden></div>
-  <div class="error" id="capture-status" hidden>CMOS 初始化未完成，尚无传感器输入。</div>
+  <div class="error" id="capture-status" hidden>Waiting for sensor input.</div>
   <div class="error" id="error" hidden></div>
 </section>
-<aside aria-label="相机控制">
-  <div class="row"><button id="shooting" title="重启并切换调试界面">切换界面</button></div>
-  <div class="row"><button data-key="menu" title="M">MENU</button><button data-key="disp" title="D">DISP</button><button data-key="play" title="P">回放</button></div>
+<aside aria-label="Camera controls">
+  <div class="row"><button id="shooting" title="Restart into the other assistance profile">Switch view</button></div>
+  <div class="row"><button data-key="menu" title="M">MENU</button><button data-key="disp" title="D">DISP</button><button data-key="play" title="P">Play</button></div>
   <div class="pad">
-    <span></span><button data-key="up" aria-label="上">↑</button><span></span>
-    <button data-key="left" aria-label="左或返回" title="← / Esc">←</button><button data-key="ok" title="Enter">OK</button><button data-key="right" aria-label="右">→</button>
-    <span></span><button data-key="down" aria-label="下">↓</button><span></span>
+    <span></span><button data-key="up" aria-label="Up">↑</button><span></span>
+    <button data-key="left" aria-label="Left or back" title="← / Esc">←</button><button data-key="ok" title="Enter">OK</button><button data-key="right" aria-label="Right">→</button>
+    <span></span><button data-key="down" aria-label="Down">↓</button><span></span>
   </div>
-  <div class="row"><button data-key="i" title="I">i</button><button data-key="delete" title="Delete">删除</button></div>
-  <div class="tools"><button id="pause">暂停</button><button id="restart">重启</button><button id="stop">停止</button></div>
+  <div class="row"><button data-key="i" title="I">i</button><button data-key="delete" title="Delete">Delete</button></div>
+  <div class="tools"><button id="pause">Pause</button><button id="restart">Restart</button><button id="stop">Stop</button></div>
 </aside>
 </div>
+<p class="help">Keyboard: M = menu · arrows = navigate · Enter = OK · Esc = back · D = display.<br>Shutter sound: MENU → left twice → down four times → right → up → OK.<br>Camera installation, recovery and real audio playback remain unverified.</p>
 </main>
 <script>
 const token='__TOKEN__';let state={},frame=-1,fetching=false;const el=id=>document.getElementById(id);
-async function action(action,key){try{const r=await fetch('/api/action',{method:'POST',headers:{'Content-Type':'application/json','X-Z7-Token':token},body:JSON.stringify({action,key})});const j=await r.json();if(!r.ok)throw Error(j.error);el('toast').textContent=key?'按键已发送…':'操作已发送…';}catch(e){el('toast').textContent=e.message;}}
+async function action(action,key){try{const r=await fetch('/api/action',{method:'POST',headers:{'Content-Type':'application/json','X-Z7-Token':token},body:JSON.stringify({action,key})});const j=await r.json();if(!r.ok)throw Error(j.error);el('toast').textContent=key?'Key sent…':'Action sent…';}catch(e){el('toast').textContent=e.message;}}
 document.querySelectorAll('[data-key]').forEach(b=>b.addEventListener('click',()=>action('key',b.dataset.key)));
 el('pause').onclick=()=>action(state.phase==='paused'?'resume':'pause');el('restart').onclick=()=>action('restart');el('stop').onclick=()=>action('stop');
 el('shooting').onclick=()=>action(state.profile==='shooting'?'menu-profile':'shooting');
 const keyboard={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',Enter:'ok',Escape:'left',m:'menu',M:'menu',d:'disp',D:'disp',p:'play',P:'play',i:'i',I:'i',Delete:'delete'};
 document.addEventListener('keydown',e=>{const key=keyboard[e.key];if(key&&!e.repeat&&state.phase==='running'&&!state.busy){e.preventDefault();action('key',key);}});
-async function poll(){if(fetching)return;fetching=true;try{const r=await fetch('/api/status');if(!r.ok)throw Error('连接失败');state=await r.json();el('status').textContent=state.message;el('boot-message').textContent=state.message;
-document.querySelectorAll('[data-key]').forEach(b=>b.disabled=state.phase!=='running'||state.busy);el('pause').disabled=!['running','paused'].includes(state.phase)||state.busy;el('pause').textContent=state.phase==='paused'?'恢复':'暂停';el('restart').disabled=state.phase==='booting'||state.busy;el('stop').disabled=state.phase==='booting'||state.phase==='stopped'||state.busy;
+async function poll(){if(fetching)return;fetching=true;try{const r=await fetch('/api/status');if(!r.ok)throw Error('Connection failed');state=await r.json();el('status').textContent=state.message;el('boot-message').textContent=state.message;
+document.querySelectorAll('[data-key]').forEach(b=>b.disabled=state.phase!=='running'||state.busy);el('pause').disabled=!['running','paused'].includes(state.phase)||state.busy;el('pause').textContent=state.phase==='paused'?'Resume':'Pause';el('restart').disabled=state.phase==='booting'||state.busy;el('stop').disabled=state.phase==='booting'||state.phase==='stopped'||state.busy;
 el('error').hidden=!state.error;el('error').textContent=state.error||'';
 el('raw-input').hidden=!state.raw_input;
-if(state.device_evidence){const e=state.device_evidence;el('raw-input').textContent=`${e.raw_width}×${e.raw_height} ${e.raw_bits} bit · 输入 ${e.raw_batches} 批 · 处理 ${e.isp_batches} 批 · ${e.processed_buffer_scanned?'LCD 已读取处理结果':'等待 LCD'}`;}
-else if(state.raw_input){const raw=state.raw_input;el('raw-input').textContent=`RAW 测试源（Z7 输入格式未确认）：${raw.width}×${raw.height} ${raw.cfa} ${raw.sample_bits} bit · 已校验 ${raw.validated_frames} 帧 · 传入虚拟机 ${raw.guest_frames_transferred} 帧 · 固件消费 ${raw.firmware_frames_consumed} 帧`;}
-el('capture-status').hidden=!state.capture;el('shooting').disabled=state.phase==='booting'||state.busy;el('shooting').textContent=state.profile==='shooting'?'菜单界面':'拍摄界面';
-el('capture-status').textContent=state.device_evidence?'无镜头 · 实验性传感器和图像处理':(state.no_lens_simulation?'无镜头模拟 · ':'')+(state.capture?.control_test?'控制链实验：使用模拟握手和测试脉冲；RAW 0 帧，尚未接入 CMOS。':'CMOS 初始化未完成，尚无传感器输入。');
+if(state.device_evidence){const e=state.device_evidence;el('raw-input').textContent=`${e.raw_width}×${e.raw_height} ${e.raw_bits} bit · RAW batches ${e.raw_batches} · ISP batches ${e.isp_batches} · ${e.processed_buffer_scanned?'Processed image displayed':'Waiting for LCD'}`;}
+else if(state.raw_input){const raw=state.raw_input;el('raw-input').textContent=`Synthetic RAW (Z7 sensor format unverified): ${raw.width}×${raw.height} ${raw.cfa} ${raw.sample_bits} bit · Validated ${raw.validated_frames} · Transferred ${raw.guest_frames_transferred} · Consumed ${raw.firmware_frames_consumed}`;}
+el('capture-status').hidden=!state.capture;el('shooting').disabled=state.phase==='booting'||state.busy;el('shooting').textContent=state.profile==='shooting'?'Menu view':'Live view';
+el('capture-status').textContent=state.device_evidence?'No lens · Experimental sensor and image processing':(state.no_lens_simulation?'No-lens simulation · ':'')+(state.capture?.control_test?'Simulated control handshakes and test pulses; no RAW sensor frames.':'Waiting for sensor input.');
 if(state.phase==='booting'){el('frame').hidden=true;el('placeholder').hidden=false;frame=-1;}
 if(state.frame&&frame!==state.frame){const response=await fetch('/api/frame?v='+state.frame);if(response.ok){const url=URL.createObjectURL(await response.blob());const img=el('frame'),old=img.src;img.onload=()=>{if(old.startsWith('blob:'))URL.revokeObjectURL(old);};img.src=url;img.hidden=false;el('placeholder').hidden=true;frame=state.frame;}}
-if(state.last_key&&!state.busy)el('toast').textContent='按键：'+state.last_key;
-}catch(e){el('status').textContent='连接中断';document.querySelectorAll('button').forEach(b=>b.disabled=true);}finally{fetching=false;setTimeout(poll,document.hidden?1000:state.phase==='running'?120:500);}}
+if(state.last_key&&!state.busy)el('toast').textContent='Key: '+state.last_key;
+}catch(e){el('status').textContent='Disconnected';document.querySelectorAll('button').forEach(b=>b.disabled=true);}finally{fetching=false;setTimeout(poll,document.hidden?1000:state.phase==='running'?120:500);}}
 poll();
 </script>
 </html>

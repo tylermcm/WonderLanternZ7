@@ -33,7 +33,9 @@ python patch.py full --source "Z_7_0380.bin" --output "output/EG16100380.BIN"
 - **EG16100380.json**：构建信息，无需复制到相机。
 
 生成文件末尾带 2 字节 CRC。若需要给 Z7 QEMU 使用，去掉最后 2 字节，得到
-33,052,088 字节的 MAIN payload。
+保留全部追加代码的 MAIN payload。33,052,088 字节只是原厂 MAIN 的长度，
+不能用它截断修改后的产物。构建成功和文件名不证明机身更新或恢复能力；请先读
+根目录 `FLASH_ASSESSMENT.md`。
 
 ## 常见问题
 

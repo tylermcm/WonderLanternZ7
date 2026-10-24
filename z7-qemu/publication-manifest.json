@@ -32,19 +32,19 @@
     "tests/test_isp.c": "dfb3a5fd2024b2dd7cc4690e0d7f291814850fcb071d9b1ee5cb280e2fade813",
     "tests/test_raw_input.py": "4df9330d1c4b04ce128f3b959b7a57b32f6fda00bcda16f0eb70e8e00ea7ad78",
     "tools/audit_publication.py": "1693ea1e1ca26e3e77f9c367b3dd4c76567529f5d00667169d3d3bc5e8ffcaf1",
-    "tools/build.py": "3a5fa6316ea6d0b58593f637c6e64863ec813952c2f9e56d21732d4b11cd5460",
+    "tools/build.py": "66d9647c98a297679a325fd10ea6d57e6b4186f2b7d01ea63b9f3ce4fa820581",
     "tools/capture_diagnostics.py": "0c2fb5be043a15f04930ea596d2ddc718a3b7e26582852fc9141936d79faf1e7",
     "tools/cmos_config.py": "2cc72804d7cfd1f7608ea43236fbcd442d2a8a07378098360b2081ab422cbe3d",
     "tools/cmos_source.py": "f7d350f02420f87b112a4504258b2f46daee525e0ba0f59f94fd9f1514c6d7cf",
-    "tools/interactive.html": "69b632b839b4a3544c10ab87f1321755f597c1a2b8b702af5e2fd0cf22508d52",
-    "tools/interactive.py": "b7beb4f5bf543a237c3bc1cf43860278dcd437eeecd1161121639731906ab182",
+    "tools/firmware_input.py": "913411e6f0cffee91ee0f7f71eeac12b833ac92908ba4a87daba95e63f76374c",
+    "tools/interactive.html": "273aafd339ec1f38bb7a8c9f1aa2094c627ad4d6b858c14d959d7870fc133d16",
+    "tools/interactive.py": "39ab7e215ae8c6492e835b1745a95731490bf9561385deadebfe94dcd41e153f",
     "tools/make_cmos.py": "279938b0e6db766fa1b46fcd613ae39f2820911521ed6c45b1d66ff9b49b7a96",
     "tools/photo_cmos.py": "3f52426ec928832b3a07de6210cd0ee9da2b95804089c53bcec83a43447b327d",
     "tools/probe.py": "45397146248621b07272579ee16d3c7b38f2b5681978a5d61b164eba3eaf9971",
     "tools/raw_input.py": "76d1895fdd42869ad4d0046c3a316207eb04abc981751e88a22e8b095047ccc7",
     "tools/rsp.py": "616a175b0b0c68d32dcbe774c3ea54da4aaa8c94e2d3e376210cdecc60e202ed",
-    "tools/smoke_qemu.py": "2139c30a997ab20df1abb9daafab1eb42355497251bb2b197e533d0aff4d7f16",
-    "tools/verify_ui.py": "9e25e66d36f3a613e944bbf3cec72901bab55764338eba2683ef429517d09432",
-    "tools/firmware_input.py": "913411e6f0cffee91ee0f7f71eeac12b833ac92908ba4a87daba95e63f76374c"
+    "tools/smoke_qemu.py": "b6b3aed331c6b039e718e101b53da8b79397cb8c7b5168e38a41db4b2751d782",
+    "tools/verify_ui.py": "6cd64a336adb6f010608553f4dc513ada9dac1fa35dc856a89769bc2d37fb1f4"
   }
 }

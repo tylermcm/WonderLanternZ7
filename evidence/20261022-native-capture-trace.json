@@ -1,0 +1,208 @@
+{
+  "schema": 1,
+  "date_local": "2026-10-22",
+  "audit_only": true,
+  "existing_candidate_suffix": "20261021-silent-property-01",
+  "main_sha256": "f15aa7249edcb4a291de4096dd26f7a8c4c0932c0d5b3b24e4180eede187dd44",
+  "evidence_checks_passed": true,
+  "evidence_check_count": 24,
+  "registered_consumer": "0x1014708d",
+  "numeric_scenarios": [
+    {
+      "name": "state1a-0-state1f-0",
+      "stock_native_workers": [
+        "0x10146233"
+      ],
+      "patched_native_workers": [
+        "0x10146233"
+      ],
+      "stock_audio_requests": 0,
+      "patched_audio_requests": 1
+    },
+    {
+      "name": "state1a-1-state1f-0",
+      "stock_native_workers": [],
+      "patched_native_workers": [],
+      "stock_audio_requests": 0,
+      "patched_audio_requests": 1
+    },
+    {
+      "name": "state1a-3-state1f-0",
+      "stock_native_workers": [],
+      "patched_native_workers": [],
+      "stock_audio_requests": 0,
+      "patched_audio_requests": 1
+    },
+    {
+      "name": "state1a-0-state1f-2",
+      "stock_native_workers": [
+        "0x1014644b"
+      ],
+      "patched_native_workers": [
+        "0x1014644b"
+      ],
+      "stock_audio_requests": 0,
+      "patched_audio_requests": 1
+    },
+    {
+      "name": "state1a-1-state1f-2",
+      "stock_native_workers": [
+        "0x1014644b"
+      ],
+      "patched_native_workers": [
+        "0x1014644b"
+      ],
+      "stock_audio_requests": 0,
+      "patched_audio_requests": 1
+    },
+    {
+      "name": "state1a-3-state1f-2",
+      "stock_native_workers": [
+        "0x1014644b"
+      ],
+      "patched_native_workers": [
+        "0x1014644b"
+      ],
+      "stock_audio_requests": 0,
+      "patched_audio_requests": 1
+    }
+  ],
+  "release_request_probe": {
+    "request_return": 0,
+    "scheduled": [
+      {
+        "worker": "0x10202a79",
+        "bytes": 12,
+        "packet": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "notifications": [
+      {
+        "event": "0x4100034",
+        "packet": [
+          0,
+          0
+        ]
+      }
+    ],
+    "release_control_requests": []
+  },
+  "checks": [
+    {
+      "name": "stock-registration-literal-identifies-consumer",
+      "passed": true
+    },
+    {
+      "name": "original-setter-populates-dispatcher-callback-slot",
+      "passed": true
+    },
+    {
+      "name": "state1a-0-state1f-0-original-consumer-executes-and-returns",
+      "passed": true
+    },
+    {
+      "name": "state1a-0-state1f-0-native-scheduling-preserved",
+      "passed": true
+    },
+    {
+      "name": "state1a-0-state1f-0-patch-queues-regardless-of-native-classification",
+      "passed": true
+    },
+    {
+      "name": "state1a-1-state1f-0-original-consumer-executes-and-returns",
+      "passed": true
+    },
+    {
+      "name": "state1a-1-state1f-0-native-scheduling-preserved",
+      "passed": true
+    },
+    {
+      "name": "state1a-1-state1f-0-patch-queues-regardless-of-native-classification",
+      "passed": true
+    },
+    {
+      "name": "state1a-1-state1f-0-native-rejects-but-patch-queues",
+      "passed": true
+    },
+    {
+      "name": "state1a-3-state1f-0-original-consumer-executes-and-returns",
+      "passed": true
+    },
+    {
+      "name": "state1a-3-state1f-0-native-scheduling-preserved",
+      "passed": true
+    },
+    {
+      "name": "state1a-3-state1f-0-patch-queues-regardless-of-native-classification",
+      "passed": true
+    },
+    {
+      "name": "state1a-3-state1f-0-native-rejects-but-patch-queues",
+      "passed": true
+    },
+    {
+      "name": "state1a-0-state1f-2-original-consumer-executes-and-returns",
+      "passed": true
+    },
+    {
+      "name": "state1a-0-state1f-2-native-scheduling-preserved",
+      "passed": true
+    },
+    {
+      "name": "state1a-0-state1f-2-patch-queues-regardless-of-native-classification",
+      "passed": true
+    },
+    {
+      "name": "state1a-1-state1f-2-original-consumer-executes-and-returns",
+      "passed": true
+    },
+    {
+      "name": "state1a-1-state1f-2-native-scheduling-preserved",
+      "passed": true
+    },
+    {
+      "name": "state1a-1-state1f-2-patch-queues-regardless-of-native-classification",
+      "passed": true
+    },
+    {
+      "name": "state1a-3-state1f-2-original-consumer-executes-and-returns",
+      "passed": true
+    },
+    {
+      "name": "state1a-3-state1f-2-native-scheduling-preserved",
+      "passed": true
+    },
+    {
+      "name": "state1a-3-state1f-2-patch-queues-regardless-of-native-classification",
+      "passed": true
+    },
+    {
+      "name": "stock-zero-count-release-request-schedules-worker",
+      "passed": true
+    },
+    {
+      "name": "stock-zero-count-notification-without-release-control",
+      "passed": true
+    }
+  ],
+  "scope": "Original Z7 dispatcher and registered consumer 0x1014708C execute in stock and existing patched MAIN images; custom admission and original property getter execute.",
+  "limitations": [
+    "Numeric classification scenarios supplied in RAM; their runtime mode meanings are not established.",
+    "Native locks, worker scheduling, allocator, audio queue, controller helper and semaphore remain controlled boundaries.",
+    "No photo/sensor transaction or live-view frame cadence is generated or measured.",
+    "Release API/zero-count worker use controlled context/validation helpers; request notification is not per-photo exposure evidence.",
+    "Passing evidence checks confirm the admission defect, not candidate safety or a corrected shutter trigger."
+  ],
+  "per_photo_trigger_identified": false,
+  "candidate_cleared": false,
+  "firmware_source_changed": false,
+  "firmware_built_or_staged": false,
+  "camera_or_card_mutated": false,
+  "owner_confirmed_enabled_off_stops_loop": true,
+  "assessment": "Native callback classification does not constrain custom audio admission. AutoRelease request notification alone also does not establish a photo.",
+  "document": "CAPTURE_EVENT_TRACE.md"
+}

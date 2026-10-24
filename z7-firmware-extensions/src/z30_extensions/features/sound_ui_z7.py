@@ -5,7 +5,7 @@
 from .sound_layout_z7 import *
 from ..assembly import constant, invoke
 
-def ui_code(f, strings, fixed, file_names, errors, file_ids, switch_ids, anchor_table, template, child_templates):
+def ui_code(f, strings, fixed, file_names, errors, file_ids, switch_ids, anchor_table, template, child_templates, shot_labels):
     code = {}
     c = constant
     def call(name): return invoke(f[name])
@@ -51,10 +51,14 @@ def ui_code(f, strings, fixed, file_names, errors, file_ids, switch_ids, anchor_
             ldr r1,[r4,#{SELECTED}];cmp r1,r5;bne file_put;{c('r0',strings['current'])}
             file_put: add r1,r5,#60;movs r2,#0;{native(0x103fbb5c)}
             adds r5,#1;cmp r5,#5;bne files_loop;
-            cmp r4,#0;beq done;ldr r1,[r4,#{RESULT}];cmp r1,#7;bhi done;cmp r1,#0;beq done;
+            cmp r4,#0;beq done;ldr r1,[r4,#{RESULT}];cmp r1,#7;bhi done;cmp r1,#0;beq shot_status;
             {c('r0',errors)} ldr r5,[r0,r1,lsl #2];mov r0,r5;movs r1,#40;movs r2,#0;{native(0x103fbb5c)}
             mov r0,r5;movs r1,#52;movs r2,#0;{native(0x103fbb5c)}
             mov r0,r5;movs r1,#53;movs r2,#0;{native(0x103fbb5c)}
+            b done;
+            shot_status: ldr r1,[r4,#{ENABLED}];cmp r1,#1;bne done;
+            ldr r1,[r4,#{SHOT_STATUS}];cmp r1,#6;bhi done;
+            {c('r0',shot_labels)}ldr r0,[r0,r1,lsl #2];movs r1,#40;movs r2,#0;{native(0x103fbb5c)}
             done:movs r0,#0;pop {{r4-r8,pc}};
         """
 
@@ -91,14 +95,14 @@ def ui_code(f, strings, fixed, file_names, errors, file_ids, switch_ids, anchor_
             switch_apply:cmp r5,#1;bhi redraw;cmp r5,#0;beq disable;
             ldr r0,[r4,#{LENGTH}];cmp r0,#0;bne enabled;
             ldr r0,[r4,#{SELECTED}];{call('load')}cmp r0,#1;bne redraw;
-            enabled:movs r0,#1;str r0,[r4,#{ENABLED}];b switched;
+            enabled:movs r0,#0;str r0,[r4,#{SHOT_STATUS}];movs r0,#1;str r0,[r4,#{ENABLED}];b switched;
             disable:movs r0,#0;str r0,[r4,#{ENABLED}];str r0,[r4,#{PENDING}];
             switched:movs r0,#0;str r0,[r4,#{RESULT}];
             return_root:movs r0,#2;{c('r1',PAGE_INDEX)}{native(0x10404c42)}b draw;
             preview:ldr r0,[r4,#{LENGTH}];cmp r0,#0;beq no_file;
             ldr r0,[r4,#{BUSY}];cmp r0,#0;bne busy;
             {c('r0',0x138d)}{native(0x1016fef2)}cmp r0,#0;bne busy;
-            {c('r0',0xa188d1a0)}ldrb r0,[r0];cmp r0,#0;bne busy;
+            {c('r0',NATIVE_AUDIO_STATE)}ldrb r0,[r0];cmp r0,#0;bne busy;
             add r0,r4,#{BUSY};movs r1,#0;movs r2,#2;{call('cas')}cmp r0,#1;bne busy;
             mov r0,r4;{call('start')}b redraw;
             no_file:movs r0,#1;str r0,[r4,#{RESULT}];b redraw;

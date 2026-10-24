@@ -86,6 +86,14 @@ def main():
             entry['sound_menu_verification'] = verify_sound_menu_layout(stock[:-2], output[:-2], report)
             if not entry['sound_menu_verification']['passed']:
                 raise RuntimeError('Z7 sound menu violates native page/layout/callback contracts')
+            from verify_sound_playback import verify as verify_sound_playback
+            entry['sound_playback_verification'] = verify_sound_playback(stock, output[:-2], report)
+            if not entry['sound_playback_verification']['passed']:
+                raise RuntimeError('Z7 playback request violates native busy/type/consumer contracts')
+            from verify_sound_shot import verify as verify_sound_shot
+            entry['sound_shot_verification'] = verify_sound_shot(stock[:-2], output[:-2], report)
+            if not entry['sound_shot_verification']['passed']:
+                raise RuntimeError('Z7 shot callback or capture diagnostics violate native contracts')
         summary['candidates'][preset] = entry
         print(f'{preset}: {len(output)-2} MAIN bytes, {report["append_length"]} appended', flush=True)
     # Vendored source directories resolve Git commands to the workspace repo on
