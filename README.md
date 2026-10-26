@@ -12,6 +12,8 @@ credits and notices are preserved; see [UPSTREAMS.json](UPSTREAMS.json).
 
 ## Experimental 3x3 grid preview
 
+[Experimental source/patcher prerelease v0.1.0-grid-preview.1](https://github.com/tylermcm/WonderLanternZ7/releases/tag/v0.1.0-grid-preview.1)
+
 The preview adds **3x3 / 4x4 / Off** to the native framing-grid menu, with the
 choice stored in the camera's existing internal settings. It has no timed
 reversion. The owner reports that the latest build is installed and keeps 3x3

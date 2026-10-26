@@ -1,5 +1,33 @@
 # Laptop handoff — October 20, 2026
 
+## Published source-only preview — October 26, 2026
+
+Source commit `3a441180f80e6be26abff46d41d9210b53b7087c` was pushed to the
+owner's `origin/main`. Public prerelease:
+https://github.com/tylermcm/WonderLanternZ7/releases/tag/v0.1.0-grid-preview.1
+The annotated tag resolves to that exact source commit. The release is
+published, marked prerelease, and includes only the source ZIP, SHA256SUMS.txt
+and RISK_NOTICE.md. **No Nikon BIN, dump, key or camera screenshot was uploaded.**
+
+The source ZIP contains 208 reviewed source/text files, matching every hash in
+its source manifest. It was extracted and used to reproduce the exact private
+EG with SHA-256
+`07d77574bc9fed84d357b4e7c3df808127d361106c10ca26e0b6e2c818f6d0a7`.
+All three published assets were downloaded and verified byte-for-byte against
+their local originals. Source ZIP SHA-256:
+`2b9b8837a9e2b8d3320cc2c2c318c1428912133b04356a50627bf5140a9ba106`.
+The private publication receipt is under `.private/releases/v0.1.0-grid-preview.1/`.
+
+Release-time checks passed 16 patcher tests with private input/no skips, 11 root
+and 11 QEMU Python tests, 292 renderer checks, 398 ISP checks, a firmware-free
+QEMU smoke test, and the 45-file QEMU publication audit. Sanitizers were not
+run. Scoped summary: `evidence/20261026-grid-release-validation.json`.
+Prominent risk/no-warranty/liability notices are in README, RISK_NOTICE.md and
+the release body, preserving component licenses and independent-work credits.
+Reddit recommendations/draft are in REDDIT_POST_DRAFT.md; nothing was posted
+or sent to Reddit/moderators by the agent. The release tag/source archive are
+immutable to this follow-up bookkeeping update on main.
+
 ## Owner persistence confirmation and public preview — October 26, 2026
 
 The owner confirmed that the latest existing-setting build was installed and
