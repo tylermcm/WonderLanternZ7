@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "scope": "Assisted stock QEMU diagnostic menu and shooting boots. No physical camera validation.",
+  "menu": {
+    "native_heading_observed": "d9 Framing grid display",
+    "native_choices_observed": ["On", "Off"],
+    "page": "0x153",
+    "constructor": "0x104EFA6A",
+    "property_read_in_original_constructor": "0x102D"
+  },
+  "shooting_attempts": [
+    {
+      "native_diagnostic_display_wait": 5000,
+      "result": "Debugger timeout during initial display wait",
+      "grid_property_changed": false,
+      "experimental_count_table_changes": 0
+    },
+    {
+      "native_diagnostic_display_wait": 100,
+      "shooting_start_action_returned": true,
+      "qmp_frame_observed": "Synthetic color bars and native Nikon shooting controls, grid Off",
+      "diagnostic_grid_property_setter": "0x1015BA4A",
+      "diagnostic_grid_property_arguments": ["0x102D", 1],
+      "setter_return_r0": 1,
+      "result": "Guest stopped at explicitly unmodeled device write before next screenshot",
+      "unmodeled_write": {"address": "0x20145620", "size": 4, "value": 1, "pc": "0x102422F2"},
+      "relationship_to_grid_enable_isolated": false,
+      "experimental_count_table_changes": 0,
+      "stock_grid_rendering_verified": false,
+      "thirds_grid_rendering_verified": false
+    }
+  ],
+  "camera_access": false,
+  "card_access": false,
+  "firmware_export": false,
+  "selectable_grid_implemented": false,
+  "flash_ready": false
+}

@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "scope": "Assisted QEMU startup with native key navigation on persistent candidate 02. No persisted-flash restart or physical camera verification.",
+  "main_payload_sha256": "a0cda3a3c4acac326cfbc56ac9aca48b075f09c3a5742f8470a5f7da79bd508c",
+  "checks": [
+    {
+      "name": "native-menu-ready",
+      "passed": true
+    },
+    {
+      "name": "row-navigation-page-0x1",
+      "passed": true
+    },
+    {
+      "name": "row-navigation-page-0x125",
+      "passed": true
+    },
+    {
+      "name": "row-navigation-page-0x127",
+      "passed": true
+    },
+    {
+      "name": "row-navigation-page-0x153",
+      "passed": true
+    },
+    {
+      "name": "thirds-retains-choice-and-native-focus",
+      "passed": true
+    },
+    {
+      "name": "row-navigation-page-0x153",
+      "passed": true
+    },
+    {
+      "name": "fourths-retains-choice-and-native-focus",
+      "passed": true
+    },
+    {
+      "name": "row-navigation-page-0x153",
+      "passed": true
+    },
+    {
+      "name": "off-retains-choice-and-native-focus",
+      "passed": true
+    }
+  ],
+  "all_passed": true,
+  "camera_access": false,
+  "card_access": false
+}

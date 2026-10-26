@@ -196,22 +196,45 @@ def require_private_output(path):
     return path
 
 
+def reviewed_candidate(directory, preset, raw, stock):
+    """Admit the exact feature selection, including the independently built grid.
+
+    This is review admission only. In particular a persistent grid review must
+    never be mistaken for clearance of its experimental internal storage hooks.
+    """
+    if preset in ('grid', 'grid-persistent', 'grid-native'):
+        from build_grid_firmware import build_image
+        candidate = (directory / 'grid.emulator.eg.bin').read_bytes()
+        rebuilt, report = build_image(raw, persistent=preset == 'grid-persistent',
+                                     native_choice=preset == 'grid-native')
+        recorded = json.loads((directory / 'grid.emulator.json').read_text(encoding='utf-8'))
+        if recorded != report:
+            raise ValueError('Grid report differs from independent rebuild')
+        main = directory / 'grid.emulator.main.bin'
+    elif preset in PRESETS:
+        candidate = (directory / f'{preset}.eg.bin').read_bytes()
+        rebuilt, report = build(stock, preset, model='z7')
+        main = directory / f'{preset}.main.bin'
+    else:
+        raise ValueError('Unsupported review preset')
+    if candidate != rebuilt or binascii.crc_hqx(candidate, 0):
+        raise ValueError('Candidate differs from independent rebuild or has a bad CRC')
+    if main.read_bytes() != candidate[:-2]:
+        raise ValueError('MAIN must retain the entire candidate except the final CRC')
+    return candidate, report
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=ROOT / '.private/stock/Z_7_0380.bin')
     parser.add_argument('--build', type=Path, required=True)
-    parser.add_argument('--preset', choices=PRESETS, default='full')
+    parser.add_argument('--preset', choices=PRESETS + ('grid', 'grid-persistent', 'grid-native'), default='full')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     output = require_private_output(args.output)
     raw = args.source.read_bytes()
     stock, container = inspect_container(raw)
-    candidate = (args.build / f'{args.preset}.eg.bin').read_bytes()
-    rebuilt, _ = build(stock, args.preset, model='z7')
-    if candidate != rebuilt or binascii.crc_hqx(candidate, 0):
-        raise ValueError('Candidate differs from independent rebuild or has a bad CRC')
-    if (args.build / f'{args.preset}.main.bin').read_bytes() != candidate[:-2]:
-        raise ValueError('MAIN must retain the entire candidate except the final CRC')
+    candidate, build_report = reviewed_candidate(args.build, args.preset, raw, stock)
     capacity = storage_descriptor(stock)
     checks = []
 
@@ -233,6 +256,13 @@ def main():
         check('native_name_' + filename, probe_filename(stock, filename), expected)
     report = dict(schema=1, purpose='Offline review only; not hardware installation approval',
                   model='Original Nikon Z7', firmware='C 3.80', preset=args.preset,
+                  features=list(build_report['features']),
+                  internal_settings_format_changed='settings' in build_report['features'],
+                  internal_setting_value_encoding_changed='grid_native' in build_report['features'],
+                  installation_assessment=('GRID_NATIVE_FLASH_ASSESSMENT.md'
+                      if 'grid_native' in build_report['features'] else
+                      'GRID_FLASH_ASSESSMENT.md' if args.preset.startswith('grid') else 'FLASH_ASSESSMENT.md'),
+                  installation_cleared=False,
                   stock_container_sha256=sha256(raw), container=container,
                   candidate=dict(filename='EG161080.BIN', size=len(candidate), sha256=sha256(candidate),
                                  main_sha256=sha256(candidate[:-2]), crc_zero=True, independently_rebuilt=True),
@@ -258,6 +288,7 @@ def main():
     (output / 'READ-ME-FIRST.txt').write_text(
         'OFFLINE REVIEW ONLY. CAMERA INSTALLATION IS NOT YET VALIDATED.\n'
         'Read the project FLASH_ASSESSMENT.md before any card/camera write.\n'
+        f"Read the exact-candidate assessment: {report['installation_assessment']}\n"
         'candidate/ contains the full independent modified EG module with its CRC.\n'
         'stock-module/ and stock-container/ are untouched inputs, kept separately.\n'
         'These stock files do not establish recovery after an inoperable boot.\n'

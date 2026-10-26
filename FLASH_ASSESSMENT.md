@@ -1,5 +1,13 @@
 # Original Z7 C 3.80 installation review — October 21, 2026
 
+**October 25 scope update:** the owner selected a separate stock-based RAM-only
+grid candidate for first hardware testing. Its concrete input, verification,
+installation sequence and recovery limits are in
+[GRID_FLASH_ASSESSMENT.md](GRID_FLASH_ASSESSMENT.md). The sound-build failure
+and hold below remain historical/current evidence for sound candidates; they
+do not describe the selected grid-only image. No new card staging or flash
+occurred during grid preparation.
+
 **Latest result: failed.** The owner reports continuous live-view sound and
 Capture audio busy. Read [LIVEVIEW_SOUND_REGRESSION.md](LIVEVIEW_SOUND_REGRESSION.md).
 Leave Shutter sound Enabled OFF. Installation of the latest candidate is inferred

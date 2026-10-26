@@ -2401,6 +2401,12 @@ static void z7_lcd_present(void *opaque)
             uint8_t pixel[4], top[4];
             size_t uvindex = (size_t)(nv12 ? y/2 : y)*us+(x & ~1U);
             z7_yuv_rgb(yp[y*ys+x], up[uvindex], up[uvindex+1], pixel);
+            /* Geometry comes from the native display registers, not host UI
+             * coordinates. The restricted style/priority are hypotheses. */
+            if (z7_lcd_grid_hit(r, x, y)) {
+                uint32_t color = r[0x1618/4];
+                pixel[0] = color >> 16; pixel[1] = color >> 8; pixel[2] = color;
+            }
             if (overlay) {
                 z7_gpu_pixel_read(cp, ap, 0x107, false, i, top);
                 for (unsigned c = 0; c < 3; c++) {
@@ -2516,7 +2522,7 @@ static bool z7_display_access(Z7LabState *s, hwaddr addr, unsigned size,
     case 0x14bc: case 0x14c4:
         if (write && (*value & ~0x3fffffffULL)) { goto rejected; }
         break;
-    /* 10242186: output crop/scaling rectangle. */
+    /* 10242186: native grid rectangles, spans, repeat counts and spacing. */
     case 0x1600: case 0x1604: case 0x1608:
         if (write && (*value & ~0x3fffffffULL)) { goto rejected; }
         break;
@@ -2531,6 +2537,17 @@ static bool z7_display_access(Z7LabState *s, hwaddr addr, unsigned size,
         break;
     case 0x1618:
         if (write && (*value & ~0x03ffffffULL)) { goto rejected; }
+        break;
+    /* 102422e8 normalizes its argument to a boolean grid-plane gate. No
+     * completion or interrupt is inferred from this write. */
+    case 0x1620:
+        if (!write || *value > 1) { goto rejected; }
+        fprintf(stderr, "Z7_GRID_ENABLE instance=%u value=%u geometry_h=%08x geometry_v=%08x spans=%08x thickness=%08x spacing=%08x repeats=%08x style=%08x functional_hypothesis=1\n",
+                index / (0x4000/4), (unsigned)*value,
+                s->display_regs[index - 0x20/4], s->display_regs[index - 0x1c/4],
+                s->display_regs[index - 0x18/4], s->display_regs[index - 0x14/4],
+                s->display_regs[index - 0x10/4], s->display_regs[index - 0xc/4],
+                s->display_regs[index - 0x8/4]);
         break;
     case 0x4c0: case 0x1510:
         if (write && (*value & ~0x606ULL)) { goto rejected; }

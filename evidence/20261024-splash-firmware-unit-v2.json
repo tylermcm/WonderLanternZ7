@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "checks": [
+    {
+      "name": "native-init-cold-state",
+      "passed": true
+    },
+    {
+      "name": "explicit-workspace-reservation",
+      "passed": true
+    },
+    {
+      "name": "reservation-guards",
+      "passed": true
+    },
+    {
+      "name": "outside-reservation-untouched",
+      "passed": true
+    },
+    {
+      "name": "native-resource-calls-retained",
+      "passed": true
+    },
+    {
+      "name": "armed-only-after-resource-init",
+      "passed": true
+    },
+    {
+      "name": "original-init-guard-consumed",
+      "passed": true
+    },
+    {
+      "name": "render-forwarding-abi",
+      "passed": true
+    },
+    {
+      "name": "firmware-native-two-image-order",
+      "passed": true
+    },
+    {
+      "name": "bounded-stack-descriptors",
+      "passed": true
+    },
+    {
+      "name": "consumed-before-recursive-render",
+      "passed": true
+    },
+    {
+      "name": "native-delay-after-consumption",
+      "passed": true
+    },
+    {
+      "name": "completed-once",
+      "passed": true
+    },
+    {
+      "name": "records-original-caller",
+      "passed": true
+    },
+    {
+      "name": "second-render-abi",
+      "passed": true
+    },
+    {
+      "name": "second-render-no-splash",
+      "passed": true
+    },
+    {
+      "name": "native-reinit-does-not-rearm",
+      "passed": true
+    },
+    {
+      "name": "invalid-magic-forwarding-abi",
+      "passed": true
+    },
+    {
+      "name": "invalid-magic-no-draw",
+      "passed": true
+    },
+    {
+      "name": "unarmed-forwarding-abi",
+      "passed": true
+    },
+    {
+      "name": "unarmed-no-draw",
+      "passed": true
+    },
+    {
+      "name": "wrong-caller-forwarding-abi",
+      "passed": true
+    },
+    {
+      "name": "wrong-caller-no-draw",
+      "passed": true
+    },
+    {
+      "name": "busy-forwarding-abi",
+      "passed": true
+    },
+    {
+      "name": "busy-no-draw",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-0-abi",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-0-no-draw",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-4-abi",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-4-no-draw",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-8-abi",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-8-no-draw",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-12-abi",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-12-no-draw",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-16-abi",
+      "passed": true
+    },
+    {
+      "name": "unmatched-clear-16-no-draw",
+      "passed": true
+    },
+    {
+      "name": "delay-failure-abi",
+      "passed": true
+    },
+    {
+      "name": "delay-failure-cleans-backing-and-consumes",
+      "passed": true
+    },
+    {
+      "name": "delay-failure-no-retry",
+      "passed": true
+    },
+    {
+      "name": "final-reservation-guards",
+      "passed": true
+    },
+    {
+      "name": "cold-init-resets-owned-state",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "main_sha256": "dc6ec38c9b427374afd80be53d31d14edb4914e89f06abc73099a9e12f021f24",
+  "firmware_built": true,
+  "candidate_cleared": false,
+  "scope": "Actual firmware hook instructions in Unicorn; native OS/GPU helper boundaries mocked.",
+  "limitations": [
+    "Single-thread instruction audit; native concurrency requires QEMU testing.",
+    "No camera, update-acceptance, recovery or physical display evidence."
+  ]
+}

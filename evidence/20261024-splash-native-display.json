@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "diagnostic_hle": true,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "qemu_binary_sha256": "6baa517644017bcd2391ab6e2d8975cf5a26bdcc645fef95c2fbb684d023cb4a",
+  "checks": [
+    {
+      "name": "native-task-delay-success",
+      "passed": true
+    },
+    {
+      "name": "native-task-delay-success",
+      "passed": true
+    },
+    {
+      "name": "caller-register-context-restored",
+      "passed": true
+    },
+    {
+      "name": "caller-scratch-restored",
+      "passed": true
+    },
+    {
+      "name": "encoded-png-and-heap-guards-unchanged",
+      "passed": true
+    },
+    {
+      "name": "descriptor-trailing-guard-intact",
+      "passed": true
+    },
+    {
+      "name": "native-header-decoder-and-gpu-path-observed",
+      "passed": true
+    },
+    {
+      "name": "full-lcd-exact-source-rgb-match",
+      "passed": true
+    },
+    {
+      "name": "splash-differs-from-native-menu",
+      "passed": true
+    },
+    {
+      "name": "native-task-delay-success",
+      "passed": true
+    },
+    {
+      "name": "native-menu-restored-exactly",
+      "passed": true
+    },
+    {
+      "name": "native-task-delay-success",
+      "passed": true
+    },
+    {
+      "name": "menu-navigation-after-dismissal",
+      "passed": true
+    },
+    {
+      "name": "guest-resumes-running",
+      "passed": true
+    }
+  ],
+  "evidence_checks_passed": true,
+  "image_size": [
+    720,
+    480
+  ],
+  "encoded_png_bytes": 13121,
+  "source_rgb_sha256": "9d5ad01c7259c7d4f650ec16252b8353846312e2de6bf60cf7dec0ffacfd96f4",
+  "lcd_rgb_sha256": "9d5ad01c7259c7d4f650ec16252b8353846312e2de6bf60cf7dec0ffacfd96f4",
+  "native_interfaces": {
+    "draw_wrapper": "0x10431738",
+    "observed": [
+      "0x104310b4",
+      "0x104313d0",
+      "0x10431278",
+      "0x104311f4",
+      "0x10430256",
+      "0x1042eb0e"
+    ]
+  },
+  "firmware_built": false,
+  "candidate_cleared": false,
+  "limitations": [
+    "Assisted stock guest; runtime PNG data and native diagnostic calls supplied by host.",
+    "Full LCD pixels verified against source; no host screen overlay or framebuffer pixel writes.",
+    "MENU redraw dismissal tested; no production timeout/key handler or once-per-power-on hook.",
+    "No physical camera timing, wake suppression, EVF switching, firmware update or recovery test."
+  ]
+}

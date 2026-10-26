@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "date_local": "2026-10-26",
+  "timezone": "America/Denver",
+  "evidence_kind": "owner report in chat",
+  "associated_staged_eg_sha256": "07d77574bc9fed84d357b4e7c3df808127d361106c10ca26e0b6e2c818f6d0a7",
+  "associated_main_sha256": "7f29bfda937c90261eff989d5f27dbf71ca2b142308b70879b1a7ef3d46c4075",
+  "owner_confirmed": {
+    "latest_persistence_build_installed": true,
+    "selected_3x3_retained_after_more_than_ten_seconds_off": true
+  },
+  "owner_response": "Yes, installed and it stays 3x3",
+  "cameras_reported": 1,
+  "independently_observed": false,
+  "camera_firmware_readback": false,
+  "camera_access_by_agent": false,
+  "scope": "Owner confirmation of latest build installation and selected-grid retention across a shutdown longer than ten seconds on one original Z7. Not comprehensive functional, durability or recovery verification."
+}

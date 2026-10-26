@@ -1,5 +1,19 @@
 # Findings and reusable lessons
 
+## Independent LCD-grid extension — October 25, 2026
+
+The native display grid uses repeated rectangles in display offsets 1600..1618
+and a boolean gate at 1620, separately from OpenVG commands. The independent
+LCD model now supports the observed black-initialization and gray-active styles
+from those native register writes, approximating their low 24 color bits as
+opaque RGB. Repetition counts are stored minus one. The 292-check renderer suite
+covers quarter/third spacing, Off, extent boundaries and unsupported inputs;
+firmware-free ARM transaction probes separately check the strict write contract.
+Color/blending, half-open edges, LCD/EVF equivalence and grid/UI priority remain
+experimental hypotheses. This extends the research emulator, not camera flash
+acceptance or recovery validation. No proprietary assets or runtime traces are
+included here.
+
 These notes summarize independently implemented Z7 research experience without
 publishing Nikon program bytes, assets or private traces. The compatible sample
 and model boundaries are in the README and architecture document. Evidence from

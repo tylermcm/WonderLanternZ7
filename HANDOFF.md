@@ -1,5 +1,554 @@
 # Laptop handoff — October 20, 2026
 
+## Owner persistence confirmation and public preview — October 26, 2026
+
+The owner confirmed that the latest existing-setting build was installed and
+keeps the selected 3x3 grid after more than ten seconds off: "Yes, installed
+and it stays 3x3". Associated staged EG SHA-256 is
+`07d77574bc9fed84d357b4e7c3df808127d361106c10ca26e0b6e2c818f6d0a7`.
+This is one owner's report on one original Z7, without independent observation
+or camera readback. Broader behavior/durability/recovery are not established.
+Evidence: `evidence/20261026-grid-saved-owner-hardware.json`.
+
+The owner requested pushing all code, an experimental release, a Reddit draft,
+and very prominent camera-damage/no-liability wording. After reviewing Nikon's
+official page (Reproduction: Not permitted), the owner chose **source/patcher
+only**, keeping the full BIN private. Do not upload Nikon firmware as an asset.
+`RISK_NOTICE.md` and `RELEASE_GRID_PREVIEW.md` contain explicit brick/data-loss,
+repair/replacement, no-warranty and liability-disclaimer language, subject to
+applicable law. Do not promise that this wording guarantees legal protection.
+The release remains an independent modified preview, preserving all licenses
+and credits; not official Nikon or Wonder Lantern work.
+
+Planned preview tag: `v0.1.0-grid-preview.1` on the source-only lab repository
+`tylermcm/WonderLanternZ7`. The user authorized publishing a prerelease, but
+not posting on Reddit; `REDDIT_POST_DRAFT.md` is for their manual use. Check
+GitHub for the actual tag/release/commit before reporting publication as done.
+
+## Existing-setting grid staged for owner flash — October 25, 2026
+
+The owner explicitly requested "lets copy it. im gonna flash it" after the
+exact-candidate assessment was prepared. The Sony QD-G240F was identified again
+as USB disk 2, E:, exFAT `NIKON Z 7_2`, with the same partition/volume identity;
+the identity was rechecked immediately before copying.
+
+`E:\EG161080.BIN` now contains the reviewed existing-setting candidate, 33,054,026
+bytes, SHA-256 `07d77574bc9fed84d357b4e7c3df808127d361106c10ca26e0b6e2c818f6d0a7`.
+It matches tested native-value candidate 02, and is the only root `.BIN`.
+Temporary copy was flushed and verified, followed by final-name readback.
+The previous working RAM-only file (SHA-256
+`ae46a48d52f4a89dac7c54bf63fc4b6d40b6c7d5adc49f67335e8b50fe97973b`)
+is verified in
+`.private/card-backups/20261025-grid-saved-050104-05d1f496/EG161080.BIN`.
+Its private `staging.json` records the operation at 2026-10-26 05:01 UTC
+(October 25 local Denver time). No formatting or photo edits occurred;
+NIKON001.DSC and SHUTTER.WAV root-file hashes were checked unchanged.
+
+Card was not automatically ejected. The agent did not operate the camera or
+observe programming. Owner intends to flash; installation/completion and actual
+persistence are not yet reported. Use supported fully charged power and normal
+on-screen update completion; select 3x3 once afterward, then check after at
+least ten seconds off and a longer off period. Those intervals are persistence
+tests, not expiry delays. Read `GRID_NATIVE_FLASH_ASSESSMENT.md`; physical
+durability, other consumers and emergency recovery remain unverified.
+
+## Existing-setting grid binary prepared — October 25, 2026
+
+The owner requested the firmware build. Fresh
+`.private/builds/20261025-grid-native-flash-01/` reproduces tested native-value
+candidate 02 exactly (EG, MAIN and report). The convenient full component file
+is `.private/flash-ready/20261025-grid-saved/EG161080.BIN`, 33,054,026 bytes,
+SHA-256 `07d77574bc9fed84d357b4e7c3df808127d361106c10ca26e0b6e2c818f6d0a7`.
+Read `GRID_NATIVE_FLASH_ASSESSMENT.md`, not the older RAM-only assessment.
+No card access, staging, ejection or camera programming occurred in this build.
+
+The owner clarified the requirement: the selected grid should remain across
+shutdowns of any duration until manually changed. Ten seconds off is only a
+regression-test interval beyond the old retention cutoff, not a reset delay or
+time-to-live. The new implementation has no timed expiry. Its intended durable
+behavior still needs physical validation. Select 3x3 once after installation;
+the old RAM-only type was not in native storage and cannot be migrated from it.
+
+Review bundle `.private/flash-review/20261025-grid-native-01/` keeps this exact
+candidate, untouched stock EG and official container separately. The helper now
+admits `--preset grid-native` for offline review only, flags the changed value
+encoding separately from the unchanged journal format, and links the correct
+assessment. Six tests pass, including rejecting RAM-only files as native-value
+artifacts and vice versa. All 12 exact-EG header/filename probes pass and three
+bundle copies verify. Full CRCs/capacity/private-path checks pass. Prior 107
+instruction and 16 QEMU checks apply to the identical MAIN; they are not a
+physical persistence or emergency recovery result. Public scoped review summary:
+`evidence/20261025-grid-native-flash-review.json`.
+
+Before any future card staging, identify the actual card/drive again. Do not
+replace the earlier working file merely because E: was used previously. Shared
+reader consumers, presets/import/export, complete power lifecycle and recovery
+limits are explicitly listed in the new assessment. The 90-record build remains
+held and must not be substituted for this existing-setting candidate.
+
+## Existing-setting grid persistence solution in the lab — October 25, 2026
+
+Read `NATIVE_GRID_SETTINGS.md`. After the owner requested a solution for the
+approximately three-second retention cutoff, a separate existing-scalar
+prototype was implemented and tested. It stores Off/4x4/3x3 as 0/1/2 in Nikon's
+existing grid scalar, normalizing only successful 0x102D/value-2 scalar reads
+to boolean On. Owned menu/geometry code reads raw 2. Nikon's original worker
+saves its original 89-record journal and original startup restores the choice
+in fresh CPU/RAM instances. No added record, custom flash writer, journal hook,
+heap reservation or conversion is used. This is the preferred next experiment;
+the older 90-record prototype remains held.
+
+Private candidate `.private/builds/20261025-grid-native-value-02/`, MAIN
+33,054,024 bytes, SHA-256
+`7f29bfda937c90261eff989d5f27dbf71ca2b142308b70879b1a7ef3d46c4075`.
+Full EG 33,054,026 bytes, SHA-256
+`07d77574bc9fed84d357b4e7c3df808127d361106c10ca26e0b6e2c818f6d0a7`.
+Four guarded windows total 28 bytes, with 1,936 appended bytes. Independently
+reproduced, valid CRC; preset `grid-native-value-emulator-only`.
+
+107 instruction checks pass: 21,130 differential reads covering all 2,111
+indexed properties plus invalid keys, native getter/visibility/menu/packed
+snapshot, actual native request/worker/completion, fresh-RAM 3x3/4x4/Off reload,
+original-stock startup preserving all 89 records with selected grid consumers
+falling back to Off, sampled program cuts 1/269 and failed programming, plus
+90 geometry calls. Candidate 02 also preserves original NZCVQ flags across the
+shared reader and compares them across all indexed reads; candidate 01 is
+superseded. Supplied OS/events/flash/UI/viewport/secondary datasets are
+explicit boundaries; this is not a complete camera shutdown or physical flash
+test. The optimized scalar differential helper avoids per-call Windows host
+timers while enforcing instruction and ABI bounds; both full-key runs passed.
+
+QEMU passes 10 native-key menu and 6 assisted live-view checks. Real native UI
+service writes stored 2; both grid planes and Off work. These do not implement
+persistent flash between QEMU processes. Scoped public summaries:
+`evidence/20261025-grid-native-value.json` and
+`evidence/20261025-grid-native-value-qemu.json`.
+Patch/container/Thumb tests pass 14 with 2 optional stock-location skips; five
+review path/admission tests pass. The previously installed RAM-only candidate
+still independently rebuilds unchanged.
+
+No new card/camera access or firmware staging occurred. At the initial prototype
+stage the experiment was excluded from the review helper; the newer build
+preparation above adds offline review admission. It changes a shared scalar-get
+API for one key/value; generic consumers, U1/U2/U3, settings-file import/export,
+toggles, wake, complete shutdown and physical durability remain review items.
+Off stores 0 and forgets the prior type, unlike the older RAM-only last-type
+behavior. Do not use the older RAM-only assessment to clear this new image.
+
+## Owner-reported grid hardware success — October 25, 2026
+
+The owner reports that the grid build works and measured its retention behavior:
+selecting 3x3 survives switch-off/on when off for less than approximately three
+seconds; longer off periods return to 4x4. This concerns the selected spacing,
+not merely visibility. It resolves the earlier ambiguous delayed-reset report:
+the observed threshold relates to time switched off. Exact boundary/repeat
+counts were not supplied. Reliable persistence is not established.
+
+The associated staged full EG SHA-256 is
+`ae46a48d52f4a89dac7c54bf63fc4b6d40b6c7d5adc49f67335e8b50fe97973b`.
+Laptop hash/report were rechecked: only `grid`, 64-byte workspace, no journal
+hooks. The initializer writes choice 0 when executed; equating it with every
+physical off/on was an unverified assumption. The observed quick-restart
+retention is consistent with temporary retained state, but that mechanism and
+the actual shutdown/init paths have not been traced. No evidence of an on-state
+spontaneous reset was reported. No new firmware changes or flashes were made
+while recording these findings. The optional journal prototype remains held.
+
+Next lifecycle regression should distinguish a rapid off/on from at least ten
+seconds switched off; battery-removal retention remains untested. The threshold
+is approximate owner timing, not a measured electronic cutoff. There is no
+camera firmware readback or independent hardware observation. LCD plus EVF,
+all choices, standby/wake, recorded-image checks, rollback and recovery remain
+outside this report. The earlier staging entry describes laptop operations
+before the owner's physical test. Evidence: `evidence/20261025-grid-owner-hardware.json`.
+
+## Grid binary rebuilt and staged — October 25, 2026
+
+The owner requested the binary for flashing and connected the XQD. E: was
+identified afresh as the Sony QD-G240F, USB disk 2, 217,701,154,816 bytes,
+exFAT volume `NIKON Z 7_2`; its partition/volume identity was checked again
+immediately before staging. The card contains DCIM/NIKON directories and user
+files; no formatting or photo/audio/settings-file edits occurred.
+
+A fresh normal grid build at `.private/builds/20261025-grid-flash-01/` reproduced
+the previously tested exact MAIN/full EG and report. The convenient local binary
+is `.private/flash-ready/20261025-grid-only/EG161080.BIN`. The same full EG is
+now the only root `.BIN` at `E:\EG161080.BIN`, 33,053,802 bytes, SHA-256
+`ae46a48d52f4a89dac7c54bf63fc4b6d40b6c7d5adc49f67335e8b50fe97973b`.
+Source rebuild, CRC, laptop copy, temporary card copy and final card filename
+readback matched. Temporary card writes were explicitly flushed before readback.
+
+The older root EG (SHA-256
+`9e636d645281ee9f92cb150b6dcc8d771b21ff95c47e45f538d951a1d932420b`)
+was copied to `.private/card-backups/20261025-grid-035528-be76f89e/EG161080.BIN`
+and its backup hash checked before replacement. `staging.json` there records
+the private operation at 2026-10-26 03:55 UTC (October 25 local Denver time).
+It is the previous experimental sound file, not stock recovery firmware.
+
+No camera flash occurred and the card was not automatically ejected. Next:
+safely eject, insert into the original Z7 with supported fully charged power,
+inspect Setup → Firmware version and obtain its actual current/new versions
+before proceeding. Physical acceptance and emergency recovery remain unverified;
+read `GRID_FLASH_ASSESSMENT.md`. Internal persistence remains held.
+
+## Grid-only hardware-test preparation — October 25, 2026
+
+The owner explicitly selected the simpler RAM-only grid build for the first
+hardware test, holding internal persistence. Read `GRID_FLASH_ASSESSMENT.md`.
+Preparation is complete at `.private/flash-review/20261025-grid-01/`.
+Its full `candidate/EG161080.BIN` is 33,053,802 bytes, SHA-256
+`ae46a48d52f4a89dac7c54bf63fc4b6d40b6c7d5adc49f67335e8b50fe97973b`.
+It matches the complete independent rebuild of grid-emulator-03; MAIN hash
+`2762ccd5276e1c4720c06e26f636c6c551cafe3772eb6d24400b769c200cd348`.
+Only the grid feature is included: stock-based 4x4 / 3x3 / Off, with 4x4 as
+cold-start choice. This replaces earlier custom sound/splash/M900/dual-display
+features. No internal settings-schema change, outer-container repacking, version
+spoofing, card access, staging or physical flash occurred.
+
+Current checks: 192 grid instruction checks/270 geometry calls, including actual
+native workspace allocator non-overlap; 12 exact-EG native filename/header
+probes; 5 preparation path/admission tests; 14 patch/container/Thumb tests with
+2 optional stock-location tests skipped. The same MAIN already passed 10 QEMU
+native-key menu checks and 6 diagnostic live-view checks; current QEMU binary
+and all five input source hashes match that evidence. Full EG/container CRCs,
+capacity and three bundle file hashes verified. Scoped summaries are
+`evidence/20261025-grid-preflash-instructions.json` and
+`evidence/20261025-grid-flash-review.json`.
+
+Next hardware step: identify the actual card/drive again, confirm current body
+and power, stage the exact EG with readback hash, then inspect recognition.
+Programming needs explicit owner authorization for this concrete reviewed
+candidate. No verified emergency recovery exists. The assessment explains
+normal-updater stock rollback limits and the post-install grid/wake/LCD/EVF
+checks. Do not reuse historical E: identity or the old sound assessment as
+clearance for this candidate. Do not select a persistent candidate for staging.
+
+Separately hardened persistent prototype: `.private/builds/20261025-grid-persistent-05/`,
+MAIN 33,058,292 bytes, SHA-256
+`e230338d7d513a54b44cea6e0f2073e3b8f22aee15f0aa848f552d293ce1d8e7`.
+It passes 74 persistence checks. Missing/damaged workspace or destination/length
+tables now reject load/save without falling through to original journal writes.
+Nikon-format conversion survives modified-firmware restarts and normal saves;
+only an explicit grid choice reenables the extension. Important native contract:
+the third word of each schema triple is a mutable flash-source cache, not a
+dirty flag. An initial overly strict guard rejected those native cache updates;
+candidate 04 is superseded, candidate 05 validates immutable pairs instead.
+The rollback function is still diagnostic, with no camera-accessible action.
+It and full lifecycle/concurrency/physical durability remain on hold. Candidate
+02 separately passed 10 native-key QEMU menu checks this turn; that does not
+validate later candidate 05 or persistence across QEMU restarts.
+
+## Compiled persistent-grid prototype — October 25, 2026
+
+The owner authorized implementing internal persistence and building/testing it
+in the lab. Current private candidate:
+`.private/builds/20261025-grid-persistent-02/`, MAIN 33,057,940 bytes, SHA-256
+`a0cda3a3c4acac326cfbc56ac9aca48b075f09c3a5742f8470a5f7da79bd508c`.
+It is reproducible with valid EG CRC and independent full rebuild validation.
+No outer update package, staging, camera/card access or installation clearance.
+
+`features/settings_z7.py` adds guarded native journal descriptor/load/save/reset
+hooks to the optional `grid_z7.build(..., persistent=True)` path. Ordinary grid
+builds remain unchanged. `tools/build_grid_firmware.py --persistent` explicitly
+selects the new emulator-only preset. It reserves 0x500 bytes at A9700000,
+including an owned 90-record table. Record 89 is 16 bytes: magic WLS1, version 1,
+grid choice 0/1, IEEE CRC32 of the first 12 bytes. Native property 0x102D stays
+0/1; the live choice remains one aligned word at STATE+4.
+
+Load tries extended format, retries original format before Nikon's reset path,
+and defaults only extension data when its CRC/version/value is invalid. Saves
+hook the normal main-journal routine, capture all native payloads plus extension
+state into an immutable snapshot, and read back into separate buffers. The
+176,744-byte temporary allocation is checked/freed; all payloads are compared,
+native descriptor/logical-view pointers restored, and dirty state retained on
+failure or generation changes. No UI/geometry hook writes flash directly.
+
+`tools/audit_grid_persistence.py` passes 53 checks: compiled CRC, cold ABI,
+fresh-instance 3x3/4x4 reloads, actual native startup caller, native reset,
+old-format migration, CRC corruption, failed readback, allocation/program
+failure, busy saves, generation changes, original-format conversion and six
+program-boundary interruptions during first migration. All 89 native records
+survive the sampled interruptions. These execute native instructions in
+Unicorn with supplied OS/allocation/flash-controller boundaries; they do not
+establish physical durability or a full QEMU persistence/reboot cycle.
+
+The updated grid instruction audit passes 190 checks/270 geometry calls on
+candidate 02. It also passes all 190 on the unchanged earlier RAM-only build.
+Patch/container/Thumb tests pass 14; two optional integrations remain skipped.
+Assisted QEMU live view passes all six checks at
+`.private/research/grid/20261025-persistent-live-01/`, session
+`20261025-141908-5174`; compiled handlers select native grid planes and Off
+restores the scene. This QEMU probe does not persist flash across restarts.
+The native-key menu probe has not been rerun on this persistent candidate.
+
+Public scoped summaries are `evidence/20261025-grid-persistence.json`,
+`evidence/20261025-grid-persistent-geometry.json`, and
+`evidence/20261025-grid-persistent-live.json`. Read the implementation section
+in `SETTINGS_PERSISTENCE_RESEARCH.md` before continuing. A diagnostic rollback
+function is compiled and verified against a fresh unmodified stock loader,
+but has no camera menu/updater integration. Its mode is RAM-only: do not power
+cycle the modified firmware between conversion and a future stock update.
+Wake/concurrency, repeated compaction/endurance, complete shutdown policy,
+updater ordering, user-visible failure reporting and physical recovery remain
+open. Invalid/missing workspace state currently falls through to original
+storage APIs; audit fail-closed behavior before considering any installation.
+The splash experiment still cannot compose with this workspace reservation.
+
+## Internal settings persistence investigation — October 25, 2026
+
+Read `SETTINGS_PERSISTENCE_RESEARCH.md`. The owner wants extension settings
+inside the camera, independent of card swaps. `tools/trace_settings_storage.py`
+passes 45 checks against pinned original instructions in isolated Unicorn.
+The main settings journal is logical `0x0F`, with 89 native records and two
+`0x40000`-byte regions at `0x12E00000` / `0x131E0000`. A supplied 90th record
+survives fresh-instance save/load while preserving all native payloads. Explicit
+old-schema retry/migration and original-format rollback conversion also work
+with supplied descriptors. Bare schema replacement fails in both directions.
+No migration, rollback or persistence hook has been installed in firmware.
+
+Correction: the raw `0x102D` scalar writer accepts 32-bit values, including 2;
+it does not enforce boolean semantics. Native menu/display code supplies or
+compares 0/1. Raw setter acceptance is not compatibility. The main journal
+wrapper also returns success after injected program failure; read-back is
+required. Public scope/results: `evidence/20261025-settings-storage.json`.
+No firmware build, camera/card access or full QEMU cold boot occurred. The
+existing grid candidate remains RAM-only.
+
+## Native 3×3 grid investigation — October 25, 2026
+
+Read `GRID_3X3_RESEARCH.md`. The original investigation now has a standalone
+emulator-only firmware candidate with native d9 choices **4x4 grid / 3x3 grid /
+Off**. Keep the existing 4x4 choice. Grid choice is separate RAM state, defaulting
+to 4x4 at workspace initialization; Nikon's native property 0x102D stays boolean.
+The choice is not saved persistently. No card access, physical flash or outer
+Nikon update package was involved; camera installation remains on hold.
+
+Current private build: `.private/builds/20261025-grid-emulator-03/`.
+MAIN is 33,053,800 bytes, SHA-256
+`2762ccd5276e1c4720c06e26f636c6c551cafe3772eb6d24400b769c200cd348`.
+Four guarded windows total 32 bytes, with 1,712 appended bytes. Builds/reports
+are reproducible with valid EG CRC; the probe independently rebuilds the entire
+MAIN/report. Normal installation presets exclude this feature. Do not compose
+it with the splash experiment: both own the same workspace-init reservation.
+
+`features/grid_z7.py` derives its geometry/table/property/UI contracts from
+original Z7 C 3.80. The builder 0x10376DA0 uses three immutable 32-byte records
+at 0x1064FD90; an atomic RAM choice selects the stock table or an appended
+copy with two internal lines per axis. Dynamic-label flag 0x1209 and both native
+focus/current-value helpers are required; earlier candidates exposed these UI
+details and were superseded.
+
+`tools/build_grid_firmware.py`, `tools/audit_grid_firmware.py`, and
+`tools/probe_grid_firmware.py` provide build, instruction audit and isolated
+menu/live probes. Final instruction audit passes 190 checks/270 geometry calls,
+including cold reservation/ABI, invalid-state fallback and current-value marking.
+The earlier pure geometry audit passes 91 checks. The QEMU production renderer
+suite passes 292 checks; strict firmware-free register contracts pass 14.
+Existing patch/container/Thumb suites pass 14, with 2 optional integrations
+skipped; RAW-input suites pass 11 with workspace-local temporary storage.
+
+The grid is a separate hardware display plane. The stock 0x20145620=1 stop
+was resolved by the traced boolean write contract, then a functional LCD-grid
+model was added from native registers 0x1600..0x1618. Observed black/gray styles, half-open
+edges and plane priority remain explicit hypotheses. No invented completions
+or host drawing injection is used. EVF and physical bit accuracy remain open.
+
+Final native-key menu probe passes all 10 checks: initial Off plus 3x3, 4x4 and
+Off selection/reopen, with correct labels, focus and current-value outlines.
+Private evidence: `.private/research/grid/20261025-selector-final-02/`.
+The earlier `20261025-selector-final/` run hit its 420-second watchdog; it is
+superseded, preserved, and not a full pass. The runner now allows 900 seconds.
+
+Final assisted live-view probe passes all 6 checks: compiled choice handlers
+and the native visibility update produce visible thirds/quarters through the
+emulated hardware plane, then Off disables the plane and restores the sampled
+scene pixels. The entire final Off PNG additionally matches the initial PNG
+byte-for-byte. Private frames: `.private/research/grid/20261025-live-final-02/`.
+Native 1024x682 alignment yields thirds x=342/684, y=228/456; quarters
+x=256/512/768, y=170/340/510. Color/priority remain emulator hypotheses.
+
+Public source-only evidence: `evidence/20261025-grid-firmware-qemu.json`,
+`evidence/20261025-grid-firmware-unit-v3.json`, and
+`evidence/20261025-grid-display-latch-final.json`. Camera LCD/EVF behavior,
+recorded files, wake/concurrency, persistent choice storage, composition,
+installation acceptance and recovery remain unverified. Do not stage or flash.
+
+## Image-creation feature shortlist — October 25, 2026
+
+The owner wants useful shooting features inspired by newer Nikon bodies with
+similar hardware. Read `IMAGE_CREATION_FEATURES.md` for the official-manual
+comparison, current Z7 baseline, ranked candidates and evidence gaps.
+Suggested first investigations: native 3×3 grid/framing guides, still-photo
+highlight stripes using the existing movie path, independent M900 property/timer
+audit, then a recipe selector based on compatible native Picture Controls.
+The D780 provides an EXPEED 6/900-second precedent; Z7II/Z6II are dual EXPEED 6
+and cannot be treated as throughput-equivalent to the original body.
+
+The source review confirms that existing M900 still overrides property 0x11A3;
+the port audit requires independent Z7 meaning and physical timing verification.
+Do not turn that experiment into a newly completed feature claim. Existing
+Creative Picture Controls, focus shift/peaking-stack preview, bracketing and
+supported-lens focus recall are part of the stock baseline, not new unlocks.
+Newer display/AF examples are design references; port feasibility is estimated.
+No new firmware build, staging or camera access occurred for this research.
+
+## Firmware-owned splash experiment — October 24, 2026
+
+The owner explicitly authorized building a firmware and running it in QEMU.
+That is a narrow exception to the earlier no-build hold for this emulator
+experiment. Camera installation, staging and flash recommendations remain on
+hold; no card/camera access or outer Nikon update package was involved.
+
+`tools/build_splash_firmware.py` builds independent Z7 C 3.80 MAIN/EG images
+from the pinned original container, twice reproducibly with valid EG CRC.
+Every QEMU input is independently rebuilt and compared in full, including its
+report. The feature is excluded from ordinary installation presets.
+
+Current private build: `.private/builds/20261024-splash-emulator-02/`.
+MAIN is 33,067,836 bytes, SHA-256
+`dc6ec38c9b427374afd80be53d31d14edb4914e89f06abc73099a9e12f021f24`.
+EG SHA-256 is
+`a60b0c9db5003db532ffe596848e8ea8ae9e390b3b4928ab3c1066316ede2fd3`.
+Three guarded instruction windows totaling 32 bytes are replaced; 15,748 bytes
+of independent code/padding/PNG assets are appended.
+
+`features/splash_z7.py` reserves 64 bytes at 0xA9700000 through the original
+monotonic workspace initializer (cursor starts at 0xA9700040), arms after
+original UI resource setup, and atomically consumes its own latch at the first
+native full-screen clear. The 0x1042F152 hook accepts caller 0x104FFB19 only
+with `[0,0,720,480,255]`; it runs before any visible menu paint. Both PNGs
+are embedded in ROM. Native 0x10431738 performs splash/black cleanup drawing;
+native delay 0x1017081E receives argument 2000. That argument is not a physical
+two-second timing claim. The displaced original prologue then resumes.
+
+`tools/audit_splash_firmware.py` passes 40 instruction/ABI checks, using mocked
+OS/GPU boundaries. Evidence: `evidence/20261024-splash-firmware-unit-v2.json`.
+The existing patch/container suites pass 11 + 3 tests. Physical low-memory,
+concurrency, wake/LCD-EVF behavior, updater acceptance and recovery remain unverified.
+Read the current section in `SPLASH_SCREEN_FEASIBILITY.md` for reproduction.
+
+Two fresh assisted QEMU cold boots pass 27 checks each, with the exact embedded
+splash as the first observed nonblack frame, native timed handoff, intact state
+guards, complete native menu redraw/navigation and one presentation through
+menu exit/re-entry. No host splash controller or drawing injection is involved.
+The base boot still supplies synthetic power/system/MENU fixtures. Public
+source-only evidence: `evidence/20261024-splash-firmware-qemu.json`; private
+frames/state and logs: `.private/research/splash/20261024-firmware-03/`.
+This proves the firmware lifecycle in assisted QEMU, not physical instant-on,
+unassisted boot, live-view startup or readiness to flash.
+
+Rejected first build and test runs remain private. Continuous QMP observation
+caught an earlier 64-pixel gray sidebar before the PNG-builder hook; the earlier
+host prototype's sampled "first-visible" claim did not test that interval.
+Original queue tracing identified the earlier clear hook used now. Test-only
+redraw waits were also corrected after exact comparisons caught text still being
+painted. Keep these failures in the record; do not turn their partial successes
+into installation clearance.
+
+## First visible screen corrected — October 24, 2026
+
+Historical host prototype, superseded by continuous firmware observations above.
+
+The owner correctly rejected the previous preview's menu -> splash ordering.
+The startup probe now intercepts the first native drawing call at 0x10430256
+while the QEMU surface is still black. It draws the splash in that native
+rendering task, holds that task with native OS delays while other guest tasks
+run, restores a black backing through native PNG/GPU drawing, and resumes the
+original first draw. The menu is only visible after the splash.
+
+Two cold boots pass 41 checks each; source-only evidence is
+`evidence/20261024-splash-first-frame.json`. Private artifacts are in
+`.private/research/splash/20261024-first-frame-startup-02/`. The first normal
+scene and later navigation are verified, including exact scene comparison at
+the same established focus state. A native help-icon backing changes on its
+first focus cycle; preserve the initial screenshot rather than masking that
+difference in an exact-pixel comparison.
+
+The original MENU fixture still schedules the first native scene internally;
+the splash runs before that scene paints visible pixels. Removing MENU setup
+and drawing from the idle application task produced a splash but no usable
+handoff. Those unsuccessful runs remain private and are not cleared methods.
+The new method is still a host-assisted rendering-boundary experiment, not a
+firmware patch, physical instant-on result or live-view startup implementation.
+The local replay viewer uses this corrected sequence. No camera/card access,
+new firmware image or flash occurred; the port/installation hold remains.
+
+## Automatic splash lifecycle experiment — October 24, 2026
+
+Historical overlay experiment: this version waited for the menu, so its passing
+checks did not establish the owner's required first-screen startup order.
+
+The owner asked to investigate automatic startup. `tools/probe_splash_startup.py`
+observes original UI initialization and automatically schedules the existing
+native PNG draw after the first stable native display. Two fresh assisted cold
+boots pass 30 checks each: one presentation, exact pixels, approximately two
+host seconds of visible hold, exact scene restoration, MENU exit/re-entry and
+navigation without re-showing. Results are source-only in
+`evidence/20261024-splash-startup.json`; frames/traces remain private in
+`.private/research/splash/20261024-auto-startup-02/`.
+
+Important: the outer UI initializer 0x102697F4 runs again on MENU re-entry. It
+is not a boot-only trigger. Its resource-setup block checks initialized guard
+0xA1822D68, calls 0x103F9C0A, then clears the guard at 0x1026984A. Both cold
+traces observe guard 1 in this block and guard 0 afterward; subsequent menu
+initialization does not rerun resource setup. The host prototype arms at the
+post-resource-return observation, consumes its own one-shot before drawing and
+never modifies the native guard. This does not prove physical wake semantics.
+
+Readiness detection, the one-shot state and timed synthetic focus redraw are
+host policy, not installed firmware hooks. Production work still needs a native
+graphics-ready/render-task event, an independent cold-reset latch and verified
+timer/dismissal/wake/LCD-EVF behavior. Do not hook the outer initializer
+unconditionally or repurpose its guard. The original display probe shares the
+heap-backed drawing helper; its regression evidence is kept privately alongside
+the new runs. All 14 original display checks pass after that refactor in
+`.private/research/splash/20261024-display-probe-07/`. No firmware build,
+card staging or camera access occurred; the
+port/flash hold remains active.
+
+## Splash takes priority — October 24, 2026
+
+The owner wants splash loading investigated before film-roll work. Read the
+new section in [SPLASH_SCREEN_FEASIBILITY.md](SPLASH_SCREEN_FEASIBILITY.md).
+`tools/probe_splash_display.py` now presents an original 720x480 RGB PNG through
+stock Z7 code in an isolated assisted QEMU guest. All 14 presentation checks
+pass: exact full-screen pixels, native decoder/GPU trace, encoded-image heap
+guards, caller register/scratch restoration, exact native menu restoration and
+subsequent menu navigation. The PNG uses original heap allocation; only an
+80-byte descriptor is staged on the diagnostic caller's stack. A fresh run and
+private screenshots are in `.private/research/splash/20261024-display-probe-06/`;
+sanitized results are `evidence/20261024-splash-native-display.json`.
+
+This is host-assisted native presentation, not an automatic startup hook or
+flashable splash feature. Earlier oversized stack-data and cross-task graphics
+lock probes stalled or left the guest unresponsive; do not reuse those methods.
+The successful probe supplies encoded PNG data only, with no host framebuffer
+pixel writes. It closes its own guest and leaves existing app sessions alone.
+Next: establish the correct startup/render-task transition, once-per-boot state,
+bounded dismissal, wake suppression and LCD/EVF behavior. No firmware build,
+card staging or camera access occurred; the port/flash hold remains in force.
+
+Earlier offline milestone:
+`tools/audit_splash_image.py` executes the stock resource getter, image wrapper,
+libpng/zlib and original memory helpers with a controlled bounded allocator.
+All 43 checks pass, including exact RGB/RGBA pixel output, buffer guards,
+callee-saved registers/stack and selected allocation-failure cleanup. The
+320x120 synthetic PNG decodes to 153,600 RGBA bytes. Evidence is source-only.
+These unit checks alone do not verify GPU/LCD presentation. Startup event
+semantics, production dismissal and wake suppression remain unverified.
+
+## Film-roll feasibility — October 24, 2026
+
+The owner asked whether a Canon Ritual-style experience could be built for Z7.
+Read [FILM_ROLL_FEASIBILITY.md](FILM_ROLL_FEASIBILITY.md). Native custom Picture
+Controls provide the initial recipe path. Nikon's original-model manual already
+documents 20 Creative controls, contradicting the inherited report's dormant-
+feature premise. A correction banner preserves that report while marking its
+unsupported conclusions. Three narrow stock-image checks are recorded in
+`evidence/20261024-picture-control-baseline.json`; no complete parser or new
+rendering was validated. Photo counting, persistence and a hard shutter limit
+remain research tasks. No firmware build, staging or camera/card access occurred.
+
 ## Source publication checkpoint — October 24, 2026
 
 The owner requested a source push and review of possible contributions to both

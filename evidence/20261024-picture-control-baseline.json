@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "camera_or_card_access": false,
+  "firmware_built": false,
+  "checks": [
+    {
+      "name": "exact-stock-main-fingerprint",
+      "passed": true
+    },
+    {
+      "name": "first-reported-enum-table-contains-twenty-consecutive-creative-values",
+      "passed": true,
+      "address": "0x10654E90",
+      "values": "0x0801..0x0814",
+      "limit": "Numeric interoperability facts; does not establish dormant functionality or new rendering support."
+    },
+    {
+      "name": "native-helper-102d8562-stores-supplied-r1-in-context",
+      "passed": true,
+      "execution": "Original two-instruction helper executed in Unicorn with synthetic RAM; no external calls.",
+      "limit": "This helper does not read a model identifier from a file. Full file/parser behavior was not executed."
+    }
+  ],
+  "parser_review": {
+    "entry": "0x101F0252",
+    "calls_in_order": [
+      "0x102D8562",
+      "0x102D8566"
+    ],
+    "compares_return_from": "0x102D8566",
+    "comparison_constant": "0x04390080",
+    "model_field_derivation_in_old_report": "unsupported; the checked sequence stores a supplied context word then compares a separate operation return",
+    "full_parser_or_file_acceptance_verified": false
+  },
+  "new_recipe_rendering_verified": false,
+  "per_photo_counter_verified": false,
+  "candidate_cleared": false,
+  "private_listing_excluded": true
+}

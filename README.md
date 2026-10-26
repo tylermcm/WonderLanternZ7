@@ -1,14 +1,45 @@
 # WonderLantern Z7 lab
 
-Independent, modified research workspace for **Nikon Z7 C 3.80** firmware
-extensions and assisted QEMU execution. Start with [HANDOFF.md](HANDOFF.md)
-when continuing on another computer.
+**EXPERIMENTAL CAMERA FIRMWARE RESEARCH. A failed or incorrect flash can
+permanently brick a camera, destroy data, or require paid repair/replacement.
+Use entirely at your own risk. To the fullest extent permitted by law, the
+authors/contributors accept no liability. No warranty or verified emergency
+recovery is provided. Read [RISK_NOTICE.md](RISK_NOTICE.md).**
 
-The owner has installed experimental builds and confirmed audible WAV Preview.
-**Automatic shutter sound is still faulty:** the latest tested build repeats
-audio during live view. Keep Shutter sound Enabled **OFF**; further candidate
-staging and flash recommendations are on hold pending the [port audit](PORT_AUDIT.md).
-There is no verified emergency recovery route.
+Independent, modified research workspace for the **original Nikon Z7 C 3.80**.
+This is not an official Nikon or Wonder Lantern release. Component licenses,
+credits and notices are preserved; see [UPSTREAMS.json](UPSTREAMS.json).
+
+## Experimental 3x3 grid preview
+
+The preview adds **3x3 / 4x4 / Off** to the native framing-grid menu, with the
+choice stored in the camera's existing internal settings. It has no timed
+reversion. The owner reports that the latest build is installed and keeps 3x3
+after more than ten seconds switched off on one original Z7. That limited
+result is not certification or proof of compatibility with every Z7.
+
+**Source/patcher release only:** no stock or modified Nikon firmware BIN is
+redistributed. Build the exact reviewed image locally using your own official
+`Z_7_0380.bin`. Start with [the release/build guide](RELEASE_GRID_PREVIEW.md),
+then read [the exact-candidate assessment](GRID_NATIVE_FLASH_ASSESSMENT.md).
+Target scope is original Z7 C 3.80 without Nikon's paid RAW-video upgrade;
+other bodies/versions, including Z7 II, are not supported by this preview.
+
+The exact image passed 107 instruction checks, 16 assisted QEMU checks and 12
+selected updater probes. Test boundaries and remaining gaps are documented in
+[NATIVE_GRID_SETTINGS.md](NATIVE_GRID_SETTINGS.md). Owner hardware results are
+recorded separately in `evidence/20261026-grid-saved-owner-hardware.json`.
+Off intentionally clears the selected type; presets/import/export, indirect
+consumers, wake behavior, extended use and failure recovery need further review.
+
+## Other lab experiments
+
+The source also retains earlier sound, splash and added-journal-record work.
+Those are **not included in the grid preview's generated image**. Automatic
+shutter sound still has the reported live-view repetition defect; its
+[port audit hold](PORT_AUDIT.md) remains. Do not substitute older presets or the
+held 90-record journal prototype for the preview's `--native-choice` build.
+For continuing development, read [HANDOFF.md](HANDOFF.md).
 
 Earlier assisted-emulator runs passed 21 general UI checks and 17 sound-submenu
 checks for each sound-capable preset. Those results establish selected emulator

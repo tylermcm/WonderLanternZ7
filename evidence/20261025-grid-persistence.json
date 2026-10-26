@@ -1,0 +1,238 @@
+{
+  "schema": 1,
+  "checks": [
+    {
+      "name": "cold-reserves-owned-table-without-overlap",
+      "passed": true
+    },
+    {
+      "name": "compiled-crc-0",
+      "passed": true
+    },
+    {
+      "name": "compiled-crc-9",
+      "passed": true
+    },
+    {
+      "name": "compiled-crc-12",
+      "passed": true
+    },
+    {
+      "name": "selection-only-marks-dirty-and-keeps-native-boolean",
+      "passed": true
+    },
+    {
+      "name": "normal-native-save-caller-runs-verified-hook",
+      "passed": true
+    },
+    {
+      "name": "verified-save-clears-dirty-and-unlocks",
+      "passed": true
+    },
+    {
+      "name": "verification-does-not-change-any-native-live-payload",
+      "passed": true
+    },
+    {
+      "name": "verification-restores-native-global-descriptor-and-logical-view",
+      "passed": true
+    },
+    {
+      "name": "verification-frees-exact-allocation",
+      "passed": true
+    },
+    {
+      "name": "fresh-ram-starts-fourths",
+      "passed": true
+    },
+    {
+      "name": "installed-load-hook-restores-thirds-from-flash-only",
+      "passed": true
+    },
+    {
+      "name": "cold-load-restores-all-native-payloads",
+      "passed": true
+    },
+    {
+      "name": "startup-load-does-not-write",
+      "passed": true
+    },
+    {
+      "name": "second-choice-save-is-verified",
+      "passed": true
+    },
+    {
+      "name": "second-fresh-instance-restores-fourths",
+      "passed": true
+    },
+    {
+      "name": "changed-generation-retains-dirty-despite-verified-snapshot",
+      "passed": true
+    },
+    {
+      "name": "compiled-original-format-conversion-verifies",
+      "passed": true
+    },
+    {
+      "name": "converted-journal-loads-with-unmodified-stock-code",
+      "passed": true
+    },
+    {
+      "name": "conversion-preserves-every-native-record",
+      "passed": true
+    },
+    {
+      "name": "native-startup-caller-restores-choice-before-return",
+      "passed": true
+    },
+    {
+      "name": "native-default-reset-also-resets-extension",
+      "passed": true
+    },
+    {
+      "name": "bad-extension-crc-defaults-without-failing-native-load",
+      "passed": true
+    },
+    {
+      "name": "bad-extension-crc-preserves-native-settings",
+      "passed": true
+    },
+    {
+      "name": "readback-corruption-is-rejected",
+      "passed": true
+    },
+    {
+      "name": "failed-readback-never-overwrites-live-settings",
+      "passed": true
+    },
+    {
+      "name": "installed-migration-loads-stock-without-resetting-native",
+      "passed": true
+    },
+    {
+      "name": "installed-migration-first-save-is-verified",
+      "passed": true
+    },
+    {
+      "name": "installed-migration-survives-fresh-instance",
+      "passed": true
+    },
+    {
+      "name": "power-cut-1-reaches-program-boundary",
+      "passed": true
+    },
+    {
+      "name": "power-cut-1-preserves-native-settings-in-fresh-instance",
+      "passed": true
+    },
+    {
+      "name": "power-cut-1-choice-is-valid-old-or-committed",
+      "passed": true
+    },
+    {
+      "name": "power-cut-2-reaches-program-boundary",
+      "passed": true
+    },
+    {
+      "name": "power-cut-2-preserves-native-settings-in-fresh-instance",
+      "passed": true
+    },
+    {
+      "name": "power-cut-2-choice-is-valid-old-or-committed",
+      "passed": true
+    },
+    {
+      "name": "power-cut-3-reaches-program-boundary",
+      "passed": true
+    },
+    {
+      "name": "power-cut-3-preserves-native-settings-in-fresh-instance",
+      "passed": true
+    },
+    {
+      "name": "power-cut-3-choice-is-valid-old-or-committed",
+      "passed": true
+    },
+    {
+      "name": "power-cut-270-reaches-program-boundary",
+      "passed": true
+    },
+    {
+      "name": "power-cut-270-preserves-native-settings-in-fresh-instance",
+      "passed": true
+    },
+    {
+      "name": "power-cut-270-choice-is-valid-old-or-committed",
+      "passed": true
+    },
+    {
+      "name": "power-cut-271-reaches-program-boundary",
+      "passed": true
+    },
+    {
+      "name": "power-cut-271-preserves-native-settings-in-fresh-instance",
+      "passed": true
+    },
+    {
+      "name": "power-cut-271-choice-is-valid-old-or-committed",
+      "passed": true
+    },
+    {
+      "name": "power-cut-272-reaches-program-boundary",
+      "passed": true
+    },
+    {
+      "name": "power-cut-272-preserves-native-settings-in-fresh-instance",
+      "passed": true
+    },
+    {
+      "name": "power-cut-272-choice-is-valid-old-or-committed",
+      "passed": true
+    },
+    {
+      "name": "program-failure-is-not-verified-success",
+      "passed": true
+    },
+    {
+      "name": "program-failure-retains-dirty-unlocks-and-frees",
+      "passed": true
+    },
+    {
+      "name": "allocation-failure-is-not-verified-success",
+      "passed": true
+    },
+    {
+      "name": "allocation-failure-retains-dirty-unlocks-and-frees",
+      "passed": true
+    },
+    {
+      "name": "allocation-failure-never-starts-flash-write",
+      "passed": true
+    },
+    {
+      "name": "busy-save-does-not-write-or-release-another-owner",
+      "passed": true
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "save-thirds",
+      "result": 1,
+      "operations": 273
+    }
+  ],
+  "main_payload_sha256": "a0cda3a3c4acac326cfbc56ac9aca48b075f09c3a5742f8470a5f7da79bd508c",
+  "all_passed": true,
+  "scope": "Execute installed grid journal hooks against isolated synthetic flash banks.\n\nOriginal Z7 journal/default/property instructions and appended ARM hooks execute.\nOS, allocation and flash-controller boundaries are supplied. Fresh instances\ncarry only flash bytes. This is not physical-camera or full QEMU boot evidence.",
+  "camera_access": false,
+  "card_access": false,
+  "supplied_boundaries": [
+    "OS and model token",
+    "workspace and checked scratch allocation",
+    "flash erase/program in Unicorn memory",
+    "native UI visibility setter",
+    "secondary startup dataset reads"
+  ],
+  "full_qemu_cold_boot": false,
+  "physical_durability": false
+}

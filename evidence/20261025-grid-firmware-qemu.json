@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "scope": "Assisted cold boots of the exact independently rebuilt candidate. Menu uses native keys; live view uses diagnostic calls to compiled choice handlers and native visibility update. Display-plane colors, edge inclusion and UI priority are functional emulator hypotheses.",
+  "main_payload_sha256": "2762ccd5276e1c4720c06e26f636c6c551cafe3772eb6d24400b769c200cd348",
+  "qemu_binary_sha256": "1a651c1bf06f5c8dc85754ba65f20ad5a73ce390eb06202a51ee75826cdd4def",
+  "native_menu": {
+    "all_passed": true,
+    "checks": [
+      {
+        "name": "native-menu-ready",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x1",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x127",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "thirds-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "fourths-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "off-retains-choice-and-native-focus",
+        "passed": true
+      }
+    ],
+    "choices": [
+      {
+        "name": "00-default-off",
+        "choice": 0,
+        "native_page": 339,
+        "native_row": 2,
+        "frame_sha256": "a7bdaaa24ab87a6d4c1407e2b18e6dccae7e349233b56a96d352e4f4f39f073b"
+      },
+      {
+        "name": "thirds",
+        "choice": 1,
+        "native_page": 339,
+        "native_row": 1,
+        "frame_sha256": "4a1c704f7886ed4bb04b1706de91b07d58556e5f17fe0600ce6d425b168d5f7c"
+      },
+      {
+        "name": "fourths",
+        "choice": 0,
+        "native_page": 339,
+        "native_row": 0,
+        "frame_sha256": "57325e1ae55b9bc89b335ec235f2975763064c8448e9e61ec56f0a798657801e"
+      },
+      {
+        "name": "off",
+        "choice": 0,
+        "native_page": 339,
+        "native_row": 2,
+        "frame_sha256": "a7bdaaa24ab87a6d4c1407e2b18e6dccae7e349233b56a96d352e4f4f39f073b"
+      }
+    ]
+  },
+  "live_view": {
+    "all_passed": true,
+    "checks": [
+      {
+        "name": "thirds-native-counts-and-enable",
+        "passed": true
+      },
+      {
+        "name": "thirds-horizontal-and-vertical-pixels",
+        "passed": true
+      },
+      {
+        "name": "fourths-native-counts-and-enable",
+        "passed": true
+      },
+      {
+        "name": "fourths-horizontal-and-vertical-pixels",
+        "passed": true
+      },
+      {
+        "name": "native-off-disables-plane",
+        "passed": true
+      },
+      {
+        "name": "native-off-restores-scene-pixels",
+        "passed": true
+      }
+    ],
+    "frames": [
+      {
+        "name": "00-off",
+        "enabled": null,
+        "choice": 0,
+        "horizontal_lines": [],
+        "vertical_lines": [],
+        "frame_sha256": "b3f9f2701de0a5ae1010e14338da83b3bd561c106a1abf9159fcda53dd94013f"
+      },
+      {
+        "name": "thirds",
+        "enabled": 1,
+        "choice": 1,
+        "horizontal_lines": [
+          228,
+          456
+        ],
+        "vertical_lines": [
+          342,
+          684
+        ],
+        "frame_sha256": "9efb51657db731cf55136a49cd58b7f5c4e0e0e90360ac5a8984038ad750f772"
+      },
+      {
+        "name": "fourths",
+        "enabled": 1,
+        "choice": 0,
+        "horizontal_lines": [
+          170,
+          340,
+          510
+        ],
+        "vertical_lines": [
+          256,
+          512,
+          768
+        ],
+        "frame_sha256": "6013a41e6968351ed4dd40c1244c617aab352485d1137a11daa86ba323cab1c6"
+      },
+      {
+        "name": "off-restored",
+        "enabled": 0,
+        "choice": 0,
+        "horizontal_lines": [],
+        "vertical_lines": [],
+        "frame_sha256": "b3f9f2701de0a5ae1010e14338da83b3bd561c106a1abf9159fcda53dd94013f"
+      }
+    ],
+    "off_exact_frame_restored": true
+  },
+  "earlier_failures_preserved": true,
+  "camera_access": false,
+  "card_access": false,
+  "flash_ready": false,
+  "physical_display_verified": false,
+  "choice_persistence": "RAM only; defaults to 4x4 at native workspace initialization",
+  "composition": "Standalone; not composed with splash or other firmware experiments"
+}

@@ -31,6 +31,30 @@ typedef struct Z7GPU {
     bool lcd_scanout;
 } Z7GPU;
 
+/* Functional LCD-grid hypothesis, separate from OpenVG command execution.
+ * 1023c4b0/1034b364 prepare rectangles, repeat counts minus one, and spacing;
+ * 10242186 packs them into +1600..1618. 102422e8 writes the +1620 gate.
+ * Observed black-initialization 01000000 and gray-active 03d8d8d8 styles are
+ * approximated as opaque RGB from the low 24 bits. Physical
+ * edge inclusion, color/blend meaning and grid/UI priority are unverified. */
+static bool z7_lcd_grid_hit(const uint32_t *r, unsigned x, unsigned y)
+{
+    if (r[0x1620/4] != 1 ||
+        (r[0x1618/4] != 0x01000000 && r[0x1618/4] != 0x03d8d8d8)) { return false; }
+    unsigned hx = r[0x1600/4] & 0xffff, hy = (r[0x1600/4] >> 16) & 0x3fff;
+    unsigned vx = r[0x1604/4] & 0xffff, vy = (r[0x1604/4] >> 16) & 0x3fff;
+    unsigned hw = r[0x1608/4] & 0xffff, vh = (r[0x1608/4] >> 16) & 0x3fff;
+    unsigned ht = r[0x160c/4] & 63, vt = (r[0x160c/4] >> 16) & 63;
+    unsigned hs = r[0x1610/4] & 0x3fff, vs = r[0x1610/4] >> 16;
+    unsigned hn = (r[0x1614/4] & 7) + 1, vn = ((r[0x1614/4] >> 16) & 7) + 1;
+    if (!hw || !vh || !ht || !vt || !hs || !vs) { return false; }
+    bool horizontal = x >= hx && x - hx < hw && y >= hy &&
+        (y - hy) / hs < hn && (y - hy) % hs < ht;
+    bool vertical = y >= vy && y - vy < vh && x >= vx &&
+        (x - vx) / vs < vn && (x - vx) % vs < vt;
+    return horizontal || vertical;
+}
+
 static bool z7_gpu_range(uint32_t addr, uint64_t bytes, bool write)
 {
     uint64_t end = (uint64_t)addr + bytes;

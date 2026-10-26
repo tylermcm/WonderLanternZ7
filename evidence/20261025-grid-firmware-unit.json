@@ -1,0 +1,762 @@
+{
+  "schema": 1,
+  "scope": "Execute compiled grid selection, page entry and native geometry instructions.\n\nUI widgets/property storage and viewport are controlled boundaries. This is not\ndisplay, startup-concurrency, image-file or physical-camera verification.",
+  "checks": [
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop0-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop0-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop0-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop0-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop1-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop1-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop1-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop1-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop2-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop2-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop2-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop2-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop4-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop4-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop4-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop4-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop8-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop8-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop8-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode0-crop8-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop0-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop0-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop0-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop0-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop1-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop1-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop1-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop1-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop2-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop2-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop2-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop2-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop4-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop4-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop4-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop4-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop8-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop8-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop8-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode1-crop8-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop0-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop0-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop0-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop0-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop1-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop1-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop1-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop1-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop2-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop2-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop2-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop2-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop4-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop4-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop4-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop4-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop8-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop8-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop8-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-mode2-crop8-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop0-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop0-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop0-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop0-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop1-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop1-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop1-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop1-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop2-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop2-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop2-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop2-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop4-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop4-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop4-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop4-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop8-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop8-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop8-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode0-crop8-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop0-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop0-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop0-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop0-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop1-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop1-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop1-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop1-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop2-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop2-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop2-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop2-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop4-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop4-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop4-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop4-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop8-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop8-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop8-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode1-crop8-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop0-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop0-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop0-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop0-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop1-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop1-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop1-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop1-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop2-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop2-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop2-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop2-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop4-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop4-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop4-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop4-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop8-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop8-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop8-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-mode2-crop8-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop0-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop0-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop0-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop0-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop1-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop1-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop1-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop1-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop2-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop2-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop2-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop2-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop4-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop4-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop4-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop4-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop8-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop8-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop8-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode0-crop8-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop0-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop0-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop0-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop0-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop1-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop1-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop1-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop1-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop2-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop2-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop2-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop2-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop4-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop4-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop4-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop4-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop8-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop8-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop8-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode1-crop8-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop0-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop0-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop0-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop0-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop1-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop1-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop1-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop1-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop2-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop2-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop2-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop2-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop4-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop4-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop4-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop4-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop8-choice0-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop8-choice1-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop8-choice42-magic1196573745",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-mode2-crop8-choice1-magic0",
+      "passed": true
+    },
+    {
+      "name": "page-enabled0-choice0",
+      "passed": true
+    },
+    {
+      "name": "page-enabled0-choice1",
+      "passed": true
+    },
+    {
+      "name": "page-enabled1-choice0",
+      "passed": true
+    },
+    {
+      "name": "page-enabled1-choice1",
+      "passed": true
+    },
+    {
+      "name": "page-enabled1-choice42",
+      "passed": true
+    },
+    {
+      "name": "thirds-keeps-native-property-boolean-and-state-owned",
+      "passed": true
+    },
+    {
+      "name": "fourths-keeps-native-property-boolean-and-state-owned",
+      "passed": true
+    },
+    {
+      "name": "native-off-preserves-third-choice",
+      "passed": true
+    }
+  ],
+  "geometry_calls": 270,
+  "all_passed": true,
+  "camera_access": false,
+  "main_payload_sha256": "9d312fe94946e37090818588b06963d92bfab879478a3f6516c7449b3fa59e99"
+}

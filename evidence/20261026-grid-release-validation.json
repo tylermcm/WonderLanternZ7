@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "date_local": "2026-10-26",
+  "scope": "Release-time host/source verification; no hardware access and no general camera-safety certification.",
+  "host_python_tests": {
+    "root": 11,
+    "qemu": 11,
+    "all_passed": true
+  },
+  "synthetic_native_tests": {
+    "renderer": 292,
+    "isp": 398,
+    "all_passed": true,
+    "sanitizers": false
+  },
+  "qemu_smoke": {
+    "passed": true,
+    "firmware_used": false
+  },
+  "patcher_tests": {
+    "run": 16,
+    "passed": 16,
+    "skipped": 0,
+    "stock_input_private": true
+  },
+  "qemu_publication_inventory": {
+    "reviewed_files": 45,
+    "passed": true
+  },
+  "release_distribution": "source/patcher only; no Nikon firmware, private image, key, dump or camera screenshot",
+  "experimental": true
+}

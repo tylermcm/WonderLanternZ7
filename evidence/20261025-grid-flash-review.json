@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "purpose": "Offline review only; not hardware installation approval",
+  "model": "Original Nikon Z7",
+  "firmware": "C 3.80",
+  "preset": "grid",
+  "features": [
+    "grid"
+  ],
+  "internal_settings_format_changed": false,
+  "installation_cleared": false,
+  "stock_container_sha256": "07cf19513ada5b770caec4cfc3531a6734c48aede28dcec037f0f8374ef441a2",
+  "container": {
+    "modules": [
+      {
+        "name": "ex1610_037000.bi",
+        "offset": 176,
+        "size": 524290,
+        "crc_zero": true,
+        "sha256": "04891b0b9791416573381d8202299e628544f28ff52862579a81b02fbdfb733c"
+      },
+      {
+        "name": "_tpj01_v140.bin",
+        "offset": 524466,
+        "size": 57346,
+        "crc_zero": true,
+        "sha256": "e60998537d46a15c430154aeeb589026aca015256d27e2d5990589d23a59c88e"
+      },
+      {
+        "name": "eg1610_038000.bi",
+        "offset": 581812,
+        "size": 33052090,
+        "crc_zero": true,
+        "sha256": "7f59d8993080203a12692cf6927a0a8218786d3f72230c04174f1563c506a6f6"
+      },
+      {
+        "name": "vr1610_010200.bi",
+        "offset": 33633902,
+        "size": 838664,
+        "crc_zero": true,
+        "sha256": "13c67b880e939a0a5d87f179d2d9c2628585b853bab459a2d61c875c340fa986"
+      }
+    ],
+    "package_crc_ok": true,
+    "trailer_zero": true
+  },
+  "candidate": {
+    "filename": "EG161080.BIN",
+    "size": 33053802,
+    "sha256": "ae46a48d52f4a89dac7c54bf63fc4b6d40b6c7d5adc49f67335e8b50fe97973b",
+    "main_sha256": "2762ccd5276e1c4720c06e26f636c6c551cafe3772eb6d24400b769c200cd348",
+    "crc_zero": true,
+    "independently_rebuilt": true
+  },
+  "stock_eg": {
+    "size": 33052090,
+    "sha256": "7f59d8993080203a12692cf6927a0a8218786d3f72230c04174f1563c506a6f6"
+  },
+  "storage_descriptor_bytes": 43253760,
+  "below_descriptor_capacity": true,
+  "native_checks": [
+    {
+      "name": "stock_native_header_property_0",
+      "passed": true
+    },
+    {
+      "name": "stock_native_header_property_1",
+      "passed": true
+    },
+    {
+      "name": "grid_native_header_property_0",
+      "passed": true
+    },
+    {
+      "name": "grid_native_header_property_1",
+      "passed": true
+    },
+    {
+      "name": "native_header_rejects_oversize",
+      "passed": true
+    },
+    {
+      "name": "native_header_rejects_short_version",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG161080.BIN",
+      "passed": true
+    },
+    {
+      "name": "native_name_eg161080.bin",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG16100380.BIN",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG162080.BIN",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG161080.BIN.extra",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG1610.BIN",
+      "passed": true
+    }
+  ],
+  "physical_camera_tested": false,
+  "card_written": false,
+  "limits": [
+    "Selected header and single-name instructions only; file I/O and runtime property mocked.",
+    "No directory enumeration, complete updater admission, erase/program/readback or real boot.",
+    "Same-version camera acceptance and emergency boot recovery remain unverified.",
+    "Stock copies are rollback inputs, not a proven recovery mechanism.",
+    "No full-container header digest was recomputed or validated."
+  ],
+  "scope": "Private preparation of exact standalone RAM-only grid component. Independently rebuilt EG and MAIN, original native header/filename probes with supplied I/O/runtime. No card staging, updater programming or hardware acceptance.",
+  "all_passed": true,
+  "preparation_tests": {
+    "passed": 5,
+    "failed": 0
+  },
+  "patch_container_thumb_tests": {
+    "passed": 14,
+    "skipped": 2
+  },
+  "selected_by_owner": "RAM-only 3x3/4x4/Off first hardware test; persistence held",
+  "qemu_evidence": "evidence/20261025-grid-firmware-qemu.json",
+  "qemu_binary_and_source_hashes_reverified": true,
+  "installation_assessment": "GRID_FLASH_ASSESSMENT.md"
+}

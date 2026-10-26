@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "scope": "Assisted QEMU of exact revised existing-scalar experiment with original return flags preserved. Menu uses native keys and UI service; live view diagnostically calls compiled handlers and native visibility update. No persistent-flash QEMU restart or physical camera verification.",
+  "main_payload_sha256": "7f29bfda937c90261eff989d5f27dbf71ca2b142308b70879b1a7ef3d46c4075",
+  "camera_access": false,
+  "card_access": false,
+  "menu": {
+    "checks": [
+      {
+        "name": "native-menu-ready",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x1",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x127",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "thirds-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "fourths-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "off-retains-choice-and-native-focus",
+        "passed": true
+      }
+    ],
+    "all_passed": true,
+    "selections": [
+      {
+        "name": "00-default-off",
+        "stored_grid_value": 0
+      },
+      {
+        "name": "thirds",
+        "stored_grid_value": 2
+      },
+      {
+        "name": "fourths",
+        "stored_grid_value": 1
+      },
+      {
+        "name": "off",
+        "stored_grid_value": 0
+      }
+    ]
+  },
+  "live": {
+    "checks": [
+      {
+        "name": "thirds-native-counts-and-enable",
+        "passed": true
+      },
+      {
+        "name": "thirds-horizontal-and-vertical-pixels",
+        "passed": true
+      },
+      {
+        "name": "fourths-native-counts-and-enable",
+        "passed": true
+      },
+      {
+        "name": "fourths-horizontal-and-vertical-pixels",
+        "passed": true
+      },
+      {
+        "name": "native-off-disables-plane",
+        "passed": true
+      },
+      {
+        "name": "native-off-restores-scene-pixels",
+        "passed": true
+      }
+    ],
+    "all_passed": true,
+    "selections": [
+      {
+        "name": "00-off",
+        "stored_grid_value": 0
+      },
+      {
+        "name": "thirds",
+        "stored_grid_value": 2
+      },
+      {
+        "name": "fourths",
+        "stored_grid_value": 1
+      },
+      {
+        "name": "off-restored",
+        "stored_grid_value": 0
+      }
+    ]
+  },
+  "all_passed": true
+}

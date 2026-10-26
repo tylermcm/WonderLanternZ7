@@ -1,0 +1,448 @@
+{
+  "schema": 1,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "checks": [
+    {
+      "name": "native-storage-initializer-binds-member-to-parent-buffer",
+      "passed": true
+    },
+    {
+      "name": "native-grid-scalar-writer-accepts-0",
+      "passed": true
+    },
+    {
+      "name": "native-grid-scalar-writer-accepts-1",
+      "passed": true
+    },
+    {
+      "name": "native-grid-scalar-writer-accepts-2",
+      "passed": true
+    },
+    {
+      "name": "native-grid-scalar-writer-accepts-4294967295",
+      "passed": true
+    },
+    {
+      "name": "packed-snapshot-grid-is-one-byte-at-29c",
+      "passed": true
+    },
+    {
+      "name": "packed-snapshot-unknown-id-is-ignored",
+      "passed": true
+    },
+    {
+      "name": "packed-snapshot-alone-did-not-program-flash",
+      "passed": true
+    },
+    {
+      "name": "native-member-save-reports-success-with-supplied-flash-boundary",
+      "passed": true
+    },
+    {
+      "name": "native-member-save-programs-entire-parent-not-one-member",
+      "passed": true
+    },
+    {
+      "name": "native-member-load-in-fresh-instance-reports-success",
+      "passed": true
+    },
+    {
+      "name": "native-member-load-restores-entire-parent-payload",
+      "passed": true
+    },
+    {
+      "name": "native-member-view-restores-synthetic-member-data",
+      "passed": true
+    },
+    {
+      "name": "native-load-does-not-erase-or-program",
+      "passed": true
+    },
+    {
+      "name": "native-save-erase-failure-is-not-success",
+      "passed": true
+    },
+    {
+      "name": "native-save-erase-retries-are-bounded",
+      "passed": true
+    },
+    {
+      "name": "native-save-program-failure-is-not-success",
+      "passed": true
+    },
+    {
+      "name": "native-save-program-retries-are-bounded",
+      "passed": true
+    },
+    {
+      "name": "stock-journal-save-returns-one",
+      "passed": true
+    },
+    {
+      "name": "stock-journal-writes-stay-in-native-journal-regions",
+      "passed": true
+    },
+    {
+      "name": "stock-journal-fresh-instance-load-succeeds",
+      "passed": true
+    },
+    {
+      "name": "stock-journal-restores-all-89-native-records",
+      "passed": true
+    },
+    {
+      "name": "stock-journal-restores-native-grid-enabled",
+      "passed": true
+    },
+    {
+      "name": "stock-journal-load-does-not-write",
+      "passed": true
+    },
+    {
+      "name": "extended-journal-save-returns-one",
+      "passed": true
+    },
+    {
+      "name": "extended-journal-writes-stay-in-native-journal-regions",
+      "passed": true
+    },
+    {
+      "name": "extended-journal-fresh-instance-load-succeeds",
+      "passed": true
+    },
+    {
+      "name": "extended-journal-restores-all-89-native-records",
+      "passed": true
+    },
+    {
+      "name": "extended-journal-restores-native-grid-enabled",
+      "passed": true
+    },
+    {
+      "name": "extended-journal-restores-supplied-custom-record",
+      "passed": true
+    },
+    {
+      "name": "extended-journal-load-does-not-write",
+      "passed": true
+    },
+    {
+      "name": "old-settings-with-added-record-is-rejected",
+      "passed": true
+    },
+    {
+      "name": "old-settings-with-added-record-does-not-program-flash",
+      "passed": true
+    },
+    {
+      "name": "extended-settings-with-stock-loader-is-rejected",
+      "passed": true
+    },
+    {
+      "name": "extended-settings-with-stock-loader-does-not-program-flash",
+      "passed": true
+    },
+    {
+      "name": "supplied-migration-falls-back-before-native-startup-reset",
+      "passed": true
+    },
+    {
+      "name": "supplied-migration-keeps-native-grid-enabled",
+      "passed": true
+    },
+    {
+      "name": "supplied-migration-save-reports-one",
+      "passed": true
+    },
+    {
+      "name": "supplied-migration-reloads-native-and-custom-records",
+      "passed": true
+    },
+    {
+      "name": "supplied-rollback-writes-original-schema",
+      "passed": true
+    },
+    {
+      "name": "supplied-rollback-loads-in-fresh-stock-schema-instance",
+      "passed": true
+    },
+    {
+      "name": "supplied-rollback-preserves-all-89-native-records",
+      "passed": true
+    },
+    {
+      "name": "journal-wrapper-reports-one-despite-program-failure",
+      "passed": true
+    },
+    {
+      "name": "journal-first-write-failure-has-bounded-low-level-retries",
+      "passed": true
+    },
+    {
+      "name": "journal-failed-save-does-not-load-as-valid",
+      "passed": true
+    }
+  ],
+  "observations": {
+    "logical_member": {
+      "id": "0x13",
+      "parent": "0x11",
+      "parent_bytes": 131068,
+      "member_offset": "0xA100",
+      "member_bytes": 256,
+      "physical_bank": "0x132c0000"
+    },
+    "grid_range": "Raw scalar storage accepts 32-bit values; stock menu/display consumers supply or require 0/1. Writer is not an enum validator.",
+    "snapshot": {
+      "table": "0xA18C25D0",
+      "entries": 452,
+      "grid_entry": 324,
+      "offset": "0x29C",
+      "width": 1,
+      "caution": "This RAM snapshot update is not itself a persistent commit."
+    },
+    "save_operations": [
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      },
+      {
+        "kind": "program",
+        "address": "0x132dfffc",
+        "bytes": 4
+      }
+    ],
+    "erase_failure_operations": [
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      }
+    ],
+    "program_failure_operations": [
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      },
+      {
+        "kind": "erase",
+        "address": "0x132c0000",
+        "bytes": 131072
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      },
+      {
+        "kind": "program",
+        "address": "0x132c0000",
+        "bytes": 131068
+      }
+    ],
+    "main_settings_journal": {
+      "stock_save": {
+        "operations": 270,
+        "erased_regions": [
+          {
+            "kind": "erase",
+            "address": "0x131e0000",
+            "bytes": 262144
+          }
+        ],
+        "last_programs": [
+          {
+            "kind": "program",
+            "address": "0x131f5794",
+            "bytes": 4
+          },
+          {
+            "kind": "program",
+            "address": "0x131f5798",
+            "bytes": 4
+          }
+        ]
+      },
+      "extended_save": {
+        "operations": 273,
+        "erased_regions": [
+          {
+            "kind": "erase",
+            "address": "0x131e0000",
+            "bytes": 262144
+          }
+        ],
+        "last_programs": [
+          {
+            "kind": "program",
+            "address": "0x131f57ac",
+            "bytes": 4
+          },
+          {
+            "kind": "program",
+            "address": "0x131f57b0",
+            "bytes": 4
+          }
+        ]
+      },
+      "old-settings-with-added-record": {
+        "native_result": 0,
+        "consequence": "Caller 0x10117594 passes failure to 0x1007099A, which can reset native settings. Bare schema replacement lacks compatibility; explicit conversions are tested separately below."
+      },
+      "extended-settings-with-stock-loader": {
+        "native_result": 0,
+        "consequence": "Caller 0x10117594 passes failure to 0x1007099A, which can reset native settings. Bare schema replacement lacks compatibility; explicit conversions are tested separately below."
+      },
+      "supplied_migration": {
+        "extended_load": 0,
+        "original_schema_retry": 1,
+        "extended_save": 1,
+        "fresh_extended_reload": 1,
+        "installed_firmware_hook": false,
+        "stock_without_conversion_rejected": true
+      },
+      "supplied_rollback_conversion": {
+        "save_result": 1,
+        "stock_schema_reload": 1,
+        "native_records_preserved": true,
+        "installed_firmware_hook": false,
+        "caution": "Explicit conversion must run while extended-schema code can still read the store. This is not camera updater/recovery validation."
+      },
+      "program_failure": {
+        "native_wrapper_result": 1,
+        "operations": [
+          {
+            "kind": "erase",
+            "address": "0x131e0000",
+            "bytes": 262144
+          },
+          {
+            "kind": "program",
+            "address": "0x131e0000",
+            "bytes": 4
+          },
+          {
+            "kind": "program",
+            "address": "0x131e0000",
+            "bytes": 4
+          },
+          {
+            "kind": "program",
+            "address": "0x131e0000",
+            "bytes": 4
+          }
+        ],
+        "caution": "0x10091974 discards 0x10091848 result; return status alone cannot prove durability."
+      },
+      "logical_id": "0x0F",
+      "native_records": 89,
+      "journal_banks": [
+        "0x12e00000",
+        "0x131e0000"
+      ],
+      "bytes_per_bank": 262144,
+      "grid_record": 49,
+      "grid_record_bytes": 576,
+      "grid_offset_within_record": "0xB4",
+      "added_record_is_supplied_test_schema_only": true
+    }
+  },
+  "all_passed": true,
+  "scope": "Original instructions with synthetic RAM and supplied in-memory flash boundaries; logical-record and main-settings journal round trips in fresh Unicorn instances. Extra record and migration descriptors are supplied test inputs, not installed firmware hooks. No grid-choice persistence implementation, complete camera shutdown/reboot, flash controller, endurance, update acceptance or recovery validation.",
+  "supplied_boundaries": [
+    "workspace allocation",
+    "model token",
+    "OS locks/context",
+    "flash erase/program into isolated Unicorn memory"
+  ],
+  "camera_access": false,
+  "card_access": false,
+  "firmware_export": false
+}

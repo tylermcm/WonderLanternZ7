@@ -1,0 +1,436 @@
+{
+  "schema": 1,
+  "diagnostic_hle": true,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "evidence_checks_passed": true,
+  "runs": [
+    {
+      "checks": [
+        {
+          "name": "pre-splash-display-is-black",
+          "passed": true
+        },
+        {
+          "name": "first-render-intercepted-before-normal-scene",
+          "passed": true
+        },
+        {
+          "name": "one-ui-init-entry-before-first-display",
+          "passed": true
+        },
+        {
+          "name": "native-resource-initializer-once",
+          "passed": true
+        },
+        {
+          "name": "native-init-consumes-guard",
+          "passed": true
+        },
+        {
+          "name": "host-one-shot-armed-by-native-init",
+          "passed": true
+        },
+        {
+          "name": "no-postboot-navigation-before-splash",
+          "passed": true
+        },
+        {
+          "name": "caller-register-context-restored",
+          "passed": true
+        },
+        {
+          "name": "caller-scratch-restored",
+          "passed": true
+        },
+        {
+          "name": "encoded-png-and-heap-guards-unchanged",
+          "passed": true
+        },
+        {
+          "name": "descriptor-trailing-guard-intact",
+          "passed": true
+        },
+        {
+          "name": "native-header-decoder-and-gpu-path-observed",
+          "passed": true
+        },
+        {
+          "name": "automatic-full-lcd-exact-pixels",
+          "passed": true
+        },
+        {
+          "name": "native-task-delays-complete",
+          "passed": true
+        },
+        {
+          "name": "splash-survives-running-guest-hold",
+          "passed": true
+        },
+        {
+          "name": "bounded-host-hold-completes",
+          "passed": true
+        },
+        {
+          "name": "caller-register-context-restored",
+          "passed": true
+        },
+        {
+          "name": "caller-scratch-restored",
+          "passed": true
+        },
+        {
+          "name": "encoded-png-and-heap-guards-unchanged",
+          "passed": true
+        },
+        {
+          "name": "descriptor-trailing-guard-intact",
+          "passed": true
+        },
+        {
+          "name": "native-header-decoder-and-gpu-path-observed",
+          "passed": true
+        },
+        {
+          "name": "native-black-backing-restored",
+          "passed": true
+        },
+        {
+          "name": "normal-menu-appears-after-splash",
+          "passed": true
+        },
+        {
+          "name": "native-menu-focus-navigation-changes-scene",
+          "passed": true
+        },
+        {
+          "name": "post-splash-menu-navigation-restores-scene",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-0-menu",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-0-menu",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-1-menu",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-1-menu",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-2-left",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-2-left",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-3-right",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-3-right",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-4-down",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-4-down",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-5-up",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-5-up",
+          "passed": true
+        },
+        {
+          "name": "native-resource-init-not-reentered",
+          "passed": true
+        },
+        {
+          "name": "outer-ui-init-reentered-without-resource-reinit",
+          "passed": true
+        },
+        {
+          "name": "single-presentation-no-rearm",
+          "passed": true
+        },
+        {
+          "name": "normal-guest-running-after-cycle",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "native_startup_events": [
+        {
+          "phase": "boot",
+          "pc": "0x102697f4",
+          "guard": 1,
+          "source": "run-to"
+        },
+        {
+          "phase": "boot",
+          "pc": "0x103f9c0a",
+          "guard": 1,
+          "source": "run-to"
+        },
+        {
+          "phase": "boot",
+          "pc": "0x1026984a",
+          "guard": 1,
+          "source": "run-to"
+        },
+        {
+          "phase": "key-menu",
+          "pc": "0x102697f4",
+          "guard": null,
+          "source": "native-call-trace"
+        }
+      ],
+      "image_size": [
+        720,
+        480
+      ],
+      "encoded_png_bytes": 13121,
+      "lcd_rgb_sha256": "9d5ad01c7259c7d4f650ec16252b8353846312e2de6bf60cf7dec0ffacfd96f4",
+      "boot_key_actions": [
+        "menu"
+      ],
+      "first_visible_scene": "splash",
+      "presentations": 1,
+      "held_frames": 27,
+      "host_hold_seconds": 2.016
+    },
+    {
+      "checks": [
+        {
+          "name": "pre-splash-display-is-black",
+          "passed": true
+        },
+        {
+          "name": "first-render-intercepted-before-normal-scene",
+          "passed": true
+        },
+        {
+          "name": "one-ui-init-entry-before-first-display",
+          "passed": true
+        },
+        {
+          "name": "native-resource-initializer-once",
+          "passed": true
+        },
+        {
+          "name": "native-init-consumes-guard",
+          "passed": true
+        },
+        {
+          "name": "host-one-shot-armed-by-native-init",
+          "passed": true
+        },
+        {
+          "name": "no-postboot-navigation-before-splash",
+          "passed": true
+        },
+        {
+          "name": "caller-register-context-restored",
+          "passed": true
+        },
+        {
+          "name": "caller-scratch-restored",
+          "passed": true
+        },
+        {
+          "name": "encoded-png-and-heap-guards-unchanged",
+          "passed": true
+        },
+        {
+          "name": "descriptor-trailing-guard-intact",
+          "passed": true
+        },
+        {
+          "name": "native-header-decoder-and-gpu-path-observed",
+          "passed": true
+        },
+        {
+          "name": "automatic-full-lcd-exact-pixels",
+          "passed": true
+        },
+        {
+          "name": "native-task-delays-complete",
+          "passed": true
+        },
+        {
+          "name": "splash-survives-running-guest-hold",
+          "passed": true
+        },
+        {
+          "name": "bounded-host-hold-completes",
+          "passed": true
+        },
+        {
+          "name": "caller-register-context-restored",
+          "passed": true
+        },
+        {
+          "name": "caller-scratch-restored",
+          "passed": true
+        },
+        {
+          "name": "encoded-png-and-heap-guards-unchanged",
+          "passed": true
+        },
+        {
+          "name": "descriptor-trailing-guard-intact",
+          "passed": true
+        },
+        {
+          "name": "native-header-decoder-and-gpu-path-observed",
+          "passed": true
+        },
+        {
+          "name": "native-black-backing-restored",
+          "passed": true
+        },
+        {
+          "name": "normal-menu-appears-after-splash",
+          "passed": true
+        },
+        {
+          "name": "native-menu-focus-navigation-changes-scene",
+          "passed": true
+        },
+        {
+          "name": "post-splash-menu-navigation-restores-scene",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-0-menu",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-0-menu",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-1-menu",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-1-menu",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-2-left",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-2-left",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-3-right",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-3-right",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-4-down",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-4-down",
+          "passed": true
+        },
+        {
+          "name": "guard-remains-consumed-after-5-up",
+          "passed": true
+        },
+        {
+          "name": "no-splash-after-5-up",
+          "passed": true
+        },
+        {
+          "name": "native-resource-init-not-reentered",
+          "passed": true
+        },
+        {
+          "name": "outer-ui-init-reentered-without-resource-reinit",
+          "passed": true
+        },
+        {
+          "name": "single-presentation-no-rearm",
+          "passed": true
+        },
+        {
+          "name": "normal-guest-running-after-cycle",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "native_startup_events": [
+        {
+          "phase": "boot",
+          "pc": "0x102697f4",
+          "guard": 1,
+          "source": "run-to"
+        },
+        {
+          "phase": "boot",
+          "pc": "0x103f9c0a",
+          "guard": 1,
+          "source": "run-to"
+        },
+        {
+          "phase": "boot",
+          "pc": "0x1026984a",
+          "guard": 1,
+          "source": "run-to"
+        },
+        {
+          "phase": "key-menu",
+          "pc": "0x102697f4",
+          "guard": null,
+          "source": "native-call-trace"
+        }
+      ],
+      "image_size": [
+        720,
+        480
+      ],
+      "encoded_png_bytes": 13121,
+      "lcd_rgb_sha256": "9d5ad01c7259c7d4f650ec16252b8353846312e2de6bf60cf7dec0ffacfd96f4",
+      "boot_key_actions": [
+        "menu"
+      ],
+      "first_visible_scene": "splash",
+      "presentations": 1,
+      "held_frames": 25,
+      "host_hold_seconds": 2.063
+    }
+  ],
+  "native_guard": "0xa1822d68",
+  "ui_initializer": "0x102697f4",
+  "post_resource_arm_observation": "0x1026984a",
+  "firmware_built": false,
+  "candidate_cleared": false,
+  "limitations": [
+    "One-shot scheduling and timed dismissal are host-side emulator policy; no installed firmware hook.",
+    "Native guard/init observed in assisted cold boot and menu exit/re-entry; physical wake/reinitialization semantics unknown.",
+    "Boot uses existing synthetic power/system state and MENU setup. Its first render is intercepted before visible menu pixels; live-view startup is not tested.",
+    "Timeout uses host monotonic seconds with native render-task delays and a native black-image cleanup, not a production firmware lifecycle handler.",
+    "No camera/card access, EVF switching, update acceptance or recovery evidence."
+  ]
+}

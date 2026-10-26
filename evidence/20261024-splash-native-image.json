@@ -1,0 +1,330 @@
+{
+  "schema": 1,
+  "audit_only": true,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "evidence_checks_passed": true,
+  "checks": [
+    {
+      "name": "exact-stock-main",
+      "passed": true
+    },
+    {
+      "name": "native-stock-entry-zero-native-result",
+      "passed": true
+    },
+    {
+      "name": "native-stock-entry-zero-dimensions",
+      "passed": true
+    },
+    {
+      "name": "native-stock-entry-zero-heap-clean",
+      "passed": true
+    },
+    {
+      "name": "synthetic-rgb-native-result",
+      "passed": true
+    },
+    {
+      "name": "synthetic-rgb-dimensions",
+      "passed": true
+    },
+    {
+      "name": "synthetic-rgb-heap-clean",
+      "passed": true
+    },
+    {
+      "name": "synthetic-rgba-native-result",
+      "passed": true
+    },
+    {
+      "name": "synthetic-rgba-dimensions",
+      "passed": true
+    },
+    {
+      "name": "synthetic-rgba-heap-clean",
+      "passed": true
+    },
+    {
+      "name": "synthetic-logo-sized-rgb-native-result",
+      "passed": true
+    },
+    {
+      "name": "synthetic-logo-sized-rgb-dimensions",
+      "passed": true
+    },
+    {
+      "name": "synthetic-logo-sized-rgb-heap-clean",
+      "passed": true
+    },
+    {
+      "name": "upper-index-clamps-to-first-native-result",
+      "passed": true
+    },
+    {
+      "name": "upper-index-clamps-to-first-dimensions",
+      "passed": true
+    },
+    {
+      "name": "upper-index-clamps-to-first-heap-clean",
+      "passed": true
+    },
+    {
+      "name": "unsupported-wrapper-mode-native-result",
+      "passed": true
+    },
+    {
+      "name": "unsupported-wrapper-mode-dimensions",
+      "passed": true
+    },
+    {
+      "name": "unsupported-wrapper-mode-heap-clean",
+      "passed": true
+    },
+    {
+      "name": "first-allocation-fails-native-result",
+      "passed": true
+    },
+    {
+      "name": "first-allocation-fails-dimensions",
+      "passed": true
+    },
+    {
+      "name": "first-allocation-fails-heap-clean",
+      "passed": true
+    },
+    {
+      "name": "second-allocation-fails-native-result",
+      "passed": true
+    },
+    {
+      "name": "second-allocation-fails-dimensions",
+      "passed": true
+    },
+    {
+      "name": "second-allocation-fails-heap-clean",
+      "passed": true
+    },
+    {
+      "name": "third-allocation-fails-native-result",
+      "passed": true
+    },
+    {
+      "name": "third-allocation-fails-dimensions",
+      "passed": true
+    },
+    {
+      "name": "third-allocation-fails-heap-clean",
+      "passed": true
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "native-stock-entry-zero",
+      "input_size": [
+        36,
+        72
+      ],
+      "synthetic_png_bytes": null,
+      "native_dimensions": [
+        36,
+        72
+      ],
+      "native_result": 1,
+      "allocation_attempts": 3,
+      "allocation_sizes": [
+        732,
+        268,
+        268
+      ],
+      "frees": 3,
+      "live_allocations": 0,
+      "abi_preserved": true
+    },
+    {
+      "name": "synthetic-rgb",
+      "input_size": [
+        32,
+        24
+      ],
+      "synthetic_png_bytes": 109,
+      "native_dimensions": [
+        32,
+        24
+      ],
+      "native_result": 1,
+      "allocation_attempts": 3,
+      "allocation_sizes": [
+        732,
+        268,
+        268
+      ],
+      "frees": 3,
+      "live_allocations": 0,
+      "abi_preserved": true
+    },
+    {
+      "name": "synthetic-rgba",
+      "input_size": [
+        32,
+        24
+      ],
+      "synthetic_png_bytes": 118,
+      "native_dimensions": [
+        32,
+        24
+      ],
+      "native_result": 1,
+      "allocation_attempts": 3,
+      "allocation_sizes": [
+        732,
+        268,
+        268
+      ],
+      "frees": 3,
+      "live_allocations": 0,
+      "abi_preserved": true
+    },
+    {
+      "name": "synthetic-logo-sized-rgb",
+      "input_size": [
+        320,
+        120
+      ],
+      "synthetic_png_bytes": 636,
+      "native_dimensions": [
+        320,
+        120
+      ],
+      "native_result": 1,
+      "allocation_attempts": 3,
+      "allocation_sizes": [
+        732,
+        268,
+        268
+      ],
+      "frees": 3,
+      "live_allocations": 0,
+      "abi_preserved": true
+    },
+    {
+      "name": "upper-index-clamps-to-first",
+      "input_size": [
+        32,
+        24
+      ],
+      "synthetic_png_bytes": 109,
+      "native_dimensions": [
+        32,
+        24
+      ],
+      "native_result": 1,
+      "allocation_attempts": 3,
+      "allocation_sizes": [
+        732,
+        268,
+        268
+      ],
+      "frees": 3,
+      "live_allocations": 0,
+      "abi_preserved": true
+    },
+    {
+      "name": "unsupported-wrapper-mode",
+      "input_size": [
+        32,
+        24
+      ],
+      "synthetic_png_bytes": 109,
+      "native_dimensions": [
+        0,
+        0
+      ],
+      "native_result": 0,
+      "allocation_attempts": 0,
+      "allocation_sizes": [],
+      "frees": 0,
+      "live_allocations": 0,
+      "abi_preserved": true
+    },
+    {
+      "name": "first-allocation-fails",
+      "input_size": [
+        32,
+        24
+      ],
+      "synthetic_png_bytes": 109,
+      "native_dimensions": [
+        0,
+        0
+      ],
+      "native_result": 0,
+      "allocation_attempts": 1,
+      "allocation_sizes": [],
+      "frees": 0,
+      "live_allocations": 0,
+      "abi_preserved": true
+    },
+    {
+      "name": "second-allocation-fails",
+      "input_size": [
+        32,
+        24
+      ],
+      "synthetic_png_bytes": 109,
+      "native_dimensions": [
+        0,
+        0
+      ],
+      "native_result": 0,
+      "allocation_attempts": 2,
+      "allocation_sizes": [
+        732
+      ],
+      "frees": 1,
+      "live_allocations": 0,
+      "abi_preserved": true
+    },
+    {
+      "name": "third-allocation-fails",
+      "input_size": [
+        32,
+        24
+      ],
+      "synthetic_png_bytes": 109,
+      "native_dimensions": [
+        0,
+        0
+      ],
+      "native_result": 0,
+      "allocation_attempts": 3,
+      "allocation_sizes": [
+        732,
+        268
+      ],
+      "frees": 2,
+      "live_allocations": 0,
+      "abi_preserved": true
+    }
+  ],
+  "native_interfaces": {
+    "resource_table": "0x10d0b7c0",
+    "table_registration": "0x104BD2EA",
+    "table_bound": "0x104BD21C",
+    "descriptor_getter": "0x104BD2F6",
+    "size_wrapper": "0x104E98A8",
+    "png_header_path": "0x104310B4"
+  },
+  "scope": "Original stock image resource getter, size wrapper, libpng header reader and memory helpers execute in Unicorn.",
+  "limitations": [
+    "Heap allocation/free are controlled, single-threaded boundaries; real allocator ownership/concurrency is unverified.",
+    "Resource table registration/bound are supplied unit inputs; no spare image ID or safe global table replacement established.",
+    "Synthetic PNG headers are read; IDAT pixels, alpha blending, CRC/error coverage and GPU/LCD drawing are unverified.",
+    "Upper-bound normalization tested; negative/untrusted image IDs are not cleared for use.",
+    "No power-on notification, once-per-boot behavior, dismissal, LCD/EVF switching or wake timing established.",
+    "No new firmware image, camera/card access, update acceptance or recovery evidence."
+  ],
+  "pixel_decode_verified": false,
+  "startup_hook_identified": false,
+  "firmware_built": false,
+  "candidate_cleared": false
+}

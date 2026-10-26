@@ -1,5 +1,17 @@
 # 尼康 Z7 滤镜/胶片模拟移植可行性分析
 
+> **Independent review correction — October 24, 2026:** the original Z7/Z6
+> [Nikon manual](https://onlinemanual.nikonimglib.com/z7_z6/en/07_the_i_button_02.html)
+> already documents the 20 Creative Picture Controls. The inherited claims below
+> that these are absent/dormant on the original model are superseded. Nikon also
+> [documents NP3 separately from Flexible Color compatibility](https://nikonimglib.com/nxstdo/onlinehelp/en/copy_custom_picture_controls_50.html);
+> NP3 alone does not mean EXPEED 7/Flexible Color. Read the independent lab's
+> [film-roll assessment](../../FILM_ROLL_FEASIBILITY.md) before using this report.
+> Its claimed parser model-field derivation is also unsubstantiated: original
+> 0x102D8562 stores a supplied context word; the 0x04390080 comparison follows
+> another operation at 0x102D8566. The inherited text is retained as provenance,
+> not approval to construct profiles or patch a supposedly hidden subsystem.
+
 > 结论先行：**Z7 C 3.80 固件内已经存在 20 种创意优化校准（Creative Picture Control）的完整名称表、枚举映射与分类服务层代码**，且第二轮逆向进一步确认：**创意基础枚举值（0x0801-0x0814）就写在 Z7 自己的固件映射表里，自定义优化校准文件解析器明确接受创意参数记录族（0x800 族）**（本文件第 5 章实逆向证据）。「把滤镜/胶片模拟移植进 Z7 固件」最现实的路线不是跨机型搬运代码，而是**启用本机休眠子系统**（m900 先例同模式），其中**路线 A（构造 NCP/PICCON 文件从卡加载）已具备全部文件层证据，可直接进入造文件实测**；Rich Tone 系列与云创配方则因 EXPEED 7 依赖在当前阶段不可行。全部结论均基于离线逆向与公开资料，**未经真机实测**。
 
 分析日期：2026-10-15。分析对象：`Z_7_0380.bin`（SHA-256 `07cf1951...441a2`，已校验为原厂镜像）。

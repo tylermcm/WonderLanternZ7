@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "date_local": "2026-10-25",
+  "timezone": "America/Denver",
+  "evidence_kind": "owner report in chat",
+  "associated_staged_eg_sha256": "ae46a48d52f4a89dac7c54bf63fc4b6d40b6c7d5adc49f67335e8b50fe97973b",
+  "associated_main_sha256": "2762ccd5276e1c4720c06e26f636c6c551cafe3772eb6d24400b769c200cd348",
+  "features": [
+    "grid"
+  ],
+  "custom_journal_hooks": false,
+  "owner_confirmed": {
+    "initial_grid_success": true,
+    "initial_off_on_retained_selected_3x3_spacing": true,
+    "later_delayed_reversion_to_4x4": true,
+    "off_less_than_approximately_three_seconds_retains_3x3": true,
+    "off_longer_than_approximately_three_seconds_resets_4x4": true
+  },
+  "independently_observed": false,
+  "camera_firmware_readback": false,
+  "retention_mechanism": "Untraced. The compiled workspace initializer defaults to 4x4 when executed; equating it with every normal off/on was an unverified assumption.",
+  "untested": [
+    "battery-removal restart",
+    "battery removal and long-term loss of power",
+    "full LCD and EVF coverage",
+    "all menu choices",
+    "standby and wake",
+    "recorded-image inspection",
+    "stock rollback",
+    "emergency recovery"
+  ],
+  "scope": "Owner reports physical grid operation and manually counted approximate off-duration threshold. Rapid off/on under roughly three seconds retains 3x3; longer off returns to 4x4. No camera readback, new firmware or independent hardware measurement.",
+  "reliable_persistence_established": false,
+  "retention_timing": {
+    "approximate_threshold_seconds": 3,
+    "timing_method": "owner counted off duration",
+    "under_threshold": "3x3 retained on restart",
+    "over_threshold": "4x4 restored on restart",
+    "exact_boundary_and_repetition_count": "unspecified",
+    "off_time_vs_running_time": "off duration confirmed by owner"
+  }
+}

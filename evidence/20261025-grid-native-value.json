@@ -1,0 +1,452 @@
+{
+  "schema": 1,
+  "scope": "Audit the existing-scalar grid experiment with original Z7 instructions.\n\nFresh instances carry only synthetic internal flash bytes. Native scalar reads,\nraw writes, startup validation, main journal and worker instructions execute.\nOS/event/flash, UI-service/widget and viewport boundaries are supplied. This\ndoes not verify physical storage, all property consumers or camera recovery.",
+  "main_payload_sha256": "7f29bfda937c90261eff989d5f27dbf71ca2b142308b70879b1a7ef3d46c4075",
+  "checks": [
+    {
+      "name": "no-custom-workspace-or-journal-feature",
+      "passed": true
+    },
+    {
+      "name": "stock-heap-or-journal-entry-0x101e3da0",
+      "passed": true
+    },
+    {
+      "name": "stock-heap-or-journal-entry-0x10070a16",
+      "passed": true
+    },
+    {
+      "name": "stock-heap-or-journal-entry-0x101aebae",
+      "passed": true
+    },
+    {
+      "name": "stock-heap-or-journal-entry-0x101aec44",
+      "passed": true
+    },
+    {
+      "name": "stock-heap-or-journal-entry-0x100709ca",
+      "passed": true
+    },
+    {
+      "name": "native-getter-differential-stored-0",
+      "passed": true
+    },
+    {
+      "name": "native-getter-preserves-original-nzcvq-0",
+      "passed": true
+    },
+    {
+      "name": "getter-never-modifies-stored-scalar-0",
+      "passed": true
+    },
+    {
+      "name": "full-native-UI-get-chain-stored-0",
+      "passed": true
+    },
+    {
+      "name": "native-visibility-predicate-stored-0",
+      "passed": true
+    },
+    {
+      "name": "native-getter-differential-stored-1",
+      "passed": true
+    },
+    {
+      "name": "native-getter-preserves-original-nzcvq-1",
+      "passed": true
+    },
+    {
+      "name": "getter-never-modifies-stored-scalar-1",
+      "passed": true
+    },
+    {
+      "name": "full-native-UI-get-chain-stored-1",
+      "passed": true
+    },
+    {
+      "name": "native-visibility-predicate-stored-1",
+      "passed": true
+    },
+    {
+      "name": "native-getter-differential-stored-2",
+      "passed": true
+    },
+    {
+      "name": "native-getter-preserves-original-nzcvq-2",
+      "passed": true
+    },
+    {
+      "name": "getter-never-modifies-stored-scalar-2",
+      "passed": true
+    },
+    {
+      "name": "full-native-UI-get-chain-stored-2",
+      "passed": true
+    },
+    {
+      "name": "native-visibility-predicate-stored-2",
+      "passed": true
+    },
+    {
+      "name": "native-getter-differential-stored-3",
+      "passed": true
+    },
+    {
+      "name": "native-getter-preserves-original-nzcvq-3",
+      "passed": true
+    },
+    {
+      "name": "getter-never-modifies-stored-scalar-3",
+      "passed": true
+    },
+    {
+      "name": "full-native-UI-get-chain-stored-3",
+      "passed": true
+    },
+    {
+      "name": "native-visibility-predicate-stored-3",
+      "passed": true
+    },
+    {
+      "name": "native-getter-differential-stored-4294967295",
+      "passed": true
+    },
+    {
+      "name": "native-getter-preserves-original-nzcvq-4294967295",
+      "passed": true
+    },
+    {
+      "name": "getter-never-modifies-stored-scalar-4294967295",
+      "passed": true
+    },
+    {
+      "name": "full-native-UI-get-chain-stored-4294967295",
+      "passed": true
+    },
+    {
+      "name": "native-visibility-predicate-stored-4294967295",
+      "passed": true
+    },
+    {
+      "name": "stock-visibility-treats-new-value-as-off",
+      "passed": true
+    },
+    {
+      "name": "stock-grid-menu-treats-new-value-as-off",
+      "passed": true
+    },
+    {
+      "name": "compiled-choice-stores-native-value-fourths",
+      "passed": true
+    },
+    {
+      "name": "compiled-menu-current-marker-fourths",
+      "passed": true
+    },
+    {
+      "name": "compiled-choice-stores-native-value-thirds",
+      "passed": true
+    },
+    {
+      "name": "compiled-menu-current-marker-thirds",
+      "passed": true
+    },
+    {
+      "name": "UI-selection-does-not-program-flash",
+      "passed": true
+    },
+    {
+      "name": "native-packed-snapshot-can-store-third-value-in-one-byte",
+      "passed": true
+    },
+    {
+      "name": "native-event-request-and-worker-save-main",
+      "passed": true
+    },
+    {
+      "name": "fourths-also-persists-in-fresh-native-startup",
+      "passed": true
+    },
+    {
+      "name": "fourths-preserves-all-unrelated-native-records",
+      "passed": true
+    },
+    {
+      "name": "off-also-persists-in-fresh-native-startup",
+      "passed": true
+    },
+    {
+      "name": "off-preserves-all-unrelated-native-records",
+      "passed": true
+    },
+    {
+      "name": "program-cut-1-is-reached",
+      "passed": true
+    },
+    {
+      "name": "program-cut-1-loads-valid-old-or-new-grid",
+      "passed": true
+    },
+    {
+      "name": "program-cut-1-preserves-unrelated-records",
+      "passed": true
+    },
+    {
+      "name": "program-cut-269-is-reached",
+      "passed": true
+    },
+    {
+      "name": "program-cut-269-loads-valid-old-or-new-grid",
+      "passed": true
+    },
+    {
+      "name": "program-cut-269-preserves-unrelated-records",
+      "passed": true
+    },
+    {
+      "name": "supplied-program-failure-preserves-previous-valid-store",
+      "passed": true
+    },
+    {
+      "name": "patched-fresh-native-startup-loads-original-schema-and-value",
+      "passed": true
+    },
+    {
+      "name": "patched-fresh-native-startup-preserves-all-89-records",
+      "passed": true
+    },
+    {
+      "name": "patched-fresh-startup-does-not-write",
+      "passed": true
+    },
+    {
+      "name": "fresh-patched-native-visibility-on",
+      "passed": true
+    },
+    {
+      "name": "stock-fresh-native-startup-loads-original-schema-and-value",
+      "passed": true
+    },
+    {
+      "name": "stock-fresh-native-startup-preserves-all-89-records",
+      "passed": true
+    },
+    {
+      "name": "stock-fresh-startup-does-not-write",
+      "passed": true
+    },
+    {
+      "name": "fresh-stock-native-visibility-off",
+      "passed": true
+    },
+    {
+      "name": "native-off-stores-zero-and-hides",
+      "passed": true
+    },
+    {
+      "name": "native-default-reset-restores-grid-off",
+      "passed": true
+    },
+    {
+      "name": "native-save-disable-policy-is-preserved",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-0-0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-0-1",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-0-2",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-0-3",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-0-4294967295",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-1-0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-1-1",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-1-2",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-1-3",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-1-4294967295",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-2-0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-2-1",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-2-2",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-2-3",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 720, 480)-2-4294967295",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-0-0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-0-1",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-0-2",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-0-3",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-0-4294967295",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-1-0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-1-1",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-1-2",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-1-3",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-1-4294967295",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-2-0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-2-1",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-2-2",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-2-3",
+      "passed": true
+    },
+    {
+      "name": "geometry-(20, 40, 700, 440)-2-4294967295",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-0-0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-0-1",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-0-2",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-0-3",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-0-4294967295",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-1-0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-1-1",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-1-2",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-1-3",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-1-4294967295",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-2-0",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-2-1",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-2-2",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-2-3",
+      "passed": true
+    },
+    {
+      "name": "geometry-(0, 0, 640, 426)-2-4294967295",
+      "passed": true
+    }
+  ],
+  "geometry_calls": 90,
+  "scalar_differential_calls": 21130,
+  "indexed_native_property_keys": 2111,
+  "all_passed": true,
+  "native_records": 89,
+  "custom_journal_hooks": false,
+  "supplied_boundaries": [
+    "OS locks/events",
+    "in-memory flash erase/program",
+    "secondary datasets during worker/startup",
+    "UI bridge to original raw setter and widgets",
+    "viewport and visibility gates"
+  ],
+  "camera_access": false,
+  "card_access": false,
+  "full_camera_shutdown": false,
+  "physical_durability": false
+}

@@ -1,0 +1,309 @@
+{
+  "schema": 1,
+  "main_sha256": "dc6ec38c9b427374afd80be53d31d14edb4914e89f06abc73099a9e12f021f24",
+  "runs": [
+    {
+      "checks": [
+        {
+          "name": "capture-starts-black",
+          "passed": true
+        },
+        {
+          "name": "first-observed-nonblack-is-exact-splash",
+          "passed": true
+        },
+        {
+          "name": "native-menu-follows-splash",
+          "passed": true
+        },
+        {
+          "name": "firmware-state-valid",
+          "passed": true
+        },
+        {
+          "name": "firmware-one-presentation-completed",
+          "passed": true
+        },
+        {
+          "name": "firmware-render-boundary-observed",
+          "passed": true
+        },
+        {
+          "name": "firmware-first-caller-recorded",
+          "passed": true
+        },
+        {
+          "name": "firmware-state-guards-intact",
+          "passed": true
+        },
+        {
+          "name": "native-workspace-reservation-retained",
+          "passed": true
+        },
+        {
+          "name": "native-navigation-responds",
+          "passed": true
+        },
+        {
+          "name": "native-navigation-restores-scene",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-0-menu",
+          "passed": true
+        },
+        {
+          "name": "guards-after-0-menu",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-1-menu",
+          "passed": true
+        },
+        {
+          "name": "guards-after-1-menu",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-2-left",
+          "passed": true
+        },
+        {
+          "name": "guards-after-2-left",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-3-right",
+          "passed": true
+        },
+        {
+          "name": "guards-after-3-right",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-4-down",
+          "passed": true
+        },
+        {
+          "name": "guards-after-4-down",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-5-up",
+          "passed": true
+        },
+        {
+          "name": "guards-after-5-up",
+          "passed": true
+        },
+        {
+          "name": "guest-running-after-navigation",
+          "passed": true
+        },
+        {
+          "name": "screenshot-observer-clean",
+          "passed": true
+        },
+        {
+          "name": "one-observed-splash-through-navigation",
+          "passed": true
+        },
+        {
+          "name": "firmware-hold-bounded-in-qemu",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "observed_changed_frames": 172,
+      "first_nonblack_rgb_sha256": "9d5ad01c7259c7d4f650ec16252b8353846312e2de6bf60cf7dec0ffacfd96f4",
+      "expected_splash_rgb_sha256": "9d5ad01c7259c7d4f650ec16252b8353846312e2de6bf60cf7dec0ffacfd96f4",
+      "qemu_wall_hold_seconds": 8.469,
+      "host_splash_controller": false,
+      "firmware_lifecycle": true,
+      "initial_lifecycle": {
+        "phase": 3,
+        "presentations": 1,
+        "delay_result": 0,
+        "armed": 1,
+        "initialized": 1,
+        "recursive_skips": 0,
+        "render_entries": 37,
+        "completed": 1,
+        "guards_intact": true
+      },
+      "final_lifecycle": {
+        "phase": 3,
+        "presentations": 1,
+        "delay_result": 0,
+        "armed": 1,
+        "initialized": 1,
+        "recursive_skips": 0,
+        "render_entries": 212,
+        "completed": 1,
+        "guards_intact": true
+      }
+    },
+    {
+      "checks": [
+        {
+          "name": "capture-starts-black",
+          "passed": true
+        },
+        {
+          "name": "first-observed-nonblack-is-exact-splash",
+          "passed": true
+        },
+        {
+          "name": "native-menu-follows-splash",
+          "passed": true
+        },
+        {
+          "name": "firmware-state-valid",
+          "passed": true
+        },
+        {
+          "name": "firmware-one-presentation-completed",
+          "passed": true
+        },
+        {
+          "name": "firmware-render-boundary-observed",
+          "passed": true
+        },
+        {
+          "name": "firmware-first-caller-recorded",
+          "passed": true
+        },
+        {
+          "name": "firmware-state-guards-intact",
+          "passed": true
+        },
+        {
+          "name": "native-workspace-reservation-retained",
+          "passed": true
+        },
+        {
+          "name": "native-navigation-responds",
+          "passed": true
+        },
+        {
+          "name": "native-navigation-restores-scene",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-0-menu",
+          "passed": true
+        },
+        {
+          "name": "guards-after-0-menu",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-1-menu",
+          "passed": true
+        },
+        {
+          "name": "guards-after-1-menu",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-2-left",
+          "passed": true
+        },
+        {
+          "name": "guards-after-2-left",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-3-right",
+          "passed": true
+        },
+        {
+          "name": "guards-after-3-right",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-4-down",
+          "passed": true
+        },
+        {
+          "name": "guards-after-4-down",
+          "passed": true
+        },
+        {
+          "name": "no-rearm-after-5-up",
+          "passed": true
+        },
+        {
+          "name": "guards-after-5-up",
+          "passed": true
+        },
+        {
+          "name": "guest-running-after-navigation",
+          "passed": true
+        },
+        {
+          "name": "screenshot-observer-clean",
+          "passed": true
+        },
+        {
+          "name": "one-observed-splash-through-navigation",
+          "passed": true
+        },
+        {
+          "name": "firmware-hold-bounded-in-qemu",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "observed_changed_frames": 151,
+      "first_nonblack_rgb_sha256": "9d5ad01c7259c7d4f650ec16252b8353846312e2de6bf60cf7dec0ffacfd96f4",
+      "expected_splash_rgb_sha256": "9d5ad01c7259c7d4f650ec16252b8353846312e2de6bf60cf7dec0ffacfd96f4",
+      "qemu_wall_hold_seconds": 4.235,
+      "host_splash_controller": false,
+      "firmware_lifecycle": true,
+      "initial_lifecycle": {
+        "phase": 3,
+        "presentations": 1,
+        "delay_result": 0,
+        "armed": 1,
+        "initialized": 1,
+        "recursive_skips": 0,
+        "render_entries": 37,
+        "completed": 1,
+        "guards_intact": true
+      },
+      "final_lifecycle": {
+        "phase": 3,
+        "presentations": 1,
+        "delay_result": 0,
+        "armed": 1,
+        "initialized": 1,
+        "recursive_skips": 0,
+        "render_entries": 212,
+        "completed": 1,
+        "guards_intact": true
+      }
+    }
+  ],
+  "passed": true,
+  "firmware_built": true,
+  "firmware_lifecycle": true,
+  "host_splash_controller": false,
+  "candidate_cleared": false,
+  "camera_verified": false,
+  "limitations": [
+    "Assisted QEMU boot/power/system/MENU setup remains necessary.",
+    "QEMU GUI surface is tested; physical LCD/EVF/wake and live-view startup are unverified.",
+    "Frame polling observes sampled order, not every physical scanout.",
+    "No update package, card staging, camera access, recovery or installation clearance."
+  ],
+  "scope": "Actual private Z7 MAIN firmware in two fresh assisted QEMU guests; firmware owns splash presentation, native task delay and black cleanup. QMP observes frames only.",
+  "emulator_only": true,
+  "unit_checks": 40,
+  "framework_tests": {
+    "patch": 11,
+    "container": 3
+  },
+  "reproducible_build": true,
+  "eg_crc_zero": true
+}

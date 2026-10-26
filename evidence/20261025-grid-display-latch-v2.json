@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "scope": "Firmware-free synthetic ARM MMIO transactions in the real QEMU binary. No pixels, IRQ/completion or physical hardware validation.",
+  "binary_sha256": "c66cc3f4e3b5edae9deda9de9eb7e5992712f145b9eeea279feb1afe89a7378c",
+  "checks": [
+    {
+      "address": "0x20141620",
+      "operation": "str",
+      "value": 0,
+      "accepted": true,
+      "passed": true
+    },
+    {
+      "address": "0x20141620",
+      "operation": "str",
+      "value": 1,
+      "accepted": true,
+      "passed": true
+    },
+    {
+      "address": "0x20141620",
+      "operation": "str",
+      "value": 2,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "address": "0x20141620",
+      "operation": "ldr",
+      "value": 0,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "address": "0x20145620",
+      "operation": "str",
+      "value": 0,
+      "accepted": true,
+      "passed": true
+    },
+    {
+      "address": "0x20145620",
+      "operation": "str",
+      "value": 1,
+      "accepted": true,
+      "passed": true
+    },
+    {
+      "address": "0x20145620",
+      "operation": "str",
+      "value": 2,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "address": "0x20145620",
+      "operation": "ldr",
+      "value": 0,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "address": "0x20149620",
+      "operation": "str",
+      "value": 0,
+      "accepted": true,
+      "passed": true
+    },
+    {
+      "address": "0x20149620",
+      "operation": "str",
+      "value": 1,
+      "accepted": true,
+      "passed": true
+    },
+    {
+      "address": "0x20149620",
+      "operation": "str",
+      "value": 2,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "address": "0x20149620",
+      "operation": "ldr",
+      "value": 0,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "address": "0x20145624",
+      "operation": "str",
+      "value": 1,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "address": "0x20145620",
+      "operation": "strb",
+      "value": 1,
+      "accepted": false,
+      "passed": true
+    }
+  ],
+  "all_passed": true,
+  "camera_access": false
+}

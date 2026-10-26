@@ -1,0 +1,181 @@
+{
+  "view": "live",
+  "main_payload_sha256": "a0cda3a3c4acac326cfbc56ac9aca48b075f09c3a5742f8470a5f7da79bd508c",
+  "steps": [
+    {
+      "name": "00-off",
+      "state": [
+        1196573745,
+        0
+      ],
+      "pages": [],
+      "frame_sha256": "b3f9f2701de0a5ae1010e14338da83b3bd561c106a1abf9159fcda53dd94013f",
+      "descriptor": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "registers": [
+        7864320,
+        180,
+        31458000,
+        131074,
+        11796600,
+        131074,
+        16777216
+      ],
+      "enable": null
+    },
+    {
+      "name": "thirds",
+      "state": [
+        1196573745,
+        1
+      ],
+      "pages": [],
+      "frame_sha256": "9efb51657db731cf55136a49cd58b7f5c4e0e0e90360ac5a8984038ad750f772",
+      "descriptor": [
+        0,
+        228,
+        1024,
+        228,
+        2,
+        342,
+        0,
+        682,
+        342,
+        2,
+        9,
+        1,
+        0,
+        0,
+        0
+      ],
+      "registers": [
+        14942208,
+        342,
+        44696576,
+        65537,
+        22413540,
+        65537,
+        64542936
+      ],
+      "enable": 1
+    },
+    {
+      "name": "fourths",
+      "state": [
+        1196573745,
+        0
+      ],
+      "pages": [],
+      "frame_sha256": "6013a41e6968351ed4dd40c1244c617aab352485d1137a11daa86ba323cab1c6",
+      "descriptor": [
+        0,
+        170,
+        1024,
+        170,
+        3,
+        256,
+        0,
+        682,
+        256,
+        3,
+        9,
+        1,
+        0,
+        0,
+        0
+      ],
+      "registers": [
+        11141120,
+        256,
+        44696576,
+        65537,
+        16777386,
+        131074,
+        64542936
+      ],
+      "enable": 1
+    },
+    {
+      "name": "off-restored",
+      "state": [
+        1196573745,
+        0
+      ],
+      "pages": [],
+      "frame_sha256": "b3f9f2701de0a5ae1010e14338da83b3bd561c106a1abf9159fcda53dd94013f",
+      "descriptor": [
+        0,
+        170,
+        1024,
+        170,
+        3,
+        256,
+        0,
+        682,
+        256,
+        3,
+        9,
+        1,
+        0,
+        0,
+        0
+      ],
+      "registers": [
+        11141120,
+        256,
+        44696576,
+        65537,
+        16777386,
+        131074,
+        64542936
+      ],
+      "enable": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "thirds-native-counts-and-enable",
+      "passed": true
+    },
+    {
+      "name": "thirds-horizontal-and-vertical-pixels",
+      "passed": true
+    },
+    {
+      "name": "fourths-native-counts-and-enable",
+      "passed": true
+    },
+    {
+      "name": "fourths-horizontal-and-vertical-pixels",
+      "passed": true
+    },
+    {
+      "name": "native-off-disables-plane",
+      "passed": true
+    },
+    {
+      "name": "native-off-restores-scene-pixels",
+      "passed": true
+    }
+  ],
+  "camera_access": false,
+  "diagnostic_inputs": true,
+  "all_passed": true,
+  "session": "20261025-141908-5174",
+  "scope": "Assisted QEMU live-view probe, compiled handler and native visibility diagnostic inputs. No persistent flash reboot, native-key menu probe or physical camera verification."
+}

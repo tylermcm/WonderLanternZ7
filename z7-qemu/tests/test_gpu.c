@@ -22,6 +22,46 @@ static Z7GPUPath *rectangle(unsigned type, bool indirect, unsigned state) {
 }
 int main(void) {
     Z7GPU g={0};
+    /* Traced stock 720x480 register packet: three repeated lines per axis.
+     * Test the production LCD-grid helper, including native Off and bounds. */
+    uint32_t grid[0x1624/4] = {0};
+    grid[0x1600/4] = 120U << 16;
+    grid[0x1604/4] = 180;
+    grid[0x1608/4] = (480U << 16) | 720;
+    grid[0x160c/4] = (2U << 16) | 2;
+    grid[0x1610/4] = (180U << 16) | 120;
+    grid[0x1614/4] = (2U << 16) | 2;
+    grid[0x1618/4] = 0x01000000;
+    CHECK(!z7_lcd_grid_hit(grid, 180, 200));
+    grid[0x1620/4] = 1;
+    for (unsigned i = 1; i <= 3; i++) {
+        CHECK(z7_lcd_grid_hit(grid, 200, 120*i));
+        CHECK(z7_lcd_grid_hit(grid, 180*i, 200));
+    }
+    CHECK(!z7_lcd_grid_hit(grid, 200, 119));
+    CHECK(!z7_lcd_grid_hit(grid, 200, 122));
+    CHECK(!z7_lcd_grid_hit(grid, 720, 120));
+    CHECK(!z7_lcd_grid_hit(grid, 180, 480));
+    CHECK(!z7_lcd_grid_hit(grid, 200, 480));
+    /* Two internal lines create thirds; no third line or stock quarter. */
+    grid[0x1600/4] = 160U << 16;
+    grid[0x1604/4] = 240;
+    grid[0x1610/4] = (240U << 16) | 160;
+    grid[0x1614/4] = (1U << 16) | 1;
+    CHECK(z7_lcd_grid_hit(grid, 200, 160));
+    CHECK(z7_lcd_grid_hit(grid, 200, 320));
+    CHECK(z7_lcd_grid_hit(grid, 240, 200));
+    CHECK(z7_lcd_grid_hit(grid, 480, 200));
+    CHECK(!z7_lcd_grid_hit(grid, 200, 120));
+    CHECK(!z7_lcd_grid_hit(grid, 180, 200));
+    CHECK(!z7_lcd_grid_hit(grid, 720, 200));
+    grid[0x1610/4] = 0;
+    CHECK(!z7_lcd_grid_hit(grid, 240, 200));
+    grid[0x1610/4] = (240U << 16) | 160;
+    grid[0x1618/4] = 0x03d8d8d8;
+    CHECK(z7_lcd_grid_hit(grid, 240, 200));
+    grid[0x1618/4] = 0x02000000;
+    CHECK(!z7_lcd_grid_hit(grid, 240, 200));
     for(unsigned type=0;type<4;type++) {
         for(unsigned state=0x2100;state<=0x3100;state+=0x1000) {
             Z7GPUPath *p=rectangle(type,true,state);

@@ -1,0 +1,492 @@
+{
+  "schema": 1,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "scope": "Original Z7 geometry and soft-float instructions; supplied viewport and crop-property boundaries. No display, GPU or physical camera validation.",
+  "original_menu_page": "0x153",
+  "original_property": "0x102D",
+  "original_builder": "0x10376da0",
+  "count_table": "0x1064fd90",
+  "native_calls": 90,
+  "checks": [
+    {
+      "name": "six-original-count-fields-equal-three",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop0-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop0-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop1-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop1-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop2-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop2-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop4-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop4-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop8-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode0-crop8-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop0-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop0-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop1-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop1-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop2-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop2-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop4-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop4-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop8-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode1-crop8-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop0-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop0-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop1-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop1-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop2-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop2-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop4-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop4-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop8-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 720, 480)-mode2-crop8-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop0-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop0-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop1-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop1-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop2-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop2-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop4-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop4-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop8-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode0-crop8-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop0-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop0-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop1-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop1-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop2-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop2-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop4-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop4-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop8-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode1-crop8-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop0-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop0-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop1-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop1-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop2-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop2-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop4-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop4-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop8-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(20, 40, 700, 440)-mode2-crop8-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop0-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop0-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop1-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop1-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop2-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop2-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop4-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop4-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop8-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode0-crop8-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop0-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop0-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop1-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop1-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop2-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop2-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop4-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop4-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop8-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode1-crop8-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop0-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop0-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop1-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop1-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop2-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop2-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop4-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop4-preserves-extents-style-and-native-offsets",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop8-counts-and-third-spacing",
+      "passed": true
+    },
+    {
+      "name": "(0, 0, 640, 426)-mode2-crop8-preserves-extents-style-and-native-offsets",
+      "passed": true
+    }
+  ],
+  "examples": [
+    {
+      "mode": 0,
+      "stock": [
+        0,
+        120,
+        720,
+        120,
+        3,
+        180,
+        0,
+        480,
+        180,
+        3,
+        9,
+        1,
+        0,
+        0,
+        0
+      ],
+      "thirds": [
+        0,
+        160,
+        720,
+        160,
+        2,
+        240,
+        0,
+        480,
+        240,
+        2,
+        9,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": 1,
+      "stock": [
+        -2,
+        118,
+        720,
+        120,
+        3,
+        178,
+        -2,
+        480,
+        180,
+        3,
+        9,
+        4,
+        0,
+        0,
+        0
+      ],
+      "thirds": [
+        -2,
+        158,
+        720,
+        160,
+        2,
+        238,
+        -2,
+        480,
+        240,
+        2,
+        9,
+        4,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": 2,
+      "stock": [
+        -2,
+        118,
+        720,
+        120,
+        3,
+        180,
+        0,
+        480,
+        180,
+        3,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "thirds": [
+        -2,
+        158,
+        720,
+        160,
+        2,
+        240,
+        0,
+        480,
+        240,
+        2,
+        10,
+        2,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "camera_access": false,
+  "firmware_export": false,
+  "all_passed": true
+}
