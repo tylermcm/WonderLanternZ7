@@ -34,9 +34,10 @@ class NativeValueGrid(SettingsFixture):
         self.worker, self.waits, self.worker_finished = False, 0, False
         self.program_count, self.cut_after = 0, None
         self.viewport = (0, 0, 720, 480)
+        self.viewport_type, self.geometry_notifications = 1, []
         for address in (0x104065B0, 0x103FBB5C, 0x103FCF0E, 0x103FB344,
                         0x10405F00, 0x10402BC2, 0x10404CD8, 0x10437190,
-                        0x10377010, 0x103EA09E, 0x101F447A, 0x10170BEE):
+                        0x10377010, 0x103EA09E, 0x101F447A, 0x10170BEE, 0x103EA7B6):
             self.u.hook_add(UC_HOOK_CODE, self.extra_hook, begin=address, end=address)
         self.u.hook_add(UC_HOOK_CODE, self.secondary_save, begin=0x101AEA60, end=0x101AEA60)
 
@@ -72,7 +73,7 @@ class NativeValueGrid(SettingsFixture):
     def extra_hook(self, u, address, size, context):
         r0, r1, r2 = (u.reg_read(r) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2))
         if address == 0x104065B0:
-            if r0 != 0x102D or r1 not in (0, 1, 2):
+            if r0 != 0x102D or r1 not in range(6):
                 raise AssertionError('Unexpected UI bridge input')
             self.setters.append(r1)
             # Supply UI service dispatch, then run the real native raw setter.
@@ -96,7 +97,12 @@ class NativeValueGrid(SettingsFixture):
         elif address == 0x10437190:
             for offset in (8, 0x14):
                 u.mem_write(r0 + offset, struct.pack('<4h', *self.viewport))
-            u.mem_write(r0 + 0x28, b'\1')
+            u.mem_write(r0 + 0x28, bytes([self.viewport_type]))
+            self.ret(0)
+        elif address == 0x103EA7B6:
+            if (r0, r1) != (0x33, 0):
+                raise AssertionError('Unexpected grid geometry notification')
+            self.geometry_notifications.append(bytes(u.mem_read(DESCRIPTOR, 32)))
             self.ret(0)
         elif address == 0x10377010:
             self.ret(1)
@@ -161,6 +167,13 @@ def audit(stock, image, report):
     def check(name, condition):
         checks.append(dict(name=name, passed=bool(condition)))
     funcs = {k: int(v, 16) for k, v in report['features']['grid']['functions'].items()}
+    expanded = report['preset'] == 'grid-layouts-emulator-only'
+    layouts = report['features']['grid'].get('layouts', [
+        dict(function='fourths', stored_value=1, control_id=0x1901, label='4x4 grid'),
+        dict(function='thirds', stored_value=2, control_id=0x7A30, label='3x3 grid'),
+        dict(function='off', stored_value=0, control_id=0x1902, label='Off')])
+    normalized = (2, 3, 4, 5) if expanded else (2,)
+    stored_cases = (0, 1, 2, 3, 4, 5, 6, 0xFFFFFFFF) if expanded else (0, 1, 2, 3, 0xFFFFFFFF)
     check('no-custom-workspace-or-journal-feature', report['features']['grid']['state_bytes'] == 0
           and 'settings' not in report['features'])
     for address, size in ((0x101E3DA0, 12), (0x10070A16, 14), (0x101AEBAE, 12),
@@ -178,21 +191,21 @@ def audit(stock, image, report):
                 raise AssertionError('Unexpected native scalar group bound')
             keys.extend((group << 8) | low for low in range(count))
     keys += [0xFFFF, 0x4800]
-    for stored in (0, 1, 2, 3, 0xFFFFFFFF):
+    for stored in stored_cases:
         a.set_raw(stored); b.set_raw(stored)
         same, flags_same = True, True
         for key in keys:
             ar, br = a.scalar(key, MEM), b.scalar(key, MEM)
             av, bv = a.word(MEM), b.word(MEM)
-            same &= ar == br and av == (1 if key == 0x102D and stored == 2 else bv)
+            same &= ar == br and av == (1 if key == 0x102D and stored in normalized else bv)
             flags_same &= a.scalar_flags == b.scalar_flags
         check('native-getter-differential-stored-' + str(stored), same)
         check('native-getter-preserves-original-nzcvq-' + str(stored), flags_same)
         check('getter-never-modifies-stored-scalar-' + str(stored), a.word(GRID_VALUE) == stored)
         check('full-native-UI-get-chain-stored-' + str(stored),
-              a.call(0x104065A4, 0x102D) == (1 if stored == 2 else stored))
+              a.call(0x104065A4, 0x102D) == (1 if stored in normalized else stored))
         check('native-visibility-predicate-stored-' + str(stored),
-              a.call(0x1037723E) == int(stored in (1, 2)))
+              a.call(0x1037723E) == int(stored in (1, *normalized)))
     b.set_raw(2)
     check('stock-visibility-treats-new-value-as-off', b.call(0x1037723E) == 0)
     b.u.mem_write(0xA1836F8C + 36, struct.pack('<I', MEM + 0x10000))
@@ -200,20 +213,30 @@ def audit(stock, image, report):
     check('stock-grid-menu-treats-new-value-as-off', b.marks == [(0x1902, 1)])
     del b
     gc.collect()
-    for name, stored, control in (('fourths', 1, 0x1901), ('thirds', 2, 0x7A30)):
+    for layout in layouts[:-1]:
+        name, stored, control = (layout[k] for k in ('function', 'stored_value', 'control_id'))
         a.call(funcs[name])
         check('compiled-choice-stores-native-value-' + name, a.word(GRID_VALUE) == stored)
         a.labels.clear(); a.rows.clear(); a.marks.clear()
         a.u.mem_write(0xA1836F8C + 36, struct.pack('<I', MEM + 0x10000))
         a.call(funcs['enter'], 0xA1836F8C)
         check('compiled-menu-current-marker-' + name, a.marks == [(control, 1)]
-              and a.labels == [(39, '4x4 grid'), (40, '3x3 grid'), (41, 'Off')])
+              and a.labels == [(39 + i, layout['label']) for i, layout in enumerate(layouts)]
+              and a.rows == list(range(39, 39 + len(layouts))))
     check('UI-selection-does-not-program-flash', not a.operations)
+    a.call(funcs['thirds'])
     a.u.mem_write(0xA20A6D48, bytes([0x5A]) * 0x384)
     a.call(0x100B9E6C, 0xA20A6D48, 0x102D, 2)
     check('native-packed-snapshot-can-store-third-value-in-one-byte',
           bytes(a.u.mem_read(0xA20A6D48, 0x384))
           == bytes([0x5A]) * 0x29C + b'\2' + bytes([0x5A]) * (0x384 - 0x29D))
+    if expanded:
+        for stored in (0, 1, 3, 4, 5):
+            a.u.mem_write(0xA20A6D48, bytes([0x5A]) * 0x384)
+            a.call(0x100B9E6C, 0xA20A6D48, 0x102D, stored)
+            check(f'packed-snapshot-stores-only-layout-byte-{stored}',
+                  bytes(a.u.mem_read(0xA20A6D48, 0x384)) == bytes([0x5A]) * 0x29C
+                  + bytes([stored]) + bytes([0x5A]) * (0x384 - 0x29D))
     before = a.payloads()
     a.save_worker()
     check('native-event-request-and-worker-save-main', a.worker_finished
@@ -222,7 +245,8 @@ def audit(stock, image, report):
     saved = a.journal()
     del a
     gc.collect()
-    for choice, stored in (('fourths', 1), ('off', 0)):
+    for choice, stored in [('fourths', 1), ('off', 0)] + (
+            [(layout['function'], layout['stored_value']) for layout in layouts[2:-1]] if expanded else []):
         a = NativeValueGrid(image, saved)
         a.initialize(); a.call(0x10117594)
         a.call(0x104F5592 if choice == 'off' else funcs[choice])
@@ -236,8 +260,26 @@ def audit(stock, image, report):
         check(choice + '-also-persists-in-fresh-native-startup', a.word(GRID_VALUE) == stored)
         check(choice + '-preserves-all-unrelated-native-records',
               all(payload == before[i] for i, payload in enumerate(a.payloads()) if i != 49))
+        if expanded and stored > 2:
+            check(choice + '-fresh-native-visibility-on', a.call(0x1037723E) == 1)
+            a.u.mem_write(0xA1836F8C + 36, struct.pack('<I', MEM + 0x10000))
+            a.call(funcs['enter'], 0xA1836F8C)
+            check(choice + '-fresh-native-layout-menu',
+                  a.marks == [(next(layout['control_id'] for layout in layouts
+                                   if layout['stored_value'] == stored), 1)])
         del a
         gc.collect()
+        if expanded and stored > 2:
+            a = NativeValueGrid(stock, changed)
+            a.initialize(); a.call(0x10117594)
+            check(choice + '-stock-loads-scalar-without-writing',
+                  a.word(GRID_VALUE) == stored and not a.operations
+                  and a.word(WORKER_STATE) == 1 and a.call(0x1037723E) == 0)
+            a.u.mem_write(0xA1836F8C + 36, struct.pack('<I', MEM + 0x10000))
+            a.call(0x104EFA6A, 0xA1836F8C)
+            check(choice + '-stock-menu-treats-as-off', a.marks == [(0x1902, 1)])
+            del a
+            gc.collect()
     for cut in sorted({1, total_programs}):
         a = NativeValueGrid(image, saved)
         a.initialize(); a.call(0x10117594); a.call(funcs['fourths'])
@@ -301,17 +343,48 @@ def audit(stock, image, report):
         ref = GridFixture(stock, viewport, 0)
         a = NativeValueGrid(image); a.initialize(); a.viewport = viewport
         for mode in range(3):
-            for stored in (0, 1, 2, 3, 0xFFFFFFFF):
+            for crop in ((0, 1, 2, 4, 8) if expanded else (0,)):
+                ref.crop = crop
+                a.call(0x100704FA, 0x402, crop, MEM + 0x800)
+                for stored in stored_cases:
+                    a.set_raw(stored)
+                    a.call(0x10376DA0, mode)
+                    actual = struct.unpack('<hhIHHhhIHHHHBBH', a.u.mem_read(DESCRIPTOR, 32))
+                    count = {2: 2, 3: 2, 4: 1, 5: 5}.get(stored, 3) if expanded else (2 if stored == 2 else 3)
+                    expected = ref.geometry(mode, count)
+                    geometry_calls += 2
+                    same = actual == expected
+                    if expanded and stored == 3:
+                        # Independent geometric oracle: exact phi fractions,
+                        # allowing <1px Q16 rounding, while preserving Nikon's
+                        # crop offsets, line extents, counts and styling.
+                        same = all(actual[i] == expected[i] for i in (0, 2, 4, 6, 7, 9, 10, 11, 12, 13, 14))
+                        for origin, interval, span in ((1, 3, 7), (5, 8, 2)):
+                            base = expected[origin] - expected[interval]
+                            first = actual[origin] - base
+                            exact = expected[span] * ((3 - 5 ** .5) / 2)
+                            same &= abs(first - exact) < 1
+                            same &= 2 * first + actual[interval] == expected[span]
+                    check(f'geometry-{viewport}-{mode}-crop{crop}-{stored}', same)
+        if expanded:
+            # Exercise the other displaced native tail branch. The original
+            # event must see the finished golden descriptor, not the temporary
+            # thirds geometry that was used to compute Nikon's crop offsets.
+            for stored in range(6):
                 a.set_raw(stored)
-                a.call(0x10376DA0, mode)
-                actual = bytes(a.u.mem_read(DESCRIPTOR, 32))
-                expected = struct.pack('<hhIHHhhIHHHHBBH', *ref.geometry(mode, 2 if stored == 2 else 3))
+                a.viewport_type = 1
+                a.call(0x10376DA0, 0)
+                expected = bytes(a.u.mem_read(DESCRIPTOR, 32))
+                a.viewport_type = 0
+                a.call(0x10376DA0, 0)
                 geometry_calls += 2
-                check(f'geometry-{viewport}-{mode}-{stored}', actual == expected)
+                check(f'viewport-notification-{viewport}-{stored}',
+                      a.geometry_notifications[-1] == expected
+                      and bytes(a.u.mem_read(DESCRIPTOR, 32)) == expected)
         del a, ref
         gc.collect()
     return dict(schema=1, scope=__doc__.strip(), main_payload_sha256=report['main_payload_sha256'],
-                checks=checks, geometry_calls=geometry_calls, scalar_differential_calls=len(keys)*5*2,
+                checks=checks, geometry_calls=geometry_calls, scalar_differential_calls=len(keys)*len(stored_cases)*2,
                 indexed_native_property_keys=len(keys)-2,
                 all_passed=all(c['passed'] for c in checks), native_records=89,
                 custom_journal_hooks=False, supplied_boundaries=['OS locks/events', 'in-memory flash erase/program',
@@ -330,7 +403,7 @@ def main():
     binary, report_path = [args.build / ('grid.emulator.' + ext) for ext in ('main.bin', 'json')]
     validate_candidate(binary, report_path, args.container)
     report = json.loads(report_path.read_text())
-    if report['preset'] != 'grid-native-value-emulator-only':
+    if report['preset'] not in ('grid-native-value-emulator-only', 'grid-layouts-emulator-only'):
         p.error('Requires native-value experiment')
     result = audit(args.stock.read_bytes(), binary.read_bytes(), report)
     args.output.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')

@@ -1,0 +1,2340 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "independent_modified_work": true,
+  "preset": "grid-layouts-emulator-only",
+  "main_payload_sha256": "6485b0a579eb469701bcb89c442ab6b7faa1cea748dd3716cc524e500595b97f",
+  "eg_sha256": "437e1f8edbb89f1409ad768dcf50e91725280481561fcaa8f0f161cc64e5dccc",
+  "main_bytes": 33056172,
+  "appended_bytes": 4084,
+  "guarded_edit_bytes": 44,
+  "layouts": [
+    {
+      "function": "fourths",
+      "label": "4x4 grid",
+      "control_id": 6401,
+      "stored_value": 1,
+      "line_count": 3
+    },
+    {
+      "function": "thirds",
+      "label": "3x3 grid",
+      "control_id": 31280,
+      "stored_value": 2,
+      "line_count": 2
+    },
+    {
+      "function": "golden",
+      "label": "Golden ratio",
+      "control_id": 31281,
+      "stored_value": 3,
+      "line_count": 2
+    },
+    {
+      "function": "center",
+      "label": "Center cross",
+      "control_id": 31282,
+      "stored_value": 4,
+      "line_count": 1
+    },
+    {
+      "function": "dense",
+      "label": "6x6 grid",
+      "control_id": 31283,
+      "stored_value": 5,
+      "line_count": 5
+    },
+    {
+      "function": "off",
+      "label": "Off",
+      "control_id": 6402,
+      "stored_value": 0,
+      "line_count": 3
+    }
+  ],
+  "instruction_audit": {
+    "schema": 1,
+    "scope": "Audit the existing-scalar grid experiment with original Z7 instructions.\n\nFresh instances carry only synthetic internal flash bytes. Native scalar reads,\nraw writes, startup validation, main journal and worker instructions execute.\nOS/event/flash, UI-service/widget and viewport boundaries are supplied. This\ndoes not verify physical storage, all property consumers or camera recovery.",
+    "main_payload_sha256": "6485b0a579eb469701bcb89c442ab6b7faa1cea748dd3716cc524e500595b97f",
+    "checks": [
+      {
+        "name": "no-custom-workspace-or-journal-feature",
+        "passed": true
+      },
+      {
+        "name": "stock-heap-or-journal-entry-0x101e3da0",
+        "passed": true
+      },
+      {
+        "name": "stock-heap-or-journal-entry-0x10070a16",
+        "passed": true
+      },
+      {
+        "name": "stock-heap-or-journal-entry-0x101aebae",
+        "passed": true
+      },
+      {
+        "name": "stock-heap-or-journal-entry-0x101aec44",
+        "passed": true
+      },
+      {
+        "name": "stock-heap-or-journal-entry-0x100709ca",
+        "passed": true
+      },
+      {
+        "name": "native-getter-differential-stored-0",
+        "passed": true
+      },
+      {
+        "name": "native-getter-preserves-original-nzcvq-0",
+        "passed": true
+      },
+      {
+        "name": "getter-never-modifies-stored-scalar-0",
+        "passed": true
+      },
+      {
+        "name": "full-native-UI-get-chain-stored-0",
+        "passed": true
+      },
+      {
+        "name": "native-visibility-predicate-stored-0",
+        "passed": true
+      },
+      {
+        "name": "native-getter-differential-stored-1",
+        "passed": true
+      },
+      {
+        "name": "native-getter-preserves-original-nzcvq-1",
+        "passed": true
+      },
+      {
+        "name": "getter-never-modifies-stored-scalar-1",
+        "passed": true
+      },
+      {
+        "name": "full-native-UI-get-chain-stored-1",
+        "passed": true
+      },
+      {
+        "name": "native-visibility-predicate-stored-1",
+        "passed": true
+      },
+      {
+        "name": "native-getter-differential-stored-2",
+        "passed": true
+      },
+      {
+        "name": "native-getter-preserves-original-nzcvq-2",
+        "passed": true
+      },
+      {
+        "name": "getter-never-modifies-stored-scalar-2",
+        "passed": true
+      },
+      {
+        "name": "full-native-UI-get-chain-stored-2",
+        "passed": true
+      },
+      {
+        "name": "native-visibility-predicate-stored-2",
+        "passed": true
+      },
+      {
+        "name": "native-getter-differential-stored-3",
+        "passed": true
+      },
+      {
+        "name": "native-getter-preserves-original-nzcvq-3",
+        "passed": true
+      },
+      {
+        "name": "getter-never-modifies-stored-scalar-3",
+        "passed": true
+      },
+      {
+        "name": "full-native-UI-get-chain-stored-3",
+        "passed": true
+      },
+      {
+        "name": "native-visibility-predicate-stored-3",
+        "passed": true
+      },
+      {
+        "name": "native-getter-differential-stored-4",
+        "passed": true
+      },
+      {
+        "name": "native-getter-preserves-original-nzcvq-4",
+        "passed": true
+      },
+      {
+        "name": "getter-never-modifies-stored-scalar-4",
+        "passed": true
+      },
+      {
+        "name": "full-native-UI-get-chain-stored-4",
+        "passed": true
+      },
+      {
+        "name": "native-visibility-predicate-stored-4",
+        "passed": true
+      },
+      {
+        "name": "native-getter-differential-stored-5",
+        "passed": true
+      },
+      {
+        "name": "native-getter-preserves-original-nzcvq-5",
+        "passed": true
+      },
+      {
+        "name": "getter-never-modifies-stored-scalar-5",
+        "passed": true
+      },
+      {
+        "name": "full-native-UI-get-chain-stored-5",
+        "passed": true
+      },
+      {
+        "name": "native-visibility-predicate-stored-5",
+        "passed": true
+      },
+      {
+        "name": "native-getter-differential-stored-6",
+        "passed": true
+      },
+      {
+        "name": "native-getter-preserves-original-nzcvq-6",
+        "passed": true
+      },
+      {
+        "name": "getter-never-modifies-stored-scalar-6",
+        "passed": true
+      },
+      {
+        "name": "full-native-UI-get-chain-stored-6",
+        "passed": true
+      },
+      {
+        "name": "native-visibility-predicate-stored-6",
+        "passed": true
+      },
+      {
+        "name": "native-getter-differential-stored-4294967295",
+        "passed": true
+      },
+      {
+        "name": "native-getter-preserves-original-nzcvq-4294967295",
+        "passed": true
+      },
+      {
+        "name": "getter-never-modifies-stored-scalar-4294967295",
+        "passed": true
+      },
+      {
+        "name": "full-native-UI-get-chain-stored-4294967295",
+        "passed": true
+      },
+      {
+        "name": "native-visibility-predicate-stored-4294967295",
+        "passed": true
+      },
+      {
+        "name": "stock-visibility-treats-new-value-as-off",
+        "passed": true
+      },
+      {
+        "name": "stock-grid-menu-treats-new-value-as-off",
+        "passed": true
+      },
+      {
+        "name": "compiled-choice-stores-native-value-fourths",
+        "passed": true
+      },
+      {
+        "name": "compiled-menu-current-marker-fourths",
+        "passed": true
+      },
+      {
+        "name": "compiled-choice-stores-native-value-thirds",
+        "passed": true
+      },
+      {
+        "name": "compiled-menu-current-marker-thirds",
+        "passed": true
+      },
+      {
+        "name": "compiled-choice-stores-native-value-golden",
+        "passed": true
+      },
+      {
+        "name": "compiled-menu-current-marker-golden",
+        "passed": true
+      },
+      {
+        "name": "compiled-choice-stores-native-value-center",
+        "passed": true
+      },
+      {
+        "name": "compiled-menu-current-marker-center",
+        "passed": true
+      },
+      {
+        "name": "compiled-choice-stores-native-value-dense",
+        "passed": true
+      },
+      {
+        "name": "compiled-menu-current-marker-dense",
+        "passed": true
+      },
+      {
+        "name": "UI-selection-does-not-program-flash",
+        "passed": true
+      },
+      {
+        "name": "native-packed-snapshot-can-store-third-value-in-one-byte",
+        "passed": true
+      },
+      {
+        "name": "packed-snapshot-stores-only-layout-byte-0",
+        "passed": true
+      },
+      {
+        "name": "packed-snapshot-stores-only-layout-byte-1",
+        "passed": true
+      },
+      {
+        "name": "packed-snapshot-stores-only-layout-byte-3",
+        "passed": true
+      },
+      {
+        "name": "packed-snapshot-stores-only-layout-byte-4",
+        "passed": true
+      },
+      {
+        "name": "packed-snapshot-stores-only-layout-byte-5",
+        "passed": true
+      },
+      {
+        "name": "native-event-request-and-worker-save-main",
+        "passed": true
+      },
+      {
+        "name": "fourths-also-persists-in-fresh-native-startup",
+        "passed": true
+      },
+      {
+        "name": "fourths-preserves-all-unrelated-native-records",
+        "passed": true
+      },
+      {
+        "name": "off-also-persists-in-fresh-native-startup",
+        "passed": true
+      },
+      {
+        "name": "off-preserves-all-unrelated-native-records",
+        "passed": true
+      },
+      {
+        "name": "golden-also-persists-in-fresh-native-startup",
+        "passed": true
+      },
+      {
+        "name": "golden-preserves-all-unrelated-native-records",
+        "passed": true
+      },
+      {
+        "name": "golden-fresh-native-visibility-on",
+        "passed": true
+      },
+      {
+        "name": "golden-fresh-native-layout-menu",
+        "passed": true
+      },
+      {
+        "name": "golden-stock-loads-scalar-without-writing",
+        "passed": true
+      },
+      {
+        "name": "golden-stock-menu-treats-as-off",
+        "passed": true
+      },
+      {
+        "name": "center-also-persists-in-fresh-native-startup",
+        "passed": true
+      },
+      {
+        "name": "center-preserves-all-unrelated-native-records",
+        "passed": true
+      },
+      {
+        "name": "center-fresh-native-visibility-on",
+        "passed": true
+      },
+      {
+        "name": "center-fresh-native-layout-menu",
+        "passed": true
+      },
+      {
+        "name": "center-stock-loads-scalar-without-writing",
+        "passed": true
+      },
+      {
+        "name": "center-stock-menu-treats-as-off",
+        "passed": true
+      },
+      {
+        "name": "dense-also-persists-in-fresh-native-startup",
+        "passed": true
+      },
+      {
+        "name": "dense-preserves-all-unrelated-native-records",
+        "passed": true
+      },
+      {
+        "name": "dense-fresh-native-visibility-on",
+        "passed": true
+      },
+      {
+        "name": "dense-fresh-native-layout-menu",
+        "passed": true
+      },
+      {
+        "name": "dense-stock-loads-scalar-without-writing",
+        "passed": true
+      },
+      {
+        "name": "dense-stock-menu-treats-as-off",
+        "passed": true
+      },
+      {
+        "name": "program-cut-1-is-reached",
+        "passed": true
+      },
+      {
+        "name": "program-cut-1-loads-valid-old-or-new-grid",
+        "passed": true
+      },
+      {
+        "name": "program-cut-1-preserves-unrelated-records",
+        "passed": true
+      },
+      {
+        "name": "program-cut-269-is-reached",
+        "passed": true
+      },
+      {
+        "name": "program-cut-269-loads-valid-old-or-new-grid",
+        "passed": true
+      },
+      {
+        "name": "program-cut-269-preserves-unrelated-records",
+        "passed": true
+      },
+      {
+        "name": "supplied-program-failure-preserves-previous-valid-store",
+        "passed": true
+      },
+      {
+        "name": "patched-fresh-native-startup-loads-original-schema-and-value",
+        "passed": true
+      },
+      {
+        "name": "patched-fresh-native-startup-preserves-all-89-records",
+        "passed": true
+      },
+      {
+        "name": "patched-fresh-startup-does-not-write",
+        "passed": true
+      },
+      {
+        "name": "fresh-patched-native-visibility-on",
+        "passed": true
+      },
+      {
+        "name": "stock-fresh-native-startup-loads-original-schema-and-value",
+        "passed": true
+      },
+      {
+        "name": "stock-fresh-native-startup-preserves-all-89-records",
+        "passed": true
+      },
+      {
+        "name": "stock-fresh-startup-does-not-write",
+        "passed": true
+      },
+      {
+        "name": "fresh-stock-native-visibility-off",
+        "passed": true
+      },
+      {
+        "name": "native-off-stores-zero-and-hides",
+        "passed": true
+      },
+      {
+        "name": "native-default-reset-restores-grid-off",
+        "passed": true
+      },
+      {
+        "name": "native-save-disable-policy-is-preserved",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop0-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop0-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop0-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop0-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop0-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop0-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop0-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop0-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop1-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop1-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop1-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop1-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop1-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop1-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop1-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop1-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop2-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop2-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop2-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop2-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop2-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop2-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop2-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop2-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop4-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop4-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop4-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop4-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop4-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop4-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop4-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop4-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop8-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop8-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop8-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop8-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop8-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop8-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop8-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-0-crop8-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop0-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop0-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop0-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop0-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop0-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop0-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop0-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop0-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop1-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop1-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop1-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop1-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop1-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop1-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop1-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop1-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop2-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop2-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop2-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop2-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop2-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop2-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop2-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop2-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop4-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop4-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop4-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop4-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop4-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop4-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop4-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop4-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop8-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop8-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop8-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop8-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop8-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop8-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop8-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-1-crop8-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop0-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop0-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop0-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop0-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop0-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop0-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop0-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop0-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop1-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop1-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop1-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop1-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop1-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop1-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop1-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop1-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop2-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop2-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop2-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop2-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop2-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop2-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop2-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop2-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop4-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop4-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop4-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop4-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop4-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop4-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop4-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop4-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop8-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop8-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop8-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop8-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop8-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop8-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop8-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 720, 480)-2-crop8-4294967295",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 720, 480)-0",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 720, 480)-1",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 720, 480)-2",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 720, 480)-3",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 720, 480)-4",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 720, 480)-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop0-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop0-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop0-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop0-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop0-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop0-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop0-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop0-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop1-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop1-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop1-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop1-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop1-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop1-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop1-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop1-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop2-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop2-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop2-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop2-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop2-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop2-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop2-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop2-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop4-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop4-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop4-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop4-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop4-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop4-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop4-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop4-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop8-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop8-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop8-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop8-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop8-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop8-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop8-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-0-crop8-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop0-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop0-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop0-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop0-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop0-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop0-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop0-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop0-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop1-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop1-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop1-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop1-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop1-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop1-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop1-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop1-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop2-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop2-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop2-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop2-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop2-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop2-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop2-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop2-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop4-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop4-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop4-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop4-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop4-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop4-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop4-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop4-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop8-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop8-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop8-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop8-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop8-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop8-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop8-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-1-crop8-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop0-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop0-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop0-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop0-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop0-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop0-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop0-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop0-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop1-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop1-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop1-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop1-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop1-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop1-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop1-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop1-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop2-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop2-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop2-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop2-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop2-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop2-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop2-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop2-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop4-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop4-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop4-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop4-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop4-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop4-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop4-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop4-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop8-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop8-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop8-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop8-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop8-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop8-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop8-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(20, 40, 700, 440)-2-crop8-4294967295",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(20, 40, 700, 440)-0",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(20, 40, 700, 440)-1",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(20, 40, 700, 440)-2",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(20, 40, 700, 440)-3",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(20, 40, 700, 440)-4",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(20, 40, 700, 440)-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop0-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop0-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop0-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop0-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop0-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop0-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop0-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop0-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop1-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop1-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop1-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop1-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop1-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop1-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop1-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop1-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop2-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop2-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop2-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop2-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop2-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop2-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop2-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop2-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop4-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop4-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop4-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop4-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop4-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop4-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop4-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop4-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop8-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop8-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop8-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop8-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop8-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop8-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop8-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-0-crop8-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop0-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop0-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop0-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop0-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop0-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop0-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop0-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop0-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop1-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop1-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop1-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop1-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop1-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop1-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop1-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop1-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop2-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop2-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop2-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop2-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop2-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop2-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop2-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop2-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop4-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop4-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop4-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop4-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop4-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop4-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop4-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop4-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop8-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop8-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop8-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop8-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop8-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop8-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop8-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-1-crop8-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop0-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop0-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop0-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop0-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop0-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop0-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop0-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop0-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop1-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop1-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop1-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop1-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop1-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop1-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop1-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop1-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop2-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop2-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop2-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop2-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop2-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop2-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop2-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop2-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop4-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop4-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop4-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop4-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop4-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop4-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop4-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop4-4294967295",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop8-0",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop8-1",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop8-2",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop8-3",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop8-4",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop8-5",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop8-6",
+        "passed": true
+      },
+      {
+        "name": "geometry-(0, 0, 640, 426)-2-crop8-4294967295",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 640, 426)-0",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 640, 426)-1",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 640, 426)-2",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 640, 426)-3",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 640, 426)-4",
+        "passed": true
+      },
+      {
+        "name": "viewport-notification-(0, 0, 640, 426)-5",
+        "passed": true
+      }
+    ],
+    "geometry_calls": 756,
+    "scalar_differential_calls": 33808,
+    "indexed_native_property_keys": 2111,
+    "all_passed": true,
+    "native_records": 89,
+    "custom_journal_hooks": false,
+    "supplied_boundaries": [
+      "OS locks/events",
+      "in-memory flash erase/program",
+      "secondary datasets during worker/startup",
+      "UI bridge to original raw setter and widgets",
+      "viewport and visibility gates"
+    ],
+    "camera_access": false,
+    "card_access": false,
+    "full_camera_shutdown": false,
+    "physical_durability": false
+  },
+  "qemu": {
+    "scope": "Assisted QEMU. Menu uses native key events; shooting view invokes compiled callbacks and native visibility update diagnostically. No persistent-flash QEMU restart.",
+    "menu_checks": [
+      {
+        "name": "native-menu-ready",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x1",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x127",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "fourths-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "fourths-stores-exact-layout-value",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "thirds-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "thirds-stores-exact-layout-value",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "golden-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "golden-stores-exact-layout-value",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "center-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "center-stores-exact-layout-value",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "dense-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "dense-stores-exact-layout-value",
+        "passed": true
+      },
+      {
+        "name": "row-navigation-page-0x153",
+        "passed": true
+      },
+      {
+        "name": "off-retains-choice-and-native-focus",
+        "passed": true
+      },
+      {
+        "name": "off-stores-exact-layout-value",
+        "passed": true
+      }
+    ],
+    "live_checks": [
+      {
+        "name": "fourths-native-counts-and-enable",
+        "passed": true
+      },
+      {
+        "name": "fourths-horizontal-and-vertical-pixels",
+        "passed": true
+      },
+      {
+        "name": "thirds-native-counts-and-enable",
+        "passed": true
+      },
+      {
+        "name": "thirds-horizontal-and-vertical-pixels",
+        "passed": true
+      },
+      {
+        "name": "golden-native-counts-and-enable",
+        "passed": true
+      },
+      {
+        "name": "golden-horizontal-and-vertical-pixels",
+        "passed": true
+      },
+      {
+        "name": "golden-two-lines-mirror-at-phi-positions",
+        "passed": true
+      },
+      {
+        "name": "center-native-counts-and-enable",
+        "passed": true
+      },
+      {
+        "name": "center-horizontal-and-vertical-pixels",
+        "passed": true
+      },
+      {
+        "name": "dense-native-counts-and-enable",
+        "passed": true
+      },
+      {
+        "name": "dense-horizontal-and-vertical-pixels",
+        "passed": true
+      },
+      {
+        "name": "native-off-disables-plane",
+        "passed": true
+      },
+      {
+        "name": "native-off-restores-scene-pixels",
+        "passed": true
+      }
+    ],
+    "live_descriptors": [
+      {
+        "name": "00-off",
+        "stored_value": 0,
+        "descriptor": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "fourths",
+        "stored_value": 1,
+        "descriptor": [
+          0,
+          170,
+          1024,
+          170,
+          3,
+          256,
+          0,
+          682,
+          256,
+          3,
+          9,
+          1,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "thirds",
+        "stored_value": 2,
+        "descriptor": [
+          0,
+          228,
+          1024,
+          228,
+          2,
+          342,
+          0,
+          682,
+          342,
+          2,
+          9,
+          1,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "golden",
+        "stored_value": 3,
+        "descriptor": [
+          0,
+          260,
+          1024,
+          162,
+          2,
+          392,
+          0,
+          682,
+          242,
+          2,
+          9,
+          1,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "center",
+        "stored_value": 4,
+        "descriptor": [
+          0,
+          342,
+          1024,
+          342,
+          1,
+          512,
+          0,
+          682,
+          512,
+          1,
+          9,
+          1,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "dense",
+        "stored_value": 5,
+        "descriptor": [
+          0,
+          114,
+          1024,
+          114,
+          5,
+          170,
+          0,
+          682,
+          170,
+          5,
+          9,
+          1,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "off-restored",
+        "stored_value": 0,
+        "descriptor": [
+          0,
+          114,
+          1024,
+          114,
+          5,
+          170,
+          0,
+          682,
+          170,
+          5,
+          9,
+          1,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "all_passed": true
+  },
+  "legacy_regression": {
+    "exact_eg_equal": true,
+    "exact_report_equal": true,
+    "instruction_checks": 107,
+    "all_passed": true
+  },
+  "host_checks": {
+    "root_tests": 12,
+    "patcher_tests": 16,
+    "skipped_tests": 0,
+    "qemu_c_changed": false,
+    "renderer_isp_repeated": false
+  },
+  "visual_inspection": [
+    "Six-row menu fits, all labels readable",
+    "Golden grid has two mirrored lines per axis",
+    "Center cross meets at center",
+    "6x6 has five horizontal and vertical lines"
+  ],
+  "camera_access": false,
+  "card_access": false,
+  "installation_cleared": false,
+  "published": false,
+  "limits": [
+    "Supplied OS/flash/UI/viewport boundaries in instruction tests",
+    "Assisted QEMU with functional LCD-grid model",
+    "No physical shutdown, durability, generic-consumer or recovery validation"
+  ]
+}

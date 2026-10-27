@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: LicenseRef-Wonder-Lantern-Community
 """Independent Z7 C 3.80 selectable-grid experiment, emulator only.
 
-Native d9 becomes 4x4 / 3x3 / Off. Nikon's property remains boolean. A separate
-A separate choice selects immutable geometry records at each native builder call.
-Persistence is optional and restricted to the native-journal emulator experiment.
+Native d9 becomes 4x4 / 3x3 / Off. The default keeps a separate RAM choice;
+native_choice uses the existing grid scalar. extra_grids adds optional golden,
+center and dense layouts, with independent emulator-only candidate identity.
+The previous three-row modes retain their exact binary output and reports.
 This standalone experiment must not be composed with the splash state hook.
 """
 import struct
@@ -25,9 +26,11 @@ def tail(address):
     return f'.balign 4; ldr.w pc,[pc,#0]; .word {address | 1};'
 
 
-def build(source, persistent=False, native_choice=False):
+def build(source, persistent=False, native_choice=False, extra_grids=False):
     if persistent and native_choice:
         raise ValueError('Choose one grid storage experiment')
+    if extra_grids and not native_choice:
+        raise ValueError('Extra grids require the existing native scalar mode')
     plan = Plan(source, platform)
     im = plan.image
     if (im.read(HEAP_SITE, 12) != HEAP_EXPECTED
@@ -56,7 +59,8 @@ def build(source, persistent=False, native_choice=False):
                 used.add(im.words(header[3] + row * 28 + 24, 1)[0] & 65535)
         except (ValueError, struct.error):
             continue
-    if THIRDS_ID in used:
+    independent_ids = (THIRDS_ID, 0x7A31, 0x7A32, 0x7A33) if extra_grids else (THIRDS_ID,)
+    if any(control in used for control in independent_ids):
         raise ValueError('Independent grid control ID collides with stock')
     thirds = bytearray(im.read(TABLE, 96))
     for record in range(3):
@@ -68,8 +72,17 @@ def build(source, persistent=False, native_choice=False):
     thirds_table = plan.alloc(thirds)
     sizes = dict(cold=192 if not persistent else 256, geometry=128, enter=384,
                  fourths=64 if not persistent else 96, thirds=64 if not persistent else 96)
+    choices = [('fourths', '4x4 grid', 0x1901, 1, 3),
+               ('thirds', '3x3 grid', THIRDS_ID, 2, 2)]
+    if extra_grids:
+        choices += [('golden', 'Golden ratio', 0x7A31, 3, 2),
+                    ('center', 'Center cross', 0x7A32, 4, 1),
+                    ('dense', '6x6 grid', 0x7A33, 5, 5)]
+        sizes.update(geometry=256, enter=768, golden=64, center=64, dense=64)
+    choices += [('off', 'Off', 0x1902, 0, 3)]
+    row_count = len(choices)
     functions = {name: plan.alloc(bytes(size)) for name, size in sizes.items()}
-    texts = [plan.alloc(text.encode('ascii') + b'\0') for text in ('4x4 grid', '3x3 grid', 'Off')]
+    texts = [plan.alloc(choice[1].encode('ascii') + b'\0') for choice in choices]
     c, call = constant, invoke
     code = {}
     code['cold'] = f"""
@@ -107,7 +120,7 @@ def build(source, persistent=False, native_choice=False):
         ldr r5,[r4,#36]; movs r6,#0;
         rows: cmp r5,#0; beq select; mov r0,r5; movs r1,#1; mov r2,r6;
         {call(0x103FCF0E)} add r1,r6,#39; {call(0x103FB344)}
-        adds r6,#1; cmp r6,#3; blo rows;
+        adds r6,#1; cmp r6,#{row_count}; blo rows;
         select: {c('r0', 0x102D)} {call(0x104065A4)}
         {c('r1', 0x1902)} cmp r0,#1; bne mark;
         {c('r1', 0x1901)} {c('r0', STATE)} ldr r2,[r0];
@@ -123,12 +136,12 @@ def build(source, persistent=False, native_choice=False):
         configure(plan, functions, code)
     if native_choice:
         from .grid_native_z7 import configure
-        configure(plan, functions, code, thirds_table)
+        configure(plan, functions, code, thirds_table, choices=choices if extra_grids else None)
     for name, text in code.items():
         plan.put(functions[name], assemble(text, functions[name], sizes[name]))
     dispatch = im.words(meta[4], 2)
     maps = []
-    for name in ('fourths', 'thirds'):
+    for name, _, _, _, _ in choices[:-1]:
         events = bytearray(im.read(dispatch[0], 17 * 16))
         activation_count = 0
         for index in range(17):
@@ -141,23 +154,23 @@ def build(source, persistent=False, native_choice=False):
         if activation_count != 2:
             raise ValueError('Missing native grid activation events')
         maps.append(plan.alloc(events))
-    controls = bytearray(original_controls[:28] * 2 + original_controls[28:])
-    for index, control_id in enumerate((0x1901, THIRDS_ID, 0x1902)):
+    controls = bytearray(original_controls[:28] * (row_count - 1) + original_controls[28:])
+    for index, (_, _, control_id, _, _) in enumerate(choices):
         struct.pack_into('<I', controls, index * 28, 39 + index)
         # Mark labels as dynamic slots. The stock 0x1000 flag would interpret
         # 39..41 as unrelated translated Nikon resource IDs on every redraw.
         struct.pack_into('<I', controls, index * 28 + 16, 0x1209)
         struct.pack_into('<I', controls, index * 28 + 24, control_id)
     control_table = plan.alloc(controls)
-    dispatch_table = plan.alloc(struct.pack('<3I', *maps, dispatch[1]))
+    dispatch_table = plan.alloc(struct.pack(f'<{row_count}I', *maps, dispatch[1]))
     boxes, labels_rect, values = [], [], []
-    for y in (110, 214, 318):
+    for y in ((96, 148, 200, 252, 304, 356) if extra_grids else (110, 214, 318)):
         boxes.extend((72, y, 702, y + 48))
         labels_rect.extend((150, y + 4, 690, y + 44))
         values.extend((690, y, 696, y + 48))
-    rectangles = [plan.alloc(struct.pack('<12h', *rect)) for rect in (boxes, labels_rect, values)]
-    geometry = plan.alloc(struct.pack('<4I', 3, *rectangles))
-    meta[1], meta[3], meta[4], meta[5] = geometry, control_table, dispatch_table, 0x30003
+    rectangles = [plan.alloc(struct.pack(f'<{row_count * 4}h', *rect)) for rect in (boxes, labels_rect, values)]
+    geometry = plan.alloc(struct.pack('<4I', row_count, *rectangles))
+    meta[1], meta[3], meta[4], meta[5] = geometry, control_table, dispatch_table, row_count | (row_count << 16)
     metadata = plan.alloc(struct.pack('<7I', *meta))
     plan.edit(OBJECT + 40, struct.pack('<I', metadata), 'Independent Z7 grid page metadata')
     plan.edit(obj[4], struct.pack('<I', functions['enter'] | 1), 'Independent grid page constructor')
@@ -182,8 +195,16 @@ def build(source, persistent=False, native_choice=False):
             choice_persistence='Existing native grid scalar; emulator-only third-value experiment',
             off_behavior='Off stores 0; choosing 3x3 again stores 2',
             composition='Standalone experiment; no custom workspace or journal hooks')
+    if extra_grids:
+        plan.features['grid'].update(control_ids=[choice[2] for choice in choices],
+            choices=[choice[1] for choice in choices],
+            layouts=[dict(function=name, label=label, control_id=control,
+                          stored_value=value, line_count=count)
+                     for name, label, control, value, count in choices],
+            choice_persistence='Existing native grid scalar; additional-value emulator experiment')
     eg, report = plan.finish()
-    preset = ('grid-native-value-emulator-only' if native_choice else
+    preset = ('grid-layouts-emulator-only' if extra_grids else
+              'grid-native-value-emulator-only' if native_choice else
               'grid-persistent-emulator-only' if persistent else 'grid-emulator-only')
     report.update(preset=preset, emulator_only=True)
     return eg, report

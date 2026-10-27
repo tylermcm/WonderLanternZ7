@@ -1,5 +1,77 @@
 # Laptop handoff — October 20, 2026
 
+## Source push requested — October 27, 2026
+
+The owner authorized pushing the additional grids, Fibonacci drawing prototype,
+research notes, tests and sanitized evidence to `tylermcm/WonderLanternZ7` on
+`origin/main`. This source update does not change the published preview tag or
+assets. Nikon firmware, generated BINs/PNGs, screenshots, raw traces, local
+runtime and Graphify output remain private and excluded from the commit.
+
+The new straight-grid mode has 484 instruction and 35 assisted-QEMU checks;
+the spiral drawing entry has 15 instruction and nine assisted-QEMU checks.
+The 16 root tests pass. The earlier three-choice image/report still reproduce
+exactly. These are scoped lab results, not new camera installation clearance;
+automatic spiral redraw/removal is still pending. Exact evidence and remaining
+work are in the two research documents below.
+
+## Fibonacci overlay drawing proof — October 27, 2026
+
+The owner asked to draw a Fibonacci curve on the golden-ratio grid. The
+compiled UI-surface diagnostic now shows both over a live test image in QEMU.
+Read `GRID_SPIRAL_RESEARCH.md` and `evidence/20261027-grid-spiral.json`.
+Private successful frames: `.private/research/grid/20261027-spiral-native-ui-01/`.
+
+`tools/build_spiral_probe.py` appends an immutable RGBA PNG and explicit drawing
+entry, preserving every MAIN byte of the six-layout parent. New preset
+`grid-spiral-draw-emulator-only`; MAIN SHA-256
+`e76f8678add993cd0a665557c09bf081e675eb470937212761d108b0a8f1f5aa`.
+The helper guards Golden ratio value 3, locks the native graphics mutex, selects
+the registered 720x480 UI surface at 0xB045F200, draws through the original Z7
+PNG path, restores the prior target and unlocks. No new lifecycle hook exists.
+Use `tools/probe_grid_spiral.py --compiled` with this private build.
+
+16 root tests, 15 supplied-boundary instruction checks and nine assisted QEMU
+checks pass. The combined scene/grid/curve frame remains identical after two
+seconds resumed. Direct-call experiment 01 had weak startup readiness; stricter
+experiment 02 failed because its draw targeted a rotating live-image buffer.
+Do not claim those earlier probes proved a usable combined overlay.
+
+Automatic redraw/removal, grid-Off and MENU transitions, dynamic crop/EVF state,
+memory/performance and concurrency still need integration/validation. Do not
+blindly call PNG drawing from the geometry worker. No camera/card write, flash
+clearance, push or publication occurred during that experiment. The source push
+is authorized separately above. Existing grid and flash-review admission
+reject the new image identity, and published default build outputs are unchanged.
+
+## Additional grid layouts — October 27, 2026
+
+The owner requested golden ratio and other photographic grids. A separate
+optional lab mode now provides 4x4 / 3x3 / Golden ratio / Center cross / 6x6 /
+Off, retaining existing scalar values 0..2 and adding 3..5. No card or camera
+was accessed, and no new flash/release was authorized or performed.
+
+Read `GRID_LAYOUTS_RESEARCH.md` and `evidence/20261027-grid-layouts.json`.
+Build with `--native-choice --extra-grids`; preset is
+`grid-layouts-emulator-only`. Tested private candidate 02 MAIN SHA-256:
+`6485b0a579eb469701bcb89c442ab6b7faa1cea748dd3716cc524e500595b97f`.
+Candidate 01 is superseded: its native geometry notification ran before the
+golden adjustment. Candidate 02 adjusts before notification and passes both
+native tail branches. Neither was staged.
+
+484 instruction checks and assisted QEMU's 22 menu / 13 live-view checks pass.
+All three new layouts were visually inspected, and each choice restores from
+synthetic native flash into fresh CPU/RAM. Native journal schema/save policy
+remain unchanged. The original three-choice image and report reproduce exactly
+and its 107 checks pass; 12 root and 16 patcher tests pass with no skips.
+Existing flash-review presets deliberately reject the additional-layout image.
+Physical shutdown/durability/recovery and generic consumers remain unverified.
+
+The default `--native-choice` output, published tag/assets and source-only
+redistribution decision remain unchanged. Curves and diagonals require a
+separate drawing path; the subsequent Fibonacci drawing proof is described
+above. Diagonal guides remain unimplemented.
+
 ## Published source-only preview — October 26, 2026
 
 Source commit `3a441180f80e6be26abff46d41d9210b53b7087c` was pushed to the

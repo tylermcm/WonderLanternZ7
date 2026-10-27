@@ -56,6 +56,8 @@ def main():
     report = json.loads(ui.FIRMWARE_REPORT.read_text())
     functions = {key: int(value, 16) for key, value in report['features']['grid']['functions'].items()}
     native_choice = 'grid_native' in report['features']
+    expanded = report['preset'] == 'grid-layouts-emulator-only'
+    layouts = report['features']['grid'].get('layouts', [])
     options = {} if args.view == 'menu' else dict(capture_control_test=True,
         raw_source=active_manifest('native0'), exmcu_no_lens=True,
         tg_periodic_test=True, tg_paired_test=True, raw_ingress_test=active_ingress(),
@@ -166,13 +168,19 @@ def main():
             row(0x127, 28)
             key('right', lambda: on_page(0x153))
             capture('00-default-off')
-            for name, target, choice in (('thirds', 1, 1), ('fourths', 0, 0), ('off', 2, 0)):
+            menu_choices = ([(layout['function'], i, int(layout['stored_value'] == 2))
+                             for i, layout in enumerate(layouts)] if expanded else
+                            [('thirds', 1, 1), ('fourths', 0, 0), ('off', 2, 0)])
+            for name, target, choice in menu_choices:
                 row(0x153, target)
                 key('right', lambda: on_page(0x127))
                 key('right', lambda: on_page(0x153))
                 step = capture(name)
                 check(name + '-retains-choice-and-native-focus',
                       step['state'][1] == choice and step['pages'][-1]['row'] == target)
+                if expanded:
+                    check(name + '-stores-exact-layout-value',
+                          step['stored_grid_value'] == layouts[target]['stored_value'])
         else:
             camera.boot_shooting()
             checkpoint()
@@ -180,7 +188,9 @@ def main():
             capture('00-off')
             original_picture = Image.open(io.BytesIO(camera.png)).convert('RGB')
             grid_points = []
-            for name, count in (('thirds', 2), ('fourths', 3)):
+            live_choices = ([(layout['function'], layout['line_count']) for layout in layouts[:-1]]
+                            if expanded else [('thirds', 2), ('fourths', 3)])
+            for name, count in live_choices:
                 native('Compiled grid choice: ' + name, functions[name], [])
                 native('Native grid visibility update', 0x10377236, [1])
                 step = capture(name)
@@ -190,10 +200,17 @@ def main():
                 r = step['registers']
                 x, y = r[1] & 65535, (r[0] >> 16) & 16383
                 expected_color = ((r[6] >> 16) & 255, (r[6] >> 8) & 255, r[6] & 255)
-                points = [(picture.width // 2 + 37, y), (x, 300)]
+                dy, dx = r[4] & 65535, r[4] >> 16
+                points = [(picture.width // 2 + 37, y + i * dy) for i in range(count)]
+                points += [(x + i * dx, 300) for i in range(count)]
                 grid_points.extend(points)
                 check(name + '-horizontal-and-vertical-pixels',
                       all(picture.getpixel(point) == expected_color for point in points))
+                if name == 'golden':
+                    d = step['descriptor']
+                    check('golden-two-lines-mirror-at-phi-positions',
+                          abs(d[3] / d[7] - .236068) < .005
+                          and abs(d[8] / d[2] - .236068) < .005)
             native('Native grid Off', 0x104F5592, [])
             step = capture('off-restored')
             check('native-off-disables-plane', step['enable'] == 0)

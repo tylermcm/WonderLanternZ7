@@ -48,6 +48,19 @@ class ReviewOutputTests(unittest.TestCase):
 
 
 class GridReviewAdmissionTests(unittest.TestCase):
+    def test_extra_layouts_cannot_use_existing_grid_flash_review(self):
+        payload = b'additional layouts lab fixture'
+        module = payload + binascii.crc_hqx(payload, 0).to_bytes(2, 'big')
+        recorded = {'preset': 'grid-layouts-emulator-only', 'features': {'grid': {}, 'grid_native': {}}}
+        released = {'preset': 'grid-native-value-emulator-only', 'features': {'grid': {}, 'grid_native': {}}}
+        with tempfile.TemporaryDirectory(dir=TEMP_PARENT) as temporary:
+            root = Path(temporary)
+            (root / 'grid.emulator.eg.bin').write_bytes(module)
+            (root / 'grid.emulator.json').write_text(json.dumps(recorded))
+            with patch('build_grid_firmware.build_image', return_value=(module, released)):
+                with self.assertRaisesRegex(ValueError, 'report differs'):
+                    prepare_flash_review.reviewed_candidate(root, 'grid-native', b'container', b'stock')
+
     def test_native_choice_review_cannot_admit_ram_only_artifacts(self):
         def fixture(native):
             payload = b'native saved grid' if native else b'RAM grid'

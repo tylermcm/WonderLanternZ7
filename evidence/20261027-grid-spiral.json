@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "independent_modified_work": true,
+  "preset": "grid-spiral-draw-emulator-only",
+  "main_payload_sha256": "e76f8678add993cd0a665557c09bf081e675eb470937212761d108b0a8f1f5aa",
+  "eg_sha256": "ca2037f1829672ec024371e2bc7da5099eee207fdc8d0e71ecdc0828faac7bea",
+  "main_bytes": 33061980,
+  "parent_main_bytes": 33056172,
+  "parent_main_payload_sha256": "6485b0a579eb469701bcb89c442ab6b7faa1cea748dd3716cc524e500595b97f",
+  "parent_bytes_unchanged": true,
+  "asset_sha256": "802a39c25440b11aad98e9b7be1e41d8dcd321a582ced09ffd695acf29b5629c",
+  "asset_bytes": 5293,
+  "helper_instruction_audit": {
+    "schema": 1,
+    "main_payload_sha256": "e76f8678add993cd0a665557c09bf081e675eb470937212761d108b0a8f1f5aa",
+    "checks": [
+      {
+        "name": "stored-value-gate-and-call-order-0",
+        "passed": true
+      },
+      {
+        "name": "stored-value-gate-and-call-order-1",
+        "passed": true
+      },
+      {
+        "name": "stored-value-gate-and-call-order-2",
+        "passed": true
+      },
+      {
+        "name": "stored-value-gate-and-call-order-3",
+        "passed": true
+      },
+      {
+        "name": "stored-value-gate-and-call-order-4",
+        "passed": true
+      },
+      {
+        "name": "stored-value-gate-and-call-order-5",
+        "passed": true
+      },
+      {
+        "name": "stored-value-gate-and-call-order-6",
+        "passed": true
+      },
+      {
+        "name": "stored-value-gate-and-call-order-4294967295",
+        "passed": true
+      },
+      {
+        "name": "safe-refusal-missing",
+        "passed": true
+      },
+      {
+        "name": "safe-refusal-duplicate",
+        "passed": true
+      },
+      {
+        "name": "safe-refusal-wrong-size",
+        "passed": true
+      },
+      {
+        "name": "safe-refusal-inactive",
+        "passed": true
+      },
+      {
+        "name": "safe-refusal-null-registry",
+        "passed": true
+      },
+      {
+        "name": "safe-refusal-invalid-current",
+        "passed": true
+      },
+      {
+        "name": "safe-refusal-select-fails",
+        "passed": true
+      }
+    ],
+    "all_passed": true,
+    "scope": "Execute the compiled spiral helper with supplied native graphics boundaries.\n\nChecks gating, native lock/select/draw/restore order, descriptors and ABI. Native\ngraphics API implementations are separately exercised in the QEMU drawing probe.",
+    "native_graphics_boundaries_supplied": true,
+    "return_pc_stack_callee_registers_checked": true,
+    "camera_access": false,
+    "card_access": false
+  },
+  "qemu": {
+    "schema": 1,
+    "main_payload_sha256": "e76f8678add993cd0a665557c09bf081e675eb470937212761d108b0a8f1f5aa",
+    "checks": [
+      {
+        "name": "live-pattern-and-golden-lines-visibly-ready",
+        "passed": true
+      },
+      {
+        "name": "compiled-ui-draw-entry-completed",
+        "passed": true
+      },
+      {
+        "name": "native-lock-select-draw-and-unlock-observed",
+        "passed": true
+      },
+      {
+        "name": "native-ui-target-restored",
+        "passed": true
+      },
+      {
+        "name": "native-spiral-color-visible-in-lcd",
+        "passed": true
+      },
+      {
+        "name": "transparent-overlay-changes-bounded-small-region",
+        "passed": true
+      },
+      {
+        "name": "native-grid-scalar-remains-golden",
+        "passed": true
+      },
+      {
+        "name": "straight-grid-lines-still-visible",
+        "passed": true
+      },
+      {
+        "name": "spiral-still-visible-after-two-seconds",
+        "passed": true
+      }
+    ],
+    "frames": [
+      {
+        "name": "00-golden-grid",
+        "sha256": "e81971de6a758041c60a6a5299da1c5da9b5536bd1533af75232088a109cba74"
+      },
+      {
+        "name": "01-native-draw-submitted",
+        "sha256": "db5acd4702bd9f7f4329b810344c101541bd8e697bd4f946ecba3b17f00570b2"
+      },
+      {
+        "name": "02-golden-with-spiral",
+        "sha256": "c87579fafc6f701264b0f39e8cb0936ae60f7a292a702937b7039f9a70bf23f6"
+      },
+      {
+        "name": "03-after-native-resume",
+        "sha256": "c87579fafc6f701264b0f39e8cb0936ae60f7a292a702937b7039f9a70bf23f6"
+      }
+    ],
+    "camera_access": false,
+    "card_access": false,
+    "automatic_redraw": false,
+    "firmware_built": true,
+    "installation_cleared": false,
+    "asset_sha256": "802a39c25440b11aad98e9b7be1e41d8dcd321a582ced09ffd695acf29b5629c",
+    "asset_bytes": 5293,
+    "curve_pixels": 6304,
+    "drawn_size": [
+      1024,
+      682
+    ],
+    "changed_pixels": 10081,
+    "curve_pixels_after_two_seconds": 6304,
+    "all_passed": true,
+    "session": "20261027-003708-455a",
+    "scope": "Diagnostic native PNG decode/GPU drawing over live golden grid. Compiled mode stores asset and drawing entry in independently verified ROM. Automatic refresh and removal are not established."
+  },
+  "root_tests": {
+    "passed": 16,
+    "new_geometry_tests": 4
+  },
+  "visual_inspection": "Combined Fibonacci curve, phi grid, live test pattern and native HUD are visible.",
+  "camera_access": false,
+  "card_access": false,
+  "installation_cleared": false,
+  "published": false,
+  "automatic_redraw": false,
+  "automatic_removal": false,
+  "limitations": [
+    "Explicit diagnostic draw entry; no lifecycle hook",
+    "Supplied native graphics boundaries for helper instruction audit",
+    "Assisted QEMU with existing peripheral/display model",
+    "No physical shutdown, update, recovery or hardware durability validation"
+  ]
+}

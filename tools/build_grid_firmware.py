@@ -12,10 +12,11 @@ from z30_extensions.container import extract_eg, Z7_CONTAINER_SHA256
 from z30_extensions.features.grid_z7 import build
 
 
-def build_image(container, persistent=False, native_choice=False):
+def build_image(container, persistent=False, native_choice=False, extra_grids=False):
     if hashlib.sha256(container).hexdigest() != Z7_CONTAINER_SHA256:
         raise ValueError('Requires original Z7 C 3.80 container')
-    eg, report = build(extract_eg(container), persistent=persistent, native_choice=native_choice)
+    eg, report = build(extract_eg(container), persistent=persistent, native_choice=native_choice,
+                       extra_grids=extra_grids)
     report.update(container_sha256=Z7_CONTAINER_SHA256, source_model='z7',
                   input_kind='stock_container', main_payload_size=len(eg) - 2,
                   main_payload_sha256=hashlib.sha256(eg[:-2]).hexdigest(),
@@ -29,12 +30,13 @@ def validate_candidate(path, report_path, stock_path):
     report = json.loads(Path(report_path).read_text(encoding='utf-8'))
     if (report.get('model') != 'Nikon Z7' or report.get('firmware') != 'C 3.80'
             or report.get('preset') not in ('grid-emulator-only', 'grid-persistent-emulator-only',
-                                          'grid-native-value-emulator-only')
+                                          'grid-native-value-emulator-only', 'grid-layouts-emulator-only')
             or not report.get('emulator_only')):
         raise ValueError('Unsupported grid experiment identity')
     persistent = report['preset'] == 'grid-persistent-emulator-only'
     eg, expected = build_image(Path(stock_path).read_bytes(), persistent=persistent,
-                              native_choice=report['preset'] == 'grid-native-value-emulator-only')
+                              native_choice=report['preset'] in ('grid-native-value-emulator-only', 'grid-layouts-emulator-only'),
+                              extra_grids=report['preset'] == 'grid-layouts-emulator-only')
     data = Path(path).read_bytes()
     if data != eg[:-2] or binascii.crc_hqx(eg, 0) or report != expected:
         raise ValueError('Firmware/report differs from independent grid rebuild')
@@ -49,14 +51,15 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--persistent', action='store_true', help='Experimental native journal integration, emulator only')
     parser.add_argument('--native-choice', action='store_true', help='Existing-scalar third-value experiment, emulator only')
+    parser.add_argument('--extra-grids', action='store_true', help='Additional native-scalar layouts; requires --native-choice')
     args = parser.parse_args()
     output = args.output.resolve()
     output.relative_to((ROOT / '.private').resolve())
     if output.exists():
         parser.error('Preserve prior candidates: choose a new private directory')
     container = args.source.read_bytes()
-    eg, report = build_image(container, persistent=args.persistent, native_choice=args.native_choice)
-    repeated, repeated_report = build_image(container, persistent=args.persistent, native_choice=args.native_choice)
+    eg, report = build_image(container, persistent=args.persistent, native_choice=args.native_choice, extra_grids=args.extra_grids)
+    repeated, repeated_report = build_image(container, persistent=args.persistent, native_choice=args.native_choice, extra_grids=args.extra_grids)
     if repeated != eg or repeated_report != report or binascii.crc_hqx(eg, 0):
         raise RuntimeError('Build/report not reproducible or EG CRC failed')
     output.mkdir(parents=True)

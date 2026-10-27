@@ -36,6 +36,15 @@ consumers, wake behavior, extended use and failure recovery need further review.
 
 ## Other lab experiments
 
+The optional [additional-grid lab candidate](GRID_LAYOUTS_RESEARCH.md) adds
+Golden ratio, Center cross and 6x6 alongside 4x4, 3x3 and Off. Menu, drawing
+and simulated saved-choice tests passed. These layouts are not part of the
+published preview and have not been cleared for camera installation.
+
+A separate [Fibonacci-curve drawing proof](GRID_SPIRAL_RESEARCH.md) now shows a
+transparent spiral over the golden grid and live scene in QEMU. Automatic
+redraw and removal are not integrated; this is an explicit diagnostic draw.
+
 The source also retains earlier sound, splash and added-journal-record work.
 Those are **not included in the grid preview's generated image**. Automatic
 shutter sound still has the reported live-view repetition defect; its
