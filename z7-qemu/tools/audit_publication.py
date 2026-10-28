@@ -27,7 +27,7 @@ FILES = {
     'tools/probe.py','tools/capture_diagnostics.py','tools/interactive.py',
     'tools/interactive.html','tools/firmware_input.py','tools/verify_ui.py','tools/smoke_qemu.py','tools/audit_publication.py',
     'tests/test_cmos_source.py','tests/test_raw_input.py','tests/test_gpu.c',
-    'tests/test_isp.c','tests/include/ui/console.h','tests/run.sh',
+    'tests/test_isp.c','tests/test_smoke_qemu.py','tests/include/ui/console.h','tests/run.sh',
 }
 IGNORED = {'.git','.local','.build','.venv','__pycache__','graphify-out'}
 SECRET_PATTERNS = [

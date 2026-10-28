@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "purpose": "Experimental original-Z7 spiral hardware trial, owner authorized; not production certification",
+  "candidate": {
+    "filename": "EG161080.BIN",
+    "size": 33062334,
+    "sha256": "52c593aff9895e31b4cfaf15ceb0335bdf4f26671d346dcb499080ea11c0f316",
+    "main_sha256": "06b89e2a4eb864a96599eea504dd1d2f8aba05c8f072243c3a7d51c999fbd136",
+    "crc_zero": true,
+    "independently_rebuilt": true
+  },
+  "owner_accepts_foreground_curve": true,
+  "charged_battery_confirmed": true,
+  "native_settings_journal_records": 89,
+  "new_settings_encoding_relative_to_six_grid_parent": false,
+  "native_header_and_filename_checks": 12,
+  "instruction_checks": 95,
+  "previous_loader_instruction_checks": 18,
+  "root_python_tests": 20,
+  "identical_main_existing_qemu_checks": 18,
+  "qemu_rerun_for_identical_copy": false,
+  "private_frame_hashes_verified": 9,
+  "ordinary_grid_modes_still_separate": true,
+  "private_bundle_copies_verified": 5,
+  "staged": {
+    "drive": "E:",
+    "bytes": 33062334,
+    "sha256": "52c593aff9895e31b4cfaf15ceb0335bdf4f26671d346dcb499080ea11c0f316",
+    "previous_firmware_sha256": "437e1f8edbb89f1409ad768dcf50e91725280481561fcaa8f0f161cc64e5dccc",
+    "backup_preserved": true,
+    "non_firmware_root_files_unchanged": true,
+    "readback_verified": true
+  },
+  "agent_operated_camera": false,
+  "emergency_recovery_verified": false,
+  "physical_rollback_verified": false,
+  "clean_display_changes_included": false,
+  "assessment": "GRID_SPIRAL_FLASH_ASSESSMENT.md",
+  "limitations": [
+    "Selected header and single-name instructions only; file I/O and runtime property mocked.",
+    "No directory enumeration, complete updater admission, erase/program/readback or real boot.",
+    "Same-version camera acceptance and emergency boot recovery remain unverified.",
+    "Stock copies are rollback inputs, not a proven recovery mechanism.",
+    "No full-container header digest was recomputed or validated.",
+    "Foreground curve accepted by owner; LCD/crop/EVF/timing and low-memory/concurrency limits remain."
+  ],
+  "owner_initially_reported_update_in_progress": true,
+  "owner_reported_post_update_display_operation": true,
+  "owner_reports_core_selection_and_menu_behavior": true,
+  "exact_update_completion_message_observed": false,
+  "owner_hardware_evidence": "evidence/20261027-grid-spiral-owner-hardware.json"
+}

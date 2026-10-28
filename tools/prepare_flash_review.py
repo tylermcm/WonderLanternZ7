@@ -202,11 +202,23 @@ def reviewed_candidate(directory, preset, raw, stock):
     This is review admission only. In particular a persistent grid review must
     never be mistaken for clearance of its experimental internal storage hooks.
     """
-    if preset in ('grid', 'grid-persistent', 'grid-native'):
+    if preset in ('grid-spiral', 'grid-spiral-display'):
+        from build_spiral_lifecycle import build_image
+        candidate = (directory / 'spiral.emulator.eg.bin').read_bytes()
+        rebuilt, report = (build_image(raw, follow_display=True) if preset == 'grid-spiral-display'
+                           else build_image(raw))
+        recorded = json.loads((directory / 'spiral.emulator.json').read_text(encoding='utf-8'))
+        if recorded != report:
+            raise ValueError('Spiral report differs from independent rebuild')
+        main = directory / 'spiral.emulator.main.bin'
+    elif preset in ('grid', 'grid-persistent', 'grid-native', 'grid-layouts'):
         from build_grid_firmware import build_image
         candidate = (directory / 'grid.emulator.eg.bin').read_bytes()
-        rebuilt, report = build_image(raw, persistent=preset == 'grid-persistent',
-                                     native_choice=preset == 'grid-native')
+        options = dict(persistent=preset == 'grid-persistent',
+                       native_choice=preset in ('grid-native', 'grid-layouts'))
+        if preset == 'grid-layouts':
+            options['extra_grids'] = True
+        rebuilt, report = build_image(raw, **options)
         recorded = json.loads((directory / 'grid.emulator.json').read_text(encoding='utf-8'))
         if recorded != report:
             raise ValueError('Grid report differs from independent rebuild')
@@ -228,7 +240,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=ROOT / '.private/stock/Z_7_0380.bin')
     parser.add_argument('--build', type=Path, required=True)
-    parser.add_argument('--preset', choices=PRESETS + ('grid', 'grid-persistent', 'grid-native'), default='full')
+    parser.add_argument('--preset', choices=PRESETS + ('grid', 'grid-persistent', 'grid-native', 'grid-layouts', 'grid-spiral', 'grid-spiral-display'), default='full')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     output = require_private_output(args.output)
@@ -259,7 +271,10 @@ def main():
                   features=list(build_report['features']),
                   internal_settings_format_changed='settings' in build_report['features'],
                   internal_setting_value_encoding_changed='grid_native' in build_report['features'],
-                  installation_assessment=('GRID_NATIVE_FLASH_ASSESSMENT.md'
+                  installation_assessment=('GRID_SPIRAL_DISPLAY_FLASH_ASSESSMENT.md'
+                      if args.preset == 'grid-spiral-display' else 'GRID_SPIRAL_FLASH_ASSESSMENT.md'
+                      if args.preset == 'grid-spiral' else 'GRID_LAYOUTS_FLASH_ASSESSMENT.md'
+                      if args.preset == 'grid-layouts' else 'GRID_NATIVE_FLASH_ASSESSMENT.md'
                       if 'grid_native' in build_report['features'] else
                       'GRID_FLASH_ASSESSMENT.md' if args.preset.startswith('grid') else 'FLASH_ASSESSMENT.md'),
                   installation_cleared=False,

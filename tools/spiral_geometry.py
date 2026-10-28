@@ -47,13 +47,14 @@ def spiral_points(width=720, height=480, margin=12, mirror_x=False, mirror_y=Fal
     return points
 
 
-def overlay_png(width=720, height=480, mirror_x=False, mirror_y=False):
+def overlay_png(width=720, height=480, mirror_x=False, mirror_y=False,
+                color=(255, 208, 64, 255)):
     """Procedural RGBA asset for original guest PNG decode/GPU drawing."""
     import io
     from PIL import Image, ImageDraw
     image = Image.new('RGBA', (width, height), (0, 0, 0, 0))
     ImageDraw.Draw(image).line(spiral_points(width, height, mirror_x=mirror_x, mirror_y=mirror_y),
-                              fill=(255, 208, 64, 255), width=2, joint='curve')
+                              fill=color, width=2, joint='curve')
     stream = io.BytesIO()
     image.save(stream, format='PNG')
     return image, stream.getvalue()

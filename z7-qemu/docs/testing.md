@@ -57,3 +57,15 @@ the specific negative or invalid cases relevant to a device change.
 Do not equate accepted key actions with successful shooting. No physical CMOS
 protocol, AF/PDAF, MVD, recording, hardware add-on loading or flash acceptance
 is certified by this test. The board has no complete VMState snapshot support.
+
+## Firmware-free smoke transport regression
+
+The smoke helper requires QMP replies to capability negotiation and the paused
+status query. It then sends `quit` and requires a zero process exit within ten
+seconds. It does not require a quit acknowledgement: QEMU's `qapi/control.json`
+explicitly permits termination before that reply reaches the client.
+
+Twelve synthetic TCP/process tests cover acknowledged quit, EOF/reset after
+quit, missing/reset/error capability and status replies, an unexpected running
+status, nonzero process exit and a quit timeout. Earlier replies remain mandatory;
+accepting an absent quit reply does not accept a crash or a hung process.

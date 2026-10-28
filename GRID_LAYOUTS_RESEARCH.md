@@ -5,6 +5,13 @@ framing-grid menu. This is separate from the published three-choice preview;
 the published image and its default build/report remain byte-for-byte unchanged.
 The additional layouts have not been installed on a camera or cleared to flash.
 
+**Hardware-test preparation update:** the owner requested a flash candidate.
+The identical six-choice image is now assessed and staged on the freshly
+identified XQD card, with the previous working file backed up and full read-back
+hash verified. Camera installation has not begun. Read
+[the exact-candidate assessment](GRID_LAYOUTS_FLASH_ASSESSMENT.md) for the
+installation path, test scope and unverified emergency-recovery limits.
+
 | Menu choice | Stored value | Drawing |
 | --- | --- | --- |
 | 4x4 grid | 1 | Three evenly spaced lines in each direction |
@@ -65,7 +72,9 @@ instructions and pass that path to `--stock`. Existing output directories are
 refused. Generated firmware and screenshots stay private. `--extra-grids`
 requires `--native-choice` and produces preset `grid-layouts-emulator-only`.
 Independent candidate admission rebuilds the complete image and report.
-The existing flash-review presets reject this new candidate.
+The dedicated `grid-layouts` review selection now admits this exact mode by
+independent rebuild. Earlier three-choice selections still reject it, and the
+Fibonacci diagnostic cannot substitute for it.
 
 ## Exact tested candidate and evidence
 

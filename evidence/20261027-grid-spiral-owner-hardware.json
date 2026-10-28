@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "date_local": "2026-10-27",
+  "timezone": "America/Denver",
+  "evidence_kind": "owner report in chat after update initiation",
+  "associated_staged_eg_sha256": "52c593aff9895e31b4cfaf15ceb0335bdf4f26671d346dcb499080ea11c0f316",
+  "associated_main_sha256": "06b89e2a4eb864a96599eea504dd1d2f8aba05c8f072243c3a7d51c999fbd136",
+  "owner_reported": {
+    "post_update_display_operates": true,
+    "spiral_appears_only_with_golden_ratio": true,
+    "switching_to_another_grid_removes_spiral": true,
+    "foreground_placement_accepted": true,
+    "menu_clears_spiral_and_return_restores_it": true,
+    "spiral_color": "yellow",
+    "spiral_visible_on_rear_monitor": true,
+    "spiral_visible_in_evf": false,
+    "other_custom_straight_grids_visible_in_evf": true
+  },
+  "owner_response": "yep it appears only when using golden ratio, and will disappear when swapping to another gridtype",
+  "cameras_reported": 1,
+  "model_previously_identified": "Original Nikon Z7, C 3.80, no paid RAW-video upgrade",
+  "independently_observed": false,
+  "camera_firmware_readback": false,
+  "agent_operated_camera": false,
+  "exact_update_completion_message_observed": false,
+  "menu_transition_response": "Yes, clears and returns",
+  "menu_transition_confirmation_pending": false,
+  "physical_rollback_verified": false,
+  "emergency_recovery_verified": false,
+  "clean_display_changes_included": false,
+  "scope": "One owner reports Golden ratio spiral selection/removal and MENU clearing/return on one camera. The yellow spiral is visible only on the monitor; other custom straight grids appear in EVF. This does not establish EVF support, crop/DISP/wake/capture performance, general reliability or recovery.",
+  "display_report": "also the spiral is yellow, i want it to match the color of the normal grid, and it doesnt show up in the evf live view, only on the monitor. but the custom grids show up on the evf"
+}

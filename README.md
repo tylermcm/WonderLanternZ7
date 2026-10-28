@@ -38,12 +38,21 @@ consumers, wake behavior, extended use and failure recovery need further review.
 
 The optional [additional-grid lab candidate](GRID_LAYOUTS_RESEARCH.md) adds
 Golden ratio, Center cross and 6x6 alongside 4x4, 3x3 and Off. Menu, drawing
-and simulated saved-choice tests passed. These layouts are not part of the
-published preview and have not been cleared for camera installation.
+and simulated saved-choice tests passed, and the owner has tried the separately
+reviewed candidate on one camera. These layouts are not part of the published
+preview. Read its [trial assessment](GRID_LAYOUTS_FLASH_ASSESSMENT.md).
 
-A separate [Fibonacci-curve drawing proof](GRID_SPIRAL_RESEARCH.md) now shows a
-transparent spiral over the golden grid and live scene in QEMU. Automatic
-redraw and removal are not integrated; this is an explicit diagnostic draw.
+A separate [Fibonacci-curve experiment](GRID_SPIRAL_RESEARCH.md) automatically
+draws a gray spiral with Golden ratio on the monitor and EVF. The owner reports
+the separately reviewed trial works, with **visible electronic-level lag in
+EVF** and slight lag on the monitor, only with Golden ratio. The lag is not fixed.
+The [exact trial assessment](GRID_SPIRAL_DISPLAY_FLASH_ASSESSMENT.md) records
+validation and recovery limits. No firmware BIN is redistributed or new release
+declared by this source update.
+
+[Clean-display research](CLEAN_DISPLAY_RESEARCH.md) hides most shooting widgets
+in an emulator experiment but still leaves card-count brackets. It is not
+included in the camera trial.
 
 The source also retains earlier sound, splash and added-journal-record work.
 Those are **not included in the grid preview's generated image**. Automatic

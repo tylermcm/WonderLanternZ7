@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "date_local": "2026-10-27",
+  "timezone": "America/Denver",
+  "preset": "grid-spiral-display-lifecycle-emulator-only",
+  "main_payload_sha256": "7049b2120a9f88e3859a5d8ec335bb4858e6642ba9a278e5cd95474edf597543",
+  "main_bytes": 33074644,
+  "eg_sha256": "c3cbb8fd4aaa932fc74cfd662cbfaac3f5471ea6ab81edb6148766d5a93449b6",
+  "eg_bytes": 33074646,
+  "color_rgba": [
+    216,
+    216,
+    216,
+    255
+  ],
+  "native_component": 1,
+  "native_display_ids": [
+    1,
+    4
+  ],
+  "lcd_dimensions": [
+    720,
+    480
+  ],
+  "evf_dimensions": [
+    1280,
+    960
+  ],
+  "instruction_checks": {
+    "count": 132,
+    "all_passed": true,
+    "supplied_ui_graphics_boundaries": true
+  },
+  "assisted_lcd_lifecycle": {
+    "count": 18,
+    "all_passed": true,
+    "frames_verified": 9,
+    "host_spiral_draw_calls": 0
+  },
+  "assisted_evf_bitmap": {
+    "count": 9,
+    "all_passed": true,
+    "explicit_host_draw_call": true,
+    "supplied_grid_display_id": true,
+    "native_bitmap_registration": true,
+    "opaque_curve_pixels_exactly_matched": 7589,
+    "matched_pixels_beyond_lcd_bounds": 6621,
+    "raw_bitmap_sha256": "5a0c52e4aa8b8181a9728df52fc8b138126723123d6a1c353cd4d2d9b8cc47ec",
+    "native_rows_bottom_up": true,
+    "physical_output_switch": false,
+    "evf_scanout_verified": false
+  },
+  "root_tests": {
+    "count": 22,
+    "all_passed": true
+  },
+  "legacy_default_main_sha256": "06b89e2a4eb864a96599eea504dd1d2f8aba05c8f072243c3a7d51c999fbd136",
+  "legacy_default_reproduced": true,
+  "camera_access": false,
+  "card_access": false,
+  "physical_evf_verified": false,
+  "camera_update_acceptance_verified": false,
+  "camera_rollback_verified": false,
+  "emergency_recovery_verified": false,
+  "installation_cleared": false,
+  "clean_display_patch_included": false,
+  "preserved_failed_runs": [
+    "gray LCD detector counted straight grid/gradient pixels",
+    "EVF bitmap attempt 01 used halfword pixel stride",
+    "EVF bitmap attempts 02 and 03 sampled top-down coordinates"
+  ],
+  "limits": [
+    "EVF bitmap is a supplied route, not physical eye-sensor/display switching.",
+    "LCD upper-arc classifier is specific to diagnostic color bars; full curve visually inspected.",
+    "Physical EVF/crop/DISP/wake/performance/concurrency and allocation remain unverified.",
+    "Existing yellow spiral installation review does not admit this variant."
+  ]
+}

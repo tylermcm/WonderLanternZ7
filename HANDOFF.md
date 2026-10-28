@@ -1,5 +1,295 @@
 # Laptop handoff — October 20, 2026
 
+## Source push preparation — October 27, 2026
+
+The owner requested pushing the code. Scope includes automatic spiral lifecycle,
+gray native LCD/EVF routing, exact-candidate review and compatibility tools,
+source-only evidence, clean-display research and the unresolved level-lag report.
+The pending QEMU smoke helper change permits EOF/reset after a successful quit
+request only, while retaining mandatory capabilities/status replies, zero exit
+and bounded termination; its 12 synthetic process/TCP regressions are included.
+No renderer performance fix or new firmware release is claimed.
+
+Fresh checks: all 23 root tests and all 23 QEMU component Python tests pass.
+The first restricted component run hit local file/socket access failures; the
+properly permitted repeat passes. The QEMU publication inventory passes with
+46 source-only files. The actual native QEMU executable also passes the updated
+firmware-free QMP smoke check. No C renderer/ISP source changed, so those contract tests
+were not redundantly rerun. Previous exact-candidate instruction/emulator results
+remain scoped as documented above. Private firmware, dumps, binaries, media,
+camera captures, keys and ignored graphs are excluded from this source push.
+
+## Gray/EVF trial works; Golden ratio level lag — October 27, 2026
+
+Owner reports the installed gray/EVF trial works, but electronic level motion
+lags conspicuously in EVF and barely noticeably on the monitor, only on Golden
+ratio. They recall no lag before the spiral. Exact report is recorded in
+`evidence/20261027-grid-spiral-display-owner-hardware.json`. Associated EG remains
+`c3cbb8fd4aaa932fc74cfd662cbfaac3f5471ea6ab81edb6148766d5a93449b6`.
+This is owner-reported post-update function/performance, not firmware readback
+or independently timed observation. Do not keep claiming EVF is wholly untested;
+the owner now reports the trial works, with this regression.
+
+Read the new performance section of `GRID_SPIRAL_RESEARCH.md`. Each eligible UI
+paint completion currently calls uncached PNG drawing under the shared native
+graphics mutex. Native wrapper forces resource ID -1 and allocates/decodes/
+synchronizes/frees a full image each call. EVF decodes 4,915,200 RGBA bytes for
+7,589 curve pixels; LCD 1,382,400 bytes for 4,195 curve pixels. This is the leading
+cause, not a measured hardware latency diagnosis. Candidate native path/paint
+primitive `0x1042F066` and boundaries `0x10450852/0x10450A3E/0x104508A6` provide a
+starting point for an allocation/decode-light curve renderer, but full argument,
+state restoration and failure contracts remain unverified. No replacement
+renderer, new firmware or lag fix was built in this triage. Preserve all current
+builds. No new card access or staging occurred. No physical rollback or emergency
+recovery is verified. Source manifest refreshed; firmware code unchanged.
+
+## Gray LCD/EVF spiral staged for owner trial — October 27, 2026
+
+Owner explicitly authorized staging/flash: "card is mounted lets flash it".
+Read `GRID_SPIRAL_DISPLAY_FLASH_ASSESSMENT.md`. Fresh independent build at
+`.private/builds/20261027-spiral-display-flash-01/` exactly matches tested candidate
+02: full EG 33,074,646 bytes, SHA-256
+`c3cbb8fd4aaa932fc74cfd662cbfaac3f5471ea6ab81edb6148766d5a93449b6`;
+MAIN `7049b2120a9f88e3859a5d8ec335bb4858e6642ba9a278e5cd95474edf597543`.
+New explicit `grid-spiral-display` review identity reconstructs all EG/MAIN/report
+bytes separately from legacy yellow and rejects mixed/modified/legacy/explicit
+artifacts. Twelve native updater header/name checks, 18 fresh previous-loader
+compatibility checks and 23 root tests pass. Exact prior 132 instruction, 18 LCD
+lifecycle and nine native EVF-bitmap results plus their frame/bitmap hashes verify;
+QEMU was not redundantly rerun for byte-identical artifacts. Ignored code graph
+refreshed. Review bundle retains stock and three prior rollback inputs separately.
+
+Sony QD-G240F was freshly identified on E: by serial, size, volume and partition.
+Its yellow EG exactly matched and is backed up at
+`.private/card-backups/20261027-spiral-display-4d73d3a5/EG161080.BIN`.
+New full EG is staged and fully hash-verified as the only root BIN. Other root
+file sizes/hashes remain unchanged; photo directories were not edited. No
+formatting, automatic ejection or camera operation occurred. Receipt is in that
+backup folder; sanitized evidence is `evidence/20261027-grid-spiral-display-flash-review.json`.
+
+Owner instructions: charged power, select 3x3 before update, safely eject, use
+normal firmware updater (version stays 3.80), do not interrupt programming, follow
+completion/restart instructions. Confirm normal rear-monitor use first, then
+Golden ratio gray curve and MENU/3x3 removal, then EVF/monitor switching. No
+physical EVF success, camera update completion, rollback or emergency recovery
+is claimed. The camera has not been operated by the agent.
+
+## Gray spiral and native EVF bitmap correction — October 27, 2026
+
+Latest owner feedback: yellow spiral is visible only on the monitor; straight
+custom grids work in EVF. The owner requests normal-grid gray and EVF support.
+The installed legacy helper explicitly excluded EVF. Read the new top section
+of `GRID_SPIRAL_RESEARCH.md` and `CLEAN_DISPLAY_RESEARCH.md`.
+
+New private build `.private/builds/20261027-spiral-display-02/` uses original Z7
+component-1 descriptors for LCD 720x480 and EVF 1280x960, exact registered
+surface/shape checks, separate immutable gray assets and active IDs 1/4.
+MAIN SHA-256 `7049b2120a9f88e3859a5d8ec335bb4858e6642ba9a278e5cd95474edf597543`.
+Independent rebuild/CRC, 132 supplied-boundary instruction checks, 18 assisted
+LCD lifecycle checks and 22 root tests pass; nine frame hashes verify. The gray
+detector's first run falsely counted native grid/gradient pixels; the failed
+run is preserved and a regression plus narrower upper-arc detector resolves it.
+The complete gray spiral and Off frames were visually inspected.
+
+Native EVF bitmap/decoder test is separate from eye-sensor/scanout validation.
+Attempt 01 sampled two-byte instead of four-byte pixels; attempts 02/03 used
+top-down coordinates against a bottom-up RGBA bitmap. These failed results
+remain preserved. Attempt-03 full raw capture exactly matches all 7,589 source
+curve pixels after vertical reflection, including 6,621 beyond LCD-sized bounds.
+Corrected repeat 04 passes all nine checks, including native registration,
+full-size gray pixels and previous target restoration. Its result is in
+`.private/research/grid/20261027-spiral-native-evf-04/`. No physical EVF success
+is claimed. Sanitized evidence: `evidence/20261027-grid-spiral-display.json`.
+Default legacy build exactly reproduces installed yellow MAIN hash `06b89e2a...`.
+The new identity is not admitted by the existing yellow flash assessment/review.
+No new candidate was copied to the card; it is in the camera after the owner's
+earlier trial. Fresh card identification and a new exact-candidate assessment
+are required before a later staging request.
+
+Clean-display emulator RAM masking hides most shooting widgets but leaves two
+card-count brackets even after MENU clear/return. Original background/secondary
+bitmap fills did not remove them. All original masks were restored, normal
+simplified readouts returned, and that isolated guest was closed. No clean UI
+firmware patch is included. Private research outputs remain under
+`.private/research/display/20261027-clean-mask-03/`.
+
+## Owner confirms spiral grid switching — October 27, 2026
+
+After the reported update initiation below, the owner reports: "yep it appears
+only when using golden ratio, and will disappear when swapping to another
+gridtype". This is the first physical-camera report for the automatic spiral
+image staged with EG SHA-256
+`52c593aff9895e31b4cfaf15ceb0335bdf4f26671d346dcb499080ea11c0f316`.
+It supports post-update display operation and expected layout selection/removal
+on one original Z7. It is not independent observation or firmware readback.
+The owner also answered "Yes, clears and returns" for opening MENU and returning
+to Golden ratio. Exact completion text, EVF/crop/DISP/wake, capture/performance
+and recovery remain unverified. The core selection and MENU lifecycle now have
+both scoped emulator evidence and one owner's physical-camera report.
+Evidence: `evidence/20261027-grid-spiral-owner-hardware.json`.
+
+## Spiral trial staged; owner reports programming — October 27, 2026
+
+The owner accepts the curve in front of status icons and explicitly requested a
+camera trial. The owner confirmed charged power and a backed-up card connected
+through its reader. Read `GRID_SPIRAL_FLASH_ASSESSMENT.md`. Clean-display research
+is a separate task and is not in this BIN.
+
+Fresh `.private/builds/20261027-spiral-flash-01/` exactly reproduces the tested
+automatic-paint image: full EG 33,062,334 bytes, SHA-256
+`52c593aff9895e31b4cfaf15ceb0335bdf4f26671d346dcb499080ea11c0f316`;
+MAIN SHA-256 `06b89e2a4eb864a96599eea504dd1d2f8aba05c8f072243c3a7d51c999fbd136`.
+The dedicated `grid-spiral` review rebuilds/completely compares EG, MAIN and report,
+retains the CRC, rejects mixed/modified/explicit-only inputs and links the new
+assessment. Other review modes remain separate. All 20 root tests pass.
+
+Fresh 95 instruction, 12 selected original updater header/name and 18 previous
+loader compatibility checks pass. The identical MAIN's existing 18 assisted-QEMU
+checks and nine frame hashes verify; QEMU was not redundantly rerun for the copy.
+Stock, prior six-grid and owner-tested three-grid inputs are kept separately in
+`.private/flash-review/20261027-spiral-01/`. No emergency recovery or physical
+rollback is verified. Foreground acceptance does not resolve LCD/EVF/crop/DISP,
+allocation/concurrency or real timing limits.
+
+The expected Sony QD-G240F was freshly re-identified as E: and its six-grid EG
+fully hash-matched. Backup: `.private/card-backups/20261027-spiral-b20cb240/EG161080.BIN`.
+The spiral was staged as the only root BIN using a flushed/verified temporary copy
+and final readback. Settings/WAV/root inventory remain unchanged. No photo-folder
+edits, formatting, automatic ejection or camera operation by the agent occurred.
+Sanitized evidence: `evidence/20261027-grid-spiral-flash-review.json`.
+
+The owner was instructed to begin with 3x3 selected and use the rear LCD, then
+choose Golden ratio after update/startup. Golden ratio now includes the curve;
+no separate spiral row exists. While asked for the current/new screen, the owner
+reported "flashing now. ill report back". Programming is owner-reported in progress,
+not observed complete. Do not interrupt an active update. Await completion and
+test Golden ratio, MENU return, and 3x3/Off following the camera's instructions.
+
+## Automatic spiral paint proof and upstream merge — October 27, 2026
+
+The owner asked to investigate automatic spiral drawing/removal. Read the new
+automatic section of `GRID_SPIRAL_RESEARCH.md`. Separate private candidate
+`.private/builds/20261027-spiral-lifecycle-01/` hooks the original Z7 dirty-widget
+paint completion, retaining the original walker/return/pending-flag behavior.
+No custom workspace, timer, capture hook, settings record or flash writer is
+added. It combines the spiral with existing Golden ratio value 3; there is no
+separate spiral menu choice yet.
+
+MAIN SHA-256 `06b89e2a4eb864a96599eea504dd1d2f8aba05c8f072243c3a7d51c999fbd136`,
+33,062,332 bytes. The explicit-draw parent has one additional guarded 12-byte
+window (11 changed bytes), plus 352 appended bytes. Full independent rebuild
+and CRC pass. Preset `grid-spiral-lifecycle-emulator-only` is rejected by ordinary
+grid and flash-review admission. The earlier six-grid card file is untouched.
+
+95 supplied-boundary instruction checks, 19 root tests and 18 assisted-QEMU
+checks pass. Native MENU clears the curve and both tested returns automatically
+restore it, without host draw calls or asset uploads. Choosing 3x3/Off through
+exact compiled handlers while MENU owns the screen removes it on return;
+Golden ratio restores it. Nine saved PNG hashes verify. The first visual run's
+second MENU check falsely counted Nikon's yellow sidebar highlight; that failed
+run remains preserved. Narrower observed-color classification has two new
+regressions, and the full repeat passes. Sanitized evidence:
+`evidence/20261027-grid-spiral-lifecycle.json`.
+
+This is a feasibility proof, not a flash-ready implementation. The curve draws
+over some status icons; layer ordering/owned UI integration is the next concrete
+problem. Direct live-view erase, DISP/playback, EVF/crop/rotation, allocation
+failure, concurrent painting and hardware performance remain unverified. No
+camera/card access, new staging, flash clearance, publication or push occurred.
+
+The owner also reported the WonderLantern PR merge. GitHub metadata confirms
+`WonderLantern/z7-qemu#3`, "Support native Windows builds and controller
+execution", is merged. Head `109671a14bd48729d6a7ed92402b2d7b229789d6` merged as
+`110c8ab93278e32870ae136533b5ee8b17db19b3`, timestamp
+`2026-10-28T02:12:21Z` (October 27 in Denver).
+https://github.com/WonderLantern/z7-qemu/pull/3 . No additional upstream comment,
+repository update or vendored-snapshot rebase was performed for this observation.
+
+## Six-choice grid prepared and staged — October 27, 2026
+
+The owner requested preparing a camera flash with the new grids, then confirmed
+the card was mounted in response to the staging request. Only 4x4 / 3x3 /
+Golden ratio (phi lines) / Center cross / 6x6 / Off are included. The Fibonacci
+curve, sound and splash remain excluded. Read `GRID_LAYOUTS_FLASH_ASSESSMENT.md`.
+
+Fresh `.private/builds/20261027-grid-layouts-flash-01/` exactly reproduces tested
+candidate 02. Full EG is 33,056,174 bytes, SHA-256
+`437e1f8edbb89f1409ad768dcf50e91725280481561fcaa8f0f161cc64e5dccc`;
+MAIN SHA-256 `6485b0a579eb469701bcb89c442ab6b7faa1cea748dd3716cc524e500595b97f`.
+Review bundle: `.private/flash-review/20261027-grid-layouts-01/`.
+Convenient copy: `.private/flash-ready/20261027-grid-layouts/EG161080.BIN`.
+
+Fresh 484 instruction checks and 12 updater header/filename probes pass. Eighteen
+new previous-build compatibility checks show native journal loading retains all
+89 payloads, old visibility/menu treat new values as Off, and old 3x3 can be
+selected/saved/reloaded. These are supplied-boundary tests, not physical rollback.
+The identical MAIN's earlier 35 QEMU checks and frame hashes were verified;
+QEMU was not rerun for a byte-identical copy. All 17 root tests pass. The new
+explicit `grid-layouts` review mode rejects old-mode/spiral report substitution.
+
+The Sony QD-G240F was re-identified by model, serial, physical capacity, USB
+bus and volume identity as E:. Its old EG matched the owner-tested saved-grid
+build and was backed up/read back at
+`.private/card-backups/20261027-grid-layouts-951c3dab/EG161080.BIN`.
+The new EG was staged through a verified temporary copy, then renamed into
+place. Final full hash matches, it is the only root `.BIN`, and settings/WAV
+hashes plus the non-firmware root inventory are unchanged. No photo-folder
+write, formatting, ejection or camera programming was performed.
+
+Next checkpoint: safely eject, insert into the original Z7 C 3.80/no paid RAW
+upgrade with fully charged supported power, and inspect the actual current/new
+version screen before starting an update. There is no verified emergency
+recovery if the camera becomes unbootable. Stock and prior EGs are preserved
+normal-updater rollback inputs only, not a full flash/calibration backup.
+Sanitized evidence: `evidence/20261027-grid-layouts-flash-review.json`.
+
+## QEMU PR fix and reply published — October 27, 2026
+
+The owner approved responding, requested no dash punctuation, and asked that
+the public reply focus on Windows without mentioning other host testing.
+The five-file smoke-test fix was committed and pushed to the existing fork
+branch `tylermcm/z7-qemu:codex/windows-native-support` as
+`109671a14bd48729d6a7ed92402b2d7b229789d6`. PR #3 now reports that head SHA.
+
+Posted and read back the revised reply as `tylermcm`:
+https://github.com/WonderLantern/z7-qemu/pull/3#issuecomment-6458021615 .
+It acknowledges the overly strict quit-reply check, links the fix, and reports
+23 passing Python tests on Windows plus three passing firmware-free smoke runs
+against the existing QEMU 10.2.4 build. Its wording was verified against the
+approved revision, including the requested punctuation and host scope.
+
+The GitHub connector's comment action returned 403 (integration permission),
+so the explicitly authorized comment was posted with the authenticated GitHub
+CLI instead. The PR branch checkout is clean. The lab's vendored copy remains
+updated locally; no additional lab main-branch push or release was made here.
+No firmware, screenshots, dumps or runtime artifacts were published.
+
+## QEMU PR response and prepared quit fix — October 27, 2026
+
+The owner asked to look into answering the response on
+https://github.com/WonderLantern/z7-qemu/pull/3 . R3tr0ooo reported that the
+smoke helper falsely fails when QEMU exits cleanly before its quit reply;
+their Python and sanitized GPU/ISP tests passed. Original pinned QEMU 10.2.4
+`qapi/control.json` explicitly permits EOF before the quit acknowledgement.
+The firmware-extension PR #1 had no returned comments at this check.
+
+Prepared locally in the vendored component and the existing isolated PR
+checkout `.private/pr-review/z7-qemu` on `codex/windows-native-support`:
+require capability/status replies, send quit separately, and require process
+exit 0 within ten seconds without reading a mandatory quit reply. Twelve new
+synthetic TCP/process regressions cover EOF/reset, ordinary replies, errors,
+nonzero exit and timeout. The synthetic server tolerates abandoned connection
+attempts before the first command, after observed Windows loopback setup aborts;
+it does not retry an actual protocol scenario.
+
+All 23 Python tests passed on the isolated PR source. Three firmware-free runs
+against the existing lab-built QEMU 10.2.4 executable passed. No Linux build,
+ASan/UBSan run, firmware/UI run or camera test was repeated for this helper
+change. QEMU C sources are unchanged. Publication inventories and code graph
+were refreshed after review. This is a prepared patch and reply draft only:
+no PR comment, PR push or main-branch push has been performed for this response.
+The owner's request did not explicitly authorize posting the drafted message.
+
 ## Source push requested — October 27, 2026
 
 The owner authorized pushing the additional grids, Fibonacci drawing prototype,

@@ -44,6 +44,12 @@ class SpiralTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 spiral_points(*args)
 
+    def test_gray_variant_matches_native_grid_rgb_and_keeps_transparency(self):
+        image, encoded = overlay_png(color=(216, 216, 216, 255))
+        colors = set(image.getdata())
+        self.assertEqual(colors, {(0, 0, 0, 0), (216, 216, 216, 255)})
+        self.assertEqual(encoded[24:26], bytes([8, 6]))
+
 
 if __name__ == '__main__':
     unittest.main()

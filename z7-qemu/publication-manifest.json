@@ -17,7 +17,7 @@
     "docs/firmware.md": "0708830e11eb7d3d9238fd3f24c0a9d4cec511da047211a959c05fd3c41a0eb4",
     "docs/publication.md": "a632fb029583c6af2709fcfc185db61079d144a027cbefa51dbe0c25d1da021d",
     "docs/research-notes.md": "da6ed765f2f343972b682e59820d553f7e8948e73119506437ff54619ddb7557",
-    "docs/testing.md": "cbd4338ccbf37c4c9dd442237d53ba4af24e06885a903c5077c86572ff90cf98",
+    "docs/testing.md": "cd25fcbbdcc2349817f3ff9798bda63ecd2d681c27bc3563c1d783886ed35788",
     "docs/usage.md": "870a0e09764272c5f6eae662b0749a0d091d4adaf9cf4b8d3bc0dd00ed27cf19",
     "qemu/nikon-z7-gpu.h": "aaa40063dc6974a77ad210048466dc4baceaf8a59bbeb38c5f2caae9ef9f3ced",
     "qemu/nikon-z7-isp-pixels.h": "ab83ae53c2638310f1843648f135685739f9e443d9c8c9f5abbd85ac28e6a262",
@@ -31,7 +31,8 @@
     "tests/test_gpu.c": "4afaa90769e54a300be921269894768fe8d128eef7a3847df8113399cd27c7d4",
     "tests/test_isp.c": "dfb3a5fd2024b2dd7cc4690e0d7f291814850fcb071d9b1ee5cb280e2fade813",
     "tests/test_raw_input.py": "4df9330d1c4b04ce128f3b959b7a57b32f6fda00bcda16f0eb70e8e00ea7ad78",
-    "tools/audit_publication.py": "1693ea1e1ca26e3e77f9c367b3dd4c76567529f5d00667169d3d3bc5e8ffcaf1",
+    "tests/test_smoke_qemu.py": "f110f31be12b09aa86fb58da11e356d4eb7cc7b04f9a73666e57457bfd80f3c0",
+    "tools/audit_publication.py": "cf3c329f1f0b26dc78248c5e597fd895467e9a4fe5c38d444409cdbb3aa6306f",
     "tools/build.py": "66d9647c98a297679a325fd10ea6d57e6b4186f2b7d01ea63b9f3ce4fa820581",
     "tools/capture_diagnostics.py": "0c2fb5be043a15f04930ea596d2ddc718a3b7e26582852fc9141936d79faf1e7",
     "tools/cmos_config.py": "2cc72804d7cfd1f7608ea43236fbcd442d2a8a07378098360b2081ab422cbe3d",
@@ -44,7 +45,7 @@
     "tools/probe.py": "45397146248621b07272579ee16d3c7b38f2b5681978a5d61b164eba3eaf9971",
     "tools/raw_input.py": "76d1895fdd42869ad4d0046c3a316207eb04abc981751e88a22e8b095047ccc7",
     "tools/rsp.py": "616a175b0b0c68d32dcbe774c3ea54da4aaa8c94e2d3e376210cdecc60e202ed",
-    "tools/smoke_qemu.py": "b6b3aed331c6b039e718e101b53da8b79397cb8c7b5168e38a41db4b2751d782",
+    "tools/smoke_qemu.py": "ea035668bed4490043c278a5ddeca9b17f35d2480418480b0f43bca31cc1ca30",
     "tools/verify_ui.py": "6cd64a336adb6f010608553f4dc513ada9dac1fa35dc856a89769bc2d37fb1f4"
   }
 }

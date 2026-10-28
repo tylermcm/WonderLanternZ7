@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "date_local": "2026-10-27",
+  "timezone": "America/Denver",
+  "evidence_kind": "owner report in chat after staged gray LCD EVF trial",
+  "associated_eg_sha256": "c3cbb8fd4aaa932fc74cfd662cbfaac3f5471ea6ab81edb6148766d5a93449b6",
+  "associated_main_sha256": "7049b2120a9f88e3859a5d8ec335bb4858e6642ba9a278e5cd95474edf597543",
+  "owner_response": "confirmed working; electric level thing visibly lags",
+  "owner_comparison": "the lag is bascially contained tothe evf and ONLY on golden ratio and this iirc wasnt an issue beofre we added the spiral. it does lag on the monitor but its barely noticable",
+  "owner_reported": {
+    "gray_lcd_evf_trial_working": true,
+    "electronic_level_lag_with_golden_ratio": true,
+    "evf_lag_conspicuous": true,
+    "monitor_lag_barely_noticeable": true,
+    "lag_only_with_golden_ratio": true,
+    "remembers_no_lag_before_spiral": true
+  },
+  "camera_count": 1,
+  "model_previously_identified": "Original Nikon Z7 C 3.80, no paid RAW video upgrade",
+  "independently_observed": false,
+  "camera_firmware_readback": false,
+  "exact_update_completion_message_observed": false,
+  "agent_operated_camera": false,
+  "performance_measured_on_hardware": false,
+  "lag_fixed": false,
+  "physical_rollback_verified": false,
+  "emergency_recovery_verified": false,
+  "scope": "Owner confirms the requested gray monitor/EVF trial works, with a display performance regression strongly associated with Golden ratio spiral rendering. Individual transition tests and timing were not independently observed."
+}

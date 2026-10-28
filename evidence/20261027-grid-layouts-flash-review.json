@@ -1,0 +1,198 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "scope": "Exact six-choice grid preparation and verified card staging, without camera programming.",
+  "preset": "grid-layouts",
+  "main_payload_sha256": "6485b0a579eb469701bcb89c442ab6b7faa1cea748dd3716cc524e500595b97f",
+  "eg_sha256": "437e1f8edbb89f1409ad768dcf50e91725280481561fcaa8f0f161cc64e5dccc",
+  "eg_bytes": 33056174,
+  "independently_rebuilt": true,
+  "eg_crc_zero": true,
+  "source_matches_tested_candidate": true,
+  "features": [
+    "grid_native",
+    "grid"
+  ],
+  "internal_settings_format_changed": false,
+  "internal_setting_value_encoding_changed": true,
+  "native_header_filename_checks": [
+    {
+      "name": "stock_native_header_property_0",
+      "passed": true
+    },
+    {
+      "name": "stock_native_header_property_1",
+      "passed": true
+    },
+    {
+      "name": "grid-layouts_native_header_property_0",
+      "passed": true
+    },
+    {
+      "name": "grid-layouts_native_header_property_1",
+      "passed": true
+    },
+    {
+      "name": "native_header_rejects_oversize",
+      "passed": true
+    },
+    {
+      "name": "native_header_rejects_short_version",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG161080.BIN",
+      "passed": true
+    },
+    {
+      "name": "native_name_eg161080.bin",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG16100380.BIN",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG162080.BIN",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG161080.BIN.extra",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG1610.BIN",
+      "passed": true
+    }
+  ],
+  "instruction_checks": 484,
+  "instruction_checks_all_passed": true,
+  "previous_build_compatibility": {
+    "schema": 1,
+    "scope": "Test new layout journals with the earlier owner-tested three-choice image.\n\nNative settings instructions run with the existing supplied OS/flash/UI\nboundaries. This verifies selected loader/setting compatibility, not physical\nrollback, updater programming, shutdown timing or emergency camera recovery.",
+    "main_payload_sha256": "6485b0a579eb469701bcb89c442ab6b7faa1cea748dd3716cc524e500595b97f",
+    "previous_main_payload_sha256": "7f29bfda937c90261eff989d5f27dbf71ca2b142308b70879b1a7ef3d46c4075",
+    "checks": [
+      {
+        "name": "golden-previous-native-loader-restores-value-and-all-records",
+        "passed": true
+      },
+      {
+        "name": "golden-previous-startup-does-not-write-storage",
+        "passed": true
+      },
+      {
+        "name": "golden-previous-native-grid-visibility-is-off",
+        "passed": true
+      },
+      {
+        "name": "golden-previous-menu-focuses-off",
+        "passed": true
+      },
+      {
+        "name": "golden-previous-can-save-and-reload-3x3-again",
+        "passed": true
+      },
+      {
+        "name": "golden-previous-preserves-unrelated-records-after-reselection",
+        "passed": true
+      },
+      {
+        "name": "center-previous-native-loader-restores-value-and-all-records",
+        "passed": true
+      },
+      {
+        "name": "center-previous-startup-does-not-write-storage",
+        "passed": true
+      },
+      {
+        "name": "center-previous-native-grid-visibility-is-off",
+        "passed": true
+      },
+      {
+        "name": "center-previous-menu-focuses-off",
+        "passed": true
+      },
+      {
+        "name": "center-previous-can-save-and-reload-3x3-again",
+        "passed": true
+      },
+      {
+        "name": "center-previous-preserves-unrelated-records-after-reselection",
+        "passed": true
+      },
+      {
+        "name": "dense-previous-native-loader-restores-value-and-all-records",
+        "passed": true
+      },
+      {
+        "name": "dense-previous-startup-does-not-write-storage",
+        "passed": true
+      },
+      {
+        "name": "dense-previous-native-grid-visibility-is-off",
+        "passed": true
+      },
+      {
+        "name": "dense-previous-menu-focuses-off",
+        "passed": true
+      },
+      {
+        "name": "dense-previous-can-save-and-reload-3x3-again",
+        "passed": true
+      },
+      {
+        "name": "dense-previous-preserves-unrelated-records-after-reselection",
+        "passed": true
+      }
+    ],
+    "all_passed": true,
+    "camera_access": false,
+    "card_access": false,
+    "physical_rollback_verified": false,
+    "emergency_recovery_verified": false
+  },
+  "reused_identical_payload_qemu": [
+    {
+      "view": "menu",
+      "checks": 22,
+      "all_passed": true
+    },
+    {
+      "view": "live",
+      "checks": 13,
+      "all_passed": true
+    }
+  ],
+  "qemu_frame_hashes_verified": true,
+  "root_tests": 17,
+  "review_tests": 8,
+  "previous_working_eg_sha256": "07d77574bc9fed84d357b4e7c3df808127d361106c10ca26e0b6e2c818f6d0a7",
+  "staging": {
+    "card_device": "Sony QD-G240F",
+    "drive": "E:",
+    "fresh_identity_verified": true,
+    "previous_firmware_backup_verified": true,
+    "final_full_file_hash_verified": true,
+    "only_one_root_bin": true,
+    "non_firmware_root_files_unchanged": true,
+    "photo_folders_written": false,
+    "formatted": false,
+    "automatically_ejected": false
+  },
+  "card_written": true,
+  "camera_written": false,
+  "candidate_physically_installed": false,
+  "physical_rollback_verified": false,
+  "emergency_recovery_verified": false,
+  "assessment": "GRID_LAYOUTS_FLASH_ASSESSMENT.md",
+  "limits": [
+    "Selected header and single-name instructions only; file I/O and runtime property mocked.",
+    "No directory enumeration, complete updater admission, erase/program/readback or real boot.",
+    "Same-version camera acceptance and emergency boot recovery remain unverified.",
+    "Stock copies are rollback inputs, not a proven recovery mechanism.",
+    "No full-container header digest was recomputed or validated.",
+    "Previous-build compatibility uses supplied native OS/flash/UI boundaries.",
+    "No physical update/boot, shutdown, LCD/EVF or long-term hardware validation for this candidate."
+  ]
+}

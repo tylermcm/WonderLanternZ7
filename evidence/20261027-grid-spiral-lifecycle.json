@@ -1,0 +1,196 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "status": "Automatic paint proof only; not cleared for camera installation",
+  "main_payload_sha256": "06b89e2a4eb864a96599eea504dd1d2f8aba05c8f072243c3a7d51c999fbd136",
+  "main_bytes": 33062332,
+  "eg_sha256": "52c593aff9895e31b4cfaf15ceb0335bdf4f26671d346dcb499080ea11c0f316",
+  "new_guarded_window_bytes": 12,
+  "changed_parent_bytes": 11,
+  "appended_to_explicit_draw_parent_bytes": 352,
+  "instruction_checks": {
+    "passed": 95,
+    "supplied_ui_graphics_boundaries": true
+  },
+  "root_python_tests": {
+    "passed": 19
+  },
+  "assisted_qemu": {
+    "passed": 18,
+    "session": "20261027-202509-5ea2",
+    "host_spiral_draw_calls": 0,
+    "diagnostic_choice_and_visibility_inputs": true,
+    "checks": [
+      {
+        "name": "live-scene-ready",
+        "passed": true
+      },
+      {
+        "name": "spiral-appears-without-host-draw-call",
+        "passed": true
+      },
+      {
+        "name": "automatic-spiral-remains-visible",
+        "passed": true
+      },
+      {
+        "name": "menu-opened",
+        "passed": true
+      },
+      {
+        "name": "menu-0-has-no-spiral",
+        "passed": true
+      },
+      {
+        "name": "spiral-returns-automatically-0",
+        "passed": true
+      },
+      {
+        "name": "menu-opened",
+        "passed": true
+      },
+      {
+        "name": "menu-1-has-no-spiral",
+        "passed": true
+      },
+      {
+        "name": "spiral-returns-automatically-1",
+        "passed": true
+      },
+      {
+        "name": "menu-opened",
+        "passed": true
+      },
+      {
+        "name": "thirds-stored-value",
+        "passed": true
+      },
+      {
+        "name": "thirds-has-no-stale-spiral",
+        "passed": true
+      },
+      {
+        "name": "menu-opened",
+        "passed": true
+      },
+      {
+        "name": "golden-stored-value",
+        "passed": true
+      },
+      {
+        "name": "golden-reappears-after-choice",
+        "passed": true
+      },
+      {
+        "name": "menu-opened",
+        "passed": true
+      },
+      {
+        "name": "off-stored-value",
+        "passed": true
+      },
+      {
+        "name": "off-has-no-stale-spiral",
+        "passed": true
+      }
+    ],
+    "frames": [
+      {
+        "name": "00-automatic-golden-spiral",
+        "sha256": "f23ad59a445fd520df085c6f2c4487694fed32db9404bd8da2e951dd292aa283",
+        "scene": 40040,
+        "curve": 6906,
+        "grid_value": 3,
+        "grid_state": "0001000001000000000000000100000000000000",
+        "surface_registry": "020000000048e51601000000"
+      },
+      {
+        "name": "01-resumed",
+        "sha256": "f23ad59a445fd520df085c6f2c4487694fed32db9404bd8da2e951dd292aa283",
+        "scene": 40040,
+        "curve": 6906,
+        "grid_value": 3,
+        "grid_state": "0001000001000000000000000100000000000000",
+        "surface_registry": "020000000048e51601000000"
+      },
+      {
+        "name": "02-menu-0",
+        "sha256": "68fb11a36bea1d5f5fd9255745ec635186071904adb7c71c0b3ad0406c469143",
+        "scene": 0,
+        "curve": 0,
+        "grid_value": 3,
+        "grid_state": "0001000001000000000000000100000000000000",
+        "surface_registry": "020000000048e51601000000"
+      },
+      {
+        "name": "03-returned-0",
+        "sha256": "99ba5387e7c012377f685394d2f9dcc8872e9504f25e5c80b92818386bd1858b",
+        "scene": 40040,
+        "curve": 6906,
+        "grid_value": 3,
+        "grid_state": "0001000001000000000000000100000000000000",
+        "surface_registry": "020000000048e51601000000"
+      },
+      {
+        "name": "02-menu-1",
+        "sha256": "1f3e72c19b3909575cf15b1eff6d565e88120c243edda37ebffe56cbee5feb36",
+        "scene": 0,
+        "curve": 0,
+        "grid_value": 3,
+        "grid_state": "0001000001000000000000000100000000000000",
+        "surface_registry": "020000000048e51601000000"
+      },
+      {
+        "name": "03-returned-1",
+        "sha256": "99ba5387e7c012377f685394d2f9dcc8872e9504f25e5c80b92818386bd1858b",
+        "scene": 40040,
+        "curve": 6906,
+        "grid_value": 3,
+        "grid_state": "0001000001000000000000000100000000000000",
+        "surface_registry": "020000000048e51601000000"
+      },
+      {
+        "name": "04-choice-thirds",
+        "sha256": "e9faf123bad94ffc21da57ac7635dbc2576793541231acfc2b29dfc12e9fb753",
+        "scene": 40702,
+        "curve": 0,
+        "grid_value": 2,
+        "grid_state": "0001000001000000000000000100000000000000",
+        "surface_registry": "020000000048e51601000000"
+      },
+      {
+        "name": "04-choice-golden",
+        "sha256": "f23ad59a445fd520df085c6f2c4487694fed32db9404bd8da2e951dd292aa283",
+        "scene": 40040,
+        "curve": 6906,
+        "grid_value": 3,
+        "grid_state": "0001000001000000000000000100000000000000",
+        "surface_registry": "020000000048e51601000000"
+      },
+      {
+        "name": "04-choice-off",
+        "sha256": "b3f9f2701de0a5ae1010e14338da83b3bd561c106a1abf9159fcda53dd94013f",
+        "scene": 40828,
+        "curve": 0,
+        "grid_value": 0,
+        "grid_state": "0001000001000000000000000100000000000000",
+        "surface_registry": "020000000048e51601000000"
+      }
+    ]
+  },
+  "first_visual_run": {
+    "status": "Failed observation check, not firmware fault",
+    "reason": "Broad gold classifier counted native yellow menu highlight; stored menu frame has no curve. Narrower curve-color check has two regressions and full repeat passes.",
+    "result_preserved": true
+  },
+  "limitations": [
+    "Current prototype combines spiral with Golden ratio, stored value 3; no separate option.",
+    "Curve can cross status icons; native layer ordering is unresolved.",
+    "Direct live-view erase, DISP, playback, crop/rotation, EVF, allocation failure and concurrent painting unverified.",
+    "Physical performance, camera update acceptance and recovery unverified."
+  ],
+  "camera_access": false,
+  "card_access": false,
+  "installation_cleared": false,
+  "private_screenshots_not_published": true
+}

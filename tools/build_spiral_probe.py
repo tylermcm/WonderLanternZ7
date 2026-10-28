@@ -18,7 +18,7 @@ from z30_extensions.platform import z7_380
 from z30_extensions.features.spiral_probe_z7 import configure
 
 
-def build_image(container):
+def build_image(container, follow_display=False):
     parent, old = build_grid(container, native_choice=True, extra_grids=True)
     source = extract_eg(container)
     plan = Plan(source, z7_380)
@@ -26,11 +26,16 @@ def build_image(container):
     plan.edits = [Edit(int(e['offset'], 16), bytes.fromhex(e['expected_hex']),
                        bytes.fromhex(e['replacement_hex']), e['name']) for e in old['edits']]
     plan.features = old['features']
-    configure(plan, overlay_png()[1])
+    if follow_display:
+        configure(plan, overlay_png(color=(216, 216, 216, 255))[1], follow_display=True,
+                  evf_png=overlay_png(1280, 960, color=(216, 216, 216, 255))[1])
+    else:
+        configure(plan, overlay_png()[1])
     eg, report = plan.finish()
     if eg[:len(parent)-2] != parent[:-2]:
         raise ValueError('Spiral probe changed its independently built parent')
-    report.update(preset='grid-spiral-draw-emulator-only', emulator_only=True,
+    report.update(preset=('grid-spiral-display-draw-emulator-only' if follow_display
+                         else 'grid-spiral-draw-emulator-only'), emulator_only=True,
         container_sha256=old['container_sha256'], input_kind='stock_container',
         source_model='z7', main_payload_size=len(eg)-2,
         main_payload_sha256=hashlib.sha256(eg[:-2]).hexdigest(),
@@ -44,9 +49,12 @@ def validate_candidate(path, report_path, stock_path):
     if report_path is None or stock_path is None:
         raise ValueError('Spiral probe needs its report and original container')
     recorded = json.loads(Path(report_path).read_text())
-    if recorded.get('preset') != 'grid-spiral-draw-emulator-only' or not recorded.get('emulator_only'):
+    if recorded.get('preset') not in ('grid-spiral-draw-emulator-only',
+                                    'grid-spiral-display-draw-emulator-only') or not recorded.get('emulator_only'):
         raise ValueError('Unsupported spiral probe identity')
-    eg, report = build_image(Path(stock_path).read_bytes())
+    follow = recorded['preset'] == 'grid-spiral-display-draw-emulator-only'
+    eg, report = (build_image(Path(stock_path).read_bytes(), follow_display=True) if follow
+                  else build_image(Path(stock_path).read_bytes()))
     if Path(path).read_bytes() != eg[:-2] or recorded != report or binascii.crc_hqx(eg, 0):
         raise ValueError('Spiral probe differs from complete independent rebuild')
     return dict(modified=True, independently_rebuilt=True, emulator_only=True,
@@ -58,12 +66,13 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--source', type=Path, default=ROOT/'.private/stock/Z_7_0380.bin')
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--follow-display', action='store_true', help='Separate gray native LCD/EVF drawing diagnostic')
     args = p.parse_args()
     output = args.output.resolve()
     output.relative_to((ROOT/'.private').resolve())
     if output == (ROOT/'.private').resolve() or output.exists():
         p.error('Use a new private output subdirectory')
-    eg, report = build_image(args.source.read_bytes())
+    eg, report = build_image(args.source.read_bytes(), follow_display=args.follow_display)
     output.mkdir(parents=True)
     (output/'spiral.emulator.eg.bin').write_bytes(eg)
     (output/'spiral.emulator.main.bin').write_bytes(eg[:-2])

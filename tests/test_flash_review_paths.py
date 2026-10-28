@@ -48,6 +48,81 @@ class ReviewOutputTests(unittest.TestCase):
 
 
 class GridReviewAdmissionTests(unittest.TestCase):
+    def test_gray_display_review_is_explicit_and_rejects_legacy_or_modified_files(self):
+        payload = b'gray native LCD EVF spiral fixture'
+        module = payload + binascii.crc_hqx(payload, 0).to_bytes(2, 'big')
+        current = {'preset': 'grid-spiral-display-lifecycle-emulator-only', 'features': {}}
+        legacy = {'preset': 'grid-spiral-lifecycle-emulator-only', 'features': {}}
+        with tempfile.TemporaryDirectory(dir=TEMP_PARENT) as temporary:
+            root = Path(temporary)
+            def rebuild(raw, follow_display=False):
+                return module, current if follow_display else legacy
+            with patch('build_spiral_lifecycle.build_image', side_effect=rebuild) as builder:
+                for corruption in (None, 'eg', 'main', 'legacy', 'explicit-only'):
+                    (root/'spiral.emulator.eg.bin').write_bytes(module if corruption != 'eg' else module[:-1])
+                    (root/'spiral.emulator.main.bin').write_bytes(payload if corruption != 'main' else payload[:-1])
+                    recorded = legacy if corruption == 'legacy' else dict(current)
+                    if corruption == 'explicit-only':
+                        recorded['preset'] = 'grid-spiral-display-draw-emulator-only'
+                    (root/'spiral.emulator.json').write_text(json.dumps(recorded))
+                    with self.subTest(corruption=corruption):
+                        if corruption is None:
+                            self.assertEqual(prepare_flash_review.reviewed_candidate(
+                                root, 'grid-spiral-display', b'container', b'stock'), (module, current))
+                            builder.assert_called_once_with(b'container', follow_display=True)
+                            with self.assertRaisesRegex(ValueError, 'report differs'):
+                                prepare_flash_review.reviewed_candidate(root, 'grid-spiral', b'container', b'stock')
+                        else:
+                            with self.assertRaises(ValueError):
+                                prepare_flash_review.reviewed_candidate(root, 'grid-spiral-display', b'container', b'stock')
+
+    def test_spiral_review_requires_the_exact_automatic_build_and_all_bytes(self):
+        payload = b'automatic spiral fixture'
+        module = payload + binascii.crc_hqx(payload, 0).to_bytes(2, 'big')
+        report = {'preset': 'grid-spiral-lifecycle-emulator-only',
+                  'features': {'grid': {}, 'grid_native': {}, 'spiral_lifecycle': {}}}
+        with tempfile.TemporaryDirectory(dir=TEMP_PARENT) as temporary:
+            root = Path(temporary)
+            eg, main, metadata = [root / ('spiral.emulator.' + name)
+                                  for name in ('eg.bin', 'main.bin', 'json')]
+            with patch('build_spiral_lifecycle.build_image', return_value=(module, report)) as rebuild:
+                for corruption in (None, 'eg', 'main', 'report', 'explicit-draw'):
+                    eg.write_bytes(module if corruption != 'eg' else module[:-1] + b'X')
+                    main.write_bytes(payload if corruption != 'main' else payload[:-1])
+                    recorded = dict(report)
+                    if corruption == 'report':
+                        recorded['unexpected'] = True
+                    if corruption == 'explicit-draw':
+                        recorded['preset'] = 'grid-spiral-draw-emulator-only'
+                    metadata.write_text(json.dumps(recorded))
+                    with self.subTest(corruption=corruption):
+                        if corruption is None:
+                            self.assertEqual(prepare_flash_review.reviewed_candidate(
+                                root, 'grid-spiral', b'container', b'stock'), (module, report))
+                            rebuild.assert_called_once_with(b'container')
+                        else:
+                            with self.assertRaises(ValueError):
+                                prepare_flash_review.reviewed_candidate(root, 'grid-spiral', b'container', b'stock')
+
+    def test_layouts_review_requires_the_exact_expanded_build(self):
+        payload = b'six layout fixture'
+        module = payload + binascii.crc_hqx(payload, 0).to_bytes(2, 'big')
+        report = {'preset': 'grid-layouts-emulator-only', 'features': {'grid': {}, 'grid_native': {}}}
+        with tempfile.TemporaryDirectory(dir=TEMP_PARENT) as temporary:
+            root = Path(temporary)
+            (root / 'grid.emulator.eg.bin').write_bytes(module)
+            (root / 'grid.emulator.main.bin').write_bytes(payload)
+            metadata = root / 'grid.emulator.json'
+            metadata.write_text(json.dumps(report))
+            with patch('build_grid_firmware.build_image', return_value=(module, report)) as rebuild:
+                self.assertEqual(prepare_flash_review.reviewed_candidate(
+                    root, 'grid-layouts', b'container', b'stock'), (module, report))
+                rebuild.assert_called_once_with(b'container', persistent=False, native_choice=True, extra_grids=True)
+                for wrong in ('grid-native-value-emulator-only', 'grid-spiral-draw-emulator-only'):
+                    metadata.write_text(json.dumps(dict(report, preset=wrong)))
+                    with self.subTest(preset=wrong), self.assertRaisesRegex(ValueError, 'report differs'):
+                        prepare_flash_review.reviewed_candidate(root, 'grid-layouts', b'container', b'stock')
+
     def test_extra_layouts_cannot_use_existing_grid_flash_review(self):
         payload = b'additional layouts lab fixture'
         module = payload + binascii.crc_hqx(payload, 0).to_bytes(2, 'big')
