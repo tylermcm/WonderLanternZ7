@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 C 3.80 native DISP input and page-cycle contracts",
+  "source_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "instruction_checks": {
+    "input_admission": 20,
+    "selector_setter_and_page_cycle": 104,
+    "passed": true,
+    "supplied_boundaries": ["Native service return values", "Incoming snapshot state", "Property storage", "Information-app transition calls"]
+  },
+  "qemu": {
+    "passed": true,
+    "checks": 7,
+    "frames": 2,
+    "supplied_native_ao_button_press": true,
+    "observed_dispatch_key": "0x29",
+    "observed_original_admission": true,
+    "observed_original_cycle": true,
+    "mode_before": 0,
+    "mode_after": 1,
+    "key_handled_before_injection_returned": true,
+    "shooting_callback_unchanged": true,
+    "earlier_failed_observations_retained": true
+  },
+  "custom_page_handler_installed": false,
+  "physical_button_verified": false,
+  "camera_access": false,
+  "physical_card": false,
+  "binaries_dumps_or_frames_included": false
+}

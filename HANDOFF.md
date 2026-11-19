@@ -29,6 +29,19 @@ Setter changes only snapshot+18A then calls original property storage. The
 native key callback and admission remain unresolved; do not install a guessed
 Z7II callback-slot translation. This is the next custom-DISP integration lead.
 
+Later independent tracing identifies original slotA1829B0C->1030DA57, internal
+dispatcher1030D7AC and key29->103673F6 admission->1037061C page cycle. Input audit01
+passes14 cases with supplied service results. Selector audit02 now passes104
+cases including80 native page-cycle/skip combinations. A live observation first
+stopped on a background0 event; input-live01 is retained as a failed trace.
+Input-live02 was explicitly stopped after its late observation proved inadequate;
+the failure is retained. Input-live03 traces during native AO injection and native
+task delays and passes7 checks/2frames: key29, original admission/cycle, mode0->1
+and callback unchanged. The real key was handled inside the injection call;
+background0 followed during delay. No guest from these runs remains live. Input audit02 now
+passes20 cases including six outer-callback admission/filter cases. No native
+callback has been replaced. See the clean-display record.
+
 ## Combined grid/battery SD module — November 19, 2026
 
 `plugins/combined_display.c` joins the native six-choice grid menu and automatic

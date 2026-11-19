@@ -111,6 +111,46 @@ storage are supplied boundaries; this does not establish persistence or every
 page's meaning. Private result: `.private/evidence/20261119-disp-selector-01.json`.
 Native key callback ownership and its existing admission checks remain to derive.
 
+## Original shooting-key route
+
+Independent Z7 disassembly finds the initialized callback word at RAM
+`0xA1829B0C` (scatter source `0x11EC5D20`) pointing to `0x1030DA57`. The outer
+callback includes native pre-dispatch admission; its internal dispatcher is
+`0x1030D7AC`. Internal key `0x29` reaches native DISP admission `0x103673F6`,
+then page cycle `0x1037061C`. Key `0x28` reaches another handler `0x1036763C`.
+These are original-Z7 routes, not translations of the pinned Z7II key or slot.
+
+`tools/audit_z7_disp_input.py` passes20 cases. Fourteen run the original internal
+dispatcher/admission instructions, with supplied native service results. They
+cover admitted cycling, snapshot states2/5/11, native mode/monitor exclusions,
+both final exclusions, fallback gate acceptance/rejection, and the distinct28
+route. Six further cases execute the outer callback through admitted routing,
+its first admission guard, two early key filters, the final key filter and an
+inner exclusion, with explicit native service results. The broader service
+environment is still supplied. Private input02 is the current instruction result.
+A live trace first stopped on a
+background key0 event; it is retained as a failed observation, not contrary
+proof of the instruction route. The revised probe filters a bounded sequence of
+native dispatches without changing the callback. That after-injection experiment
+was stopped explicitly after its observation point proved insufficient; input-live02
+is retained. Current input-live03 arms instruction traces during the native AO
+press and bounded native task delays, so it can also observe another CPU handling
+the event before the injection returns. The press remains a supplied diagnostic
+input, not physical-button evidence. Input-live03 now passes seven checks across
+two frames: AO injection itself captures dispatcher key29, original admission
+and original page cycle; the subsequent task-delay call captures background0.
+Native mode changes0->1, and callbackA1829B0C remains1030DA57. This confirms that
+the first late breakpoint missed the real request because it ran before the AO
+injection returned. No pixels/register values were forced to create that route.
+
+Selector audit02 expands to104 checks, adding80 native page-cycle cases over
+all five starting pages, supplied photo/movie/output/exposure/eligibility states.
+Original instructions retain native histogram-page skips and alternate-output/
+movie information-page skips. Photo LCD page4 reaches two native app-transition
+calls and returns2; those calls are supplied boundaries, so this is routing
+evidence rather than a completed information-app transition. No custom page
+handler has yet been installed.
+
 ## Display routing relevant to the spiral
 
 Original descriptor getter `0x10433B80(kind, display_id, dataset)` accepts LCD

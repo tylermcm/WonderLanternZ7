@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
@@ -173,7 +173,39 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'clean':
+        if args.view == 'disp-input':
+            slot = int.from_bytes(camera.remote.memory(0xa1829b0c, 4), 'little')
+            check('original-shooting-key-callback-binding', slot == 0x1030da57)
+            capture('disp-input-before')
+            initial_mode = camera.remote.memory(0xa201d4d0 + 0x18a, 1).hex()
+            # Observe during the AO injection and bounded native task delays:
+            # the event can run on another CPU before the injection returns.
+            packet = checkpoint()
+            saved_trace = ui.probe.TRACE_CALL, ui.probe.TRACE_REPEAT
+            observed_calls = []
+            try:
+                ui.probe.TRACE_CALL = [0x1030d7ac, 0x103673f6, 0x1037061c]
+                ui.probe.TRACE_REPEAT = {0x1030d7ac}
+                values = [0] * 8; values[83 // 32] = 1 << (83 % 32); values[4] = 10
+                observed_calls.append(ui.call_fixture(camera.remote, packet, 0x105230a6,
+                    struct.pack('<8I', *values), [('scratch', 0), 5, ('scratch', 20)]))
+                for _ in range(5):
+                    packet = 'T05thread:' + observed_calls[-1]['return_cpu'] + ';'
+                    observed_calls.append(ui.call_fixture(camera.remote, packet, 0x1017081e, bytes(32), [1000]))
+                    if any(int(e['registers']['r15'], 16) == 0x103673f6 for call in observed_calls for e in call['trace']): break
+            finally:
+                ui.probe.TRACE_CALL, ui.probe.TRACE_REPEAT = saved_trace
+            (output / 'native-disp-call-trace.json').write_text(json.dumps(observed_calls, indent=2) + '\n', encoding='utf-8')
+            events = [e['registers'] for call in observed_calls for e in call['trace']]
+            keys = [e['r0'] for e in events if int(e['r15'], 16) == 0x1030d7ac]
+            result['native_disp_input'] = dict(callback_slot=hex(slot), dispatcher='0x1030d7ac', keys=keys,
+                                             mode_before=initial_mode, supplied_native_ao_press=True)
+            check('injected-native-disp-reaches-z7-key-29', any(int(k, 16) == 0x29 for k in keys))
+            check('injected-native-disp-reaches-original-admission', any(int(e['r15'], 16) == 0x103673f6 for e in events))
+            capture('disp-input-after')
+            result['native_disp_input']['mode_after'] = camera.remote.memory(0xa201d4d0 + 0x18a, 1).hex()
+            check('original-callback-remains-unchanged-after-key', camera.remote.memory(0xa1829b0c, 4) == struct.pack('<I', slot))
+        elif args.view == 'clean':
             if module['kind'] != 'original-Z7-clean-display-diagnostic':
                 raise ValueError('Clean view requires the disabled-by-default clean diagnostic')
             request_address = base + module['symbols']['z7_clean_request']
