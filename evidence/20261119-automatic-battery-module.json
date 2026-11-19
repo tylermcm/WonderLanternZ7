@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Automatic original-Z7 C 3.80 LCD-photo battery percentage module; emulator only",
+  "module_sha256": "89358992419867380781bafae7a1624f4d51955b3920127718f6daba9318ea23",
+  "disabled_module_sha256": "a0237b08bad6d23e48e896857d6fb9ba9331aceea29eb43b12e459ba2b15d66c",
+  "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+  "file_bytes": 2824,
+  "sampling_interval_gui_passes": 16,
+  "instruction_checks": {
+    "passed": true,
+    "count": 39,
+    "boundaries": [
+      "GUI/control instance and transitions",
+      "Native incoming telemetry and mutex",
+      "Font/label/list/pixel services",
+      "File/kernel/heap"
+    ]
+  },
+  "qemu": {
+    "passed": true,
+    "checks": 8,
+    "frames": 5,
+    "native_snapshot_percent": 0,
+    "supplied_percentage": false,
+    "gui_bar_and_visibility_supplied_once": true,
+    "bar_value_supplied": 1,
+    "full_frame_restored": true,
+    "baseline_and_restored_sha256": "bc92c648d0a04ae26c8e96c7a2809624db0cde13a0dd86a1be6f76a247f9e490",
+    "adapter_glyph_excluded": true,
+    "visual_inspection": true,
+    "native_warning_rgb": [
+      240,
+      72,
+      72
+    ],
+    "stock_warning_pixels": 752,
+    "overlay_warning_pixels": 692
+  },
+  "earlier_gap_retained": "Earlier narrow green checks admitted adapter glyph; visual review identified it and admission was tightened.",
+  "hardware_telemetry": false,
+  "physical_card": false,
+  "camera_access": false,
+  "binaries_or_frames_included": false,
+  "remaining": [
+    "Native-key menu/playback and AF stress",
+    "Additional GUI lifecycle and output/rotation paths",
+    "Movie extension",
+    "Combined grid/battery module",
+    "Camera-side setting UI",
+    "Physical telemetry/card/cache/wake and installation/recovery assessment"
+  ]
+}

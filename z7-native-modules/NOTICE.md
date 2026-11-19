@@ -30,9 +30,13 @@ grid/histogram module are documented in `Z7_DISPLAY_MODULE_RESEARCH.md`, with
 native menu/grid emulator observations and an unresolved histogram rendering
 gap. Physical card/cache behavior and camera display integration remain unverified.
 
-`examples/battery_display_probe.c` adapts the transparent-rectangle preparation
+`examples/battery_display_probe.c` and `plugins/battery_percent.c` adapt the transparent-rectangle preparation
 from upstream `sdk/battery_percent.h` under the same preserved MIT license,
 copyright (c) 2026 JKWTCN. Its original-Z7 addresses, pool/lifetime checks and
-diagnostic phase control are local work. It displays supplied text, not battery
-telemetry. See `Z7_BATTERY_DISPLAY_RESEARCH.md` for native rendering/restoration
+diagnostic phase control are local work. The fixed-text diagnostic displays
+supplied text, not battery telemetry. See `Z7_BATTERY_DISPLAY_RESEARCH.md` for native rendering/restoration
 evidence and the remaining feature work.
+
+The automatic module uses the independently derived native sample policy rather
+than supplied text. Its visibility, ownership, font/palette and bounded-cadence
+logic are local modifications. Physical battery telemetry is still unverified.

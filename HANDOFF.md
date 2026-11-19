@@ -1,5 +1,36 @@
 # Laptop handoff — October 20, 2026
 
+## Automatic LCD-photo battery module — November 19, 2026
+
+New `plugins/battery_percent.c` is automatic, replacing diagnostic phase control
+for this profile. Read the top of `Z7_BATTERY_DISPLAY_RESEARCH.md`. It samples once
+per16 GUI passes, rejects bar fallback and invalid telemetry, follows known
+native foreground battery glyphs, and restores the stock icon on exclusion/off.
+Builder `--variant battery-percent --battery-percent on|off` sets an owned data
+word and reseals module CRC. There is not yet a camera-side settings menu.
+
+Private module07 and off04 are current. Source fingerprints are in their reports.
+Audit06 passes39 instruction checks including the off package. QEMU04 passes8
+checks/5frames, including exact full-frame restoration and adapter exclusion.
+GUI request supplies bar1/icon visibility once; native getter supplies percent0
+from the assisted virtual controller. No physical battery telemetry follows.
+All current frames were inspected: native warning red is retained, compact
+percentage fits, the stock icon returns, and no percentage overlays the adapter.
+
+Visual review of earlier QEMU01 caught a semantic gap despite green checks: it
+had admitted adapter glyph112A. The new gate accepts only even foreground glyphs
+1120..1128 with native class4/HUD painter, excluding adapter112A/B and background
+glyphs. Font0 (36px) was too large; the feature uses original LCD readout font100
+(20px), selected through native kind19. Frame/text inherit stock warning palette.
+The name `native_power_kind` in old private inspection output was an unproven
+interpretation of function1030D3CA; current tooling labels it as unknown UI state.
+
+Next: native-key menu/playback/AF stress and repeated GUI lifetime; combine the
+standalone battery module with the grid module. Other display ports, histogram
+statistics production and physical card/cache/telemetry/wake/output behavior
+remain open. No staging or camera flash is authorized. No owned QEMU run remains
+live from these completed tests. Earlier handoff entries describe prior stages.
+
 ## Native battery sample-to-HUD integration — November 19, 2026
 
 The last turn made code/validation progress, not completion. New reusable sample

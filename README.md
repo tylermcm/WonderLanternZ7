@@ -41,13 +41,19 @@ extension framework. The [original-Z7 host probe](Z7_MODULE_HOST_RESEARCH.md)
 now compiles as Thumb, loads a C module through modeled filesystem services,
 and boots in assisted QEMU with bounded unavailable-file handling. Real-card
 loading and physical cache coherence remain unverified. It is an emulator-only
-experiment; display-module integration follows the host work.
+experiment underpinning the first display modules.
 
 The [first display module](Z7_DISPLAY_MODULE_RESEARCH.md) now adds a native
 six-choice grid menu through the SD-module host. Native-key menu and rendered
 grid checks pass in assisted QEMU. Histogram/horizon integration preserves the
 native restrictions; its live-view fixture gap is recorded separately. This
 candidate remains emulator-only.
+
+An [automatic LCD-photo battery module](Z7_BATTERY_DISPLAY_RESEARCH.md) now
+adds bounded native sampling, compact percentage text, warning-color preservation
+and stock-icon restoration. It is a separate SD-module profile with an initial
+on/off build setting. Assisted-emulator checks include a labeled GUI icon fixture;
+physical telemetry and the remaining lifecycle/output paths are unverified.
 
 The optional [additional-grid lab candidate](GRID_LAYOUTS_RESEARCH.md) adds
 Golden ratio, Center cross and 6x6 alongside 4x4, 3x3 and Off. Menu, drawing

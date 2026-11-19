@@ -95,3 +95,15 @@ Neither result establishes real-card loading or physical cache coherence.
 This module command produces no camera-installable firmware; the separate host
 builder produces private emulator-only EG/MAIN artifacts. See
 [NOTICE.md](NOTICE.md) for provenance and licensing.
+
+## Automatic battery profile
+
+The separate `plugins/battery_percent.c` profile is now available through
+`tools/build_z7_display_module.py --variant battery-percent --battery-percent on`
+(or `off`). It uses the bounded native sample policy and a GUI-owned native text
+object. Read [the exact scope and checks](../Z7_BATTERY_DISPLAY_RESEARCH.md).
+It follows known LCD-photo battery glyphs and preserves their warning palette;
+adapter glyphs, foreign objects/labels/fonts and unsupported layouts are excluded.
+This is emulator-only software, separate from the current grid profile. Keep
+generated packages private and do not treat the builder setting as a native
+camera menu or installation clearance.

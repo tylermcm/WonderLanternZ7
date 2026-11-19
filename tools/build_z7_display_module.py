@@ -7,8 +7,9 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import struct
 
-from build_z7_module import ROOT, build
+from build_z7_module import ROOT, HEADER, build, seal
 from build_z7_module_host import ZIG
 
 
@@ -17,31 +18,46 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent'), default='grids')
+    parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         parser.error('Choose a new directory under .private')
     if args.diagnostics and args.variant != 'grids':
         parser.error('Ownership diagnostic variants apply to the grid module')
+    if args.battery_percent is not None and args.variant != 'battery-percent':
+        parser.error('--battery-percent applies only to the battery-percent module')
     relative, kind, minimum_api = {
         'grids': ('plugins/grids_histogram.c', 'original-Z7-grids-histogram-module', 20),
         'battery-probe': ('examples/battery_display_probe.c', 'original-Z7-battery-text-diagnostic', 16),
         'battery-sample': ('examples/battery_sample_probe.c', 'original-Z7-battery-sample-diagnostic', 12),
         'battery-native': ('examples/battery_native_display_probe.c', 'original-Z7-battery-native-sample-diagnostic', 16),
+        'battery-percent': ('plugins/battery_percent.c', 'original-Z7-battery-percent-module', 16),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
     packet, report = build(source, zig=args.zig.resolve())
     again, second = build(source, zig=args.zig.resolve())
     if packet != again or report != second:
         raise RuntimeError('Display module is not reproducible')
+    if args.variant == 'battery-percent':
+        enabled = args.battery_percent != 'off'
+        offset = report['symbols']['z7_battery_enabled']
+        if offset % 4 or not 0 <= offset <= report['image_bytes'] - 4 or offset in report['relocations']:
+            raise RuntimeError('Battery setting is not an owned initialized data word')
+        if struct.unpack_from('<I', packet, HEADER + offset)[0] != 1:
+            raise RuntimeError('Unexpected battery setting default')
+        configured = bytearray(packet)
+        struct.pack_into('<I', configured, HEADER + offset, int(enabled))
+        packet = seal(configured)
+        report['configuration'] = dict(battery_percent_enabled=enabled, scope='LCD photo; native battery visibility')
     report.update(kind=kind, emulator_only=True,
         module_sha256=hashlib.sha256(packet).hexdigest(), file_bytes=len(packet),
         source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
               ROOT / 'z7-native-modules/sdk/module.ld']
-    if args.variant in ('battery-sample', 'battery-native'):
+    if args.variant in ('battery-sample', 'battery-native', 'battery-percent'):
         inputs.append(ROOT / 'z7-native-modules/plugins/battery_sample.h')
     if args.variant == 'battery-native':
         inputs.append(ROOT / 'z7-native-modules/examples/battery_display_probe.c')

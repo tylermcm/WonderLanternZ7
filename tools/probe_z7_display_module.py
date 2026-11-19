@@ -32,7 +32,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto'), required=True)
+    parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--histogram-context-fixture', action='store_true',
                         help='Explicitly supply native histogram context 1; not a camera-derived observation')
     parser.add_argument('--trace-histogram-writes', action='store_true', help='Record bounded native histogram control watchpoints')
@@ -44,6 +45,8 @@ def main():
         parser.error('Histogram context fixture requires live view')
     if args.battery_text_trial and args.view != 'inspect':
         parser.error('Battery text trial requires inspect view')
+    if args.battery_icon_fixture and args.view != 'battery-auto':
+        parser.error('Battery icon fixture requires battery-auto view')
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         parser.error('Choose a new private evidence directory')
@@ -156,14 +159,61 @@ def main():
                 native_driver_state=camera.remote.memory(0xa188d70c, 3).hex(),
                 normalized_maximum=camera.remote.memory(0xa201d33c, 4).hex())
         check('module-loaded-and-callbacks-committed', state()[10] == 8 and state()[23] == 1 and fixture.finished)
-        if args.view != 'battery':
+        if args.view not in ('battery', 'battery-auto'):
             for _ in range(20):
                 if state()[35]:
                     break
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'battery':
+        if args.view == 'battery-auto':
+            def automatic_word(name):
+                return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_battery_' + name], 4), 'little')
+            def enable(value):
+                camera.remote.write_memory(base + module['symbols']['z7_battery_enabled'], struct.pack('<I', value))
+            capture('automatic-native-context')
+            check('no-native-battery-icon-means-no-overlay', automatic_word('object') == 0 and automatic_word('samples') == 0)
+            if args.battery_icon_fixture:
+                enable(0)
+                result['battery_icon_fixture'] = dict(scope='One supplied native control visibility request; native widget renderer initializes icon',
+                    original_controls=[camera.remote.memory(0xa1824a14 + i * 48, 2).hex() for i in (0, 1)],
+                    original_bar=camera.remote.memory(0xa201d4d0 + 0x1aa, 1).hex(), supplied_bar=1,
+                    percentage_supplied=False)
+                camera.remote.write_memory(0xa201d4d0 + 0x1aa, b'\1')
+                for i in (0, 1): camera.remote.write_memory(0xa1824a14 + i * 48, b'\1\1')
+                native('Native stock battery widget renderer after supplied visibility request', 0x102f40a0, [])
+                capture('automatic-stock-icon-baseline')
+                stock_icon = Image.open(io.BytesIO(camera.png)).convert('RGB')
+                check('supplied-request-reaches-native-icon', camera.remote.memory(0xa1824a14 + 49, 1) == b'\1')
+                enable(1)
+                for _ in range(30):
+                    advance(.3)
+                    if automatic_word('paints'): break
+                capture('automatic-percent')
+                check('eligible-native-icon-automatically-shows-percentage', automatic_word('object') != 0 and automatic_word('paints') > 0 and automatic_word('samples') > 0)
+                shown = Image.open(io.BytesIO(camera.png)).convert('RGB')
+                box = (2, 552, 112, 622)
+                check('automatic-percent-changes-native-icon-region', shown.crop(box).tobytes() != stock_icon.crop(box).tobytes())
+                enable(0)
+                for _ in range(30):
+                    advance(.3)
+                    if camera.remote.memory(automatic_word('object') + 40, 4) == bytes(4): break
+                capture('automatic-stock-icon-restored')
+                restored = Image.open(io.BytesIO(camera.png)).convert('RGB')
+                check('automatic-disable-restores-stock-icon-region', restored.crop(box).tobytes() == stock_icon.crop(box).tobytes())
+                result['automatic_battery'] = dict(native_sample=automatic_word('percent'), samples=automatic_word('samples'),
+                    paints=automatic_word('paints'), supplied_percentage=False, hardware_telemetry=False,
+                    full_frame_restored=restored.tobytes() == stock_icon.tobytes())
+                result['battery_icon_fixture']['active_objects'] = [dict(
+                    pointer=hex(int.from_bytes(camera.remote.memory(0xa1824a14 + i * 48 + 36, 4), 'little')),
+                    record=camera.remote.memory(int.from_bytes(camera.remote.memory(0xa1824a14 + i * 48 + 36, 4), 'little'), 96).hex()) for i in (0, 1)]
+                camera.remote.write_memory(0xa201d4d0 + 0x1aa, b'\0')
+                native('Native adapter glyph for exclusion check', 0x102f40a0, [])
+                count = automatic_word('samples'); enable(1)
+                capture('automatic-adapter-excluded')
+                check('adapter-glyph-never-enables-percentage', automatic_word('samples') == count and
+                      camera.remote.memory(automatic_word('object') + 40, 4) == bytes(4))
+        elif args.view == 'battery':
             symbols = module['symbols']
             def trial_word(name):
                 return int.from_bytes(camera.remote.memory(base + symbols['z7_battery_trial_' + name], 4), 'little')
@@ -222,7 +272,7 @@ def main():
             capture('native-pool-inspection')
             check('native-gui-pool-inspected', bool(occupied))
             result['native_battery_snapshot'] = camera.remote.memory(0xa235aee4, 56).hex()
-            result['native_power_kind'] = query('Native power kind', 0x1030d3ca, [])
+            result['native_ui_state_1030d3ca'] = query('Native UI state 1030D3CA, semantics under investigation', 0x1030d3ca, [])
             result['native_battery_controls'] = camera.remote.memory(0xa1824a14, 480).hex()
             if args.battery_text_trial:
                 baseline = Image.open(io.BytesIO(camera.png)).convert('RGB')

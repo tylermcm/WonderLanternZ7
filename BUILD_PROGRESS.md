@@ -43,6 +43,12 @@ authorization and a concrete exact-candidate installation/recovery assessment.
   native-getter/HUD variant: 23 instruction cases and seven QEMU checks pass,
   including exact complete-frame restoration after displaying the virtual native
   snapshot's 0%. Automatic context gating, cadence and owner controls remain.
+- Automatic LCD-photo battery module now implements that gating and cadence,
+  with explicit initial on/off SD-package configuration, compact native font,
+  foreground battery-glyph admission and inherited warning colors. 39 instruction
+  checks and eight QEMU checks pass. Full stock-frame restoration is exact.
+  GUI bar/icon visibility is a labeled supplied input; telemetry remains virtual.
+  Native-key/AF/output lifecycle and combined feature module work remain.
 
 ## Next implementation
 

@@ -2,9 +2,73 @@
 
 Independent original Nikon Z7 C 3.80 research, November 19, 2026. The SD-module
 framework and first grid module are described in
-[Z7_DISPLAY_MODULE_RESEARCH.md](Z7_DISPLAY_MODULE_RESEARCH.md). Battery percentage
-is still under implementation. The text probe uses an explicitly supplied
-**63%**, never observed battery telemetry. Nothing has been staged or flashed.
+[Z7_DISPLAY_MODULE_RESEARCH.md](Z7_DISPLAY_MODULE_RESEARCH.md). An automatic
+LCD-photo battery module is now implemented and tested in assisted QEMU. Broader
+native lifecycle/output validation and physical telemetry remain open. Earlier
+text probes use supplied **63%** and are kept separate below. Nothing has been
+staged or flashed.
+
+## Automatic LCD photo module
+
+`plugins/battery_percent.c` follows eligible native battery glyphs, samples the
+validated getter once per 16 GUI paint passes, updates the owned label, and
+restores stock icon layers when disabled or excluded. Invalid samples remain
+rate-limited too. No sampling, allocation or label write occurs while disabled.
+Its initial setting is part of the SD package; use builder option
+`--battery-percent on` or `off`. There is no camera-side setting menu yet.
+
+Admission requires the live GUI pool, LCD/photo context, no active native menu
+page, a visible stock foreground battery glyph (`0x1120,22,24,26,28`), its known
+HUD painter and unrotated native layout. Plug/adapter pair `0x112A/B`, hidden
+icons, foreign painters, alternate layouts, movie/EVF contexts and bar fallback
+are excluded. Restore code can repaint both original foreground/background
+layers without replacing their callbacks or visibility. Existing native warning
+palette descriptors are inherited for the outline and percentage text.
+
+The native compact LCD readout font comes from kind19's entry at `0xA18237E8`,
+font100 in the inspected stock data, with 20-pixel height. The old diagnostic's
+font0 has 36-pixel height and was unsuitable inside the icon. Runtime font
+admission rejects unknown or larger-than-24-pixel records. Borrowed label299 is
+checked for both text and font ownership. GUI rebuilds can reclaim an empty,
+reset label; foreign text/font data is never overwritten.
+
+Current private module07 is 2,824 bytes, SHA-256
+`89358992419867380781bafae7a1624f4d51955b3920127718f6daba9318ea23`.
+Disabled counterpart04 is
+`a0237b08bad6d23e48e896857d6fb9ba9331aceea29eb43b12e459ba2b15d66c`.
+Both reproduce with the pinned compiler. The builder changes only the owned
+initialized setting word and reseals the module CRC; firmware is not modified
+by this configuration operation.
+
+39 automatic-module instruction checks cover cadence, rejected samples,
+disable/re-enable, font invalidation, warning palettes, GUI slot/label rebuild,
+stale callbacks, foreign label/font changes, admission exclusions, full native
+pool capacity and disabled-package CRC/admission without work. Original pool,
+snapshot and initialization code runs; GUI/telemetry instances and selected
+font/list/pixel services are supplied.
+
+Assisted-QEMU run04 passes eight checks across five frames: no native icon means
+no overlay/sampling; a one-time supplied native bar/icon request enables the
+stock renderer and automatic percentage; disabling restores the complete stock
+frame exactly; the adapter glyph does not enable sampling or the percentage.
+The percentage comes from the virtual native snapshot (0), not from that GUI
+request. The supplied bar1 and icon visibility are explicitly modeled inputs,
+not observed camera battery state. Frames were inspected: the native low-battery
+red palette is retained, the compact percentage is readable, and the stock icon
+returns. Earlier run01 passed narrow pixel checks but wrongly admitted the
+adapter glyph; visual inspection caught it, and the implementation was tightened.
+
+This remains a standalone SD module, separate from the grid module. Combining
+features, native-key menu/playback transitions, AF redraw stress, movie support,
+EVF/HDMI/rotation behavior and physical card/telemetry/cache/wake behavior remain
+work. The evidence does not clear installation or recovery.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant battery-percent --battery-percent on --output .private/builds/battery-percent-new
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant battery-percent --battery-percent off --output .private/builds/battery-percent-off-new
+.venv\Scripts\python.exe tools/audit_z7_battery_percent.py --build .private/builds/20261119-display-host-02 --module .private/builds/battery-percent-new --disabled-module .private/builds/battery-percent-off-new --output .private/evidence/battery-percent-new.json
+.venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/battery-percent-new --view battery-auto --battery-icon-fixture --output .private/evidence/battery-percent-new
+```
 
 ## Native data contract
 
