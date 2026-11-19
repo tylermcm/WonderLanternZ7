@@ -38,6 +38,10 @@ The bounded watch experiment observes the normal updater with context back at
 zero after resuming; a one-time diagnostic write is not a valid live context
 producer. Do not freeze that field or bypass the native exclusion to force a
 successful result.
+The corrected observer in private live run 06 stops at native store
+`0x1036D5D4`, single-steps on the stopped CPU, and reads control bytes `01 00`
+with context zero and DISP state 3. It identifies the native hiding instruction;
+the producer of the transient context still needs to be traced.
 
 ## Callback and menu lifetime
 
@@ -130,3 +134,11 @@ the word at `+0x18` as `%d%%`. That wrapper reaches `0x101F9ECE`, which locks
 `0xA235AE4C`, copies 56 bytes from `0xA235AEE4`, then unlocks. This differs from
 the Z7II's 80-byte contract. Snapshot producers, invalid/sentinel semantics,
 sampling cadence and a suitably owned Z7 text object still require validation.
+
+`tools/audit_z7_battery_snapshot.py` passes 32 instruction checks. It executes
+the original getter, wrapper and ARM memcpy with supplied mutex/producer
+boundaries, verifying exactly 56 copied bytes, guards, lock ordering and unchanged
+source. A prefix trace of the original menu constructor reaches `%d%%` formatting
+with the exact +0x18 word for eight values, including out-of-range diagnostics.
+Object lookup/hide calls are supplied and the trace stops before formatting;
+this does not establish GUI lifetime or real battery telemetry.

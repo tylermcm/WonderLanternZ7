@@ -75,5 +75,26 @@
     "Native menu/geometry observations do not establish camera persistence or EVF transitions.",
     "Histogram rendering remains unverified; ordinary and supplied-context live failures are retained.",
     "No update acceptance, recovery, staging or camera flash validation."
-  ]
+  ],
+  "battery_snapshot": {
+    "passed": true,
+    "instruction_checks": 32,
+    "native_copy_bytes": 56,
+    "percent_word_offset": 24,
+    "supplied_boundaries": [
+      "Mutex",
+      "Snapshot producer",
+      "Menu object lookup/hide"
+    ],
+    "telemetry_verified": false,
+    "overlay_implemented": false
+  },
+  "histogram_watch": {
+    "native_hide_store": "0x1036d5d4",
+    "observed_context": 0,
+    "observed_disp_state": 3,
+    "observed_control_bytes": "0100",
+    "original_instruction_single_stepped": true,
+    "rendering_verified": false
+  }
 }

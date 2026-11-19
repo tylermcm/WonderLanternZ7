@@ -229,8 +229,13 @@ def main():
                         regs = camera.remote.registers()
                         if camera.remote.command('z' + watch) != 'OK':
                             raise RuntimeError('Cannot single-step observed histogram write')
+                        stopped_thread = stopped.split('thread:')[1].split(';')[0]
+                        if camera.remote.command('Hc' + stopped_thread) != 'OK':
+                            raise RuntimeError('Cannot select histogram writer CPU')
                         camera.remote.send('s'); camera.running = True
                         stepped = camera.receive_stop()
+                        if camera.remote.command('Hc-1') != 'OK':
+                            raise RuntimeError('Cannot restore native SMP resume')
                         if camera.remote.command('Z' + watch) != 'OK':
                             raise RuntimeError('Cannot resume histogram write observation')
                         observations.append(dict(stop=stopped, registers=regs,

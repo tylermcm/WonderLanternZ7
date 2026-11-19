@@ -22,8 +22,12 @@ observations and is not evidence of physical camera histogram behavior.
 Live run 05's bounded watch sees context reset to zero on resumed native update;
 a one-time context fixture does not supply a valid live context producer. Its
 watchpoint was before a store and repeated without stepping; the tool now removes
-the watchpoint, steps the observed instruction and reinstalls it. That revised
-optional watch mode still needs a fresh run. Do not hold the context at 1.
+the watchpoint, steps the observed instruction and reinstalls it. Do not hold
+the context at 1.
+Update: revised live run 06 succeeds as an observer: on the selected stopped CPU
+it steps native hiding store `0x1036D5D4`, reads `01 00`, context 0 and DISP 3.
+The ordinary histogram visibility check correctly remains failed. Trace the
+context producer next; there is no reason to remove this native exclusion.
 
 Current private records: display module menu 01, live 03, display-host audit 03
 and display-module audit 04 under `.private/evidence/20261119-*`. All failed
@@ -38,6 +42,11 @@ Battery-data lead: original percent formatter `0x104C4AA2` calls `0x10437684` /
 Snapshot source `0xA235AEE4`, mutex `0xA235AE4C`. This is not Z7II's 80-byte
 contract. Validate producer/sentinels and owned text-object lifetime next; the
 percentage overlay is not implemented yet.
+The new `tools/audit_z7_battery_snapshot.py` passes 32 checks (private result
+`20261119-battery-snapshot-02.json`): actual wrapper/getter/ARM memcpy, bounded
+56-byte copy, mutex order and original menu-constructor prefix reaching percent
+formatting with exactly snapshot word +0x18. Mutex, producer and object lookup
+boundaries are supplied. No hardware battery telemetry or overlay is proven.
 
 ## Autonomous continuation and native-kernel module load — November 19, 2026
 

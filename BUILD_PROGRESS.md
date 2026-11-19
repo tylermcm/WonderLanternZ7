@@ -27,6 +27,11 @@ authorization and a concrete exact-candidate installation/recovery assessment.
   supplied histogram-context combinations. All 39 root regression tests pass.
 - Assisted-QEMU native menu: 19 checks pass across all six selections. Live
   grid observations pass 14 checks for counts, pixels and Off restoration.
+- Local source-only display checkpoint `81f0371`, after initial host `6d4d8c9`.
+- Corrected histogram watch identifies native hiding store `0x1036D5D4` after
+  context returns to zero. The default live histogram check remains failed.
+- Original battery snapshot contract: 32 instruction checks pass for the
+  locked 56-byte copy and native percent-formatting prefix; no overlay yet.
 
 ## Next implementation
 
