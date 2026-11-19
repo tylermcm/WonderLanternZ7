@@ -77,7 +77,7 @@ existing candidate, card contents or physical camera was changed.
 | Histogram + horizon | Native widget masks/gates; this lab already has a Z7 implementation | Package that known implementation as a module; retain photo/video/output gates |
 | Custom DISP pages | RAM key handler and per-widget visibility masks | Reuse Z7 clean-display research; resolve card brackets and native masks before porting presets |
 | Focal length | Updates native focal-length text using live lens properties | Identify Z7 lens properties, widget lifetime, dirty/update/erase paths and LCD/EVF exclusions |
-| Battery percentage | Automatic LCD-photo SD module implemented; native sample policy rejects bar fallback, compact HUD text and stock restoration tested in assisted QEMU | Combine with grids; validate native-key lifecycle, other outputs and physical telemetry before installation review |
+| Battery percentage | Automatic LCD-photo module and combined grid/battery package implemented; rejects bar fallback, retains compact native text/warning colors; stock restoration and MENU lifecycle tested in assisted QEMU | Validate playback/AF, other outputs and physical telemetry before installation review |
 | Photo highlights / zebras | Producer/display callbacks and photo-specific parameters | Trace Z7 native movie highlights path, ownership and LCD/EVF routing; keep movie settings separate |
 | Portrait display | Native objects, orientation and layout callbacks | Map Z7 orientation/rotation policy and object geometry; test each affected photo/movie/menu path |
 | Extended movie recording | RAM callbacks propagate longer native capacity-limited duration | Trace Z7 duration, writer/encoder budgets and UI messages; retain native thermal/error/storage handling |

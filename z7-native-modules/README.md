@@ -104,6 +104,9 @@ The separate `plugins/battery_percent.c` profile is now available through
 object. Read [the exact scope and checks](../Z7_BATTERY_DISPLAY_RESEARCH.md).
 It follows known LCD-photo battery glyphs and preserves their warning palette;
 adapter glyphs, foreign objects/labels/fonts and unsupported layouts are excluded.
-This is emulator-only software, separate from the current grid profile. Keep
+`--variant combined` now joins this with the grid/histogram profile through a
+single staged registration; `--battery-percent on|off` also applies there. The
+combined package has separate instruction, live-pixel and native MENU lifecycle
+checks in the display record. This remains emulator-only software. Keep
 generated packages private and do not treat the builder setting as a native
 camera menu or installation clearance.

@@ -49,6 +49,13 @@ authorization and a concrete exact-candidate installation/recovery assessment.
   checks and eight QEMU checks pass. Full stock-frame restoration is exact.
   GUI bar/icon visibility is a labeled supplied input; telemetry remains virtual.
   Native-key/AF/output lifecycle and combined feature module work remain.
+- Combined SD package now runs grid/histogram hooks and automatic battery
+  callbacks together. 954 grid/rollback and39 battery instruction checks pass;
+  standalone grids rebuild byte-identically. Assisted-QEMU combined live passes
+  10 checks/6frames, native six-choice menu19 checks, and native MENU lifecycle14
+  checks/10frames. Percentage hides/stops sampling in menus and recovers after
+  an eligible native icon request. These supplied GUI requests remain labeled;
+  percentage and physical telemetry are not supplied/proven respectively.
 
 ## Next implementation
 

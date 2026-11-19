@@ -13,6 +13,10 @@
 #define GRID_RAW 0xa24f182cu
 #define GRID_TABLE 0x1064fd90u
 #define HISTOGRAM 0xa1827404u
+#define Z7_GRID_COMMIT_MASKS() do { \
+    for (uint32_t z7_mask_i = 0; z7_mask_i < 9; ++z7_mask_i) WORD(HISTOGRAM + 4 + z7_mask_i * 4) = 0xcccu; \
+    __asm__ volatile("dmb sy" ::: "memory"); \
+} while (0)
 
 static uint16_t tables[4][48];
 static uint32_t metadata[7], callbacks[5], controls[6][7], maps[6];
@@ -167,7 +171,8 @@ uint32_t z7_main(const struct z7_module_api *api)
     /* Both registrations are staged. These scalar mask stores cannot publish
      * module code or dangling pointers; no failure path follows them.
      */
-    for (uint32_t i = 0; i < 9; ++i) WORD(HISTOGRAM + 4 + i * 4) = 0xcccu;
-    __asm__ volatile("dmb sy" ::: "memory");
+#ifndef Z7_GRID_DEFER_MASKS
+    Z7_GRID_COMMIT_MASKS();
+#endif
     return 0;
 }

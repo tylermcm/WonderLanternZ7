@@ -77,12 +77,27 @@ def audit(raw, host, stock, bundle, failures):
         if not passed:
             raise AssertionError(name)
     f = HostFixture(raw, host, packet)
+    if module['kind'] == 'original-Z7-combined-display-module':
+        # This audit isolates grid behavior with a supplied inactive battery GUI.
+        f.u.mem_map(0xa2010000, 0x20000)
+        f.u.mem_write(0xa18237d0, bytes(4))
     native_meta = bytes(f.u.mem_read(OBJECT + 40, 4))
     native_callbacks = bytes(f.u.mem_read(OBJECT + 16, 4))
     check('module-init-and-both-staged-registrations', f.call(host['symbols']['z7_module_load_once'], STATE) == 8 and
           f.words()[22:24] == (1, 1) and f.words()[34:36] == (1, 0))
     check('init-does-not-publish-native-menu-pointers', bytes(f.u.mem_read(OBJECT + 40, 4)) == native_meta and
           bytes(f.u.mem_read(OBJECT + 16, 4)) == native_callbacks)
+    if module['kind'] == 'original-Z7-combined-display-module':
+        check('combined-publishes-all-six-owned-display-services', all(f.words()[26:32]))
+        for name, address in (('battery-preflight', 0x1064d610 + 18 * 4), ('grid-preflight', OBJECT)):
+            bad = HostFixture(raw, host, packet)
+            bad.u.mem_write(address, bytes(4))
+            check(name + '-fails-before-any-native-publication',
+                  bad.call(host['symbols']['z7_module_load_once'], STATE) == 7 and not bad.live and
+                  bad.words()[19:36] == (0,) * 17 and
+                  bytes(bad.u.mem_read(OBJECT + 40, 4)) == native_meta and
+                  bytes(bad.u.mem_read(OBJECT + 16, 4)) == native_callbacks and
+                  struct.unpack('<9I', bad.u.mem_read(HISTOGRAM + 4, 36)) == (0x444,) * 6 + (0x440,) * 3)
     # A supplied native page-list shape lets the GUI-owned bridge prove deferral.
     listing, records = 0xa2908000, 0xa2909000
     f.u.mem_write(0xa181f91c, struct.pack('<I', listing))

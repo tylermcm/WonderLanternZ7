@@ -18,29 +18,30 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         parser.error('Choose a new directory under .private')
-    if args.diagnostics and args.variant != 'grids':
-        parser.error('Ownership diagnostic variants apply to the grid module')
-    if args.battery_percent is not None and args.variant != 'battery-percent':
-        parser.error('--battery-percent applies only to the battery-percent module')
+    if args.diagnostics and args.variant not in ('grids', 'combined'):
+        parser.error('Ownership diagnostic variants apply to grids or combined modules')
+    if args.battery_percent is not None and args.variant not in ('battery-percent', 'combined'):
+        parser.error('--battery-percent applies only to battery-percent or combined modules')
     relative, kind, minimum_api = {
         'grids': ('plugins/grids_histogram.c', 'original-Z7-grids-histogram-module', 20),
         'battery-probe': ('examples/battery_display_probe.c', 'original-Z7-battery-text-diagnostic', 16),
         'battery-sample': ('examples/battery_sample_probe.c', 'original-Z7-battery-sample-diagnostic', 12),
         'battery-native': ('examples/battery_native_display_probe.c', 'original-Z7-battery-native-sample-diagnostic', 16),
         'battery-percent': ('plugins/battery_percent.c', 'original-Z7-battery-percent-module', 16),
+        'combined': ('plugins/combined_display.c', 'original-Z7-combined-display-module', 20),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
     packet, report = build(source, zig=args.zig.resolve())
     again, second = build(source, zig=args.zig.resolve())
     if packet != again or report != second:
         raise RuntimeError('Display module is not reproducible')
-    if args.variant == 'battery-percent':
+    if args.variant in ('battery-percent', 'combined'):
         enabled = args.battery_percent != 'off'
         offset = report['symbols']['z7_battery_enabled']
         if offset % 4 or not 0 <= offset <= report['image_bytes'] - 4 or offset in report['relocations']:
@@ -57,10 +58,12 @@ def main():
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
               ROOT / 'z7-native-modules/sdk/module.ld']
-    if args.variant in ('battery-sample', 'battery-native', 'battery-percent'):
+    if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined'):
         inputs.append(ROOT / 'z7-native-modules/plugins/battery_sample.h')
     if args.variant == 'battery-native':
         inputs.append(ROOT / 'z7-native-modules/examples/battery_display_probe.c')
+    if args.variant == 'combined':
+        inputs += [ROOT / 'z7-native-modules/plugins/grids_histogram.c', ROOT / 'z7-native-modules/plugins/battery_percent.c']
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)
@@ -76,9 +79,10 @@ def main():
         for folder, name, relative, define in variants:
             directory = output / folder
             directory.mkdir(exist_ok=True)
+            if args.variant == 'combined' and folder == 'failures': relative = 'plugins/combined_display.c'
             original = ROOT / 'z7-native-modules' / relative
             diagnostic_source = directory / (name + '.c')
-            diagnostic_source.write_text(('#define ' + define + ' 1\n' if define else '') + original.read_text(),
+            diagnostic_source.write_text(('#define ' + define + ' 1\n' if define else '') + '#include "' + original.as_posix() + '"\n',
                                          encoding='utf-8', newline='\n')
             diagnostic, metadata = build(diagnostic_source, zig=args.zig.resolve())
             repeat, repeated_metadata = build(diagnostic_source, zig=args.zig.resolve())

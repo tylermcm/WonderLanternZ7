@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## Combined grid/battery SD module — November 19, 2026
+
+`plugins/combined_display.c` joins the native six-choice grid menu and automatic
+LCD-photo battery percentage in one package. It stages both component bindings
+locally, registers one unified display table/menu, and commits histogram masks
+last. Component/menu failures leave native pointers and masks unchanged.
+The standalone grid package remains byte-identical after the deferred-mask edit.
+
+Private combined-display-01 and combined-display-off-01 use existing display
+host02. The enabled package is5,140 bytes, SHA
+`f7dbdf87c9280edf65d5ff495e2079152221740c27009ac0bd316cddf7ff395f`.
+Grid audit02 passes954 checks; battery audit01 passes39. Combined live01 passes
+10 checks/6frames, with golden grid and percentage together and exact full-frame
+stock restoration. Menu01 passes19 checks/all six choices. Lifecycle01 passes14
+checks/10frames: native MENU hides the percentage, stops sampling, then returns
+to an eligible icon and recovers. The menu and recovered frames were inspected.
+Lifecycle uses three labeled bar/icon GUI requests; percent0 comes from the
+assisted virtual snapshot. No physical battery telemetry is established.
+
+See `Z7_DISPLAY_MODULE_RESEARCH.md` and source-only combined evidence. Native
+playback/AF stress, other outputs, custom DISP, focal length, photo zebras,
+portrait layout and histogram statistics production remain open. No staging or
+camera flash is authorized. No guest remains live from the completed runs.
+Older entries below record earlier, separate-component milestones.
+
 ## Automatic LCD-photo battery module — November 19, 2026
 
 New `plugins/battery_percent.c` is automatic, replacing diagnostic phase control

@@ -7,6 +7,58 @@ The framework format derives from the pinned MIT JKWTCN source identified in
 independently written. Generated firmware, modules, frames and raw traces stay
 private. No camera installation or physical card test has occurred.
 
+## Combined SD module
+
+`plugins/combined_display.c` now combines the six-choice native grid menu,
+histogram/horizon mode hooks and automatic LCD-photo battery percentage in a
+single `Z7APP.BIN`. It retains the same host ABI and exact stock binding. Battery
+admission, compact font, warning palette and hardware gaps are documented in
+[the battery record](Z7_BATTERY_DISPLAY_RESEARCH.md).
+
+Both component initializers prepare owned data against a local staging API.
+Grid histogram-mask stores are deferred in this profile. Only after both
+components prepare successfully does the entrypoint register one unified display
+table and one menu with the real host. The scalar masks commit last, with no
+subsequent failure path. Host readiness/menu-pointer publication remains staged
+until successful return and an inactive grid page. Failed component preflight
+or menu ownership leaves the native pointers and masks unchanged.
+
+Private combined bundle01 is reproducible: 5,140 bytes, image4,992, BSS2,216,
+21 relocations, SHA-256
+`f7dbdf87c9280edf65d5ff495e2079152221740c27009ac0bd316cddf7ff395f`.
+The battery-disabled combined packet is
+`fdbd54528580bbabab029c8bffde68206246dcc76fe67a7cd48efe76e104b93c`.
+The standalone grid packet rebuilds byte-identically to its previously tested
+package after introducing deferred mask publication.
+
+The combined packet passes954 grid/registration/rollback instruction checks,
+including756 native geometry calls and both component-preflight failures, plus
+39 automatic-battery checks. Assisted QEMU passes ten live checks across six
+frames, including simultaneous golden-grid pixels and percentage, exact full-frame
+stock restoration, and adapter exclusion. A separate native-key run passes all
+19 menu checks and all six selections. A further native MENU-entry/return run
+passes14 checks across10 frames: an active percentage retires in the menu,
+performs no sampling there, and recovers when the native icon becomes eligible
+after return. The menu and returned percentage frames were visually inspected.
+No real-card or camera result follows.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant combined --diagnostics --battery-percent on --output .private/builds/combined-new
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant combined --battery-percent off --output .private/builds/combined-off-new
+.venv\Scripts\python.exe tools/audit_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/combined-new --failures .private/builds/combined-new/failures --output .private/evidence/combined-grid-new.json
+.venv\Scripts\python.exe tools/audit_z7_battery_percent.py --build .private/builds/20261119-display-host-02 --module .private/builds/combined-new --disabled-module .private/builds/combined-off-new --output .private/evidence/combined-battery-new.json
+.venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/combined-new --view battery-auto --battery-icon-fixture --output .private/evidence/combined-live-new
+.venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/combined-new --view menu --output .private/evidence/combined-menu-new
+.venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/combined-new --view battery-auto --battery-icon-fixture --battery-lifecycle --output .private/evidence/combined-lifecycle-new
+```
+
+These remain private emulator-only builds. The live GUI request supplies native
+bar/icon visibility once; the percentage is read from the assisted virtual
+snapshot. The lifecycle run supplies two additional labeled bar/visibility
+requests, before MENU and after return; it does not supply a percentage.
+Histogram statistics production remains unverified in QEMU; this
+combination does not bypass its original data/eligibility checks.
+
 ## Implemented behavior
 
 `z7-native-modules/plugins/grids_histogram.c` supplies the native d9 framing-grid

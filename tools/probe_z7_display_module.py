@@ -34,6 +34,7 @@ def main():
     parser.add_argument('--module', type=Path, required=True)
     parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
+    parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--histogram-context-fixture', action='store_true',
                         help='Explicitly supply native histogram context 1; not a camera-derived observation')
     parser.add_argument('--trace-histogram-writes', action='store_true', help='Record bounded native histogram control watchpoints')
@@ -47,6 +48,8 @@ def main():
         parser.error('Battery text trial requires inspect view')
     if args.battery_icon_fixture and args.view != 'battery-auto':
         parser.error('Battery icon fixture requires battery-auto view')
+    if args.battery_lifecycle and not (args.view == 'battery-auto' and args.battery_icon_fixture):
+        parser.error('Battery lifecycle requires battery-auto with its explicit icon fixture')
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         parser.error('Choose a new private evidence directory')
@@ -159,7 +162,8 @@ def main():
                 native_driver_state=camera.remote.memory(0xa188d70c, 3).hex(),
                 normalized_maximum=camera.remote.memory(0xa201d33c, 4).hex())
         check('module-loaded-and-callbacks-committed', state()[10] == 8 and state()[23] == 1 and fixture.finished)
-        if args.view not in ('battery', 'battery-auto'):
+        combined = module['kind'] == 'original-Z7-combined-display-module'
+        if args.view not in ('battery', 'battery-auto') or combined:
             for _ in range(20):
                 if state()[35]:
                     break
@@ -194,6 +198,20 @@ def main():
                 shown = Image.open(io.BytesIO(camera.png)).convert('RGB')
                 box = (2, 552, 112, 622)
                 check('automatic-percent-changes-native-icon-region', shown.crop(box).tobytes() != stock_icon.crop(box).tobytes())
+                if combined:
+                    native('Combined module golden grid choice', base + module['symbols']['golden'], [])
+                    native('Native grid visibility with percentage active', 0x10377236, [1])
+                    capture('combined-golden-grid-and-percent')
+                    descriptor = struct.unpack('<hhIHHhhIHHHHBBH', camera.remote.memory(0xa2020c2c, 32))
+                    registers = struct.unpack('<7I', camera.remote.memory(0x20145600, 28))
+                    picture = Image.open(io.BytesIO(camera.png)).convert('RGB')
+                    x, y = registers[1] & 65535, registers[0] >> 16 & 16383
+                    dy, dx = registers[4] & 65535, registers[4] >> 16
+                    color = (registers[6] >> 16 & 255, registers[6] >> 8 & 255, registers[6] & 255)
+                    points = [(picture.width // 2 + 37, y + i * dy) for i in range(2)] + [(x + i * dx, 300) for i in range(2)]
+                    check('combined-grid-and-battery-coexist-with-native-pixels', descriptor[4] == descriptor[9] == 2 and
+                          all(picture.getpixel(p) == color for p in points) and camera.remote.memory(automatic_word('object') + 40, 4) != bytes(4))
+                    native('Native grid Off after combined observation', 0x104f5592, [])
                 enable(0)
                 for _ in range(30):
                     advance(.3)
@@ -213,6 +231,35 @@ def main():
                 capture('automatic-adapter-excluded')
                 check('adapter-glyph-never-enables-percentage', automatic_word('samples') == count and
                       camera.remote.memory(automatic_word('object') + 40, 4) == bytes(4))
+                if args.battery_lifecycle:
+                    def request_icon(label):
+                        result['battery_icon_fixture'].setdefault('additional_requests', []).append(label)
+                        camera.remote.write_memory(0xa201d4d0 + 0x1aa, b'\1')
+                        for i in (0, 1): camera.remote.write_memory(0xa1824a14 + i * 48, b'\1\1')
+                        native('Native battery renderer, one GUI request: ' + label, 0x102f40a0, [])
+                    request_icon('before native MENU')
+                    for _ in range(30):
+                        advance(.3)
+                        if automatic_word('object') and camera.remote.memory(automatic_word('object') + 40, 4) != bytes(4): break
+                    capture('automatic-before-menu')
+                    check('automatic-percentage-active-before-native-menu', automatic_word('object') and
+                          camera.remote.memory(automatic_word('object') + 40, 4) != bytes(4))
+                    key('menu', lambda: bool(pages()))
+                    capture('automatic-native-menu')
+                    check('native-menu-hides-owned-percentage', not automatic_word('object') or
+                          camera.remote.memory(automatic_word('object') + 40, 4) == bytes(4))
+                    count = automatic_word('samples')
+                    for _ in range(5): advance(.3)
+                    check('native-menu-performs-no-battery-sampling', automatic_word('samples') == count)
+                    key('menu', lambda: not pages())
+                    capture('automatic-native-menu-return')
+                    request_icon('after native MENU return')
+                    for _ in range(30):
+                        advance(.3)
+                        if automatic_word('object') and camera.remote.memory(automatic_word('object') + 40, 4) != bytes(4): break
+                    capture('automatic-after-menu-eligible-request')
+                    check('native-menu-return-recovers-owned-percentage-when-eligible', automatic_word('object') and
+                          camera.remote.memory(automatic_word('object') + 40, 4) != bytes(4))
         elif args.view == 'battery':
             symbols = module['symbols']
             def trial_word(name):

@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 C 3.80 combined SD display module; emulator only",
+  "module_sha256": "f7dbdf87c9280edf65d5ff495e2079152221740c27009ac0bd316cddf7ff395f",
+  "disabled_module_sha256": "fdbd54528580bbabab029c8bffde68206246dcc76fe67a7cd48efe76e104b93c",
+  "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+  "file_bytes": 5140,
+  "image_bytes": 4992,
+  "bss_bytes": 2216,
+  "relocations": 21,
+  "features": ["Six native grid choices", "Histogram/horizon mode hooks with original restrictions", "Automatic LCD-photo battery percentage"],
+  "publication": "Component bindings stage locally; unified host registration precedes final native mask stores; host readiness and menu publication follow successful initialization.",
+  "instruction_checks": {
+    "grid_registration_and_rollback": 954,
+    "automatic_battery": 39,
+    "passed": true,
+    "supplied_boundaries": ["Incoming GUI/control/telemetry data", "Font/label/list/pixel services", "File/kernel/heap services"],
+    "standalone_grid_rebuild_byte_identical": true
+  },
+  "qemu": {
+    "live": {"passed": true, "checks": 10, "frames": 6, "simultaneous_grid_and_percentage_pixels": true, "full_stock_frame_restored": true},
+    "native_grid_menu": {"passed": true, "checks": 19, "frames": 7, "all_six_choices": true},
+    "native_menu_lifecycle": {
+      "passed": true,
+      "checks": 14,
+      "frames": 10,
+      "active_before_menu": true,
+      "hidden_and_not_sampling_in_menu": true,
+      "recovers_after_eligible_native_icon_request": true,
+      "supplied_bar_visibility_requests": 3,
+      "supplied_bar": 1,
+      "native_snapshot_percent": 0,
+      "supplied_percentage": false,
+      "visual_inspection": true
+    },
+    "modeled_read_only_module_file": true,
+    "assisted_controller_inputs": true,
+    "histogram_statistics_production_verified": false
+  },
+  "root_regression_tests": {"passed": true, "count": 39, "skipped": 0},
+  "camera_access": false,
+  "physical_card": false,
+  "hardware_telemetry": false,
+  "binaries_or_frames_included": false,
+  "remaining": ["Playback/AF stress", "Other output and rotation paths", "Camera-side battery setting UI", "Custom DISP/focal length/photo zebras/portrait ports", "Histogram statistics production", "Physical card/cache/wake/telemetry and exact-candidate installation/recovery assessment"]
+}
