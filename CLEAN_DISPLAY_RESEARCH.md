@@ -96,6 +96,21 @@ The native scene is an assisted test pattern, not sensor imagery. No camera-side
 DISP setting is implemented: native key handler/presets and broader lifetime/output
 coverage remain to be implemented.
 
+## Native page selector contract
+
+The earlier live experiment already queried original selector `0x103673AC` and
+observed photo LCD property `0x2F15`. New `tools/audit_z7_disp_selector.py` executes
+that selector and original setter `0x103673DE`:24 cases pass. Supplied property
+`0x138D` zero selects photo properties2F15/2F16; nonzero selects movie2F17/2F18.
+Native display-kind getter `0x103FEF80` result1 selects the LCD property; result4
+selects the alternate property. Other display-kind semantics are not established.
+The setter writes only snapshot `0xA201D4D0+0x18A`, reselects the matching property
+and calls original property setter `0x104065B0` with the new page. Values0..4
+were exercised with neighboring snapshot bytes unchanged. Display-kind/property
+storage are supplied boundaries; this does not establish persistence or every
+page's meaning. Private result: `.private/evidence/20261119-disp-selector-01.json`.
+Native key callback ownership and its existing admission checks remain to derive.
+
 ## Display routing relevant to the spiral
 
 Original descriptor getter `0x10433B80(kind, display_id, dataset)` accepts LCD

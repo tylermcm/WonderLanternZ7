@@ -22,6 +22,13 @@ and restored frames were inspected. No owned guest remains live. Camera-side
 DISP key/settings, other outputs and broader lifecycle are next. Generated
 packages and frames remain private.
 
+Original DISP selector103673AC/setter103673DE now have24 instruction checks in
+`tools/audit_z7_disp_selector.py`, private selector01. Photo LCD property2F15,
+photo alternate2F16, movie LCD2F17/alternate2F18 follow supplied138D/display-kind.
+Setter changes only snapshot+18A then calls original property storage. The
+native key callback and admission remain unresolved; do not install a guessed
+Z7II callback-slot translation. This is the next custom-DISP integration lead.
+
 ## Combined grid/battery SD module — November 19, 2026
 
 `plugins/combined_display.c` joins the native six-choice grid menu and automatic
