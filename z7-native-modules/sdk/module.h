@@ -12,12 +12,16 @@
 #define Z7_MODULE_MAX_FILE (1u << 20)
 #define Z7_MODULE_MAX_MEMORY (4u << 20)
 
-/* No firmware functions are exported yet. This ABI is deliberately separate
+struct z7_display_hooks;
+struct z7_grid_menu;
+/* This ABI is deliberately separate
  * from Z7II. Modules are trusted native code and must return from init.
  * On failure, init must leave no tasks, callbacks or other retained pointers.
  */
 struct z7_module_api {
     uint32_t abi, size, target;
+    uint32_t (*register_display)(const struct z7_display_hooks *hooks);
+    uint32_t (*register_grid_menu)(const struct z7_grid_menu *menu);
 };
 uint32_t z7_main(const struct z7_module_api *api);
 

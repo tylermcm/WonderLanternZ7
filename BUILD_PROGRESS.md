@@ -19,13 +19,25 @@ authorization and a concrete exact-candidate installation/recovery assessment.
   and initializer execution remain native guest code. This is not real-card I/O.
 - Five new tests cover fixture ownership, buffer bounds and unrelated-request
   pass-through. Successful run: `.private/evidence/20261119-module-host-qemu-load-04/`.
+- Staged owned display/menu API, GUI-path publication, stock fallbacks and
+  initializer-failure cleanup; 316 display-host instruction checks pass.
+- Native six-choice grid module with golden ratio, center cross, 6x6, 3x3,
+  4x4 and Off. Reproducible private host/module builds and diagnostic variants.
+- 933 display-module checks pass, including 756 native geometry calls and 256
+  supplied histogram-context combinations. All 39 root regression tests pass.
+- Assisted-QEMU native menu: 19 checks pass across all six selections. Live
+  grid observations pass 14 checks for counts, pixels and Off restoration.
 
 ## Next implementation
 
-1. Add a staged, owned display-hook API. An initializer failure must never publish
-   a callback into freed module storage. Absent modules retain stock behavior.
-2. Port grids and histogram/horizon as the first display controls, using the
-   existing independently mapped Z7 paths, not copied Z7II addresses.
+1. Complete histogram/horizon visual validation. Its mode/mask changes and native
+   restrictions pass instruction checks, but the ordinary live fixture supplies
+   shooting-context zero and native code hides the histogram. Another run reaches
+   context 1 and immediate visibility, then a later native pass hides it again.
+   Trace that writer and preserve both failures. An explicit supplied-context
+   diagnostic must stay separately labeled.
+2. Record current display work in `Z7_DISPLAY_MODULE_RESEARCH.md`; retain private
+   evidence and refresh the ignored graph/source manifest before a checkpoint.
 3. Continue the display work in `SD_MODULE_PORT.md`: custom DISP, focal length,
    battery percentage, photo zebras and portrait layout. Independently derive
    native interfaces, test failure/restoration paths, and keep uncertain features

@@ -1,5 +1,44 @@
 # Laptop handoff — October 20, 2026
 
+## Native SD display module — November 19, 2026
+
+Read `Z7_DISPLAY_MODULE_RESEARCH.md` for the current display implementation.
+Branch `codex/z7-sd-display-ports` preserves the initial host checkpoint in
+`6d4d8c9`. Display host candidate 02 and module bundle 02 are private, reproducible
+emulator-only outputs. The module adds six native grid choices through staged,
+owned display/menu registrations. Menu pointers commit on the GUI path while
+the grid page is inactive. Failed initializers cannot leave callbacks into freed
+storage. The native menu passes all six selections; five grid layouts and Off
+pass native geometry/pixel/restoration observations in assisted QEMU.
+
+The host audit passes 316 checks; module audit passes 933 checks with 756 geometry
+calls, plus 39 root tests without skips. The ordinary live histogram check still
+fails: the assisted fixture has native context byte `0xA201D318 == 0`, which the
+original visibility code excludes. Another run reaches context 1 and immediate
+native visibility, then a later pass hides it again. Its other eligibility checks
+pass; the complete hiding path is still being traced. Preserve the native gates.
+An explicit context-1 diagnostic flag is separate from default
+observations and is not evidence of physical camera histogram behavior.
+Live run 05's bounded watch sees context reset to zero on resumed native update;
+a one-time context fixture does not supply a valid live context producer. Its
+watchpoint was before a store and repeated without stepping; the tool now removes
+the watchpoint, steps the observed instruction and reinstalls it. That revised
+optional watch mode still needs a fresh run. Do not hold the context at 1.
+
+Current private records: display module menu 01, live 03, display-host audit 03
+and display-module audit 04 under `.private/evidence/20261119-*`. All failed
+histogram diagnostics are retained. Continue with native shooting-context
+derivation and the remaining independent display ports. Z7 widget 60 has two
+power-zoom controls and cannot be replaced using Z7II's focal-widget assumption.
+The active autonomous goal remains open; no physical staging or flash is
+authorized by this continuation. The older entries below record earlier stages.
+
+Battery-data lead: original percent formatter `0x104C4AA2` calls `0x10437684` /
+`0x101F9ECE` for a locked 56-byte snapshot, then formats word +0x18 as `%d%%`.
+Snapshot source `0xA235AEE4`, mutex `0xA235AE4C`. This is not Z7II's 80-byte
+contract. Validate producer/sentinels and owned text-object lifetime next; the
+percentage overlay is not implemented yet.
+
 ## Autonomous continuation and native-kernel module load — November 19, 2026
 
 The owner asked to keep building until finished while they are at work. Follow

@@ -25,5 +25,7 @@ check destination overlap and address overflow, bound ELF reads and allocations,
 and add native C and synthetic Thumb execution checks. Z7II packages are rejected.
 The new original-Z7 host adapter is independent local MIT code. Its scoped
 filesystem/task/cache instruction checks and assisted QEMU no-card startup are
-documented in `Z7_MODULE_HOST_RESEARCH.md`; physical card/cache behavior and
-display-feature integration remain unverified.
+documented in `Z7_MODULE_HOST_RESEARCH.md`. The independent display-hook API and
+grid/histogram module are documented in `Z7_DISPLAY_MODULE_RESEARCH.md`, with
+native menu/grid emulator observations and an unresolved histogram rendering
+gap. Physical card/cache behavior and camera display integration remain unverified.

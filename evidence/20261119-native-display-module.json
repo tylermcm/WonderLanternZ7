@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original Nikon Z7 C 3.80 SD display module; emulator only",
+  "camera_access": false,
+  "physical_card_access": false,
+  "firmware_or_frames_included": false,
+  "results": [
+    {
+      "suite": "display-host",
+      "passed": true,
+      "checks_passed": 316,
+      "checks_total": 316,
+      "failed_checks": [],
+      "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+      "module_sha256": null,
+      "geometry_calls": null,
+      "supplied_context": false
+    },
+    {
+      "suite": "display-module",
+      "passed": true,
+      "checks_passed": 933,
+      "checks_total": 933,
+      "failed_checks": [],
+      "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+      "module_sha256": "3f698f03db054e144218793428dc47ae91d558399ac33d7f81f59a8f1b987e62",
+      "geometry_calls": 756,
+      "supplied_context": false
+    },
+    {
+      "suite": "native-menu",
+      "passed": true,
+      "checks_passed": 19,
+      "checks_total": 19,
+      "failed_checks": [],
+      "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+      "module_sha256": "3f698f03db054e144218793428dc47ae91d558399ac33d7f81f59a8f1b987e62",
+      "geometry_calls": null,
+      "supplied_context": false
+    },
+    {
+      "suite": "ordinary-live",
+      "passed": false,
+      "checks_passed": 14,
+      "checks_total": 15,
+      "failed_checks": [
+        "native-horizon-page-with-histogram-visible"
+      ],
+      "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+      "module_sha256": "3f698f03db054e144218793428dc47ae91d558399ac33d7f81f59a8f1b987e62",
+      "geometry_calls": null,
+      "supplied_context": false
+    },
+    {
+      "suite": "supplied-context-live",
+      "passed": false,
+      "checks_passed": 14,
+      "checks_total": 15,
+      "failed_checks": [
+        "native-horizon-page-with-histogram-visible"
+      ],
+      "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+      "module_sha256": "3f698f03db054e144218793428dc47ae91d558399ac33d7f81f59a8f1b987e62",
+      "geometry_calls": null,
+      "supplied_context": true
+    }
+  ],
+  "root_tests": {
+    "passed": 39,
+    "skipped": 0
+  },
+  "limitations": [
+    "Read-only filesystem dispatch HLE supplies the module; no physical card I/O.",
+    "Native menu/geometry observations do not establish camera persistence or EVF transitions.",
+    "Histogram rendering remains unverified; ordinary and supplied-context live failures are retained.",
+    "No update acceptance, recovery, staging or camera flash validation."
+  ]
+}

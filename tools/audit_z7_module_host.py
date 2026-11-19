@@ -16,7 +16,7 @@ from capstone import Cs, CS_ARCH_ARM, CS_MODE_THUMB
 from unicorn.arm_const import UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3, UC_ARM_REG_PC, UC_ARM_REG_CPSR
 from audit_splash_image import NativePNG, MEM, STOCK_SHA
 from build_z7_module import pack_module, seal
-from build_z7_module_host import ROOT, STATE, STATE_BYTES, MAGIC, CURSOR, HEAP_SITE, PRESET
+from build_z7_module_host import ROOT, STATE, STATE_BYTES, MAGIC, CURSOR, HEAP_SITE, PRESET, DISPLAY_PRESET
 
 
 class HostFixture(NativePNG):
@@ -153,7 +153,7 @@ class HostFixture(NativePNG):
 def audit(raw, report, stock, packet):
     if hashlib.sha256(stock).hexdigest() != STOCK_SHA:
         raise ValueError('Requires exact original Z7 C 3.80 MAIN')
-    if report['preset'] != PRESET or hashlib.sha256(raw).hexdigest() != report['main_payload_sha256']:
+    if report['preset'] not in (PRESET, DISPLAY_PRESET) or hashlib.sha256(raw).hexdigest() != report['main_payload_sha256']:
         raise ValueError('Candidate fingerprint or identity mismatch')
     checks, scenarios = [], []
     def check(name, condition):

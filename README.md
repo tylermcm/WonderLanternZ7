@@ -43,6 +43,12 @@ and boots in assisted QEMU with bounded unavailable-file handling. Real-card
 loading and physical cache coherence remain unverified. It is an emulator-only
 experiment; display-module integration follows the host work.
 
+The [first display module](Z7_DISPLAY_MODULE_RESEARCH.md) now adds a native
+six-choice grid menu through the SD-module host. Native-key menu and rendered
+grid checks pass in assisted QEMU. Histogram/horizon integration preserves the
+native restrictions; its live-view fixture gap is recorded separately. This
+candidate remains emulator-only.
+
 The optional [additional-grid lab candidate](GRID_LAYOUTS_RESEARCH.md) adds
 Golden ratio, Center cross and 6x6 alongside 4x4, 3x3 and Off. Menu, drawing
 and simulated saved-choice tests passed, and the owner has tried the separately

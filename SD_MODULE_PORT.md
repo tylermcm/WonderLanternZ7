@@ -40,6 +40,12 @@ installer, firmware or camera screenshots were downloaded.
 
 ## First implemented stage
 
+**Latest display milestone:** [Z7_DISPLAY_MODULE_RESEARCH.md](Z7_DISPLAY_MODULE_RESEARCH.md)
+records the staged callback/menu API, native six-choice grid module, compiled
+instruction audits and assisted-QEMU menu/pixel checks. The SDK exports display
+registration now; the initial offline-stage limits below are historical. Native
+histogram exclusions remain, including a shooting-context gap in the live fixture.
+
 **Continuation:** the [original-Z7 host probe](Z7_MODULE_HOST_RESEARCH.md) now adds
 boot/task, filesystem and cache bindings. The actual C module and host compile
 as Thumb; 99 instruction checks and seven assisted-QEMU startup checks pass.

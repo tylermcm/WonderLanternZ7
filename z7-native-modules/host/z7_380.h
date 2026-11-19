@@ -2,6 +2,7 @@
 #ifndef Z7_HOST_380_H
 #define Z7_HOST_380_H
 #include "module.h"
+#include "display.h"
 
 #define Z7_HOST_STATE 0xa9700000u
 #define Z7_HOST_STATE_BYTES 256u
@@ -20,7 +21,11 @@ struct z7_host_state {
     uint32_t magic, booted, status, native_result;
     uint32_t image, allocation, memory_size, entry_offset;
     uint32_t module_result, attempts, retained_fd;
-    uint32_t reserved[41];
+    uint32_t loading_image, loading_image_size, loading_memory_size;
+    uint32_t display_registered, display_ready;
+    struct z7_display_hooks display;
+    uint32_t grid_metadata, grid_callbacks, grid_menu_registered, grid_menu_committed;
+    uint32_t reserved[24];
     uint32_t guards[4];
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");
@@ -28,4 +33,10 @@ uint32_t z7_module_load_once(struct z7_host_state *state);
 void z7_module_worker(struct z7_host_state *state);
 void z7_module_boot(void);
 uint32_t z7_autoop_init(void);
+const uint16_t *z7_display_grid_source(void);
+void z7_display_grid_geometry(void);
+uint32_t z7_display_scalar(uint32_t key, uint32_t value);
+uint32_t z7_display_histogram_gate(uint32_t state);
+void z7_display_before_paint(void);
+void z7_display_after_paint(void);
 #endif

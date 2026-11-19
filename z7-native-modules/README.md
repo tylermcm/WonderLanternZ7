@@ -9,8 +9,10 @@ experimental `host/z7_380.c` supplies those bindings for an isolated stock-based
 probe; its [research and validation record](../Z7_MODULE_HOST_RESEARCH.md)
 separates successful instruction-fixture loading from actual QEMU no-card boot.
 
-The SDK currently exports only ABI, API size and target identity. No Z7II native
-addresses or unverified Z7 firmware functions are exported. Native modules are
+The SDK now exports ABI, API size, target identity and staged display/menu
+registration. See [the display module record](../Z7_DISPLAY_MODULE_RESEARCH.md)
+for ownership, publication, the additive API size and reproducible audit commands.
+No Z7II native addresses are exported. Native modules are
 trusted code, not sandboxed. CRC detects corruption; it does not authenticate a
 module or make arbitrary code safe.
 

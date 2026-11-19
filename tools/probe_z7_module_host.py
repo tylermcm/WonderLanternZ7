@@ -54,6 +54,28 @@ class HostCamera(ui.Camera):
         return super().call(packet, name, function, payload, arguments)
 
 
+def bind_module_fixture(output, packet, host_report):
+    """Configure one explicit immutable module file for a fresh guest."""
+    from module_file_fixture import ModuleFileFixture, ModuleFileRemote
+    class RecordingModuleFileFixture(ModuleFileFixture):
+        def request(self, remote, pointer):
+            try:
+                return super().request(remote, pointer)
+            finally:
+                (output / 'filesystem-events.json').write_text(json.dumps(dict(
+                    events=self.events, position=self.position, opened=self.opened,
+                    closed=self.closed, finished=self.finished), indent=2) + '\n', encoding='utf-8')
+    fixture = RecordingModuleFileFixture(packet)
+    class BoundModuleRemote(ModuleFileRemote):
+        def __init__(self, port):
+            super().__init__(port, fixture)
+    ui.Remote = BoundModuleRemote
+    HostCamera.module_fixture = fixture
+    HostCamera.module_result_address = host_report['symbols']['z7_module_result']
+    HostCamera.module_waited = False
+    return fixture
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
@@ -71,22 +93,7 @@ def main():
     ui.validate_firmware = validate_candidate
     module_fixture = None
     if args.module:
-        from module_file_fixture import ModuleFileFixture, ModuleFileRemote
-        class RecordingModuleFileFixture(ModuleFileFixture):
-            def request(self, remote, pointer):
-                try:
-                    return super().request(remote, pointer)
-                finally:
-                    (output / 'filesystem-events.json').write_text(json.dumps(dict(
-                        events=self.events, position=self.position, opened=self.opened,
-                        closed=self.closed, finished=self.finished), indent=2) + '\n', encoding='utf-8')
-        module_fixture = RecordingModuleFileFixture(args.module.read_bytes())
-        class BoundModuleRemote(ModuleFileRemote):
-            def __init__(self, port):
-                super().__init__(port, module_fixture)
-        ui.Remote = BoundModuleRemote
-        HostCamera.module_fixture = module_fixture
-        HostCamera.module_result_address = json.loads(ui.FIRMWARE_REPORT.read_text())['symbols']['z7_module_result']
+        module_fixture = bind_module_fixture(output, args.module.read_bytes(), json.loads(ui.FIRMWARE_REPORT.read_text()))
     camera = HostCamera(0, profile='menu')
     result = dict(checks=[], observations=[], assisted_qemu=True, camera_access=False,
                   physical_card=False, module_loaded=False)
