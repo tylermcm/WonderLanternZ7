@@ -27,11 +27,25 @@ class HistogramFixture(HostFixture):
     def __init__(self, *args):
         super().__init__(*args)
         self.u.mem_map(0xa2010000, 0x20000)
+        self.u.mem_map(0xa2360000, 0x10000)
         self.excluded = self.blocked = 0
         self.exposure = 1
+        self.histogram_available = False
+        self.histogram_bins = [0] * 256
+        self.histogram_requests = 0
 
     def hook(self, u, address, size, context):
-        if address == 0x104065a4:
+        if address in (0x1017095a, 0x1017093e) and u.reg_read(UC_ARM_REG_R0) == 0xa2363384:
+            self.ret(1)
+        elif address == 0x104070ac:
+            pointer = u.reg_read(UC_ARM_REG_R0)
+            if pointer != 0xa201f6d8:
+                raise AssertionError('Unexpected native histogram destination')
+            self.histogram_requests += 1
+            if self.histogram_available:
+                u.mem_write(pointer, struct.pack('<256I', *self.histogram_bins))
+            self.ret(int(self.histogram_available))
+        elif address == 0x104065a4:
             key = u.reg_read(UC_ARM_REG_R0)
             if key not in (0x102c, 0x138d):
                 raise AssertionError('Unexpected histogram property')
@@ -98,6 +112,28 @@ def audit(raw, host, stock, bundle, failures):
         dirty = not auxiliary and mode in (2, 3) and not excluded and kind != 2
         check(f'native-histogram-context-{mode}-{kind}-{auxiliary}-{excluded}-{exposure}-{blocked}',
               bytes(h.u.mem_read(control, 2)) == bytes([int(dirty), int(visible)]))
+    # Trace the original context producer and its snapshot copy too. Only the
+    # statistics service and mutex are supplied; never force its output context.
+    h.u.mem_write(0xa181c988, bytes(2))  # Supplied unextended viewport capability.
+    h.exposure, h.blocked, h.excluded = 1, 0, 0
+    for mode, viewport_flag, available in product(range(4), range(2), range(2)):
+        h.u.mem_write(0xa201d4d0 + 0x18a, bytes([mode]))
+        h.u.mem_write(0xa201d4d0 + 0x40, b'\0')
+        h.u.mem_write(0xa2367974, bytes(0x420))
+        h.u.mem_write(0xa2367974 + 0x28, bytes([viewport_flag]))
+        h.histogram_available = bool(available)
+        h.histogram_bins = [i % 13 for i in range(256)]
+        h.histogram_requests = 0
+        h.u.mem_write(0xa201d318, b'\x09')
+        h.call(0x10370696)
+        expected = mode in (2, 3) and not viewport_flag and available
+        check(f'native-histogram-producer-{mode}-{viewport_flag}-{available}',
+              bytes(h.u.mem_read(0xa201d318, 1)) == bytes([int(expected)]) and
+              h.histogram_requests == int(mode in (2, 3) and not viewport_flag))
+        if expected:
+            check(f'native-histogram-producer-copies-bins-{mode}',
+                  bytes(h.u.mem_read(0xa201df88, 1024)) == struct.pack('<256I', *h.histogram_bins) and
+                  int.from_bytes(h.u.mem_read(0xa201d33c, 4), 'little') == 12)
     for kind in ('failed-init', 'foreign-controls', 'foreign-callback'):
         bad = HostFixture(raw, host, (failures / (kind + '.BIN')).read_bytes())
         check(kind + '-rejects-and-frees-module', bad.call(host['symbols']['z7_module_load_once'], STATE) == 7 and not bad.live)

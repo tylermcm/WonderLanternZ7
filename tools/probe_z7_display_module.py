@@ -32,14 +32,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery'), required=True)
     parser.add_argument('--histogram-context-fixture', action='store_true',
                         help='Explicitly supply native histogram context 1; not a camera-derived observation')
     parser.add_argument('--trace-histogram-writes', action='store_true', help='Record bounded native histogram control watchpoints')
+    parser.add_argument('--trace-histogram-context', action='store_true', help='Observe native context producer instead of widget stores')
+    parser.add_argument('--battery-text-trial', action='store_true', help='Diagnostic native text object with supplied 63 percent; inspect view only')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     if args.histogram_context_fixture and args.view != 'live':
         parser.error('Histogram context fixture requires live view')
+    if args.battery_text_trial and args.view != 'inspect':
+        parser.error('Battery text trial requires inspect view')
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         parser.error('Choose a new private evidence directory')
@@ -146,14 +150,116 @@ def main():
     try:
         camera.boot(announce_ready=False) if args.view == 'menu' else camera.boot_shooting()
         checkpoint()
+        if args.view != 'menu':
+            result['histogram_source_state'] = dict(
+                viewport_flag=camera.remote.memory(0xa2367974 + 0x28, 1).hex(),
+                native_driver_state=camera.remote.memory(0xa188d70c, 3).hex(),
+                normalized_maximum=camera.remote.memory(0xa201d33c, 4).hex())
         check('module-loaded-and-callbacks-committed', state()[10] == 8 and state()[23] == 1 and fixture.finished)
-        for _ in range(20):
-            if state()[35]:
-                break
-            advance()
-        check('grid-menu-published-on-gui-path', state()[35] == 1)
+        if args.view != 'battery':
+            for _ in range(20):
+                if state()[35]:
+                    break
+                advance()
+            check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'menu':
+        if args.view == 'battery':
+            symbols = module['symbols']
+            def trial_word(name):
+                return int.from_bytes(camera.remote.memory(base + symbols['z7_battery_trial_' + name], 4), 'little')
+            check('battery-trial-is-initially-inactive', trial_word('phase') == 0 and trial_word('object') == 0)
+            capture('battery-module-inactive')
+            baseline = Image.open(io.BytesIO(camera.png)).convert('RGB')
+            camera.remote.write_memory(base + symbols['z7_battery_trial_phase'], struct.pack('<I', 1))
+            for _ in range(20):
+                advance(.4)
+                if trial_word('paints') or trial_word('error'):
+                    break
+            capture('battery-module-supplied-63')
+            check('module-creates-and-paints-owned-native-object', trial_word('object') != 0 and trial_word('paints') > 0 and trial_word('error') == 0)
+            shown = Image.open(io.BytesIO(camera.png)).convert('RGB')
+            box = (2, 552, 112, 622)
+            check('module-native-text-changes-region', shown.crop(box).tobytes() != baseline.crop(box).tobytes())
+            camera.remote.write_memory(base + symbols['z7_battery_trial_phase'], struct.pack('<I', 2))
+            for _ in range(20):
+                advance(.4)
+                if trial_word('phase') == 3 or trial_word('error'):
+                    break
+            capture('battery-module-retired')
+            retired = Image.open(io.BytesIO(camera.png)).convert('RGB')
+            result['battery_module_trial'] = dict(supplied_percent=63, hardware_telemetry=False,
+                phase=trial_word('phase'), paints=trial_word('paints'), error=trial_word('error'))
+            check('module-retires-on-native-paint-path', trial_word('phase') == 3 and trial_word('error') == 0)
+            check('module-retirement-restores-region', retired.crop(box).tobytes() == baseline.crop(box).tobytes())
+        elif args.view == 'inspect':
+            gui = query('Native live GUI context', 0x102f2b84, [])
+            if not 0xa1800000 <= gui <= 0xbfffffc0 or gui % 4:
+                raise ValueError('Unexpected native GUI context pointer')
+            result['gui_context'] = dict(pointer=hex(gui), prefix=camera.remote.memory(gui, 64).hex())
+            save()
+            pool = int.from_bytes(camera.remote.memory(gui + 0x24, 4), 'little')
+            if not 0xa1800000 <= pool <= 0xbfffffe0 or pool % 4:
+                raise ValueError('Unexpected native GUI pool pointer')
+            header = camera.remote.memory(pool, 16)
+            result['gui_pool_header'] = dict(pointer=hex(pool), bytes=header.hex())
+            save()
+            total, _, regular, _ = struct.unpack('<4H', header[:8])
+            slots = int.from_bytes(header[8:12], 'little')
+            if not 0 < regular <= total <= 4096 or not 0xa1800000 <= slots <= 0xc0000000 - total * 4 or slots % 4:
+                raise ValueError('Unexpected native GUI pool shape')
+            records = struct.unpack('<' + 'I' * total, camera.remote.memory(slots, total * 4))
+            occupied = [dict(slot=i, object=hex(p), prefix=camera.remote.memory(p, 96).hex())
+                        for i, p in enumerate(records[:regular]) if p]
+            result['gui_pool'] = dict(pointer=hex(pool), header=header.hex(), total=total, regular=regular,
+                free_regular=[i for i, p in enumerate(records[:regular]) if not p], occupied=occupied,
+                global_class_pools=camera.remote.memory(0xa181c770, 32).hex(),
+                main_paint_lists=camera.remote.memory(0xa201e3b4, 16).hex(),
+                dynamic_label_registry=camera.remote.memory(0xa2019e78, 12 * 300).hex())
+            save()
+            capture('native-pool-inspection')
+            check('native-gui-pool-inspected', bool(occupied))
+            result['native_battery_snapshot'] = camera.remote.memory(0xa235aee4, 56).hex()
+            result['native_power_kind'] = query('Native power kind', 0x1030d3ca, [])
+            result['native_battery_controls'] = camera.remote.memory(0xa1824a14, 480).hex()
+            if args.battery_text_trial:
+                baseline = Image.open(io.BytesIO(camera.png)).convert('RGB')
+                slot, label = 1199, 299
+                label_address = 0xa2019e78 + label * 12
+                label_record = struct.unpack('<3I', camera.remote.memory(label_address, 12))
+                check('trial-slot-and-label-currently-unused', regular == 1200 and not records[slot] and
+                      label_record[0] == 0 and label_record[1] != 0)
+                object_pointer = query('Allocate diagnostic regular object', 0x103fcf0e, [pool, 0, slot])
+                check('trial-native-pool-owns-allocation', object_pointer != 0 and
+                      int.from_bytes(camera.remote.memory(slots + slot * 4, 4), 'little') == object_pointer)
+                def store(offset, value):
+                    camera.remote.write_memory(object_pointer + offset, struct.pack('<I', value))
+                store(0, 0x7a40); store(4, 2); store(8, label); store(12, 2)
+                store(0x10, 10 | (400 << 16)); store(0x14, 70 | (424 << 16))
+                store(0x18, 0); store(0x28, 0); store(0x2c, 1)
+                store(0x34, 0x1000); store(0x38, 1); store(0x3c, 0x1000); store(0x40, 0x2ed)
+                store(0x48, 0xa201e3b4)
+                store(0x98, 10 | (400 << 16)); store(0x9c, 70 | (424 << 16))
+                camera.call(checkpoint(), 'Set diagnostic label, supplied 63 percent', 0x103fbb5c,
+                            b'63%\0' + bytes(28), [('scratch', 0), label, 0])
+                native('Initialize diagnostic native HUD text object', 0x10384d82, [object_pointer])
+                native('Append diagnostic object to native paint list', 0x103faeba, [0xa201e3b4, object_pointer])
+                native('Show diagnostic text', 0x103fb32e, [object_pointer, 1])
+                native('Request native text repaint', 0x103fb302, [0xa201e3b4, 1])
+                capture('battery-text-supplied-63')
+                shown = Image.open(io.BytesIO(camera.png)).convert('RGB')
+                box = (14, 568, 100, 604)
+                changed = sum(a != b for a, b in zip(baseline.crop(box).getdata(), shown.crop(box).getdata()))
+                result['battery_text_trial'] = dict(supplied_percent=63, hardware_telemetry=False,
+                    slot=slot, label=label, object=hex(object_pointer), changed_pixels=changed,
+                    object_prefix=camera.remote.memory(object_pointer, 96).hex())
+                check('trial-text-produces-native-pixels', changed > 10)
+                native('Hide diagnostic text', 0x103fb32e, [object_pointer, 0])
+                native('Request native restoration', 0x103fb302, [0xa201e3b4, 1])
+                capture('battery-text-hidden')
+                hidden = Image.open(io.BytesIO(camera.png)).convert('RGB')
+                result['battery_text_trial']['native_hide_alone_restores_region'] = hidden.crop(box).tobytes() == baseline.crop(box).tobytes()
+                check('trial-hidden-text-restores-region', hidden.crop(box).tobytes() == baseline.crop(box).tobytes())
+        elif args.view == 'menu':
             check('native-menu-initial-page', on_page(0x13))
             key('left', lambda: on_page(1)); row(1, 3)
             key('right', lambda: on_page(0x125)); row(0x125, 4)
@@ -217,12 +323,13 @@ def main():
                 camera.remote.write_memory(0xa201d308 + 0x10, b'\1')
                 native('Native histogram update with supplied context', 0x1036d57c, [])
                 result['histogram_context_fixture']['immediate_control'] = camera.remote.memory(control, 2).hex()
-            if args.trace_histogram_writes:
-                watch = f'2,{control + 1:x},1'
+            if args.trace_histogram_writes or args.trace_histogram_context:
+                watch_address = 0xa201d318 if args.trace_histogram_context else control + 1
+                watch = f'2,{watch_address:x},1'
                 if camera.remote.command('Z' + watch) != 'OK':
                     raise RuntimeError('Cannot observe histogram control writes')
                 try:
-                    observations = result.setdefault('histogram_control_writes', [])
+                    observations = result.setdefault('histogram_context_writes' if args.trace_histogram_context else 'histogram_control_writes', [])
                     for _ in range(12):
                         camera.remote.send('c'); camera.running = True
                         stopped = camera.receive_stop()
@@ -244,7 +351,7 @@ def main():
                             context=camera.remote.memory(0xa201d308 + 0x10, 1).hex(),
                             mode=camera.remote.memory(0xa201d4d0 + 0x18a, 1).hex()))
                         save()
-                        if camera.remote.memory(control + 1, 1) == b'\0':
+                        if camera.remote.memory(watch_address, 1) == b'\0':
                             break
                 finally:
                     if camera.remote.command('z' + watch) != 'OK':

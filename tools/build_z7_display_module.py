@@ -17,19 +17,23 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe'), default='grids')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         parser.error('Choose a new directory under .private')
-    source = ROOT / 'z7-native-modules/plugins/grids_histogram.c'
+    if args.diagnostics and args.variant != 'grids':
+        parser.error('Ownership diagnostic variants apply to the grid module')
+    relative = 'plugins/grids_histogram.c' if args.variant == 'grids' else 'examples/battery_display_probe.c'
+    source = ROOT / 'z7-native-modules' / relative
     packet, report = build(source, zig=args.zig.resolve())
     again, second = build(source, zig=args.zig.resolve())
     if packet != again or report != second:
         raise RuntimeError('Display module is not reproducible')
-    report.update(kind='original-Z7-grids-histogram-module', emulator_only=True,
+    report.update(kind='original-Z7-grids-histogram-module' if args.variant == 'grids' else 'original-Z7-battery-text-diagnostic', emulator_only=True,
         module_sha256=hashlib.sha256(packet).hexdigest(), file_bytes=len(packet),
         source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
-        camera_verified=False, physical_card_verified=False, api_minimum_bytes=20)
+        camera_verified=False, physical_card_verified=False, api_minimum_bytes=20 if args.variant == 'grids' else 16)
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)
     (output / 'module.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8', newline='\n')

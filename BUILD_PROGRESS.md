@@ -32,6 +32,13 @@ authorization and a concrete exact-candidate installation/recovery assessment.
   context returns to zero. The default live histogram check remains failed.
 - Original battery snapshot contract: 32 instruction checks pass for the
   locked 56-byte copy and native percent-formatting prefix; no overlay yet.
+- Expanded battery data audit: 44 checks distinguish direct percent data from
+  native bar-based fallback. Expanded display-module audit: 951 checks include
+  original histogram context production with supplied statistics availability.
+- SD-loaded native HUD diagnostic passes seven QEMU checks and 14 ownership
+  instruction checks. Supplied63% renders, then retires with the complete frame
+  byte-identical to baseline. This is drawing/lifetime progress, not telemetry
+  or the finished automatic battery feature; see `Z7_BATTERY_DISPLAY_RESEARCH.md`.
 
 ## Next implementation
 

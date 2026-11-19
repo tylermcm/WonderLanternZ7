@@ -93,9 +93,26 @@ def audit(raw):
         checks.append(dict(name=f'native-menu-formats-snapshot-word-{percent}', passed=passed))
         if not passed:
             raise AssertionError(checks[-1]['name'])
+    fixture.menu_trace = False
+    producer_results = []
+    for fallback in (0, 1):
+        fixture.u.mem_write(0xa18b4de8, struct.pack('<I', fallback))
+        for percent in (0, 1, 63, 100, 101, 0xffffffff):
+            incoming = bytearray(56)
+            struct.pack_into('<I', incoming, 24, percent)
+            fixture.u.mem_write(MEM + 0xd000, bytes(incoming))
+            fixture.u.mem_write(MEM + 0xe000, bytes(56))
+            fixture.call(0x101f9888, MEM + 0xe000, MEM + 0xd000)
+            observed = int.from_bytes(fixture.u.mem_read(MEM + 0xe018, 4), 'little')
+            producer_results.append(dict(fallback=fallback, supplied_word=percent, output_word=observed))
+            passed = observed == (percent if not fallback else 1)
+            checks.append(dict(name=f'native-battery-producer-{fallback}-{percent}', passed=passed))
+            if not passed:
+                raise AssertionError(checks[-1]['name'])
     return dict(passed=True, checks=checks, source_sha256=STOCK_SHA, snapshot_bytes=SIZE,
         percentage_word_offset=24, supplied_boundaries=['Mutex services', 'Snapshot producer bytes',
             'Menu object lookup/hide calls; constructor trace stops at first formatter'],
+        producer_results=producer_results, bar_fallback_exists=True, fallback_flag_address='0xa18b4de8',
         sentinel_semantics_verified=False, telemetry_verified=False, overlay_implemented=False,
         camera_access=False, card_access=False)
 

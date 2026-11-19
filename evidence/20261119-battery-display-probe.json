@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Original-Z7 C 3.80 SD-loaded native HUD text/lifetime diagnostic, not an automatic battery feature",
+  "module_sha256": "83d5ce5c623ba5918dcc4ed6941361e0a0f4e306f24f444714e70ea65da77683",
+  "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+  "file_bytes": 1096,
+  "image_bytes": 1024,
+  "bss_bytes": 20,
+  "qemu": {
+    "passed": true,
+    "checks": 7,
+    "frames": 3,
+    "supplied_text": "63%",
+    "hardware_telemetry": false,
+    "complete_frame_restored": true,
+    "inactive_frame_sha256": "b3f9f2701de0a5ae1010e14338da83b3bd561c106a1abf9159fcda53dd94013f",
+    "retired_frame_sha256": "b3f9f2701de0a5ae1010e14338da83b3bd561c106a1abf9159fcda53dd94013f",
+    "visual_inspection": true,
+    "modeled_module_filesystem": true
+  },
+  "instruction_audits": {
+    "object_lifetime": {
+      "passed": true,
+      "checks": 14,
+      "supplied_boundaries": [
+        "GUI context/pool instance",
+        "Font measurement",
+        "Label storage",
+        "Paint and list services",
+        "File/kernel/heap"
+      ]
+    },
+    "battery_snapshot": {
+      "passed": true,
+      "checks": 44,
+      "bar_fallback_exists": true,
+      "hardware_telemetry": false
+    },
+    "grid_histogram_module": {
+      "passed": true,
+      "checks": 951,
+      "geometry_calls": 756
+    }
+  },
+  "earlier_failures_retained": [
+    "Native hide-only trial left residual glyphs",
+    "Direct rectangle call outside GUI callback failed restoration",
+    "First SD probe clearing bounds missed outlined glyph padding"
+  ],
+  "camera_access": false,
+  "physical_card_access": false,
+  "firmware_or_frames_included": false,
+  "remaining": [
+    "Connect valid direct native telemetry; reject bar fallback",
+    "Native visibility and owner setting",
+    "AF redraw and GUI teardown/rebuild",
+    "Menu/playback/warning and EVF/HDMI transitions",
+    "Sampling cadence",
+    "Physical card/cache/update/recovery validation"
+  ]
+}

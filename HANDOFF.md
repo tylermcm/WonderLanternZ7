@@ -1,5 +1,44 @@
 # Laptop handoff — October 20, 2026
 
+## Native HUD lifetime milestone — November 19, 2026
+
+Read `Z7_BATTERY_DISPLAY_RESEARCH.md`. The battery text diagnostic is now an
+actual SD-loaded module, separate from the grid module. Candidate probe 02
+passes seven assisted-QEMU checks with supplied text 63%, then retires on the
+native GUI path. The complete inactive/retired PNGs are byte-identical (SHA in
+the research record). Earlier hide-only/generic-constructor/direct-clear trials
+and probe 01's insufficient clearing bounds all remain private failures.
+
+New private outputs: `.private/builds/20261119-battery-display-probe-02/`,
+`.private/evidence/20261119-battery-module-trial-02/`, battery-display-audit-02
+(14 checks), battery-snapshot-03 (44 checks), display-module-05 (951 checks).
+The instruction display audit executes original native pool/zeroing/HUD init;
+font/label/list/paint and loader services remain supplied. The QEMU visual run
+executes native font and painter code. Neither establishes hardware telemetry.
+
+Native GUI getter `0x102F2B84` returns context `0xA201E388`; its object pool is
+at +0x24, not directly the returned value. Native regular pool capacity is 1200,
+object size 284. Diagnostic slot1199/label299 were empty in the inspected session.
+HUD constructor `0x10384D82`, measure request `0x10384E02`, painter `0x10384968`,
+destructor `0x10384954`. Native RGBA rectangle painter `0x10433912`. The supplied
+text's outlined glyph exceeds its layout box: retiring `(2,392)-(78,436)` around
+layout `(10,400)-(70,424)` restores the entire observed frame exactly.
+
+The battery producer `0x101F9888` normally copies input +0x18, but native flag
+`0xA18B4DE8 != 0` can replace it through bar conversion `0x101F9844`. A precise
+percentage feature must reject that fallback. Next: extract the validated GUI
+ownership/painter path into the feature; add sample validity/cadence, native
+battery visibility, label ownership, GUI rebuild/teardown and owner controls.
+The probe's fixed63% and diagnostic phase writes are not the finished feature.
+
+Histogram context watch run07 finds native producer `0x10370696` clearing at
+`0x10370716`. It requires its native eligibility, snapshot +0x28 == 0 and a
+successful statistics fetch `0x104070AC`; the latter reaches `0x101F8F20`, requiring
+driver state2. The 951-check audit includes real context production and bin copy
+with supplied statistics. No histogram completion flag was forced in QEMU.
+The probe now records viewport/driver source state passively on future boots.
+No guest process from these completed probes remains owned/running.
+
 ## Native SD display module — November 19, 2026
 
 Read `Z7_DISPLAY_MODULE_RESEARCH.md` for the current display implementation.

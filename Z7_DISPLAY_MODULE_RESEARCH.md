@@ -42,6 +42,14 @@ The corrected observer in private live run 06 stops at native store
 `0x1036D5D4`, single-steps on the stopped CPU, and reads control bytes `01 00`
 with context zero and DISP state 3. It identifies the native hiding instruction;
 the producer of the transient context still needs to be traced.
+Later context-write run 07 identifies `0x10370716` in native producer
+`0x10370696`. It permits a context only when its original eligibility check,
+snapshot `+0x28` and histogram-data service succeed. Service `0x104070AC` reaches
+`0x101F8F20`, which requires its driver state to be 2 before fetching bins.
+The expanded instruction audit now passes **951 checks**, including original
+context production and 1,024-byte bin copying/normalization with supplied
+statistics availability. This does not supply statistics to the QEMU camera
+pipeline or establish histogram rendering there.
 
 ## Callback and menu lifetime
 
@@ -135,10 +143,13 @@ the word at `+0x18` as `%d%%`. That wrapper reaches `0x101F9ECE`, which locks
 the Z7II's 80-byte contract. Snapshot producers, invalid/sentinel semantics,
 sampling cadence and a suitably owned Z7 text object still require validation.
 
-`tools/audit_z7_battery_snapshot.py` passes 32 instruction checks. It executes
+`tools/audit_z7_battery_snapshot.py` now passes 44 instruction checks. It executes
 the original getter, wrapper and ARM memcpy with supplied mutex/producer
 boundaries, verifying exactly 56 copied bytes, guards, lock ordering and unchanged
 source. A prefix trace of the original menu constructor reaches `%d%%` formatting
 with the exact +0x18 word for eight values, including out-of-range diagnostics.
 Object lookup/hide calls are supplied and the trace stops before formatting;
 this does not establish GUI lifetime or real battery telemetry.
+The producer audit additionally distinguishes copied telemetry from the native
+bar-based fallback. See [battery display research](Z7_BATTERY_DISPLAY_RESEARCH.md)
+for the owned HUD-text module and its exact full-frame restoration observation.
