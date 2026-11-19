@@ -34,6 +34,7 @@
       "supplied_percentage": false,
       "visual_inspection": true
     },
+    "native_no_card_play_lifecycle": {"passed": true, "checks": 17, "frames": 13, "owned_reference_cleared_on_gui_teardown": true, "sampling_stops": true, "return_recovers": true, "supplied_bar_visibility_requests": 4, "visual_inspection": true, "image_playback_verified": false},
     "modeled_read_only_module_file": true,
     "assisted_controller_inputs": true,
     "histogram_statistics_production_verified": false

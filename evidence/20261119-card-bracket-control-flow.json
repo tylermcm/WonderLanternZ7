@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 C 3.80 clean-display control-flow research",
+  "source_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "passed": true,
+  "instruction_checks": 18,
+  "control_flow_checks": 12,
+  "native_wrapper_checks": 6,
+  "widget": 16,
+  "inactive_controls_still_reach_shared_bracket_helper": true,
+  "native_wrapper_makes_bracket_objects_visible": true,
+  "native_exclusion_preserved": true,
+  "supplied_boundaries": ["Incoming output/snapshot/control bytes", "Synthetic GUI objects", "Count-text helpers", "Glyph/style setters in first 12 cases; image/style payload application in final six"],
+  "actual_pixels_verified": false,
+  "clean_display_implemented": false,
+  "camera_access": false,
+  "binaries_dumps_or_frames_included": false
+}

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 C 3.80 disabled-by-default clean-DISP SD diagnostic",
+  "module_sha256": "aeb6da1b5d8d58f29e031290c26aa57569282a8f6969f67184f61236468a7d70",
+  "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+  "file_bytes": 5716,
+  "instruction_checks": {"passed": true, "count": 13, "supplied_boundaries": ["GUI/control/page/output state", "Loader services"]},
+  "qemu": {
+    "passed": true,
+    "checks": 6,
+    "frames": 3,
+    "request_supplied_explicitly": true,
+    "native_disp_keys": true,
+    "native_scene_assisted_test_pattern": true,
+    "clean_scene_and_golden_grid_visually_inspected": true,
+    "bracket_objects_hidden": 4,
+    "mask_words_restored": 549,
+    "restored_frame_visually_inspected": true,
+    "separate_full_rgb_comparison_identical": true,
+    "baseline_and_restored_png_sha256": "44202a60313081bd965c253dcbbfafba718b0f776226926413efa467944e550e"
+  },
+  "ordinary_combined_module_byte_identical": true,
+  "root_tests": {"passed": true, "count": 39, "skipped": 0},
+  "completed_custom_disp_feature": false,
+  "camera_side_setting_or_key_handler": false,
+  "camera_access": false,
+  "physical_card": false,
+  "binaries_dumps_or_frames_included": false,
+  "remaining": ["Native DISP controls and presets", "Lifecycle/ownership across menu/playback/wake/outputs", "Warning and capture exclusions", "Hardware display validation"]
+}

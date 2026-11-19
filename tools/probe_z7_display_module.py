@@ -32,9 +32,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
+    parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
     parser.add_argument('--histogram-context-fixture', action='store_true',
                         help='Explicitly supply native histogram context 1; not a camera-derived observation')
     parser.add_argument('--trace-histogram-writes', action='store_true', help='Record bounded native histogram control watchpoints')
@@ -50,6 +51,8 @@ def main():
         parser.error('Battery icon fixture requires battery-auto view')
     if args.battery_lifecycle and not (args.view == 'battery-auto' and args.battery_icon_fixture):
         parser.error('Battery lifecycle requires battery-auto with its explicit icon fixture')
+    if args.battery_playback and not args.battery_lifecycle:
+        parser.error('Battery playback requires battery lifecycle')
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         parser.error('Choose a new private evidence directory')
@@ -170,9 +173,40 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'battery-auto':
+        if args.view == 'clean':
+            if module['kind'] != 'original-Z7-clean-display-diagnostic':
+                raise ValueError('Clean view requires the disabled-by-default clean diagnostic')
+            request_address = base + module['symbols']['z7_clean_request']
+            def cycle_mode(target):
+                for _ in range(8):
+                    if camera.remote.memory(0xa201d4d0 + 0x18a, 1) == bytes([target]): return
+                    camera.key(checkpoint(), 'disp'); advance(.5)
+                raise RuntimeError('Cannot reach native DISP mode')
+            descriptors = [int.from_bytes(camera.remote.memory(0x1064d610 + i * 4, 4), 'little') for i in range(61)]
+            original_masks = [camera.remote.memory(p + 4, 36) for p in descriptors]
+            native('Clean diagnostic golden grid choice', base + module['symbols']['golden'], [])
+            native('Native grid enabled for clean diagnostic', 0x10377236, [1])
+            cycle_mode(1); capture('clean-native-baseline')
+            camera.remote.write_memory(request_address, struct.pack('<I', 1)); advance(.5)
+            cycle_mode(0); cycle_mode(1)
+            capture('clean-requested-simplified')
+            check('clean-diagnostic-masks-apply-exactly', all(camera.remote.memory(p + 4, 36) ==
+                  struct.pack('<9I', *(x & ~0x22222 for x in struct.unpack('<9I', saved)))
+                  for p, saved in zip(descriptors, original_masks)))
+            objects = [int.from_bytes(camera.remote.memory(0xa1824684 + i * 48 + 36, 4), 'little') for i in range(1, 5)]
+            result['clean_brackets'] = [dict(pointer=hex(p), visible=camera.remote.memory(p + 40, 4).hex(),
+                painter=camera.remote.memory(p + 76, 4).hex()) for p in objects]
+            check('clean-diagnostic-bracket-objects-hidden', all(camera.remote.memory(p + 40, 4) == bytes(4) for p in objects))
+            camera.remote.write_memory(request_address, bytes(4)); advance(.5)
+            cycle_mode(0); cycle_mode(1); capture('clean-native-restored')
+            check('clean-diagnostic-restores-all-owned-masks', all(camera.remote.memory(p + 4, 36) == saved
+                  for p, saved in zip(descriptors, original_masks)))
+        elif args.view == 'battery-auto':
             def automatic_word(name):
                 return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_battery_' + name], 4), 'little')
+            def automatic_visible():
+                object_pointer = automatic_word('object')
+                return bool(object_pointer and int.from_bytes(camera.remote.memory(object_pointer + 40, 4), 'little'))
             def enable(value):
                 camera.remote.write_memory(base + module['symbols']['z7_battery_enabled'], struct.pack('<I', value))
             capture('automatic-native-context')
@@ -260,6 +294,27 @@ def main():
                     capture('automatic-after-menu-eligible-request')
                     check('native-menu-return-recovers-owned-percentage-when-eligible', automatic_word('object') and
                           camera.remote.memory(automatic_word('object') + 40, 4) != bytes(4))
+                    if args.battery_playback:
+                        result['playback_fixture_scope'] = 'No emulated memory card; native PLAY error path, not image playback'
+                        camera.key(checkpoint(), 'play')
+                        capture('automatic-native-empty-card-playback')
+                        result['empty_card_playback'] = dict(
+                            pages=pages(), ui_output=camera.remote.memory(0xa18237c6, 1).hex(),
+                            snapshot_mode=camera.remote.memory(0xa201d4d0 + 0x40, 1).hex(),
+                            owned_object=hex(automatic_word('object')), owned_visible=automatic_visible())
+                        check('native-empty-card-playback-hides-owned-percentage', not automatic_visible())
+                        count = automatic_word('samples')
+                        for _ in range(5): advance(.3)
+                        check('native-empty-card-playback-performs-no-battery-sampling', automatic_word('samples') == count)
+                        camera.key(checkpoint(), 'play')
+                        capture('automatic-native-empty-card-playback-return')
+                        request_icon('after native empty-card PLAY return')
+                        for _ in range(30):
+                            advance(.3)
+                            if automatic_word('object') and camera.remote.memory(automatic_word('object') + 40, 4) != bytes(4): break
+                        capture('automatic-after-playback-eligible-request')
+                        check('native-playback-return-recovers-owned-percentage-when-eligible', automatic_word('object') and
+                              camera.remote.memory(automatic_word('object') + 40, 4) != bytes(4))
         elif args.view == 'battery':
             symbols = module['symbols']
             def trial_word(name):

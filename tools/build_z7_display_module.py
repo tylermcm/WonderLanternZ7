@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -35,6 +35,7 @@ def main():
         'battery-native': ('examples/battery_native_display_probe.c', 'original-Z7-battery-native-sample-diagnostic', 16),
         'battery-percent': ('plugins/battery_percent.c', 'original-Z7-battery-percent-module', 16),
         'combined': ('plugins/combined_display.c', 'original-Z7-combined-display-module', 20),
+        'clean-probe': ('examples/clean_display_probe.c', 'original-Z7-clean-display-diagnostic', 20),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
     packet, report = build(source, zig=args.zig.resolve())
@@ -58,12 +59,14 @@ def main():
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
               ROOT / 'z7-native-modules/sdk/module.ld']
-    if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined'):
+    if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe'):
         inputs.append(ROOT / 'z7-native-modules/plugins/battery_sample.h')
     if args.variant == 'battery-native':
         inputs.append(ROOT / 'z7-native-modules/examples/battery_display_probe.c')
-    if args.variant == 'combined':
+    if args.variant in ('combined', 'clean-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/grids_histogram.c', ROOT / 'z7-native-modules/plugins/battery_percent.c']
+    if args.variant == 'clean-probe':
+        inputs += [ROOT / 'z7-native-modules/plugins/combined_display.c', ROOT / 'z7-native-modules/examples/clean_display_policy.h']
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)

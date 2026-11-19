@@ -59,6 +59,14 @@ authorization and a concrete exact-candidate installation/recovery assessment.
 
 ## Next implementation
 
+Current continuation also adds native no-card PLAY teardown/return coverage
+(17 QEMU checks/13frames) and isolates the clean-DISP card-bracket bypass
+(18 original-instruction cases). A disabled-by-default combined clean diagnostic
+passes13 mask/object restoration cases; assisted-QEMU live01 passes6 checks/
+3frames with clean pixels and exact full-frame restoration to baseline.
+The ordinary combined package rebuild remains byte-identical. No completed
+custom-DISP feature or image-playback/card validation follows from these probes.
+
 1. Complete histogram/horizon visual validation. Its mode/mask changes and native
    restrictions pass instruction checks, but the ordinary live fixture supplies
    shooting-context zero and native code hides the histogram. Another run reaches

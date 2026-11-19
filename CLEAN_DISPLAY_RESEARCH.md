@@ -44,6 +44,58 @@ playback, warnings, capture and wake. The main UI bitmap also hosts the spiral;
 hiding that entire bitmap would hide the curve too. Combining a clean display
 with the spiral is not yet tested.
 
+## Card-bracket control flow, November 19, 2026
+
+`tools/audit_z7_card_brackets.py` now executes the original card updater
+`0x102F3F8A`, its native control-visibility query `0x102F2F1E`, and shared helper
+`0x102F7E24`. Widget16's fifteen controls start at `0xA1824684`. The updater's
+ordinary count-text branch depends on active controls, but its tail still enters
+the shared bracket helper when the visibility query returns zero. That helper
+updates controls4/2 (and3/1 for output0) through original glyph-update wrapper
+`0x102F2F80`, whose native body makes the GUI object visible. This explains a
+concrete path that survives descriptor-mask exclusion.
+
+Eighteen instruction cases pass. Twelve cover supplied visibility0/1, output0/1/2 and
+snapshot exclusion byte `0xA201D4D0+0x192` values0/1. The native exclusion remains
+effective. Six further cases execute the original glyph/style wrapper, geometry
+copy and native visibility setter using synthetic GUI objects: inactive controls
+still make exactly objects1/2/3/4 visible for output0, or2/4 for outputs1/2.
+Image/style payload application and count-text helpers are supplied boundaries;
+these checks identify control flow and object visibility, not actual clean pixels.
+Private result: `.private/evidence/20261119-card-brackets-02.json`. No clean-display module or
+camera patch has been enabled. A future callback must suppress the shared path
+or hide its owned native objects during the GUI paint phase, with exact native
+restoration across DISP/menu/playback and output changes. Mask changes alone
+remain insufficient.
+
+## Disabled SD diagnostic
+
+`examples/clean_display_probe.c` includes the combined display module with an
+optional pre-paint callback. Its BSS request starts at zero, so startup leaves
+the native UI alone. An explicit emulator request saves all61x9 current mask
+words and clears only simplified-state bits `0x22222`; LCD-photo/page exclusions
+restore owned values. Each word is restored only while it still equals this
+diagnostic's masked value, preserving unrelated writes. Four independently
+identified bracket objects are hidden with the original native visibility setter
+only in simplified mode; their initial visible states are retained for exit.
+Object class, painter and native parent are checked before access.
+
+Private probe01 is5,716 bytes, SHA
+`aeb6da1b5d8d58f29e031290c26aa57569282a8f6969f67184f61236468a7d70`.
+`tools/audit_z7_clean_display.py` passes13 compiled cases: default-off,
+exact mask changes/restoration, four native visibility setters, repeat paints,
+menu/EVF/movie exclusions, unknown request, a foreign mask write, invalid final
+descriptor and foreign bracket painter. GUI objects
+and incoming state remain supplied. The existing combined module rebuilds to
+the same previously validated SHA. Assisted-QEMU live01 passes six checks across
+three frames: explicit request plus native DISP cycling produces only the scene
+and golden grid, without the old brackets; all549 native mask words restore on
+disable. Clean/restored frames were visually inspected. A separate full RGB
+comparison finds the entire restored frame byte-identical to the baseline.
+The native scene is an assisted test pattern, not sensor imagery. No camera-side
+DISP setting is implemented: native key handler/presets and broader lifetime/output
+coverage remain to be implemented.
+
 ## Display routing relevant to the spiral
 
 Original descriptor getter `0x10433B80(kind, display_id, dataset)` accepts LCD

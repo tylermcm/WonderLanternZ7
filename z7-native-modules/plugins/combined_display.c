@@ -21,6 +21,13 @@
 #undef z7_main
 #undef Z7_GRID_DEFER_MASKS
 
+#ifdef Z7_CLEAN_DISPLAY_PROBE
+#include "../examples/clean_display_policy.h"
+#define Z7_COMBINED_BEFORE clean_before
+#else
+#define Z7_COMBINED_BEFORE before
+#endif
+
 static const struct z7_display_hooks *pending_grid, *pending_battery;
 static const struct z7_grid_menu *pending_menu;
 static uint32_t stage_display(const struct z7_display_hooks *h)
@@ -40,7 +47,7 @@ static const struct z7_module_api staging = {
 };
 static const struct z7_display_hooks combined_hooks = {
     Z7_DISPLAY_ABI, sizeof(combined_hooks), grid_source, grid_geometry,
-    scalar_value, histogram_gate, before, after
+    scalar_value, histogram_gate, Z7_COMBINED_BEFORE, after
 };
 uint32_t z7_main(const struct z7_module_api *api)
 {

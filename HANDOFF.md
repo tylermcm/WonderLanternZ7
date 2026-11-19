@@ -1,5 +1,27 @@
 # Laptop handoff — October 20, 2026
 
+## Native PLAY lifetime and clean-DISP investigation — November 19, 2026
+
+Combined playback03 passes17 assisted-QEMU checks/13frames. Native PLAY shows
+the no-card error page43, tears down the shooting GUI and clears the owned HUD
+reference; no percentage remains or sampling occurs there. PLAY return rebuilds
+and recovers after a fourth labeled icon/bar GUI request. Both error and recovered
+frames were inspected. This is the native no-card path, not image playback or
+real-card evidence. Playback02 is retained as a probe failure: it read object+40
+after the object correctly became zero. The probe now handles that teardown.
+
+Card-bracket audit02 passes18 original instruction cases. Widget16 updater
+102F3F8A tails into102F7E24 even when its normal control-visibility result is zero;
+the original glyph wrapper makes four LCD bracket objects visible again. See
+`CLEAN_DISPLAY_RESEARCH.md`. New clean-probe is disabled by default and still a
+diagnostic, not a completed custom-DISP feature. Its13 instruction checks pass
+mask/visibility restoration, menu/EVF/movie exclusion and foreign-mask protection.
+Private live01 passes6 checks/3frames: clean scene+golden grid, all549 mask words
+restored and a separate full RGB comparison byte-identical to baseline. Clean
+and restored frames were inspected. No owned guest remains live. Camera-side
+DISP key/settings, other outputs and broader lifecycle are next. Generated
+packages and frames remain private.
+
 ## Combined grid/battery SD module — November 19, 2026
 
 `plugins/combined_display.c` joins the native six-choice grid menu and automatic

@@ -42,6 +42,15 @@ performs no sampling there, and recovers when the native icon becomes eligible
 after return. The menu and returned percentage frames were visually inspected.
 No real-card or camera result follows.
 
+Native PLAY coverage now passes17 checks/13frames in private playback03. With
+no emulated memory card, PLAY reaches the original error page43 and tears down
+the shooting GUI; the module clears its object reference and does not sample or
+draw there. Returning to shooting recovers after an additional labeled icon/bar
+request (four total in this run). Both frames were inspected. This proves the
+no-card error transition, not browsing real images. Playback02's probe read of
+object+40 after legitimate teardown is retained as a failure; current probing
+checks a nullable object reference before reading its visibility.
+
 ```powershell
 .venv\Scripts\python.exe tools/build_z7_display_module.py --variant combined --diagnostics --battery-percent on --output .private/builds/combined-new
 .venv\Scripts\python.exe tools/build_z7_display_module.py --variant combined --battery-percent off --output .private/builds/combined-off-new
