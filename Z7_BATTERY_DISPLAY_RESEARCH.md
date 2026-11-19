@@ -92,6 +92,44 @@ missing label buffers, full global capacity and an unready GUI. Font measurement
 label/list/paint services, the GUI instance and loader service boundaries are
 supplied. This audit does not prove pixels, cleanup on camera, or telemetry.
 
+## Native sample integration milestone
+
+`plugins/battery_sample.h` now implements a bounded direct-sample policy. It
+requires initialized snapshot word0 equal to 1, a native converted kind in 1..6,
+percent 0..100, and zero bar-fallback flag both before and after the native getter.
+Rejected reads preserve the caller's output. The before/after check is conservative;
+controller transitions and physical sampling validity are still unverified.
+
+The compiled 192-byte sampler probe passes 23 instruction cases, including both
+percentage boundaries, unknown/uninitialized data, fallback before a query and a
+supplied fallback transition during the original locked copy. The original
+getter/ARM copy run; telemetry, mutex and loader boundaries are supplied.
+
+`examples/battery_native_display_probe.c` connects that sampler to the validated
+HUD lifecycle. Its independent audit passes 23 cases covering object ownership,
+formatting 0,1,9,10,63,99,100 percent, and rejection without object creation.
+The native-sample QEMU run passes seven checks across three frames. It reads the
+emulator's native snapshot value0, renders `0%`, and removes it with a complete
+frame byte-identical to baseline. The virtual power/controller boot inputs are
+assisted; this is not physical battery telemetry. Diagnostic phase control still
+triggers one sample, rather than a finished automatic display feature.
+
+Private native-sample package 01 is 1,224 bytes, SHA-256
+`fb0feb156df8d50b8dd84e0f2e0fcc45fa370c955f7d1656f058eec975d07523`.
+Build reports now hash included source/SDK/linker inputs, including the shared
+sampler header, in addition to comparing complete repeat-build packets.
+Final bundle02 records current include hashes with the same complete packet;
+the fixed-text variant also rebuilds byte-identically to its prior tested packet.
+
+The same run passively observes histogram viewport flag0 and driver bytes
+`01 02 02`, with normalized maximum0. Thus the histogram driver is already in
+its native required state2 in this fixture; driver admission alone does not
+provide statistics. Do not force the context or a hardware completion flag.
+
+Use `--variant battery-sample` for its instruction diagnostic and
+`--variant battery-native` for snapshot-to-HUD integration. Both use new private
+output directories and the same host, audit and QEMU commands below.
+
 ## Reproduction
 
 Use the root private Windows toolchain and new private output names:

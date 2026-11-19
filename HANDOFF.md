@@ -1,5 +1,32 @@
 # Laptop handoff — October 20, 2026
 
+## Native battery sample-to-HUD integration — November 19, 2026
+
+The last turn made code/validation progress, not completion. New reusable sample
+policy `z7-native-modules/plugins/battery_sample.h` rejects uninitialized/unknown
+data, percent >100 and native bar fallback before/after a getter query. Failure
+preserves output. Its 192-byte compiled probe passes 23 cases, including a
+fallback transition during the native locked copy. Private result sample-01.
+
+Builder variants `battery-sample` and `battery-native` were added. The latter
+includes the shared HUD diagnostic with actual getter/formatter integration.
+Private bundle `.private/builds/20261119-battery-native-probe-01/` passes 23
+instruction checks (`battery-native-audit-02.json`) and seven assisted-QEMU
+checks (`battery-native-display-01/`). It displays the emulator snapshot's 0%,
+then retires with the complete frame byte-identical to the starting frame.
+No percent value is written by this display probe; virtual controller/power boot
+inputs remain assisted. This is still diagnostic one-shot phase control, not an
+automatic visibility/cadence/owner-setting feature. Continue that implementation.
+Final bundle02 records current included-source hashes and is byte-identical to
+QEMU-tested bundle01. The fixed-text bundle03 also matches its previously tested
+bundle02 byte-for-byte. Source-only evidence is
+`evidence/20261119-battery-native-integration.json`.
+
+The native-sample QEMU run passively reports histogram viewport flag0, native
+driver bytes `01 02 02` (driver state2), maximum0. Driver admission is already
+valid; the statistics service/data-production path still needs investigation.
+No owned emulator process is still running from these completed runs.
+
 ## Native HUD lifetime milestone — November 19, 2026
 
 Read `Z7_BATTERY_DISPLAY_RESEARCH.md`. The battery text diagnostic is now an

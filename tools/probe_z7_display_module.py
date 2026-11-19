@@ -175,7 +175,8 @@ def main():
                 advance(.4)
                 if trial_word('paints') or trial_word('error'):
                     break
-            capture('battery-module-supplied-63')
+            native_sample = module['kind'] == 'original-Z7-battery-native-sample-diagnostic'
+            capture('battery-module-native-sample' if native_sample else 'battery-module-supplied-63')
             check('module-creates-and-paints-owned-native-object', trial_word('object') != 0 and trial_word('paints') > 0 and trial_word('error') == 0)
             shown = Image.open(io.BytesIO(camera.png)).convert('RGB')
             box = (2, 552, 112, 622)
@@ -187,7 +188,9 @@ def main():
                     break
             capture('battery-module-retired')
             retired = Image.open(io.BytesIO(camera.png)).convert('RGB')
-            result['battery_module_trial'] = dict(supplied_percent=63, hardware_telemetry=False,
+            result['battery_module_trial'] = dict(supplied_percent=None if native_sample else 63, hardware_telemetry=False,
+                native_snapshot_sample=trial_word('percent') if native_sample else None,
+                native_sample_valid=trial_word('sample_valid') if native_sample else None,
                 phase=trial_word('phase'), paints=trial_word('paints'), error=trial_word('error'))
             check('module-retires-on-native-paint-path', trial_word('phase') == 3 and trial_word('error') == 0)
             check('module-retirement-restores-region', retired.crop(box).tobytes() == baseline.crop(box).tobytes())

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Original Z7 C 3.80 native snapshot-to-HUD diagnostic integration; automatic feature remains incomplete",
+  "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+  "module_sha256": "fb0feb156df8d50b8dd84e0f2e0fcc45fa370c955f7d1656f058eec975d07523",
+  "file_bytes": 1224,
+  "sampler_instruction_cases": 23,
+  "integration_instruction_cases": 23,
+  "qemu": {
+    "passed": true,
+    "checks": 7,
+    "frames": 3,
+    "supplied_percent": null,
+    "native_snapshot_sample": 0,
+    "virtual_controller_inputs_assisted": true,
+    "hardware_telemetry": false,
+    "full_frame_restored": true,
+    "baseline_and_restored_sha256": "b3f9f2701de0a5ae1010e14338da83b3bd561c106a1abf9159fcda53dd94013f",
+    "visual_inspection": true
+  },
+  "final_source_rebuild_matches_validated_packet": true,
+  "fixed_text_variant_unchanged": true,
+  "histogram_passive_source_state": {
+    "viewport_flag": "00",
+    "native_driver_state": "010202",
+    "normalized_maximum": "00000000"
+  },
+  "native_histogram_rendering_verified": false,
+  "camera_access": false,
+  "physical_card_access": false,
+  "private_frames_or_binaries_included": false,
+  "remaining": [
+    "Automatic native visibility and owner controls",
+    "Repeated sampling and bounded cadence",
+    "Label ownership, GUI rebuild and warning/AF redraw",
+    "EVF/HDMI/menu/playback transitions",
+    "Physical telemetry and card/cache behavior"
+  ]
+}

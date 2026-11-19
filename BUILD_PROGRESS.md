@@ -39,6 +39,10 @@ authorization and a concrete exact-candidate installation/recovery assessment.
   instruction checks. Supplied63% renders, then retires with the complete frame
   byte-identical to baseline. This is drawing/lifetime progress, not telemetry
   or the finished automatic battery feature; see `Z7_BATTERY_DISPLAY_RESEARCH.md`.
+- Direct native battery sampler: 23 compiled instruction cases pass. Integrated
+  native-getter/HUD variant: 23 instruction cases and seven QEMU checks pass,
+  including exact complete-frame restoration after displaying the virtual native
+  snapshot's 0%. Automatic context gating, cadence and owner controls remain.
 
 ## Next implementation
 

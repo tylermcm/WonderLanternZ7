@@ -2,11 +2,17 @@
  * Original-Z7 GUI-lifetime diagnostic. The transparent rectangle preparation
  * follows JKWTCN's MIT battery painter, adapted to independently mapped Z7 APIs.
  * Copyright (c) 2026 JKWTCN; WonderLanternZ7 contributors.
- * Supplied text is 63%, never hardware telemetry. No persistent settings.
+ * Default supplied text is 63%; the explicit native-sample variant reads the
+ * original getter. Neither establishes hardware telemetry. No persistent settings.
  */
 #include "module.h"
 #include "display.h"
 #include <stdint.h>
+#ifdef Z7_BATTERY_USE_NATIVE_SAMPLE
+#include "../plugins/battery_sample.h"
+volatile uint32_t z7_battery_trial_sample_valid;
+volatile uint32_t z7_battery_trial_percent = 0xffffffffu;
+#endif
 #define W(a) (*(volatile uint32_t *)(uintptr_t)(a))
 #define F(a,r,...) ((r (*)(__VA_ARGS__))(uintptr_t)(a))
 volatile uint32_t z7_battery_trial_phase, z7_battery_trial_object;
@@ -66,6 +72,20 @@ static void after(void)
     if (z7_battery_trial_phase != 1 || z7_battery_trial_object || z7_battery_trial_error) return;
     uint32_t p = pool();
     if (!p) return;
+    const char *text = "63%";
+#ifdef Z7_BATTERY_USE_NATIVE_SAMPLE
+    uint32_t percent;
+    if (!battery_direct_sample(&percent)) { z7_battery_trial_error = 4; return; }
+    z7_battery_trial_sample_valid = 1;
+    z7_battery_trial_percent = percent;
+    char label[8];
+    uint32_t n = 0;
+    if (percent == 100) label[n++] = '1';
+    if (percent >= 10) label[n++] = (char)('0' + (percent / 10) % 10);
+    label[n++] = (char)('0' + percent % 10);
+    label[n++] = '%'; label[n] = 0;
+    text = label;
+#endif
     if (W(W(p + 8) + 1199 * 4) || W(0xa2019e78u + 299 * 12) || !W(0xa2019e78u + 299 * 12 + 4)) {
         z7_battery_trial_error = 1; return;
     }
@@ -83,7 +103,7 @@ static void after(void)
     W(object + 0x34) = W(object + 0x3c) = 0x1000;
     W(object + 0x38) = 1; W(object + 0x40) = 0x2ed; W(object + 0x48) = 0xa201e3b4u;
     W(object + 0x98) = W(object + 0x10); W(object + 0x9c) = W(object + 0x14);
-    F(0x103fbb5du, void, const char *, uint32_t, uint32_t)("63%", 299, 0);
+    F(0x103fbb5du, void, const char *, uint32_t, uint32_t)(text, 299, 0);
     F(0x10384d83u, void, uint32_t)(object);
     F(0x10384e03u, uint32_t, uint32_t, uint32_t)(object, 1);
     W(object + 0x4c) = (uint32_t)(uintptr_t)painter;

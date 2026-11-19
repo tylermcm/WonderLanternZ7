@@ -46,6 +46,20 @@ class BatteryDisplayFixture(HostFixture):
             super().hook(u, address, size, context)
 
 
+class NativeBatteryDisplayFixture(BatteryDisplayFixture):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.u.mem_map(0xa2350000, 0x10000)
+        self.u.mem_write(0xa235aee4, struct.pack('<14I', 1, 1, 0, 0, 0, 0, 63, *([0] * 7)))
+        self.u.mem_write(0xa18b4de8, bytes(4))
+
+    def hook(self, u, address, size, context):
+        if address in (0x10170944, 0x1017093e) and u.reg_read(UC_ARM_REG_R0) == 0xa235ae4c:
+            self.ret(1)
+        else:
+            super().hook(u, address, size, context)
+
+
 def audit(raw, host, packet, module):
     if hashlib.sha256(raw).hexdigest() != host['main_payload_sha256'] or hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Candidate or module identity mismatch')
@@ -55,7 +69,8 @@ def audit(raw, host, packet, module):
         if not passed:
             raise AssertionError(name)
     def load():
-        f = BatteryDisplayFixture(raw, host, packet)
+        fixture = NativeBatteryDisplayFixture if module['kind'] == 'original-Z7-battery-native-sample-diagnostic' else BatteryDisplayFixture
+        f = fixture(raw, host, packet)
         if f.call(host['symbols']['z7_module_load_once'], STATE) != 8:
             raise AssertionError('Diagnostic module did not initialize')
         return f, f.words()[12]
@@ -103,8 +118,23 @@ def audit(raw, host, packet, module):
         bad.u.mem_write(address(loaded, 'phase'), struct.pack('<I', 1))
         bad.call(host['symbols']['z7_display_after_paint'])
         check(case + '-does-not-publish-an-object', word(bad, loaded, 'object') == 0 and not bad.list_calls and not bad.labels)
+    if module['kind'] == 'original-Z7-battery-native-sample-diagnostic':
+        for percent in (0, 1, 9, 10, 63, 99, 100):
+            sample, loaded = load()
+            sample.u.mem_write(0xa235aee4 + 24, struct.pack('<I', percent))
+            sample.u.mem_write(address(loaded, 'phase'), struct.pack('<I', 1))
+            sample.call(host['symbols']['z7_display_after_paint'])
+            check(f'native-sample-formats-{percent}', sample.labels == [(str(percent) + '%', 299)] and
+                  word(sample, loaded, 'percent') == percent and word(sample, loaded, 'sample_valid') == 1)
+        for case in ('fallback', 'out-of-range'):
+            bad, loaded = load()
+            if case == 'fallback': bad.u.mem_write(0xa18b4de8, struct.pack('<I', 1))
+            else: bad.u.mem_write(0xa235aee4 + 24, struct.pack('<I', 101))
+            bad.u.mem_write(address(loaded, 'phase'), struct.pack('<I', 1))
+            bad.call(host['symbols']['z7_display_after_paint'])
+            check(case + '-sample-never-creates-gui-object', word(bad, loaded, 'object') == 0 and word(bad, loaded, 'error') == 4 and not bad.labels and not bad.list_calls)
     return dict(passed=True, checks=checks, module_sha256=module['module_sha256'], main_sha256=host['main_payload_sha256'],
-        supplied_boundaries=['GUI context/pool instance', 'Font measurement', 'Label storage', 'Paint and list services', 'File/kernel/heap'],
+        supplied_boundaries=['GUI context/pool instance', 'Font measurement', 'Label storage', 'Paint and list services', 'File/kernel/heap', 'Native telemetry/mutex for sampler variant'],
         visual_restoration_verified=False, telemetry_verified=False, camera_access=False)
 
 
