@@ -74,6 +74,13 @@ DISP transition, primes simplified-state masks before input and restores the ful
 baseline frame exactly after disable/native cycling. Configurable presets,
 camera-side settings/persistence, warning policy and broader lifecycle remain.
 
+The configurable settings model now exists independently of the renderer:
+four presets, per-preset eight information groups/four components, five-page
+enable set, master and battery switches, reset isolation and last-page protection.
+The strict64-byte original-Z7 wire format passes1,262 compiled-ARM cases against
+an independent reference. Native controls, renderer binding and card persistence
+are still to implement; see `z7-native-modules/DISPLAY_SETTINGS.md`.
+
 1. Complete histogram/horizon visual validation. Its mode/mask changes and native
    restrictions pass instruction checks, but the ordinary live fixture supplies
    shooting-context zero and native code hides the histogram. Another run reaches

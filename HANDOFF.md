@@ -1,5 +1,21 @@
 # Laptop handoff — October 20, 2026
 
+## Configurable display settings model — November 19, 2026
+
+Read `z7-native-modules/DISPLAY_SETTINGS.md`. New independent C model represents
+four presets, eight per-preset information groups, four components, separate
+information-page enable, custom master and global battery setting. Defaults,
+enabled-page skipping, last-page protection and reset isolation are implemented.
+Its strict independent64-byte Z7C1 format validates model/CRC/target/version and
+preserves output on rejection. No card I/O or native menu is installed yet.
+Private settings-probe02 SHAa8b278b4614741a10a5b90c6614edf93f3436469c8929f768e510d7daa4355f0
+passes1,262 actual compiled-ARM cases against an independent wire reference,
+including all512 single-bit corruptions, sealed invalid fields, all31 page-enable
+sets, isolation/reset, overlapping buffers, canaries and null pointers.
+File/kernel/heap for the loader remain supplied. This is model progress, not
+native settings UI/persistence or completion of the full custom-DISP feature.
+No owned guest remains running from the completed prior probes.
+
 ## Native-button clean-page prototype — November 19, 2026
 
 New `examples/disp_key_probe.c` is a default-off optional SD profile. It checks

@@ -18,6 +18,10 @@ module or make arbitrary code safe.
 
 ## Package format
 
+The independent [display settings model](DISPLAY_SETTINGS.md) now supplies
+configurable preset/page semantics and a strict64-byte original-Z7 wire format.
+Its compiled diagnostic has no native menu binding or card I/O yet.
+
 All integers are little-endian 32-bit words. Image bytes immediately follow the
 64-byte header; a sorted table of image-relative relocation offsets follows the
 image. BSS is described by the header and occupies no bytes in the package.

@@ -40,3 +40,10 @@ evidence and the remaining feature work.
 The automatic module uses the independently derived native sample policy rather
 than supplied text. Its visibility, ownership, font/palette and bounded-cadence
 logic are local modifications. Physical battery telemetry is still unverified.
+
+`plugins/display_settings.c` and its header are independently written MIT code.
+The configurable-page/component concepts are informed by pinned upstream
+`sdk/disp.h` and `docs/custom-disp.md`, copyright (c)2026 JKWTCN under MIT.
+The original-Z7 wire format is separate; no upstream configuration bytes or
+native Z7II interfaces are copied. The model does not yet provide native UI or
+card persistence. See `DISPLAY_SETTINGS.md` for scoped compiled validation.
