@@ -67,6 +67,13 @@ passes13 mask/object restoration cases; assisted-QEMU live01 passes6 checks/
 The ordinary combined package rebuild remains byte-identical. No completed
 custom-DISP feature or image-playback/card validation follows from these probes.
 
+The optional default-off native-key clean-page prototype now passes22 compiled
+policy/ownership checks and8 assisted-QEMU checks/3frames. It forwards arguments
+and results through the exact native shooting callback, observes a native-admitted
+DISP transition, primes simplified-state masks before input and restores the full
+baseline frame exactly after disable/native cycling. Configurable presets,
+camera-side settings/persistence, warning policy and broader lifecycle remain.
+
 1. Complete histogram/horizon visual validation. Its mode/mask changes and native
    restrictions pass instruction checks, but the ordinary live fixture supplies
    shooting-context zero and native code hides the histogram. Another run reaches

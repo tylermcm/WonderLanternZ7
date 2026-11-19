@@ -151,6 +151,40 @@ calls and returns2; those calls are supplied boundaries, so this is routing
 evidence rather than a completed information-app transition. No custom page
 handler has yet been installed.
 
+## Native-key clean-page prototype
+
+`examples/disp_key_probe.c` now provides an optional native-key diagnostic on
+the same SD host. It validates original callbackA1829B0C->1030DA57 before any
+component initialization, and publishes its owned wrapper only after the final
+successful component registrations and scalar stores. No failure follows that
+publication. The wrapper forwards all four arguments and the original result;
+it runs the complete original callback first, including native admission and
+page-cycle behavior. It counts an accepted DISP only when key29 changes a valid
+native page in photo LCD with an inactive native page list. Other keys and
+blocked requests retain their native behavior.
+
+The master word defaults0. When explicitly enabled, the GUI pre-paint callback
+primes the existing diagnostic's simplified-state masks before the next native
+DISP event. Other page bits remain untouched, and bracket suppression remains
+limited to simplified mode1. This is native-button control of the clean-page
+experiment, not the complete configurable presets, enabled-page skipping,
+information app, persistent settings menu or proven warning policy.
+
+Private key-probe02 is5,972 bytes, SHA
+`622096e10293df185d4ab20da2d82511e5b024b43de551911184bcfe89af7b45`.
+The22-case compiled audit supplies the original callback's outcomes and checks
+argument/result forwarding, native-blocked inputs, non-DISP keys, master defaults,
+menu/movie/EVF exclusions and callback publication failure paths. The original
+callback/admission itself has separate20-case instruction and live-trace evidence.
+Key-live01 now passes eight assisted-QEMU checks across three frames: explicit
+master enable primes masks, one native DISP enters clean mode1 and counts as an
+accepted native change, four bracket objects are hidden, and master disable plus
+native cycling restores the entire RGB frame byte-identically to baseline.
+Both clean and restored frames were inspected. No request flag or snapshot mode
+was written to enter the clean page; only the prototype master word was supplied.
+The original callback handled page changes. Both ordinary combined and earlier clean-probe packages
+rebuild byte-identically after adding this optional profile.
+
 ## Display routing relevant to the spiral
 
 Original descriptor getter `0x10433B80(kind, display_id, dataset)` accepts LCD

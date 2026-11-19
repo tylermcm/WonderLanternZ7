@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 C 3.80 default-off native-button clean-page SD prototype",
+  "module_sha256": "622096e10293df185d4ab20da2d82511e5b024b43de551911184bcfe89af7b45",
+  "main_sha256": "1d9a09a4d2d26569dba5852de2b60c9a1bcbe9a9efb94483a9e4215939c1a410",
+  "file_bytes": 5972,
+  "instruction_checks": {
+    "passed": true,
+    "count": 22,
+    "supplied_boundaries": ["Native shooting-callback outcome", "GUI/page/output state", "Loader services"],
+    "exact_native_arguments_and_result_forwarded": true,
+    "failed_init_never_publishes_callback": true
+  },
+  "qemu": {
+    "passed": true,
+    "checks": 8,
+    "frames": 3,
+    "explicit_prototype_master_setting": true,
+    "native_ao_disp_input": true,
+    "native_shooting_callback_executed": true,
+    "accepted_native_transitions": 1,
+    "clean_frame_visually_inspected": true,
+    "four_bracket_objects_hidden": true,
+    "restored_frame_visually_inspected": true,
+    "entire_rgb_baseline_restored_exactly": true,
+    "snapshot_mode_or_clean_request_supplied": false
+  },
+  "root_tests": {"passed": true, "count": 39, "skipped": 0},
+  "ordinary_combined_and_prior_clean_modules_byte_identical": true,
+  "full_configurable_disp_port": false,
+  "camera_side_settings_ui": false,
+  "warning_policy_verified": false,
+  "camera_access": false,
+  "physical_card": false,
+  "binaries_dumps_or_frames_included": false
+}

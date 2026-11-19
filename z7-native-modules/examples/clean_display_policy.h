@@ -56,3 +56,35 @@ static void clean_before(void)
         }
     }
 }
+#ifdef Z7_DISP_KEY_PROBE
+volatile uint32_t z7_disp_key_enabled, z7_disp_key_accepted, z7_disp_key_rejected;
+static uint32_t clean_key(uint32_t key, uint32_t a, uint32_t b, uint32_t c)
+{
+    /* Run the exact native outer callback and its inner admission/cycle first.
+     * A blocked button must never activate this diagnostic. No admission service
+     * is replaced or forced. Non-DISP keys retain their original result.
+     */
+    uint32_t old_mode = B(0xa201d4d0u + 0x18a);
+    uint32_t result = F(0x1030da57u, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t)(key, a, b, c);
+    uint32_t new_mode = B(0xa201d4d0u + 0x18a);
+    if (key == 0x29 && z7_disp_key_enabled == 1 && old_mode <= 4 && new_mode != old_mode &&
+        !B(0xa18237c6u) && !B(0xa201d4d0u + 0x40) && pool()) {
+        uint32_t pages = W(0xa181f91cu);
+        if (pages && ram(pages, 16) && !W(pages + 8)) {
+            ++z7_disp_key_accepted;
+            return result;
+        }
+    }
+    if (key == 0x29) ++z7_disp_key_rejected;
+    return result;
+}
+static void disp_key_before(void)
+{
+    /* Prime only the simplified-state mask bits before the next native button
+     * event. Other DISP states retain those masks' original bits. This avoids
+     * changing eligibility after the native key callback already laid out page1.
+     */
+    z7_clean_request = z7_disp_key_enabled == 1;
+    clean_before();
+}
+#endif

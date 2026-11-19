@@ -23,7 +23,11 @@
 
 #ifdef Z7_CLEAN_DISPLAY_PROBE
 #include "../examples/clean_display_policy.h"
+#ifdef Z7_DISP_KEY_PROBE
+#define Z7_COMBINED_BEFORE disp_key_before
+#else
 #define Z7_COMBINED_BEFORE clean_before
+#endif
 #else
 #define Z7_COMBINED_BEFORE before
 #endif
@@ -53,6 +57,9 @@ uint32_t z7_main(const struct z7_module_api *api)
 {
     if (!api || api->abi != Z7_MODULE_ABI || api->target != Z7_MODULE_TARGET ||
         api->size < sizeof(*api) || !api->register_display || !api->register_grid_menu) return 1;
+#ifdef Z7_DISP_KEY_PROBE
+    if (W(0xa1829b0cu) != 0x1030da57u) return 1;
+#endif
     if (battery_initialize(&staging) || grid_initialize(&staging) ||
         pending_grid != &grid_hooks || pending_battery != &battery_hooks || pending_menu != &menu) return 1;
     if (!api->register_display(&combined_hooks) || !api->register_grid_menu(pending_menu)) return 1;
@@ -60,5 +67,9 @@ uint32_t z7_main(const struct z7_module_api *api)
      * and native menu pointer publication still follow successful return.
      */
     Z7_GRID_COMMIT_MASKS();
+#ifdef Z7_DISP_KEY_PROBE
+    __asm__ volatile("dmb sy" ::: "memory");
+    W(0xa1829b0cu) = (uint32_t)(uintptr_t)clean_key;
+#endif
     return 0;
 }

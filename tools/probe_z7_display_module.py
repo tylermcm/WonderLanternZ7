@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-key'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
@@ -173,7 +173,38 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'disp-input':
+        if args.view == 'disp-key':
+            if module['kind'] != 'original-Z7-disp-key-diagnostic': raise ValueError('Native-key diagnostic required')
+            def key_word(name): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_disp_key_' + name], 4), 'little')
+            def mode(): return int.from_bytes(camera.remote.memory(0xa201d4d0 + 0x18a, 1), 'little')
+            def next_mode():
+                old = mode(); key('disp', lambda: mode() != old)
+            def reach(target):
+                for _ in range(8):
+                    if mode() == target: return
+                    next_mode()
+                raise RuntimeError('Native-key diagnostic cannot reach requested DISP mode')
+            check('key-callback-owns-published-resident-module', int.from_bytes(camera.remote.memory(0xa1829b0c, 4), 'little') ==
+                  (base + module['symbols']['clean_key']) | 1)
+            check('key-diagnostic-defaults-disabled', key_word('enabled') == 0)
+            native('Native-key diagnostic golden grid', base + module['symbols']['golden'], [])
+            native('Native grid enabled for native-key diagnostic', 0x10377236, [1])
+            reach(1); capture('key-native-simplified-baseline'); stock = camera.png
+            reach(0)
+            camera.remote.write_memory(base + module['symbols']['z7_disp_key_enabled'], struct.pack('<I', 1))
+            advance(1)
+            next_mode(); capture('key-clean-simplified')
+            check('native-disp-key-activates-simplified-clean-page', mode() == 1 and key_word('accepted') > 0 and
+                  int.from_bytes(camera.remote.memory(base + module['symbols']['z7_clean_active'], 4), 'little') == 1)
+            objects = [int.from_bytes(camera.remote.memory(0xa1824684 + i * 48 + 36, 4), 'little') for i in range(1, 5)]
+            check('native-key-clean-page-hides-four-brackets', all(camera.remote.memory(p + 40, 4) == bytes(4) for p in objects))
+            camera.remote.write_memory(base + module['symbols']['z7_disp_key_enabled'], bytes(4)); advance(1)
+            reach(0); reach(1); capture('key-native-simplified-restored')
+            check('native-key-master-disable-restores-complete-frame', Image.open(io.BytesIO(stock)).convert('RGB').tobytes() ==
+                  Image.open(io.BytesIO(camera.png)).convert('RGB').tobytes())
+            result['native_key_diagnostic'] = dict(accepted=key_word('accepted'), rejected=key_word('rejected'),
+                                                  explicit_master_setting=True, full_custom_pages=False)
+        elif args.view == 'disp-input':
             slot = int.from_bytes(camera.remote.memory(0xa1829b0c, 4), 'little')
             check('original-shooting-key-callback-binding', slot == 0x1030da57)
             capture('disp-input-before')

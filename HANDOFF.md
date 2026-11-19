@@ -1,5 +1,22 @@
 # Laptop handoff — October 20, 2026
 
+## Native-button clean-page prototype — November 19, 2026
+
+New `examples/disp_key_probe.c` is a default-off optional SD profile. It checks
+the original native callback binding, publishes an owned wrapper only after all
+registrations succeed, forwards arguments/result through the original callback,
+and counts only native-admitted DISP page changes. Enabled GUI pre-paint primes
+the clean diagnostic masks before native input. This is not the full configurable
+DISP port or warning-policy validation. No camera-side setting UI exists yet.
+Private key-probe02 SHA622096e10293df185d4ab20da2d82511e5b024b43de551911184bcfe89af7b45
+passes22 instruction policy/ownership cases with supplied native callback outcomes.
+Original input admission has separate20-case+QEMU evidence. Key-live01 passes8
+checks/3frames: native DISP enters clean mode1, counts one accepted transition,
+and disable/native cycling restores the complete RGB baseline byte-identically.
+Clean/restored frames were inspected. No guest remains live from completed runs.
+Only the prototype master switch is explicitly supplied. Existing combined and clean
+diagnostic packages both rebuild byte-identically. Artifacts stay private.
+
 ## Native PLAY lifetime and clean-DISP investigation — November 19, 2026
 
 Combined playback03 passes17 assisted-QEMU checks/13frames. Native PLAY shows
