@@ -192,6 +192,10 @@ class GridReviewAdmissionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Unsupported'):
             prepare_flash_review.reviewed_candidate(Path('unused'), 'grid-typo', b'', b'')
 
+    def test_module_host_probe_is_excluded_from_installation_review(self):
+        with self.assertRaisesRegex(ValueError, 'Unsupported'):
+            prepare_flash_review.reviewed_candidate(Path('unused'), 'sd-module-host-emulator-only', b'', b'')
+
 
 if __name__ == '__main__':
     unittest.main()

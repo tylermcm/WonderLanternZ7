@@ -36,6 +36,13 @@ consumers, wake behavior, extended use and failure recovery need further review.
 
 ## Other lab experiments
 
+The [Z7II-to-Z7 SD module port](SD_MODULE_PORT.md) starts from JKWTCN's new
+extension framework. The [original-Z7 host probe](Z7_MODULE_HOST_RESEARCH.md)
+now compiles as Thumb, loads a C module through modeled filesystem services,
+and boots in assisted QEMU with bounded unavailable-file handling. Real-card
+loading and physical cache coherence remain unverified. It is an emulator-only
+experiment; display-module integration follows the host work.
+
 The optional [additional-grid lab candidate](GRID_LAYOUTS_RESEARCH.md) adds
 Golden ratio, Center cross and 6x6 alongside 4x4, 3x3 and Off. Menu, drawing
 and simulated saved-choice tests passed, and the owner has tried the separately

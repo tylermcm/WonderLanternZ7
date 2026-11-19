@@ -1,0 +1,31 @@
+/* SPDX-License-Identifier: MIT; independent original-Z7 C 3.80 research. */
+#ifndef Z7_HOST_380_H
+#define Z7_HOST_380_H
+#include "module.h"
+
+#define Z7_HOST_STATE 0xa9700000u
+#define Z7_HOST_STATE_BYTES 256u
+#define Z7_HOST_MAGIC 0x5a37484du
+#define Z7_HOST_FS_OK 0x04390080u
+#define Z7_HOST_RETRIES 100u
+
+enum z7_host_status {
+    Z7_HOST_IDLE = 0, Z7_HOST_NO_FILE, Z7_HOST_BAD_SIZE,
+    Z7_HOST_ALLOC_FAILED, Z7_HOST_READ_FAILED, Z7_HOST_CLOSE_FAILED,
+    Z7_HOST_INVALID_MODULE, Z7_HOST_INIT_FAILED, Z7_HOST_LOADED,
+    Z7_HOST_TASK_FAILED, Z7_HOST_ALREADY_LOADED, Z7_HOST_BAD_STATE
+};
+struct z7_host_state {
+    uint32_t task[8];
+    uint32_t magic, booted, status, native_result;
+    uint32_t image, allocation, memory_size, entry_offset;
+    uint32_t module_result, attempts, retained_fd;
+    uint32_t reserved[41];
+    uint32_t guards[4];
+};
+_Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");
+uint32_t z7_module_load_once(struct z7_host_state *state);
+void z7_module_worker(struct z7_host_state *state);
+void z7_module_boot(void);
+uint32_t z7_autoop_init(void);
+#endif

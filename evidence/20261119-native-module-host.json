@@ -1,0 +1,515 @@
+{
+  "schema": 1,
+  "date_local": "2026-11-19",
+  "timezone": "America/Denver",
+  "scope": "Original-Z7 C 3.80 module host, independent emulator-only prototype",
+  "candidate": {
+    "main_bytes": 33053812,
+    "main_sha256": "b2cde95401214c3115c55e3bd378dab836ae2f7e635612202dbd3e6e0a0fea1e",
+    "eg_bytes": 33053814,
+    "eg_sha256": "70df2389d258f2fde677bb15877102510cffd42664ea726d8c7d3960834af983",
+    "eg_crc_zero": true,
+    "independently_reproduced": true,
+    "host_bytes": 1561,
+    "appended_bytes": 1724,
+    "guarded_edits": 2,
+    "state_bytes": 256,
+    "preset": "sd-module-host-emulator-only",
+    "camera_verified": false,
+    "installation_cleared": false
+  },
+  "module": {
+    "kind": "Actual compiled C probe, no camera hooks",
+    "file_bytes": 200,
+    "image_bytes": 128,
+    "bss_bytes": 4,
+    "relocations": 2,
+    "sha256": "d18b1a76ffba964b857523f45db81c141a1a3cda4486ebaa98c4bb3243a16a71"
+  },
+  "compiler": {
+    "version": "0.15.2",
+    "archive_sha256": "3a0ed1e8799a2f8ce2a6e6290a9ff22e6906f8227865911fb7ddedc3cc14cb0c",
+    "compiler_sha256": "d408dd38eed3e5204af841bcebf70502a4dbbb8399a3a3262be55059370bc018",
+    "source": "https://ziglang.org/download/0.15.2/zig-x86_64-windows-0.15.2.zip",
+    "private_install": true
+  },
+  "instruction_checks": {
+    "passed": 99,
+    "failures": 0,
+    "checks": [
+      {
+        "name": "success-result",
+        "passed": true
+      },
+      {
+        "name": "success-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "success-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "success-single-retained-allocation",
+        "passed": true
+      },
+      {
+        "name": "success-compiled-c-module-initialized",
+        "passed": true
+      },
+      {
+        "name": "success-cache-publish-executed",
+        "passed": true
+      },
+      {
+        "name": "success-reload-rejected",
+        "passed": true
+      },
+      {
+        "name": "success-closes-before-module-call",
+        "passed": true
+      },
+      {
+        "name": "513-byte-final-read-and-native-cache-padding",
+        "passed": true
+      },
+      {
+        "name": "large-probe-bss-initialized",
+        "passed": true
+      },
+      {
+        "name": "native-invalidation-stays-inside-owned-640-byte-stack-array",
+        "passed": true
+      },
+      {
+        "name": "multiple-chunks-plus-final-tail",
+        "passed": true
+      },
+      {
+        "name": "missing-result",
+        "passed": true
+      },
+      {
+        "name": "missing-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "missing-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "missing-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "missing-close-count",
+        "passed": true
+      },
+      {
+        "name": "bad-size-result",
+        "passed": true
+      },
+      {
+        "name": "bad-size-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "bad-size-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "bad-size-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "bad-size-close-count",
+        "passed": true
+      },
+      {
+        "name": "size-high-result",
+        "passed": true
+      },
+      {
+        "name": "size-high-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "size-high-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "size-high-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "size-high-close-count",
+        "passed": true
+      },
+      {
+        "name": "alloc-raw-result",
+        "passed": true
+      },
+      {
+        "name": "alloc-raw-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "alloc-raw-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "alloc-raw-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "alloc-raw-close-count",
+        "passed": true
+      },
+      {
+        "name": "alloc-body-result",
+        "passed": true
+      },
+      {
+        "name": "alloc-body-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "alloc-body-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "alloc-body-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "alloc-body-close-count",
+        "passed": true
+      },
+      {
+        "name": "short-read-result",
+        "passed": true
+      },
+      {
+        "name": "short-read-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "short-read-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "short-read-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "short-read-close-count",
+        "passed": true
+      },
+      {
+        "name": "read-error-result",
+        "passed": true
+      },
+      {
+        "name": "read-error-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "read-error-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "read-error-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "read-error-close-count",
+        "passed": true
+      },
+      {
+        "name": "close-error-result",
+        "passed": true
+      },
+      {
+        "name": "close-error-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "close-error-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "close-error-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "close-error-close-count",
+        "passed": true
+      },
+      {
+        "name": "failed-close-is-not-retried",
+        "passed": true
+      },
+      {
+        "name": "grown-file-result",
+        "passed": true
+      },
+      {
+        "name": "grown-file-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "grown-file-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "grown-file-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "grown-file-close-count",
+        "passed": true
+      },
+      {
+        "name": "bad-crc-result",
+        "passed": true
+      },
+      {
+        "name": "bad-crc-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "bad-crc-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "bad-crc-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "wrong-model-result",
+        "passed": true
+      },
+      {
+        "name": "wrong-model-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "wrong-model-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "wrong-model-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "init-error-result",
+        "passed": true
+      },
+      {
+        "name": "init-error-file-path-read-only",
+        "passed": true
+      },
+      {
+        "name": "init-error-guard-preserved",
+        "passed": true
+      },
+      {
+        "name": "init-error-no-retained-image",
+        "passed": true
+      },
+      {
+        "name": "invalid-state-no-filesystem-or-allocation",
+        "passed": true
+      },
+      {
+        "name": "success-original-autoop-result-preserved",
+        "passed": true
+      },
+      {
+        "name": "success-single-task-created",
+        "passed": true
+      },
+      {
+        "name": "success-native-task-descriptor",
+        "passed": true
+      },
+      {
+        "name": "success-native-task-start-contract",
+        "passed": true
+      },
+      {
+        "name": "success-full-width-kernel-task-id",
+        "passed": true
+      },
+      {
+        "name": "success-boot-status",
+        "passed": true
+      },
+      {
+        "name": "success-boot-scheduling-once-original-forwarded-every-time",
+        "passed": true
+      },
+      {
+        "name": "task-create-error-original-autoop-result-preserved",
+        "passed": true
+      },
+      {
+        "name": "task-create-error-single-task-created",
+        "passed": true
+      },
+      {
+        "name": "task-create-error-native-task-descriptor",
+        "passed": true
+      },
+      {
+        "name": "task-create-error-native-task-start-contract",
+        "passed": true
+      },
+      {
+        "name": "task-create-error-full-width-kernel-task-id",
+        "passed": true
+      },
+      {
+        "name": "task-create-error-boot-status",
+        "passed": true
+      },
+      {
+        "name": "task-create-error-boot-scheduling-once-original-forwarded-every-time",
+        "passed": true
+      },
+      {
+        "name": "task-start-error-original-autoop-result-preserved",
+        "passed": true
+      },
+      {
+        "name": "task-start-error-single-task-created",
+        "passed": true
+      },
+      {
+        "name": "task-start-error-native-task-descriptor",
+        "passed": true
+      },
+      {
+        "name": "task-start-error-native-task-start-contract",
+        "passed": true
+      },
+      {
+        "name": "task-start-error-full-width-kernel-task-id",
+        "passed": true
+      },
+      {
+        "name": "task-start-error-boot-status",
+        "passed": true
+      },
+      {
+        "name": "task-start-error-boot-scheduling-once-original-forwarded-every-time",
+        "passed": true
+      },
+      {
+        "name": "patched-workspace-original-unwind",
+        "passed": true
+      },
+      {
+        "name": "workspace-reservation-and-state-guards",
+        "passed": true
+      },
+      {
+        "name": "workspace-hook-preserves-native-continuation-registers-and-flags",
+        "passed": true
+      },
+      {
+        "name": "missing-worker-bounded-and-parked",
+        "passed": true
+      },
+      {
+        "name": "missing-retry-delay-count",
+        "passed": true
+      },
+      {
+        "name": "delayed-card-worker-bounded-and-parked",
+        "passed": true
+      },
+      {
+        "name": "delayed-card-retry-delay-count",
+        "passed": true
+      }
+    ],
+    "execution": "Compiled Thumb host and C module plus original Z7 wrappers under Unicorn",
+    "supplied_boundaries": [
+      "Filesystem request dispatcher",
+      "Kernel task creation/start and flags",
+      "Heap allocator/free",
+      "Cache-region table",
+      "AUTOOP and workspace continuation in isolated checks"
+    ]
+  },
+  "qemu_checks": {
+    "passed": 7,
+    "failures": 0,
+    "checks": [
+      {
+        "name": "native-workspace-state-initialized",
+        "passed": true
+      },
+      {
+        "name": "native-kernel-created-and-started-task",
+        "passed": true
+      },
+      {
+        "name": "bounded-missing-module-worker-completed",
+        "passed": true
+      },
+      {
+        "name": "missing-module-retains-no-code-image",
+        "passed": true
+      },
+      {
+        "name": "native-menu-frame-available",
+        "passed": true
+      },
+      {
+        "name": "same-session-state-retained-after-menu-input",
+        "passed": true
+      },
+      {
+        "name": "guest-alive",
+        "passed": true
+      }
+    ],
+    "scope": "Fresh assisted native-kernel boot/task plus unavailable-file behavior; no physical card",
+    "worker_attempts": 100,
+    "active_module": false,
+    "menu_frame_sha256": "3415779417dba23f1020c94f916578cec79449dc021cad778f7d7ccdccf3d893",
+    "previous_menu_frame_visually_inspected": true,
+    "fresh_guest_closed": true
+  },
+  "root_tests": {
+    "passed": 34,
+    "skipped": 0,
+    "command": ".venv/Scripts/python.exe -m unittest discover -s tests -q"
+  },
+  "corrected_harness_findings": [
+    "Initial QEMU task ID assertion incorrectly excluded 0x01000102",
+    "Initial probe cleanup referenced a nonexistent attribute; identified guest stopped, cleanup corrected",
+    "Failed probe evidence retained separately; no firmware crash inferred"
+  ],
+  "remaining": [
+    "Real-card readiness/removal/read/EOF/error behavior",
+    "Physical executable-heap cache coherence",
+    "Concurrent initialization and physical wake/power lifecycle",
+    "Display-feature modules",
+    "Camera installation acceptance and emergency recovery"
+  ],
+  "camera_access": false,
+  "card_access": false,
+  "staged": false,
+  "flashed": false,
+  "pushed": false,
+  "source_fingerprints": {
+    "z7-native-modules/host/module.c": "84093828866243909b035871f89b051ea40d069c9eb8f85481765356a220fcfd",
+    "z7-native-modules/host/z7_380.c": "38933b747f15318dc4cea34dd693d66d121a1b4e014007ef43c71b7c0484d709",
+    "z7-native-modules/host/z7_380.h": "93775de7ee76e74f96d0bf264e37341ebd0fb68989af0461f78bad9711fec141",
+    "z7-native-modules/sdk/module.h": "2e98b41d7bb494efd57bf05964d610fb709f7a51b014e0e069585513db7ccf8c",
+    "z7-native-modules/sdk/module.ld": "62a816bb8809dcb18a0c2d46289d30700086ed441b9f8ce2a120cf2f1ea23f67"
+  }
+}

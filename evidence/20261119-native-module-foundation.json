@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "date_local": "2026-11-19",
+  "timezone": "America/Denver",
+  "scope": "Independent original-Z7 module format and loading core; offline only",
+  "upstream": {
+    "url": "https://github.com/JKWTCN/z7ii-extensions",
+    "commit": "50a22b24c50619cffa646dac386e8334659f475a",
+    "model": "Nikon Z7II C 1.70",
+    "license": "MIT",
+    "reported_feature_groups": 15,
+    "hardware_claims": "Upstream author reports; not original-Z7 validation"
+  },
+  "local_format": {
+    "magic": "Z7M1",
+    "abi": 1,
+    "target": "0x03800007",
+    "target_scope": "Original Nikon Z7 C 3.80, experimental module ABI",
+    "header_bytes": 64,
+    "maximum_file_bytes": 1048576,
+    "maximum_image_plus_bss_bytes": 4194304
+  },
+  "checks": {
+    "root_unittest_command": ".venv/Scripts/python.exe -m unittest discover -s tests -v",
+    "root_tests_passed": 33,
+    "root_tests_skipped": 0,
+    "new_module_tests_passed": 10,
+    "loader_execution": "C compiled and executed on native Windows host",
+    "compiler": "MSYS2 UCRT64 GCC 16.2.0, strict warnings and -Werror",
+    "module_execution": "Synthetic Keystone Thumb initializer under Unicorn",
+    "module_runtime_bases": ["0x50000000", "0x51004000", "0x52000000"],
+    "properties": [
+      "Z7II package and API identity rejection",
+      "complete CRC validation",
+      "all relocations validated before destination writes",
+      "relocation alignment, order, uniqueness and pointer bounds",
+      "destination canaries and unchanged destination/metadata on rejection",
+      "destination overlap and runtime address overflow rejection",
+      "exact 1 MiB file and 4 MiB memory boundaries",
+      "zeroed BSS, retained state and rebased Thumb pointer low bit",
+      "initializer return, stack and callee-saved register preservation",
+      "synthetic linked ELF packing and malformed ELF rejection"
+    ],
+    "graphify_refresh": "Completed locally; 1475 nodes and 3576 edges; ignored output"
+  },
+  "limitations": [
+    "No original-Z7 SD/card, boot/task, heap or cache API integration",
+    "C loading core not compiled or executed as ARM in this run",
+    "LLVM toolchain not found on inspected PATH; C example compile/link untested",
+    "No complete SD-loaded module system or display feature port yet",
+    "No QEMU firmware session or physical-camera validation performed",
+    "No firmware candidate generated or installation/recovery claim",
+    "No camera/card access, staging, flashing or public push",
+    "Existing shutter-sound hold and spiral EVF level lag unresolved"
+  ]
+}

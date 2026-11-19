@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "date_local": "2026-11-19",
+  "scope": "Assisted QEMU module load using explicit read-only filesystem-dispatch HLE; not real-card I/O",
+  "main_sha256": "b2cde95401214c3115c55e3bd378dab836ae2f7e635612202dbd3e6e0a0fea1e",
+  "module_sha256": "d18b1a76ffba964b857523f45db81c141a1a3cda4486ebaa98c4bb3243a16a71",
+  "checks": [
+    {
+      "name": "native-workspace-state-initialized",
+      "passed": true
+    },
+    {
+      "name": "native-kernel-created-and-started-task",
+      "passed": true
+    },
+    {
+      "name": "module-loaded-on-native-task",
+      "passed": true
+    },
+    {
+      "name": "native-heap-retains-executable-module",
+      "passed": true
+    },
+    {
+      "name": "modeled-read-close-completed",
+      "passed": true
+    },
+    {
+      "name": "compiled-c-initializer-marker-in-native-heap",
+      "passed": true
+    },
+    {
+      "name": "native-menu-frame-available",
+      "passed": true
+    },
+    {
+      "name": "same-session-state-retained-after-menu-input",
+      "passed": true
+    },
+    {
+      "name": "guest-alive",
+      "passed": true
+    }
+  ],
+  "checks_passed": 9,
+  "root_tests_passed": 39,
+  "native_guest_services": [
+    "Task creation/start/scheduling",
+    "Heap allocation and retention",
+    "Cache-maintenance instructions",
+    "Host validation, relocation and BSS clearing",
+    "Compiled C initialization and observed BSS marker"
+  ],
+  "modeled_boundary": "Read-only module open/stat/read/close at original filesystem request dispatcher",
+  "filesystem_events": [
+    {
+      "operation": "open",
+      "read_only": true
+    },
+    {
+      "operation": "stat",
+      "bytes": 200,
+      "after_close": false
+    },
+    {
+      "operation": "read",
+      "capacity": 201,
+      "actual": 200
+    },
+    {
+      "operation": "close"
+    },
+    {
+      "operation": "stat",
+      "bytes": 200,
+      "after_close": true
+    }
+  ],
+  "breakpoint_refreshes": [
+    {
+      "removed": "E22",
+      "installed": "OK"
+    },
+    {
+      "removed": "OK",
+      "installed": "OK"
+    },
+    {
+      "removed": "OK",
+      "installed": "OK"
+    }
+  ],
+  "filesystem_dispatch_stops": 5,
+  "menu_frame_sha256": "4eeeb46d487e244ad78559314409f22f9a99ad7cf2c54fe97b0fc9e71aef79d8",
+  "physical_card": false,
+  "camera_access": false,
+  "hardware_cache_coherence_verified": false,
+  "installation_cleared": false
+}

@@ -1,5 +1,97 @@
 # Laptop handoff — October 20, 2026
 
+## Autonomous continuation and native-kernel module load — November 19, 2026
+
+The owner asked to keep building until finished while they are at work. Follow
+`BUILD_PROGRESS.md` and the active goal: module framework then display ports,
+with no physical card/camera staging or flash. The existing source-only/privacy,
+licensing and exact-candidate assessment rules remain in force.
+
+The unchanged host candidate 02 now passes nine assisted-QEMU load checks using
+`tools/module_file_fixture.py`, an explicit read-only filesystem-dispatch HLE.
+Task scheduling, heap allocation, cache instructions, host relocation and the
+actual compiled C initializer run in the guest. Its BSS marker is read from
+native allocated memory. This is not a physical card test. Successful private
+result: `.private/evidence/20261119-module-host-qemu-load-04/`.
+
+Initial file-fixture observation points were installed before RSP negotiation
+and did not remain active. The corrected client refreshes the observation after
+negotiation and before bounded guest calls, and retires it after native close/
+stat completion. All failed diagnostics are preserved. Five fixture unit tests
+cover exact writes, owned handles, read-only flags, pass-through and bounds.
+
+Next: stage module-owned display callbacks until initializer success, preserving
+stock fallbacks without a module. Start with grids and histogram/horizon using
+the existing independently mapped original-Z7 geometry and visibility paths.
+
+## Original-Z7 module host probe — November 19, 2026
+
+Owner authorized continuing the SD-module foundation. Read
+`Z7_MODULE_HOST_RESEARCH.md`. Private Zig 0.15.2 (official archive hash pinned)
+now compiles both the actual C initialization module and the complete host as
+Thumb. `tools/Setup-Z7ModuleToolchain.ps1` reproduces the private compiler setup;
+the system toolchain and WSL are unchanged. Builder temporaries/caches are private.
+
+Final candidate: `.private/builds/20261119-module-host-02/`, MAIN SHA-256
+`b2cde95401214c3115c55e3bd378dab836ae2f7e635612202dbd3e6e0a0fea1e`,
+33,053,812 bytes. Two independent builds match, with valid full EG CRC. It is
+stock-based and includes no display, sound or installed grid/spiral features.
+Guarded workspace initialization reserves 256 bytes and preserves native
+continuation registers/NZCVQ; one AUTOOP binding forwards the original initializer
+before scheduling a native low-priority loader task. No preset is added to the
+ordinary firmware builder or installation-review admission.
+
+99 instruction checks execute the compiled Thumb host and C module plus original
+Z7 filesystem/task/cache wrappers. Kernel, FS-dispatch and allocator boundaries
+are modeled. They cover cleanup/errors, model/CRC/bounds, cache ordering and
+owned 640-byte staging bounds, full-width task IDs, boot/retries and actual C
+initialization. Native Z7 file objects are 40 bytes; the sound routine's 48-byte
+stack reservation includes its read-count storage, correcting the earlier
+object-size inference. Z7's direct-buffer read ABI and success 0x04390080 differ
+from Z7II and are independently traced.
+
+The final candidate passes seven assisted-QEMU checks for native task creation/
+start, 100 unavailable-file attempts, intact guards, no active image and MENU
+input in one guest. Private result: `.private/evidence/20261119-module-host-qemu-03/`.
+Its predecessor's Playback menu frame was visually inspected. Initial probe 01
+incorrectly rejected kernel task ID 0x01000102 with a 16-bit assertion and had a
+cleanup attribute error; that guest was identified/stopped, the harness was fixed,
+and the failed evidence is preserved. Do not report those harness failures as a
+firmware crash. All 34 root tests pass, including exclusion from flash review.
+
+This does not establish successful real-card loading, card removal/EOF/error
+semantics, physical cache coherence, wake, display features or emergency recovery.
+No physical camera/card access, staging or flash, commit or public push occurred.
+Preserve installed/prior candidates. A future hardware step requires a concrete
+exact-candidate installation/recovery assessment and explicit owner authorization.
+
+## SD-loaded module foundation — November 19, 2026
+
+The owner linked `JKWTCN/z7ii-extensions` and selected SD-loaded modules first,
+then display features. Read `SD_MODULE_PORT.md` and `z7-native-modules/README.md`.
+Inspected/pinned source commit: `50a22b24c50619cffa646dac386e8334659f475a`, Z7II
+C 1.70 preview.21. Its 15 feature groups are upstream reports, not original-Z7
+hardware validation. Selected public text references remain ignored under
+`.private/research/z7ii-50a22b2/`; no release binaries or screenshots were fetched.
+
+New MIT-derived independent component adds Z7M1/0x03800007 identity, minimal
+z7_main API, C validation/preparation core, linker layout, example and bounded
+ELF module packer. No Z7II camera addresses are bound into this component.
+Ten new tests pass: native-host C core plus synthetic relocated Thumb init at
+three bases, API rejection, BSS/ABI preservation, malformed inputs and buffer
+bounds. All 33 root tests pass without skips. LLVM is absent from inspected PATH;
+the example C probe and actual LLVM compilation/linking remain untested.
+
+This is not a completed SD loader: original-Z7 boot/task/card/file/cache/heap
+integration still needs independent contracts and failure/lifecycle tests, then
+an isolated no-feature firmware probe. Existing sound-port filesystem addresses
+are leads only; upstream's descriptor/read/cache contract differs. Native C core
+execution on the host is distinct from the synthetic module's Thumb execution.
+No original-Z7 firmware or QEMU binary source changed, no new firmware candidate
+was generated, and no card/camera access, staging, flash, commit or push occurred.
+Existing sound-trigger hold and spiral EVF lag remain. Preserve installed/prior
+builds and require a fresh exact-candidate assessment before future flashing.
+
 ## Source push preparation — October 27, 2026
 
 The owner requested pushing the code. Scope includes automatic spiral lifecycle,
