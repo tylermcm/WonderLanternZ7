@@ -47,3 +47,10 @@ The configurable-page/component concepts are informed by pinned upstream
 The original-Z7 wire format is separate; no upstream configuration bytes or
 native Z7II interfaces are copied. The model does not yet provide native UI or
 card persistence. See `DISPLAY_SETTINGS.md` for scoped compiled validation.
+
+`examples/settings_menu_policy.h` is independent local MIT native-interface work
+based on original-Z7 instruction/GUI observations. Native contracts were also
+cross-referenced against this lab's separately licensed sound-menu component;
+that component retains its community license. No sound-menu implementation or
+firmware bytes are embedded in the new profile. Generated native structures,
+frames, traces and binaries remain private.

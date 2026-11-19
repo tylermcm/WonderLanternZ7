@@ -77,3 +77,65 @@ validated configuration loading/saving and lifecycle. The existing grid, battery
 and clean-page profiles have not been switched to this model yet. Firmware,
 modules and configuration bytes remain private; camera installation remains
 outside this software validation.
+
+## Native settings-menu prototype
+
+Optional `--variant settings-menu-probe` now combines the existing display
+profile with an owned native page-zero object at `0xA1833548`. The original
+page getter resolves that slot. Preparation rejects any occupied page-zero
+object, validates the original page42 layout and builds owned metadata,
+callbacks, seven controls, geometry and event maps. Publication follows successful
+component registration with the page tag stored last. The ordinary combined
+grid/battery package still rebuilds byte-identically.
+
+The root contains custom-page master, four presets, independent information-page
+enable and battery setting. Preset subviews expose page enable, information,
+four components and reset. Information is split into six groups plus a further
+view for Other/Focal. Virtual subviews retain one native object; native Back
+returns through the virtual parents and then the original native page history.
+Control IDs7B10..7B16 are absent from the3,893 IDs found in the stock menu table.
+Dynamic slots230..244 are borrowed only while empty or still holding this
+prototype's exact prior strings/font. Detached callbacks check page identity,
+metadata and callback-table ownership before changing model state.
+
+Private candidate09 is9,348 bytes, image9,088, BSS3,160,49 relocations, SHA
+`31e94a9c59853f6e412c77aba9330d85af0bc23cf848735a796af1823adb1283`.
+Twenty-eight compiled instruction cases pass, including native page lookup,
+model edits/reset/last-page protection, foreign labels, stale callbacks and
+failed initialization. Native label/focus/header/queue services are supplied
+in those policy cases; six additional cases execute the original text setter
+to verify its font-kind restrictions and the supported bridge through kind0.
+
+Assisted-QEMU live09 passes15 checks across seven frames using native direction
+keys for master/preset/component/information/global edits and Back navigation.
+The final model is flags3, enabled-pages31, Standard grid off and shutter group
+off, with other preset defaults retained. All seven frames were inspected.
+Titles, information labels and final ON/OFF states now render correctly. Some
+intermediate root captures omit submenu `--` indicators until a later repaint;
+font/present timing remains under investigation. This is not complete visual
+validation of every preset, subview or lifecycle.
+
+Earlier failures remain private: live01 assumed event callbacks receive the
+page inR0, but the original router's BLX does not promise that argument. Explicit
+event adapters now supply the owned page address. Live02 changed the current
+Back event's destination while that event was executing, causing an extra native
+exit; Back maps now stay neutral and root exit invokes native history explicitly.
+Later green model checks still produced stale text. Native component painting
+after edits consumes the dirty objects. Header ID203 comes from the original
+layout/observed native object, rather than a foreign menu's header ID. Original
+setter104BCBDA rejects direct font-kind1->2; a native1->0->2 transition fixes the
+resource-text title. Binding runs after header construction on the native GUI
+paint path. No host pixel buffer writes are used.
+
+The menu is opened by an explicitly supplied native diagnostic call, not by a
+normal camera menu entry. Its edits currently change only the settings model;
+they do not enable the actual renderer or card persistence. Next work must add
+the user-facing entry, complete rendering/setting bindings, investigate remaining
+indicator repaint timing and cover MENU/playback/GUI rebuild/re-entry/foreign
+ownership. The current optional profile is not installation-ready.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant settings-menu-probe --output .private/builds/settings-menu-new
+.venv\Scripts\python.exe tools/audit_z7_settings_menu.py --build .private/builds/20261119-display-host-02 --module .private/builds/settings-menu-new --output .private/evidence/settings-menu-new.json
+.venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/settings-menu-new --view settings-menu --output .private/evidence/settings-menu-live-new
+```

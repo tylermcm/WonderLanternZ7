@@ -81,6 +81,13 @@ The strict64-byte original-Z7 wire format passes1,262 compiled-ARM cases against
 an independent reference. Native controls, renderer binding and card persistence
 are still to implement; see `z7-native-modules/DISPLAY_SETTINGS.md`.
 
+The optional native settings-menu prototype now edits that model through native
+direction keys and virtual subview Back navigation. Candidate09 passes28 compiled
+checks and15 assisted-QEMU checks/7frames. Visual review drove event-convention,
+Back, native paint and font-kind fixes; some intermediate submenu indicators
+still need repaint-timing work. A normal menu entry, actual renderer/settings
+binding, card persistence and broader lifecycle remain unfinished.
+
 1. Complete histogram/horizon visual validation. Its mode/mask changes and native
    restrictions pass instruction checks, but the ordinary live fixture supplies
    shooting-context zero and native code hides the histogram. Another run reaches

@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-key'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-key', 'settings-menu'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
@@ -67,7 +67,7 @@ def main():
     if hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Module fingerprint mismatch')
     fixture = bind_module_fixture(output, packet, host)
-    options = {} if args.view == 'menu' else dict(capture_control_test=True,
+    options = {} if args.view in ('menu', 'settings-menu') else dict(capture_control_test=True,
         raw_source=active_manifest('native0'), exmcu_no_lens=True, tg_periodic_test=True,
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
         orientation_fixture=0, keep_awake=True, photo_liveview=True)
@@ -132,6 +132,22 @@ def main():
         (output / (name + '.png')).write_bytes(camera.png)
         stored = int.from_bytes(camera.remote.memory(0xa24f182c, 4), 'little')
         step = dict(name=name, stored_grid=stored, frame_sha256=hashlib.sha256(camera.png).hexdigest(), pages=pages())
+        if args.view == 'settings-menu':
+            step['settings_view'] = int.from_bytes(camera.remote.memory(base + module['symbols']['z7_settings_view'], 4), 'little')
+            labels = []
+            for slot in range(230, 245):
+                length, pointer, font = struct.unpack('<3I', camera.remote.memory(0xa2019e78 + slot * 12, 12))
+                labels.append(dict(slot=slot, length=length, font=font, text=camera.remote.memory(pointer, 51).split(b'\0')[0].decode('utf-8', errors='replace')))
+            step['dynamic_labels'] = labels
+            pool_pointer = int.from_bytes(camera.remote.memory(0xa1833548 + 36, 4), 'little')
+            if pool_pointer:
+                total, compounds, regular_count, unused, slots, values = struct.unpack('<4H2I', camera.remote.memory(pool_pointer, 16))
+                step['settings_native_label_objects'] = []
+                for row in range(7):
+                    pointer = int.from_bytes(camera.remote.memory(slots + (regular_count + row) * 4, 4), 'little')
+                    if pointer:
+                        record = camera.remote.memory(pointer, 100)
+                        step['settings_native_label_objects'].append(dict(row=row, pointer=hex(pointer), words=list(struct.unpack('<25I', record))))
         if args.view == 'live':
             step['descriptor'] = list(struct.unpack('<hhIHHhhIHHHHBBH', camera.remote.memory(0xa2020c2c, 32)))
             step['registers'] = list(struct.unpack('<7I', camera.remote.memory(0x20145600, 28)))
@@ -157,9 +173,9 @@ def main():
     watchdog.daemon = True
     watchdog.start()
     try:
-        camera.boot(announce_ready=False) if args.view == 'menu' else camera.boot_shooting()
+        camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu') else camera.boot_shooting()
         checkpoint()
-        if args.view != 'menu':
+        if args.view not in ('menu', 'settings-menu'):
             result['histogram_source_state'] = dict(
                 viewport_flag=camera.remote.memory(0xa2367974 + 0x28, 1).hex(),
                 native_driver_state=camera.remote.memory(0xa188d70c, 3).hex(),
@@ -173,7 +189,54 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'disp-key':
+        if args.view == 'settings-menu':
+            if module['kind'] != 'original-Z7-display-settings-menu-diagnostic': raise ValueError('Settings menu diagnostic required')
+            def settings(): return list(struct.unpack('<10I', camera.remote.memory(base + module['symbols']['z7_menu_settings'], 40)))
+            def view(): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_settings_view'], 4), 'little')
+            check('settings-page-zero-owned-with-seven-row-metadata', camera.remote.memory(0xa1833548, 4) == struct.pack('<I', 2))
+            native('Open explicitly supplied native settings page-zero entry', 0x10404c42, [2, 0])
+            for _ in range(20):
+                advance(.3)
+                if on_page(0): break
+            capture('settings-root')
+            result['settings_page_diagnostics'] = dict(object_words=list(struct.unpack('<11I', camera.remote.memory(0xa1833548, 44))),
+                title_record=camera.remote.memory(0xa2019e78 + 230 * 12, 12).hex(),
+                title_buffer=camera.remote.memory(int.from_bytes(camera.remote.memory(0xa2019e78 + 230 * 12 + 4, 4), 'little'), 51).hex(),
+                header=query('Owned settings header lookup', 0x103faebe, [0x203, int.from_bytes(camera.remote.memory(0xa1833548 + 12, 4), 'little')]))
+            regular_base = int.from_bytes(camera.remote.memory(0xa181c778, 4), 'little')
+            regular = camera.remote.memory(regular_base, 1200 * 284)
+            candidates = []
+            for i in range(1200):
+                record = regular[i * 284:(i + 1) * 284]
+                identifier, kind, label, image_kind = struct.unpack_from('<4I', record)
+                box = struct.unpack_from('<4h', record, 16)
+                if identifier and 0 <= box[1] < 60 and struct.unpack_from('<I', record, 76)[0]:
+                    candidates.append(dict(pointer=hex(regular_base + i * 284), identifier=hex(identifier), label=hex(label),
+                        image_kind=image_kind, box=box, parent=hex(struct.unpack_from('<I', record, 72)[0]),
+                        painter=hex(struct.unpack_from('<I', record, 76)[0])))
+            result['settings_page_diagnostics']['top_text_objects'] = candidates
+            save()
+            check('native-router-opens-owned-page-zero', on_page(0))
+            row(0, 0); key('right', lambda: settings()[0] == 1)
+            capture('settings-master-on')
+            row(0, 1); key('right', lambda: view() == 1)
+            capture('settings-standard')
+            row(0, 2); key('right', lambda: settings()[2] == 0)
+            check('native-controls-change-only-standard-grid-choice', settings()[2:6] == [0, 0, 5, 10])
+            row(0, 1); key('right', lambda: view() == 2)
+            capture('settings-information')
+            row(0, 0); key('right', lambda: settings()[6] == 126)
+            key('left', lambda: view() == 1); key('left', lambda: view() == 0)
+            capture('settings-root-return')
+            row(0, 6); key('right', lambda: settings()[0] == 3)
+            row(0, 5); key('right', lambda: settings()[1] == 31)
+            capture('settings-global-choices')
+            check('native-setting-edits-retain-other-preset-values', settings() == [3, 31, 0, 0, 5, 10, 126, 7, 0, 127])
+            key('left', lambda: not on_page(0))
+            capture('settings-native-back')
+            check('native-root-back-leaves-owned-page', not on_page(0))
+            result['settings_menu'] = dict(model=settings(), explicit_diagnostic_entry=True, card_io=False, renderer_binding=False)
+        elif args.view == 'disp-key':
             if module['kind'] != 'original-Z7-disp-key-diagnostic': raise ValueError('Native-key diagnostic required')
             def key_word(name): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_disp_key_' + name], 4), 'little')
             def mode(): return int.from_bytes(camera.remote.memory(0xa201d4d0 + 0x18a, 1), 'little')

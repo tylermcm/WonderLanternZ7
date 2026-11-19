@@ -1,5 +1,29 @@
 # Laptop handoff — October 20, 2026
 
+## Native settings-menu prototype — November 19, 2026
+
+Read the final section of `z7-native-modules/DISPLAY_SETTINGS.md`. Optional
+settings-menu-probe now publishes an owned native page-zero object after all
+registrations succeed. Its root/preset/information virtual subviews edit the
+validated settings model through native keys. Ordinary combined bytes are unchanged.
+Private candidate09 SHA31e94a9c59853f6e412c77aba9330d85af0bc23cf848735a796af1823adb1283
+passes28 instruction cases; live09 passes15 checks/7frames. Frames were inspected:
+titles, information rows and final ON/OFF values are correct. Intermediate root
+captures can omit submenu `--` indicators until another repaint; this is open.
+
+Earlier failures/green-but-visually-stale runs remain private. Original event
+router does not supply page inR0, so no-argument adapters supply the guarded page.
+Back destinations stay neutral during callbacks; root exit uses native history.
+Actual dirty-object painting uses original103FAEC6 on the GUI path. Header ID203
+is from the original layout. Native font setter rejects1->2; bridge1->0->2 is
+instruction-tested. Active-page prepaint binds the header after construction.
+
+The menu still opens through an explicit native diagnostic call. Add a real
+entry, connect settings to renderers/persistence, finish indicator timing and
+cover re-entry/MENU/playback/foreign-state lifecycle. Do not mistake model/UI
+edits for actual renderer settings yet. No guest remains live from these runs.
+No camera or physical card access occurred. Existing earlier entries are historical.
+
 ## Configurable display settings model — November 19, 2026
 
 Read `z7-native-modules/DISPLAY_SETTINGS.md`. New independent C model represents

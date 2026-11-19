@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 native settings-menu model-edit prototype; incomplete feature integration",
+  "module_sha256": "31e94a9c59853f6e412c77aba9330d85af0bc23cf848735a796af1823adb1283",
+  "file_bytes": 9348,
+  "instruction_checks": {"passed": true, "count": 28, "supplied_boundaries": ["Label/focus/header services", "Native queued/component drawing services", "File/kernel/heap"], "original_text_kind_setter_executed_in_bridge_cases": true},
+  "assisted_qemu": {
+    "model_and_navigation_checks_passed": true,
+    "checks": 15,
+    "frames": 7,
+    "native_direction_keys": true,
+    "explicit_diagnostic_page_entry": true,
+    "visual_inspection": true,
+    "title_information_labels_and_final_status_values_correct": true,
+    "intermediate_submenu_indicator_repaint_issue_open": true,
+    "complete_visual_validation": false,
+    "earlier_failures_and_visual_gaps_retained": true
+  },
+  "ordinary_combined_module_byte_identical": true,
+  "root_tests": {"passed": true, "count": 39, "skipped": 0},
+  "normal_camera_menu_entry": false,
+  "renderer_setting_binding": false,
+  "card_persistence": false,
+  "camera_access": false,
+  "physical_card": false,
+  "installation_ready": false,
+  "binaries_dumps_or_frames_included": false
+}
