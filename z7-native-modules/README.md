@@ -1,6 +1,15 @@
 # Original-Z7 native module foundation
 
 This component implements [the SD-module port](../SD_MODULE_PORT.md).
+The intended installation has two parts: an installed original-Z7 firmware
+host, followed by `Z7APP.BIN` on the SD card. The host reads and initializes the
+module during startup; later compatible module updates replace the card file
+after full power-down. This is a startup loader with one resident combined
+module, with no hot unloading. Changing the host or its native hook contracts
+can still require another firmware update. Actual card loading and camera
+installation/recovery remain unverified; the successful emulator runs supply
+the read-only filesystem boundary.
+
 `host/module.c` validates and prepares a module in a caller-owned buffer. It does
 not read a card, allocate camera memory, modify firmware, register callbacks,
 publish executable caches, or call an initializer. A future Z7 host must supply

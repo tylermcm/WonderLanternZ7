@@ -1,5 +1,37 @@
 # Laptop handoff — October 20, 2026
 
+## Native entry and actual battery switch — November 19, 2026
+
+Optional `--variant display-settings` adds a seventh Display settings row under
+native d9 Framing grid display. Original six choices/values remain. Entry01
+SHA567528756b145881a0d3fb05edcaf2673dda0f032368e0734d0d73b35d65b825
+passes20 native-key checks/8frames for full entry/model/back, and a separate19
+checks/7frames for all six grid selections. Entry/root/back were inspected.
+The ordinary combined regression05 remains byte-identical to its prior package.
+
+Entry02 SHA9a086f58748b34beaa9e45c823ad585ef45983b64ab756c4566115592a2a46e9
+binds model battery setting to the actual renderer, initially OFF.46 compiled
+menu checks and38 automatic-battery checks pass. Battery audit enables through
+the actual compiled settings adapter, with supplied GUI queue services.
+Private settings-battery-integration01 fails stock ROI restoration after MENU:
+percentage enables/disables but native icon is absent afterward. Keep this run.
+Integration02 adds a disabled-only menu control first;25 checks/6frames pass,
+including that control and exact complete RGB restoration after enable/disable.
+No production change separates those two runs, so sequence/timing remains open.
+Both use labeled GUI bar/icon requests, no supplied percent or setting word.
+
+Visual inspection catches stale battery menu status in integration02: enabled
+reads OFF, disabled reads ON. Actual flags and shooting behavior are correct.
+Fix native value cache/repaint timing and reproduce the initial no-control
+sequence before claiming a completed integration. Other preset/master settings
+still change only the model. Persistence, warning/AF policy and broader output/
+lifecycle remain. Read DISPLAY_SETTINGS.md's latest section and source evidence.
+Root39 tests pass, none skipped; graph refresh1889nodes/4731edges. No owned guest
+remains from these completed runs. No camera/card access, staging or flashing.
+The SD architecture is one installed firmware host plus resident Z7APP.BIN at
+startup; later compatible feature packages replace the card file after power-off.
+Actual physical card loading and exact-candidate installation/recovery are open.
+
 ## Native settings-menu prototype — November 19, 2026
 
 Read the final section of `z7-native-modules/DISPLAY_SETTINGS.md`. Optional

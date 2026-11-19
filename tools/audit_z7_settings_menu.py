@@ -24,6 +24,7 @@ class MenuFixture(HostFixture):
         self.labels = []
         self.back_requests = []
         self.redraws = []
+        self.opens, self.property_writes = [], []
 
     def hook(self, u, address, size, context):
         if address == 0x103fbb5c:
@@ -47,6 +48,10 @@ class MenuFixture(HostFixture):
             self.ret(1)
         elif address == 0x103faec6:
             self.ret(1)
+        elif address == 0x10404c42:
+            self.opens.append([u.reg_read(UC_ARM_REG_R0), u.reg_read(UC_ARM_REG_R1)]); self.ret(1)
+        elif address == 0x104065b0:
+            self.property_writes.append([u.reg_read(UC_ARM_REG_R0), u.reg_read(UC_ARM_REG_R1)]); self.ret(1)
         else:
             super().hook(u, address, size, context)
 
@@ -65,6 +70,7 @@ def audit(raw, host, packet, module):
     def model(): return list(struct.unpack('<10I', f.u.mem_read(base + module['symbols']['z7_menu_settings'], 40)))
     def word(name): return int.from_bytes(f.u.mem_read(base + module['symbols'][name], 4), 'little')
     def action(row): f.u.mem_write(OBJECT + 22, struct.pack('<2H', 0, row)); call('sm_activate', 0xdeadbeef)
+    check('menu-global-battery-default-matches-renderer-disabled-state', word('z7_battery_enabled') == 0)
     check('native-page-getter-resolves-zero-and-retains-stock-leaf', f.call(0x103fccc2, 2, 0) == OBJECT and f.call(0x103fccc2, 2, 42) == OBJECT + 42 * 44)
     check('native-page-getter-still-rejects-unknown-class', f.call(0x103fccc2, 7, 0) == 0)
     call('sm_render', OBJECT)
@@ -80,6 +86,9 @@ def audit(raw, host, packet, module):
     action(6); check('native-reset-retains-page-enable-and-master', model() == [1, 14, 1, 0, 5, 10, 127, 7, 0, 127])
     call('sm_back_event', 0xdeadbeef); action(6); action(5)
     check('battery-and-native-information-page-switches-independent', model()[0:2] == [3, 30])
+    check('native-battery-choice-publishes-to-automatic-renderer', word('z7_battery_enabled') == 1)
+    action(6); check('native-battery-disable-preserves-other-settings', model()[0:2] == [1, 30] and word('z7_battery_enabled') == 0)
+    action(6)
     f.u.mem_write(base + module['symbols']['z7_menu_settings'] + 4, struct.pack('<I', 16)); action(5)
     check('native-action-cannot-disable-last-page', model()[1] == 16)
     check('native-actions-request-original-queued-redraw', f.redraws and all(row == [0x103fa771, 3, 7] for row in f.redraws))
@@ -98,6 +107,19 @@ def audit(raw, host, packet, module):
         check(f'owned-text-kind-{old_kind}-uses-supported-native-bridge',
               bytes(f.u.mem_read(text_object + 8, 8)) == struct.pack('<2I', 230, 2) and
               bytes(f.u.mem_read(text_object + 68, 4)) == struct.pack('<I', 1))
+    if 'sm_open' in module['symbols']:
+        meta = base + module['symbols']['metadata']; row_maps = base + module['symbols']['maps']
+        check('entry-profile-retains-six-grid-options-and-adds-seventh-row', bytes(f.u.mem_read(meta + 20, 4)) == struct.pack('<I', 0x00070007))
+        for row in range(7):
+            pointer = int.from_bytes(f.u.mem_read(row_maps + row * 4, 4), 'little')
+            records = [struct.unpack('<4I', f.u.mem_read(pointer + i * 16, 16)) for i in range(17)]
+            active = [record for record in records if record[0] in (0x239, 0x25f)]
+            check(f'entry-profile-owned-row-{row}-activation-and-routing', len(active) == 2 and all(
+                record[1] & 1 and base <= (record[1] & ~1) < base + module['image_bytes'] and record[3] == (0x3a0 if row == 6 else 0x3a1) for record in active))
+        for name, value in [('fourths', 1), ('thirds', 2), ('golden', 3), ('center', 4), ('dense', 5), ('off_owned', 0)]:
+            call(name); check('entry-profile-retains-native-grid-choice-' + name, f.property_writes[-1] == [0x102d, value])
+        f.u.mem_write(base + module['symbols']['z7_settings_view'], struct.pack('<I', 2)); call('sm_open')
+        check('native-entry-opens-settings-root-with-original-page-api', f.opens == [[2, 0]] and word('z7_settings_view') == 0)
     prior = list(f.labels); record = REGISTRY + 230 * 12; f.u.mem_write(record, struct.pack('<I', 1))
     call('sm_render', OBJECT); check('foreign-label-is-never-overwritten', f.labels == prior and bytes(f.u.mem_read(record, 4)) == struct.pack('<I', 1))
     previous = model(); f.u.mem_write(OBJECT + 40, bytes(4)); action(0)
@@ -107,7 +129,8 @@ def audit(raw, host, packet, module):
         original = bytes(g.u.mem_read(OBJECT, 44))
         check(name + '-preserves-native-page-and-cleans-module', g.call(host['symbols']['z7_module_load_once'], STATE) == 7 and bytes(g.u.mem_read(OBJECT, 44)) == original and not g.live)
     return dict(passed=True, checks=checks, module_sha256=module['module_sha256'], main_sha256=host['main_payload_sha256'],
-                supplied_boundaries=['Label storage', 'Native focus/header services', 'File/kernel/heap'],
+                supplied_boundaries=['Label storage', 'Native focus/header services',
+                    'Native queued/component drawing, page opening and property storage', 'File/kernel/heap'],
                 actual_menu_pixels=False, card_io=False, camera_access=False)
 
 

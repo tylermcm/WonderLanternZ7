@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 native d9 display-settings entry and battery renderer binding; incomplete integration",
+  "entry01": {
+    "module_sha256": "567528756b145881a0d3fb05edcaf2673dda0f032368e0734d0d73b35d65b825",
+    "native_menu_entry_model_back": {"passed": true, "checks": 20, "frames": 8, "entry_root_back_frames_inspected": true},
+    "native_six_grid_choices": {"passed": true, "checks": 19, "frames": 7},
+    "actual_battery_binding": false
+  },
+  "entry02": {
+    "module_sha256": "9a086f58748b34beaa9e45c823ad585ef45983b64ab756c4566115592a2a46e9",
+    "file_bytes": 9612,
+    "image_bytes": 9344,
+    "bss_bytes": 3760,
+    "menu_instruction_checks": 46,
+    "automatic_battery_instruction_checks": 38,
+    "instruction_checks_passed": true,
+    "instruction_supplied_boundaries": ["File/kernel/heap", "Native label, GUI instance, font and painting services", "Native page opening, property storage and queue services", "Telemetry and mutex for battery policy cases"],
+    "battery_default_off": true,
+    "compiled_settings_callback_enables_actual_renderer_in_battery_audit": true,
+    "assisted_qemu_first_sequence": {
+      "passed": false,
+      "native_menu_enable_and_disable_actual_renderer": true,
+      "stock_battery_region_restored": false,
+      "failure_retained": true
+    },
+    "assisted_qemu_with_preceding_disabled_menu_control": {
+      "passed": true,
+      "checks": 25,
+      "frames": 6,
+      "native_keys": true,
+      "disabled_control_preserves_stock_region": true,
+      "enable_shows_actual_percentage_renderer": true,
+      "disable_restores_complete_rgb_frame_exactly": true,
+      "supplied_setting_word": false,
+      "supplied_percentage": false,
+      "supplied_gui_bar_and_icon_requests": true,
+      "virtual_native_snapshot_percent": 0,
+      "shooting_and_menu_frames_inspected": true,
+      "menu_status_text_stale": true,
+      "enabled_capture_reads": "OFF",
+      "disabled_capture_reads": "ON",
+      "complete_visual_validation": false
+    },
+    "first_sequence_failure_resolved": false,
+    "production_code_changed_between_sequences": false
+  },
+  "ordinary_combined_package_byte_identical": true,
+  "root_tests": {"passed": true, "count": 39, "skipped": 0},
+  "other_preset_and_master_renderer_bindings": false,
+  "card_persistence": false,
+  "physical_camera_or_card": false,
+  "physical_telemetry": false,
+  "installation_ready": false,
+  "binaries_dumps_or_frames_included": false
+}

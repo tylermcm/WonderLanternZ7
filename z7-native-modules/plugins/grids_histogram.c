@@ -18,12 +18,30 @@
     __asm__ volatile("dmb sy" ::: "memory"); \
 } while (0)
 
+#ifdef Z7_SETTINGS_MENU_ENTRY
+#define Z7_GRID_ROWS 7
+#define Z7_GRID_ACTIONS 7
+#define Z7_GRID_NAME_BYTES 20
+static uint32_t sm_open(void);
+#else
+#define Z7_GRID_ROWS 6
+#define Z7_GRID_ACTIONS 5
+#define Z7_GRID_NAME_BYTES 16
+#endif
 static uint16_t tables[4][48];
-static uint32_t metadata[7], callbacks[5], controls[6][7], maps[6];
-static uint32_t events[5][17][4], geometry[4];
-static int16_t boxes[6][4], labels[6][4], values[6][4];
-static const char names[6][16] = {"4x4 grid", "3x3 grid", "Golden ratio", "Center cross", "6x6 grid", "Off"};
-static const uint32_t control_ids[6] = {0x1901, 0x7a30, 0x7a31, 0x7a32, 0x7a33, 0x1902};
+static uint32_t metadata[7], callbacks[5], controls[Z7_GRID_ROWS][7], maps[Z7_GRID_ROWS];
+static uint32_t events[Z7_GRID_ACTIONS][17][4], geometry[4];
+static int16_t boxes[Z7_GRID_ROWS][4], labels[Z7_GRID_ROWS][4], values[Z7_GRID_ROWS][4];
+static const char names[Z7_GRID_ROWS][Z7_GRID_NAME_BYTES] = {"4x4 grid", "3x3 grid", "Golden ratio", "Center cross", "6x6 grid", "Off"
+#ifdef Z7_SETTINGS_MENU_ENTRY
+    , "Display settings"
+#endif
+};
+static const uint32_t control_ids[Z7_GRID_ROWS] = {0x1901, 0x7a30, 0x7a31, 0x7a32, 0x7a33, 0x1902
+#ifdef Z7_SETTINGS_MENU_ENTRY
+    , 0x7a34
+#endif
+};
 volatile uint32_t z7_display_grid_entries;
 
 static uint32_t readable(uint32_t p, uint32_t n)
@@ -72,15 +90,22 @@ static uint32_t thirds(void) { return set_grid(2); }
 static uint32_t golden(void) { return set_grid(3); }
 static uint32_t center(void) { return set_grid(4); }
 static uint32_t dense(void) { return set_grid(5); }
-static uint32_t (*const choices[5])(void) = {fourths, thirds, golden, center, dense};
+#ifdef Z7_SETTINGS_MENU_ENTRY
+static uint32_t off_owned(void) { return FN(0x104f5593u, uint32_t, void)(); }
+#endif
+static uint32_t (*const choices[Z7_GRID_ACTIONS])(void) = {fourths, thirds, golden, center, dense
+#ifdef Z7_SETTINGS_MENU_ENTRY
+    , off_owned, sm_open
+#endif
+};
 
 static uint32_t grid_enter(uint32_t object)
 {
     ++z7_display_grid_entries;
-    for (uint32_t i = 0; i < 6; ++i)
+    for (uint32_t i = 0; i < Z7_GRID_ROWS; ++i)
         FN(0x103fbb5du, void, const char *, uint32_t, uint32_t)(names[i], 39 + i, 0);
     uint32_t list = WORD(object + 36);
-    if (list) for (uint32_t i = 0; i < 6; ++i) {
+    if (list) for (uint32_t i = 0; i < Z7_GRID_ROWS; ++i) {
         uint32_t control = FN(0x103fcf0fu, uint32_t, uint32_t, uint32_t, uint32_t)(list, 1, i);
         if (!control) break;
         FN(0x103fb345u, void, uint32_t, uint32_t)(control, 39 + i);
@@ -123,21 +148,34 @@ uint32_t z7_main(const struct z7_module_api *api)
         for (uint32_t i = 0; i < 3; ++i)
             tables[table][i * 16 + 5] = tables[table][i * 16 + 11] = (uint16_t)counts[table];
     }
-    for (uint32_t row = 0; row < 5; ++row) {
+#ifdef Z7_SETTINGS_MENU_ENTRY
+    if (!readable(old_maps[1], 17 * 16)) return 1;
+#endif
+    for (uint32_t row = 0; row < Z7_GRID_ACTIONS; ++row) {
+        const uint32_t *source_events = old_events;
+        uint32_t expected = 0x104f5589u;
+#ifdef Z7_SETTINGS_MENU_ENTRY
+        if (row == 5) { source_events = (const uint32_t *)(uintptr_t)old_maps[1]; expected = 0x104f5593u; }
+#endif
         uint32_t activations = 0;
         for (uint32_t i = 0; i < 17; ++i) {
-            for (uint32_t j = 0; j < 4; ++j) events[row][i][j] = old_events[i * 4 + j];
+            for (uint32_t j = 0; j < 4; ++j) events[row][i][j] = source_events[i * 4 + j];
             if (events[row][i][0] == 0x239 || events[row][i][0] == 0x25f) {
-                if (events[row][i][1] != 0x104f5589u || events[row][i][2] || events[row][i][3] != 0x3a1) return 1;
+                if (events[row][i][1] != expected || events[row][i][2] || events[row][i][3] != 0x3a1) return 1;
                 events[row][i][1] = (uint32_t)(uintptr_t)choices[row];
+#ifdef Z7_SETTINGS_MENU_ENTRY
+                if (row == 6) events[row][i][3] = 0x3a0;
+#endif
                 ++activations;
             }
         }
         if (activations != 2) return 1;
         maps[row] = (uint32_t)(uintptr_t)events[row];
     }
+#ifndef Z7_SETTINGS_MENU_ENTRY
     maps[5] = old_maps[1];
-    for (uint32_t row = 0; row < 6; ++row) {
+#endif
+    for (uint32_t row = 0; row < Z7_GRID_ROWS; ++row) {
         for (uint32_t i = 0; i < 7; ++i) controls[row][i] = old_controls[(row == 5 ? 7 : 0) + i];
         controls[row][0] = 39 + row;
         controls[row][4] = 0x1209;
@@ -147,7 +185,7 @@ uint32_t z7_main(const struct z7_module_api *api)
         labels[row][0] = 150; labels[row][1] = y + 4; labels[row][2] = 690; labels[row][3] = y + 44;
         values[row][0] = 690; values[row][1] = y; values[row][2] = 696; values[row][3] = y + 48;
     }
-    geometry[0] = 6;
+    geometry[0] = Z7_GRID_ROWS;
     geometry[1] = (uint32_t)(uintptr_t)boxes;
     geometry[2] = (uint32_t)(uintptr_t)labels;
     geometry[3] = (uint32_t)(uintptr_t)values;
@@ -155,7 +193,7 @@ uint32_t z7_main(const struct z7_module_api *api)
     metadata[1] = (uint32_t)(uintptr_t)geometry;
     metadata[3] = (uint32_t)(uintptr_t)controls;
     metadata[4] = (uint32_t)(uintptr_t)maps;
-    metadata[5] = 0x00060006;
+    metadata[5] = Z7_GRID_ROWS | Z7_GRID_ROWS << 16;
     for (uint32_t i = 0; i < 5; ++i) callbacks[i] = old_callbacks[i];
     callbacks[0] = (uint32_t)(uintptr_t)grid_enter;
 #ifdef Z7_DISPLAY_MENU_FOREIGN_CONTROLS

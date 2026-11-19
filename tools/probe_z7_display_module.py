@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-key', 'settings-menu'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
@@ -47,8 +47,10 @@ def main():
         parser.error('Histogram context fixture requires live view')
     if args.battery_text_trial and args.view != 'inspect':
         parser.error('Battery text trial requires inspect view')
-    if args.battery_icon_fixture and args.view != 'battery-auto':
-        parser.error('Battery icon fixture requires battery-auto view')
+    if args.battery_icon_fixture and args.view not in ('battery-auto', 'settings-battery'):
+        parser.error('Battery icon fixture requires battery-auto or settings-battery view')
+    if args.view == 'settings-battery' and not args.battery_icon_fixture:
+        parser.error('Settings-battery requires its explicit icon fixture')
     if args.battery_lifecycle and not (args.view == 'battery-auto' and args.battery_icon_fixture):
         parser.error('Battery lifecycle requires battery-auto with its explicit icon fixture')
     if args.battery_playback and not args.battery_lifecycle:
@@ -67,7 +69,7 @@ def main():
     if hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Module fingerprint mismatch')
     fixture = bind_module_fixture(output, packet, host)
-    options = {} if args.view in ('menu', 'settings-menu') else dict(capture_control_test=True,
+    options = {} if args.view in ('menu', 'settings-menu', 'settings-entry') else dict(capture_control_test=True,
         raw_source=active_manifest('native0'), exmcu_no_lens=True, tg_periodic_test=True,
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
         orientation_fixture=0, keep_awake=True, photo_liveview=True)
@@ -132,7 +134,16 @@ def main():
         (output / (name + '.png')).write_bytes(camera.png)
         stored = int.from_bytes(camera.remote.memory(0xa24f182c, 4), 'little')
         step = dict(name=name, stored_grid=stored, frame_sha256=hashlib.sha256(camera.png).hexdigest(), pages=pages())
-        if args.view == 'settings-menu':
+        if args.view == 'settings-battery':
+            step['battery_controls'] = []
+            for i in range(10):
+                record = camera.remote.memory(0xa1824a14 + i * 48, 48)
+                pointer = int.from_bytes(record[36:40], 'little')
+                step['battery_controls'].append(dict(index=i, record=record.hex(), pointer=hex(pointer),
+                    object_words=list(struct.unpack('<25I', camera.remote.memory(pointer, 100))) if pointer else []))
+            step['battery_state'] = {name: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_battery_' + name], 4), 'little')
+                for name in ('enabled', 'object', 'samples', 'paints', 'percent')}
+        if args.view in ('settings-menu', 'settings-entry'):
             step['settings_view'] = int.from_bytes(camera.remote.memory(base + module['symbols']['z7_settings_view'], 4), 'little')
             labels = []
             for slot in range(230, 245):
@@ -173,9 +184,9 @@ def main():
     watchdog.daemon = True
     watchdog.start()
     try:
-        camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu') else camera.boot_shooting()
+        camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry') else camera.boot_shooting()
         checkpoint()
-        if args.view not in ('menu', 'settings-menu'):
+        if args.view not in ('menu', 'settings-menu', 'settings-entry'):
             result['histogram_source_state'] = dict(
                 viewport_flag=camera.remote.memory(0xa2367974 + 0x28, 1).hex(),
                 native_driver_state=camera.remote.memory(0xa188d70c, 3).hex(),
@@ -189,12 +200,71 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'settings-menu':
-            if module['kind'] != 'original-Z7-display-settings-menu-diagnostic': raise ValueError('Settings menu diagnostic required')
+        if args.view == 'settings-battery':
+            if module['kind'] != 'original-Z7-display-settings-module': raise ValueError('Native settings-entry module required')
+            def battery_word(name): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_battery_' + name], 4), 'little')
+            def battery_visible():
+                pointer = battery_word('object')
+                return bool(pointer and int.from_bytes(camera.remote.memory(pointer + 40, 4), 'little'))
+            def request_battery(label):
+                result.setdefault('settings_battery_fixture', dict(supplied_percentage=False, bar=1, requests=[]))['requests'].append(label)
+                camera.remote.write_memory(0xa201d4d0 + 0x1aa, b'\1')
+                for i in (0, 1): camera.remote.write_memory(0xa1824a14 + i * 48, b'\1\1')
+                native('Native battery renderer after labeled GUI request: ' + label, 0x102f40a0, [])
+            def open_settings():
+                if not pages(): key('menu', lambda: bool(pages()))
+                for _ in range(10):
+                    if on_page(1): break
+                    camera.key(checkpoint(), 'left'); advance(.5)
+                check('settings-battery-reaches-native-menu-tabs', on_page(1))
+                row(1, 3); key('right', lambda: on_page(0x125)); row(0x125, 4)
+                key('right', lambda: on_page(0x127)); row(0x127, 28)
+                key('right', lambda: on_page(0x153)); row(0x153, 6)
+                key('right', lambda: on_page(0)); row(0, 6)
+            def return_shooting():
+                for _ in range(10):
+                    if not pages(): return
+                    camera.key(checkpoint(), 'menu'); advance(.5)
+                raise RuntimeError('Native MENU did not return to shooting')
+            check('settings-battery-default-off', battery_word('enabled') == 0)
+            request_battery('initial disabled baseline'); capture('settings-battery-stock-baseline')
+            baseline = Image.open(io.BytesIO(camera.png)).convert('RGB')
+            open_settings(); return_shooting(); request_battery('disabled native menu control round trip')
+            capture('settings-battery-disabled-menu-control')
+            control = Image.open(io.BytesIO(camera.png)).convert('RGB')
+            result['disabled_menu_control_region_matches_initial'] = control.crop((2, 552, 112, 622)).tobytes() == baseline.crop((2, 552, 112, 622)).tobytes()
+            open_settings(); key('right', lambda: battery_word('enabled') == 1)
+            capture('settings-battery-enabled-in-native-menu')
+            return_shooting(); request_battery('after native menu enable')
+            for _ in range(30):
+                advance(.3)
+                if battery_visible(): break
+            capture('settings-battery-enabled-in-shooting')
+            check('native-menu-enables-actual-percentage-renderer', battery_visible() and battery_word('samples') > 0)
+            open_settings(); key('right', lambda: battery_word('enabled') == 0)
+            capture('settings-battery-disabled-in-native-menu')
+            return_shooting(); request_battery('after native menu disable')
+            capture('settings-battery-stock-restored')
+            restored = Image.open(io.BytesIO(camera.png)).convert('RGB')
+            check('native-menu-disable-leaves-no-owned-percentage', not battery_visible())
+            check('native-menu-disable-restores-stock-battery-region', restored.crop((2, 552, 112, 622)).tobytes() == baseline.crop((2, 552, 112, 622)).tobytes())
+            result['settings_battery_integration'] = dict(supplied_setting_word=False, supplied_percentage=False,
+                native_snapshot_percent=battery_word('percent'), full_frame_restored=restored.tobytes() == baseline.tobytes(), hardware_telemetry=False)
+        elif args.view in ('settings-menu', 'settings-entry'):
+            expected_kind = 'original-Z7-display-settings-module' if args.view == 'settings-entry' else 'original-Z7-display-settings-menu-diagnostic'
+            if module['kind'] != expected_kind: raise ValueError('Matching settings menu profile required')
             def settings(): return list(struct.unpack('<10I', camera.remote.memory(base + module['symbols']['z7_menu_settings'], 40)))
             def view(): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_settings_view'], 4), 'little')
             check('settings-page-zero-owned-with-seven-row-metadata', camera.remote.memory(0xa1833548, 4) == struct.pack('<I', 2))
-            native('Open explicitly supplied native settings page-zero entry', 0x10404c42, [2, 0])
+            if args.view == 'settings-entry':
+                key('left', lambda: on_page(1)); row(1, 3)
+                key('right', lambda: on_page(0x125)); row(0x125, 4)
+                key('right', lambda: on_page(0x127)); row(0x127, 28)
+                key('right', lambda: on_page(0x153)); row(0x153, 6)
+                capture('settings-grid-entry')
+                key('right', lambda: on_page(0))
+            else:
+                native('Open explicitly supplied native settings page-zero entry', 0x10404c42, [2, 0])
             for _ in range(20):
                 advance(.3)
                 if on_page(0): break
@@ -232,10 +302,13 @@ def main():
             row(0, 5); key('right', lambda: settings()[1] == 31)
             capture('settings-global-choices')
             check('native-setting-edits-retain-other-preset-values', settings() == [3, 31, 0, 0, 5, 10, 126, 7, 0, 127])
+            check('native-battery-setting-published-to-renderer', camera.remote.memory(base + module['symbols']['z7_battery_enabled'], 4) == struct.pack('<I', 1))
             key('left', lambda: not on_page(0))
             capture('settings-native-back')
             check('native-root-back-leaves-owned-page', not on_page(0))
-            result['settings_menu'] = dict(model=settings(), explicit_diagnostic_entry=True, card_io=False, renderer_binding=False)
+            if args.view == 'settings-entry':
+                check('settings-back-restores-grid-page-without-changing-grid-setting', on_page(0x153) and camera.remote.memory(0xa24f182c, 4) == bytes(4))
+            result['settings_menu'] = dict(model=settings(), explicit_diagnostic_entry=args.view == 'settings-menu', card_io=False, battery_binding=True, custom_page_renderer_binding=False)
         elif args.view == 'disp-key':
             if module['kind'] != 'original-Z7-disp-key-diagnostic': raise ValueError('Native-key diagnostic required')
             def key_word(name): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_disp_key_' + name], 4), 'little')

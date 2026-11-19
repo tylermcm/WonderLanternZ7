@@ -88,6 +88,16 @@ Back, native paint and font-kind fixes; some intermediate submenu indicators
 still need repaint-timing work. A normal menu entry, actual renderer/settings
 binding, card persistence and broader lifecycle remain unfinished.
 
+The optional display-settings profile now has a native d9 menu entry. Its first
+build passes20 entry/model/back checks and19 six-grid-selection checks. A second
+build binds the actual battery renderer to the native menu switch (default OFF),
+with46 compiled menu and38 automatic-battery cases passing. Longer assisted-QEMU
+integration passes25 checks/6frames, including full RGB restoration; the earlier
+shorter sequence fails restoration and is retained. Visual inspection catches
+stale ON/OFF text even in the passing run. Resolve both timing gaps before
+calling the profile complete. Other preset/master renderer bindings and card
+persistence remain open. See DISPLAY_SETTINGS.md and the latest HANDOFF entry.
+
 1. Complete histogram/horizon visual validation. Its mode/mask changes and native
    restrictions pass instruction checks, but the ordinary live fixture supplies
    shooting-context zero and native code hides the histogram. Another run reaches

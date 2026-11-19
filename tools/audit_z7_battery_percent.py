@@ -30,7 +30,9 @@ class AutomaticFixture(NativeBatteryDisplayFixture):
             self.u.mem_write(ICON + offset, struct.pack('<I', value))
 
     def hook(self, u, address, size, context):
-        if address == 0x10437684:
+        if getattr(self, 'settings_callback_fixture', False) and address in (0x103fac5a, 0x103faec6):
+            self.ret(1)
+        elif address == 0x10437684:
             self.getter_calls += 1
             super().hook(u, address, size, context)
         elif address == 0x103fbb5c:
@@ -52,7 +54,8 @@ class AutomaticFixture(NativeBatteryDisplayFixture):
 def audit(raw, host, packet, module):
     if hashlib.sha256(raw).hexdigest() != host['main_payload_sha256'] or hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Host/module fingerprint mismatch')
-    if not module['configuration']['battery_percent_enabled']: raise ValueError('Audit requires enabled module')
+    settings_activation = module['kind'] == 'original-Z7-display-settings-module'
+    if not settings_activation and not module['configuration']['battery_percent_enabled']: raise ValueError('Audit requires enabled module')
     checks = []
     def check(name, good):
         checks.append(dict(name=name, passed=bool(good)))
@@ -60,6 +63,13 @@ def audit(raw, host, packet, module):
     def load():
         f = AutomaticFixture(raw, host, packet)
         if f.call(host['symbols']['z7_module_load_once'], STATE) != 8: raise AssertionError('Module load failed')
+        if settings_activation:
+            loaded = f.words()[12]
+            f.settings_callback_fixture = True
+            f.u.mem_write(0xa1833548 + 22, struct.pack('<2H', 0, 6))
+            f.call(loaded + module['symbols']['sm_activate'])
+            if int.from_bytes(f.u.mem_read(loaded + module['symbols']['z7_battery_enabled'], 4), 'little') != 1:
+                raise AssertionError('Native settings callback did not enable renderer')
         return f, f.words()[12]
     def word(f, base, name): return int.from_bytes(f.u.mem_read(base + module['symbols']['z7_battery_' + name], 4), 'little')
     def setword(f, base, name, value): f.u.mem_write(base + module['symbols']['z7_battery_' + name], struct.pack('<I', value))
@@ -152,6 +162,7 @@ def audit(raw, host, packet, module):
     check('foreign-font-change-retires-without-overwriting-label', int.from_bytes(font.u.mem_read(LABEL + 8, 4), 'little') == 0 and
           not any(p[0] == 0x10384968 and int.from_bytes(p[1][:4], 'little') == 0x7a40 for p in font.paint_calls))
     return dict(passed=True, checks=checks, module_sha256=module['module_sha256'], main_sha256=host['main_payload_sha256'],
+        activation='Compiled native settings callback with supplied GUI queue' if settings_activation else 'Enabled SD package configuration',
         sampling_interval_gui_passes=16, supplied_boundaries=['GUI/control instance and transitions', 'Native incoming telemetry and mutex',
             'Font/label/list/pixel services', 'File/kernel/heap'], physical_camera=False, visual_validation=False)
 

@@ -32,6 +32,14 @@ static uint32_t sm_owned(uint32_t object)
     return object == 0xa1833548u && W(object) == 2 &&
         W(object + 16) == (uint32_t)(uintptr_t)sm_callbacks && W(object + 40) == (uint32_t)(uintptr_t)sm_meta;
 }
+#ifdef Z7_SETTINGS_MENU_ENTRY
+static uint32_t sm_open(void)
+{
+    if (!sm_owned(0xa1833548u)) return 0;
+    z7_settings_view = 0;
+    return F(0x10404c43u, uint32_t, uint32_t, uint32_t)(2, 0);
+}
+#endif
 static uint32_t sm_label_ownership(void)
 {
     for (uint32_t i = 0; i < 15; ++i) {
@@ -96,6 +104,7 @@ static uint32_t sm_action(uint32_t object)
         else if (row == 6) z7_settings_view = 2;
     }
     ++z7_settings_actions;
+    z7_battery_enabled = !!(z7_menu_settings.flags & Z7_SETTINGS_BATTERY);
     sm_render(object);
     if (view != z7_settings_view) sm_focus(object, 0);
     sm_redraw_request();
@@ -179,6 +188,7 @@ static uint32_t sm_prepare(void)
     sm_callbacks[4] = sm_callbacks[5] = sm_callbacks[6] = (uint32_t)(uintptr_t)sm_zero; sm_callbacks[7] = 0x1040525f;
     sm_object[0] = 2; sm_object[1] = leaf[1]; sm_object[4] = (uint32_t)(uintptr_t)sm_callbacks; sm_object[10] = (uint32_t)(uintptr_t)sm_meta;
     z7_settings_defaults(&z7_menu_settings);
+    z7_battery_enabled = 0;
     return 1;
 }
 static void sm_publish(void)

@@ -139,3 +139,59 @@ ownership. The current optional profile is not installation-ready.
 .venv\Scripts\python.exe tools/audit_z7_settings_menu.py --build .private/builds/20261119-display-host-02 --module .private/builds/settings-menu-new --output .private/evidence/settings-menu-new.json
 .venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/settings-menu-new --view settings-menu --output .private/evidence/settings-menu-live-new
 ```
+
+## Native menu entry and battery binding
+
+The optional `--variant display-settings` profile adds a seventh **Display
+settings** row to Custom Settings d9, Framing grid display. It retains the six
+grid choices and their stored values. The new row opens the owned settings page
+through the original native page API; Back returns to the grid page. Off now
+uses an owned event map and a wrapper around the original Off callback, since
+the host permits its native-map exemption only on the final row. Ordinary
+combined builds remain byte-identical; this profile does not change the host.
+
+Private entry01 (SHA
+`567528756b145881a0d3fb05edcaf2673dda0f032368e0734d0d73b35d65b825`)
+passes20 assisted-QEMU native-key checks/8frames from native menu tabs through
+d9 into settings and back. Entry/root/back frames were inspected. A separate
+19-check/7frame native-key run covers all six grid selections with the seventh
+row present. These results apply to entry01, before the battery binding below.
+
+Entry02 is9,612 bytes, image9,344 and BSS3,760, SHA
+`9a086f58748b34beaa9e45c823ad585ef45983b64ab756c4566115592a2a46e9`.
+It starts the actual battery renderer OFF to match the model and publishes its
+enabled state after native settings actions. Forty-six compiled menu checks
+pass; another38 automatic-battery checks enable it through the compiled settings
+callback with supplied GUI queue boundaries. This verifies the actual included
+renderer, not just the model flag. The remaining preset/master settings still
+edit the model only, and configuration persistence is not connected.
+
+The first entry02 native battery integration run is retained as a failure.
+Native menu keys enable the actual percentage in shooting and disable the owned
+overlay, but the stock battery ROI does not match the initial baseline after
+MENU return: the native icon is absent. All three shooting frames were inspected.
+The emulator supplies bar/icon visibility requests, never a percentage or the
+setting word. The longer integration02 adds a disabled-only native-menu control
+round trip and native object diagnostics. It passes25 checks/6frames: the
+disabled control preserves the stock icon, native keys enable the actual
+renderer, and disable restores the complete RGB frame byte-identically. Its
+virtual native battery sample is0%; this is not physical telemetry. All frames
+were inspected or matched byte-identically to the inspected restored frame.
+
+This second run does not resolve the first run's restoration failure: no
+production code changed, and the preceding disabled control changes the boot/
+menu sequence. Visual review also catches stale battery status text: the ON
+capture still reads OFF and the OFF capture reads ON, despite the correct
+renderer flag and shooting behavior. This extends the earlier indicator timing
+gap to actual status values. Reproduce the immediate-after-boot restoration
+failure and correct native value repaint/cache timing before treating this
+profile as complete. Green state checks do not establish a correct menu image.
+This supersedes the earlier prototype's model-only battery limitation; it does
+not complete custom DISP, every menu indicator, lifecycle or physical telemetry.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-settings --output .private/builds/display-settings-new
+.venv\Scripts\python.exe tools/audit_z7_settings_menu.py --build .private/builds/20261119-display-host-02 --module .private/builds/display-settings-new --output .private/evidence/display-settings-new.json
+.venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/display-settings-new --view settings-entry --output .private/evidence/display-settings-entry-new
+.venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/display-settings-new --view settings-battery --battery-icon-fixture --output .private/evidence/display-settings-battery-new
+```
