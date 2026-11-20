@@ -7,6 +7,7 @@
 #include "disp.h"
 #include "gui.h"
 #include "information.h"
+#include "worker.h"
 
 #define Z7_HOST_STATE 0xa9700000u
 #define Z7_HOST_STATE_BYTES 256u
@@ -35,12 +36,14 @@ struct z7_host_state {
     uint32_t information_cycle, information_cycle_registered;
     uint32_t before_information_update, information_update_registered;
     uint32_t information_cycle_running, information_update_running;
-    uint32_t reserved[11];
+    uint32_t worker_callback, worker_registered, worker_running, resident_image_size;
+    uint32_t reserved[7];
     uint32_t guards[4];
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");
 uint32_t z7_module_load_once(struct z7_host_state *state);
 void z7_module_worker(struct z7_host_state *state);
+void z7_module_worker_tick(void);
 void z7_module_boot(void);
 uint32_t z7_autoop_init(void);
 const uint16_t *z7_display_grid_source(void);

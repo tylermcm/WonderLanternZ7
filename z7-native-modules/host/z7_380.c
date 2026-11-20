@@ -13,12 +13,13 @@ static uint32_t register_disp_cycle(uint32_t (*callback)(void));
 static uint32_t register_after_gui_update(void (*callback)(void));
 static uint32_t register_information_cycle(uint32_t (*callback)(void));
 static uint32_t register_before_information_update(void (*callback)(void));
-static const struct z7_module_information_api api = {
-    {{{{Z7_MODULE_ABI, sizeof(api), Z7_MODULE_TARGET, register_display, register_grid_menu}, register_before_update},
+static uint32_t register_worker(void (*callback)(void));
+static const struct z7_module_worker_api api = {
+    {{{{{Z7_MODULE_ABI, sizeof(api), Z7_MODULE_TARGET, register_display, register_grid_menu}, register_before_update},
       register_disp_cycle}, register_after_gui_update},
-    register_information_cycle, register_before_information_update
+    register_information_cycle, register_before_information_update}, register_worker
 };
-_Static_assert(sizeof(api) == 40, "Information API prefix layout");
+_Static_assert(sizeof(api) == 44, "Worker API prefix layout");
 static void *allocate(uint32_t n) { return FN(0x1016fe39u, void *, uint32_t, uint32_t)(n, 0); }
 static void release(void *p) { FN(0x1016fe4bu, void, void *)(p); }
 static void delay(uint32_t n) { FN(0x1017081fu, void, uint32_t)(n); }
@@ -46,6 +47,28 @@ static uint32_t loading_data(struct z7_host_state *s, uintptr_t p, uint32_t n)
 static uint32_t loading_code(struct z7_host_state *s, uint32_t fn)
 {
     return (fn & 1) && within(fn & ~1u, s->loading_image, s->loading_image_size, 2);
+}
+static uint32_t register_worker(void (*callback)(void))
+{
+    struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->image || s->worker_registered ||
+        s->display_ready || !loading_code(s, (uint32_t)(uintptr_t)callback)) return 0;
+    s->worker_callback = (uint32_t)(uintptr_t)callback;
+    s->worker_registered = 1;
+    return 1;
+}
+void z7_module_worker_tick(void)
+{
+    struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || s->status != Z7_HOST_LOADED || !s->image || !s->allocation ||
+        s->loading_image || !s->worker_registered || !s->worker_callback ||
+        !(s->worker_callback & 1) || s->resident_image_size > s->memory_size ||
+        !within(s->worker_callback & ~1u, s->image, s->resident_image_size, 2)) return;
+    uint32_t expected = 0;
+    if (!__atomic_compare_exchange_n(&s->worker_running, &expected, 1, 0,
+                                    __ATOMIC_ACQUIRE, __ATOMIC_RELAXED)) return;
+    ((void (*)(void))(uintptr_t)s->worker_callback)();
+    __atomic_store_n(&s->worker_running, 0, __ATOMIC_RELEASE);
 }
 static uint32_t register_display(const struct z7_display_hooks *hooks)
 {
@@ -331,7 +354,7 @@ __attribute__((noinline)) void z7_module_publish(uint8_t *body, uint32_t n)
 __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
 {
     return ((uint32_t (*)(const struct z7_module_api *))
-             ((uintptr_t)body + entry + 1))(&api.gui.disp.update.base);
+             ((uintptr_t)body + entry + 1))(&api.information.gui.disp.update.base);
 }
 __attribute__((noinline)) void z7_module_result(struct z7_host_state *s)
 {
@@ -419,6 +442,7 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->information_cycle = s->information_cycle_registered = 0;
     s->before_information_update = s->information_update_registered = 0;
     s->information_cycle_running = s->information_update_running = 0;
+    s->worker_callback = s->worker_registered = s->worker_running = s->resident_image_size = 0;
     s->grid_metadata = s->grid_callbacks = s->grid_menu_registered = s->grid_menu_committed = 0;
     for (uint32_t i = 0; i < sizeof(s->display) / 4; ++i)
         ((volatile uint32_t *)&s->display)[i] = 0;
@@ -432,6 +456,7 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
         s->information_cycle = s->information_cycle_registered = 0;
         s->before_information_update = s->information_update_registered = 0;
         s->information_cycle_running = s->information_update_running = 0;
+        s->worker_callback = s->worker_registered = s->worker_running = s->resident_image_size = 0;
         s->grid_metadata = s->grid_callbacks = s->grid_menu_registered = s->grid_menu_committed = 0;
         for (uint32_t i = 0; i < sizeof(s->display) / 4; ++i)
             ((volatile uint32_t *)&s->display)[i] = 0;
@@ -442,6 +467,7 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->allocation = (uint32_t)(uintptr_t)allocation;
     s->memory_size = memory;
     s->entry_offset = info.entry_offset;
+    s->resident_image_size = info.image_size;
     __asm__ volatile("dmb sy" ::: "memory");
     if (s->display_registered || s->grid_menu_registered || s->update_registered || s->disp_registered || s->gui_registered ||
         s->information_cycle_registered || s->information_update_registered)
@@ -461,7 +487,10 @@ void z7_module_worker(struct z7_host_state *s)
         z7_module_result(s);
     }
     /* Keep the task and any successful module resident; no hot unload. */
-    for (;;) delay(1000);
+    for (;;) {
+        delay(1000);
+        z7_module_worker_tick();
+    }
 }
 void z7_module_boot(void)
 {

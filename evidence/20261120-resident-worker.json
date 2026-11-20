@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "independent_original_z7_work": true,
+  "passed": true,
+  "host": {
+    "main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+    "main_bytes": 33058860,
+    "resident_bytes": 4593,
+    "api_bytes": 44,
+    "state_bytes": 256,
+    "source_fingerprints_verified": 11,
+    "reproducible": true
+  },
+  "worker_probe": {
+    "module_sha256": "428a947e16a756a659a0a88df6dbed67f8ca06d3378ea41baae3efd4aa5db83e",
+    "bytes": 384,
+    "image_bytes": 320,
+    "bss_bytes": 24,
+    "source_fingerprints_verified": 9,
+    "reproducible": true
+  },
+  "scoped_instruction_checks": {
+    "worker": 55,
+    "loader": 99,
+    "display": 316,
+    "gui": 122,
+    "information": 116,
+    "full_five_choice_routing": 54
+  },
+  "scoped_instruction_checks_total": 762,
+  "root_regression_tests": 55,
+  "root_skips": 0,
+  "assisted_qemu": {
+    "checks": 11,
+    "worker_counter_samples": [
+      2,
+      5
+    ],
+    "native_menu_retained": true,
+    "original_worker_task_runs": true,
+    "filesystem_fixture_retired_before_counter_observation": true,
+    "counter_or_pixel_stores_supplied": false,
+    "helper_sources_frozen": true,
+    "png_sha256_verified": true,
+    "qemu_binary_sha256": "f76609ae4cb96060ca1593a352a7ec3fc6af7e29473db756b4bbebf699b45c98",
+    "binary_and_5_source_fingerprints_verified": true
+  },
+  "ownership": {
+    "initialization_only": true,
+    "null_foreign_even_bss_duplicate_late_callbacks_rejected": true,
+    "failed_initialization_retires_before_free": true,
+    "resident_code_bounds_checked": true,
+    "recursive_dispatch_suppressed": true,
+    "older_api_prefixes_preserved": true,
+    "api40_host_rejects_api44_module": true
+  },
+  "supplied_boundaries": [
+    "Read-only module file dispatcher",
+    "Kernel/allocator services in instruction fixtures",
+    "Immediate native delay returns in instruction fixtures",
+    "Application/property/render service inputs in routing fixtures"
+  ],
+  "settings_file_load_save_implemented": false,
+  "physical_scheduling_interval_verified": false,
+  "shutdown_flush_implemented": false,
+  "full_feature_pixels_revalidated_on_this_host": false,
+  "native_information_mirror_resolved": false,
+  "camera_access": false,
+  "physical_card_access": false,
+  "card_staged": false,
+  "flashed": false,
+  "pushed": false,
+  "full_goal_complete": false
+}

@@ -88,7 +88,7 @@ def audit(raw, report, stock, directory, legacy):
     def configure(g, name, v):
         g.u.mem_write(g.probe_base + symbols[name], struct.pack('<I', v))
 
-    check('api40-information-only-module-loaded', status == 8 and value(f, 'z7_info_probe_api_bytes') == 40 and f.words()[23] == 1)
+    check('api40-prefix-information-only-module-loaded', status == 8 and value(f, 'z7_info_probe_api_bytes') >= 40 and f.words()[23] == 1)
     check('both-registration-contracts', value(f, 'z7_info_probe_cycle_mask') == 63 and value(f, 'z7_info_probe_update_mask') == 63)
     check('init-does-not-call-information-hooks', not value(f, 'z7_info_probe_cycles') and not value(f, 'z7_info_probe_updates'))
     check('native-information-key-event-slots-unchanged',
@@ -203,7 +203,7 @@ def audit(raw, report, stock, directory, legacy):
     old = json.loads((legacy / 'module-host.emulator.json').read_text(encoding='utf-8'))
     failed, status = load(host=old, image=(legacy / 'module-host.emulator.main.bin').read_bytes())
     check('legacy-api32-rejects-api40-module', status == 7 and not failed.live)
-    return dict(passed=True, checks=checks, api_bytes=40, state_bytes=256,
+    return dict(passed=True, checks=checks, api_bytes=value(f, 'z7_info_probe_api_bytes'), minimum_api_bytes=40, state_bytes=256,
                 main_sha256=report['main_payload_sha256'], original_key_admission_executes=True,
                 delegated_prefix_register_stack_lr_flags_verified=True,
                 supplied_boundaries=['Loader/kernel/filesystem/heap', 'Incoming app/registry/snapshot state',

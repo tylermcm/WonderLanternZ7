@@ -82,7 +82,18 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--module', type=Path, help='Explicit read-only diagnostic file service; not a physical card')
     parser.add_argument('--probe-marker', action='store_true', help='Verify the C probe marker in its first BSS word')
+    parser.add_argument('--worker-probe-report', type=Path, help='Verify the bounded worker diagnostic counter during free running')
     args = parser.parse_args()
+    worker_report = None
+    if args.worker_probe_report:
+        if not args.module or args.probe_marker:
+            parser.error('Worker report requires --module and cannot use --probe-marker')
+        worker_report = json.loads(args.worker_probe_report.read_text(encoding='utf-8'))
+        if worker_report.get('kind') != 'original-Z7-resident-worker-diagnostic' or worker_report.get('module_sha256') != hashlib.sha256(args.module.read_bytes()).hexdigest():
+            parser.error('Exact worker diagnostic module/report required')
+        offset = worker_report['symbols']['z7_worker_calls']
+        if offset % 4 or not worker_report['image_bytes'] <= offset <= worker_report['image_bytes'] + worker_report['bss_bytes'] - 4:
+            parser.error('Worker counter must be an owned BSS word')
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         parser.error('Choose a new private directory')
@@ -140,6 +151,24 @@ def main():
             result.update(module_loaded=True, modeled_filesystem=True,
                           module_sha256=hashlib.sha256(module_fixture.packet).hexdigest(),
                           filesystem_events=module_fixture.events)
+            if worker_report:
+                check('worker-only-registration-published', words[49] & 1 and words[50] == 1 and words[51] == 0 and
+                      words[52] == worker_report['image_bytes'] and words[22:24] == (0, 0))
+                counter_address = words[12] + worker_report['symbols']['z7_worker_calls']
+                initial = int.from_bytes(camera.remote.memory(counter_address, 4), 'little')
+                samples = [initial]
+                for attempt in range(6):
+                    camera.continue_guest()
+                    time.sleep(2)
+                    snapshot('worker-progress-' + str(attempt + 1))
+                    samples.append(int.from_bytes(camera.remote.memory(counter_address, 4), 'little'))
+                    if samples[-1] >= initial + 2:
+                        break
+                result['worker_counter_samples'] = samples
+                result['worker_delay_argument'] = 1000
+                check('native-resident-worker-advances-without-paint-or-host-counter-writes', samples[-1] >= initial + 2 and all(a <= b for a, b in zip(samples, samples[1:])))
+                words = snapshot('worker-settled')
+                check('worker-returns-and-releases-running-guard', words[51] == 0 and words[10] == 8)
         else:
             check('bounded-missing-module-worker-completed', words[10] == 1 and words[17] == 100)
             check('missing-module-retains-no-code-image', words[12] == 0 and words[13] == 0)

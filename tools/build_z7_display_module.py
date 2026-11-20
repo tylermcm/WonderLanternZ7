@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -47,6 +47,7 @@ def main():
         'gui-update-probe': ('examples/gui_update_probe.c', 'original-Z7-gui-update-diagnostic', 32),
         'information-transition-probe': ('examples/information_transition_probe.c', 'original-Z7-information-transition-diagnostic', 12),
         'information-host-probe': ('examples/information_host_probe.c', 'original-Z7-information-host-diagnostic', 40),
+        'worker-probe': ('examples/worker_probe.c', 'original-Z7-resident-worker-diagnostic', 44),
         'display-histogram-probe': ('examples/display_histogram_probe.c', 'original-Z7-display-histogram-diagnostic', 32),
         'display-groups-probe': ('examples/display_groups_probe.c', 'original-Z7-display-groups-diagnostic', 32),
         'display-other-probe': ('examples/display_other_probe.c', 'original-Z7-display-other-diagnostic', 32),
@@ -87,8 +88,10 @@ def main():
         inputs.append(ROOT / 'z7-native-modules/plugins/focal_sample.h')
     if requested_variant == 'information-transition-probe':
         inputs.append(ROOT / 'z7-native-modules/plugins/information_transition.h')
-    if requested_variant == 'information-host-probe':
+    if requested_variant in ('information-host-probe', 'worker-probe'):
         inputs.extend(ROOT / 'z7-native-modules/sdk' / name for name in ('information.h', 'gui.h', 'disp.h', 'update.h'))
+    if requested_variant == 'worker-probe':
+        inputs.append(ROOT / 'z7-native-modules/sdk/worker.h')
     if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe'):
         inputs.append(ROOT / 'z7-native-modules/plugins/battery_sample.h')
     if args.variant == 'battery-native':
@@ -140,6 +143,8 @@ def main():
             ('probes', 'gui-failure', 'examples/gui_update_probe.c', 'Z7_GUI_PROBE_FAIL'),
             ('probes', 'information-success', 'examples/information_host_probe.c', None),
             ('probes', 'information-failure', 'examples/information_host_probe.c', 'Z7_INFORMATION_PROBE_FAIL'),
+            ('probes', 'worker-success', 'examples/worker_probe.c', None),
+            ('probes', 'worker-failure', 'examples/worker_probe.c', 'Z7_WORKER_PROBE_FAIL'),
             ('failures', 'failed-init', 'plugins/grids_histogram.c', 'Z7_DISPLAY_MODULE_FAIL'),
             ('failures', 'foreign-controls', 'plugins/grids_histogram.c', 'Z7_DISPLAY_MENU_FOREIGN_CONTROLS'),
             ('failures', 'foreign-callback', 'plugins/grids_histogram.c', 'Z7_DISPLAY_MENU_BAD_CALLBACK'),

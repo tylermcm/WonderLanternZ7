@@ -1,5 +1,59 @@
 # Laptop handoff — October 20, 2026
 
+## Resident task callback for persistence - November20,2026
+
+Saved prior native-texture work source-only in58639ac. Continued building beyond
+that investigation. New API44 sdk/worker.h appends init-only register_worker to
+unchanged API40prefix. Existing loader task now delays1000 then dispatches an
+owned callback after successful initialization. No paint/menu I/O. State remains
+256bytes/old offsets; reserved words49..52 now callback/registered/running/code
+length. Registration rejects null/foreign/even/BSS/duplicate/late pointers;
+failed init clears before free; dispatch checks guards/status/residency/code
+bounds and atomic non-reentry. Callback owns its work bounds/shared-state locking.
+No card readiness, shutdown flushing or hardware delay units are claimed.
+
+Private host09 MAIN33058860/resident4593, reproducibleSHA
+7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057.
+Host08 remains preserved; do not substitute prior host08 visual evidence as
+host09 full-profile validation. Existing module05d4981187...15ffcd unchanged.
+Worker-probe01 384bytes/image320/BSS24/SHA
+428a947e16a756a659a0a88df6dbed67f8ca06d3378ea41baae3efd4aa5db83e.
+worker-diagnostics01/probes contains reproducible success/failure builds.
+
+Worker instruction01 PASS55 (actual loop success/failure/missing retries included).
+Loader99/display316/GUI122/information116 PASS on host09. API40host rejects44
+probe. Information audit now checks minimum40prefix instead of exact hostcapacity,
+reports actual44. Root55/no-skips PASS. One harness attempt initially read a
+nonexistent diagnostic SHA metadata key; fixed to record packet SHA. Another
+misread calls as0 when deliberately clearing image pointer; stable probe address
+now verifies actual memory, not missing-state-derived count. Neither was a host
+callback failure. First compile missed nested api.information field; corrected
+before any candidate was produced.
+
+Live worker job51734 TERMINAL PASS11 at
+.private/evidence/20261120-worker-live-01. Counter2->5 under free running after
+module FS fixture retired, guard clear and native MENU still works. No supplied
+counter stores/paint triggers. MENU PNG hash verified; helpers frozen beside run.
+QEMU unchangedf76609ae...9b45c98, all5source+binary hashes verified. Host11source
+and worker9source hashes verified. Live worker is not full-feature display/pixel
+acceptance. Full routing host09 audit6162 TERMINAL PASS54 on unchanged full module05.
+Total scoped instruction checks762; these are not complete pixels/lifecycle.
+Final graph73545 TERMINAL:2514nodes/6451edges; generated graph ignored.
+All jobs terminal. Source evidence:evidence/20261120-resident-worker.json.
+
+NEXT: settings persistence now has a worker execution path, but NO file load/save
+implementation. Establish original-Z7 write/flush/replace contracts before wiring
+I/O; no config.h was saved in pinned-source snapshot, do not assume it exists.
+Read-only loader contracts are in Z7_MODULE_HOST_RESEARCH.md. First native leads
+from exact stock:102D86B0 is the file-object wrapper via function pointer1027C048
+(write request opcode9);102D86A0 is its read sibling via1027C018. These are STATIC
+LEADS ONLY, not yet independently executed write/flush semantics. Do not infer
+flush/rename contracts from neighboring functions or copy Z7II addresses. Preserve
+last known valid configuration on failure and keep I/O off paint/menu callbacks.
+Native Info mirror remains recorded, visual acceptancefalse; do not resume global
+flip experiment. Highlights/portrait/lifecycle/realstats remain in full scope.
+No camera/card/staging/flash/push. Full goal remains active.
+
 ## Native texture contracts; global flip REJECTED — November20,2026
 
 Previousd3a932a turn was PROGRESS. This turn does NOT fix native Info mirroring.

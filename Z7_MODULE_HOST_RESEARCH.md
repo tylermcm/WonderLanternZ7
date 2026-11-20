@@ -37,6 +37,49 @@ publication of an active module. A failed close retains the handle value as a
 diagnostic and blocks retries; it does not claim that the underlying OS resource
 was released. No stale-handle raw-close fallback is attempted.
 
+## Resident worker callback
+
+November20,2026: additive API44 `sdk/worker.h` retains the existing40-byte
+information prefix and every older prefix. One module-owned Thumb callback can
+be registered during initialization. The existing low-priority loader task calls
+it after each native delay argument1000, following successful module publication.
+It is independent of display registration and does not run inside painting or
+menu callbacks. Delay units and physical scheduling intervals are not inferred.
+
+Registration rejects null, foreign, even, BSS and duplicate callbacks. Failed
+initialization clears the staged pointer before releasing storage. Dispatch
+requires valid host guards, loaded status, resident image/allocation and executable
+image bounds; an atomic running guard suppresses recursive/concurrent dispatch.
+The resident image length occupies a formerly reserved state word; all earlier
+state offsets,256-byte reservation and guard offsets remain unchanged. The module
+must bound its callback and coordinate shared settings state. This API supplies
+no card-readiness guarantee, filesystem mutex or shutdown flush.
+
+Private host09 is reproducible, MAIN33058860 bytes, resident4593 bytes, SHA
+`7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057`.
+Worker probe01 is384 bytes, image320/BSS24, SHA
+`428a947e16a756a659a0a88df6dbed67f8ca06d3378ea41baae3efd4aa5db83e`.
+Fifty-five instruction checks include the actual loader loop with success,
+failed initialization and exhausted unavailable-file retries. The earlier API40
+host rejects this API44 module before registration. Loader99, display316,
+GUI122 and information116 checks pass on host09; unchanged full module05 also
+passes54 five-choice routing checks. Root55/no-skips pass. File,
+allocator and kernel/delay boundaries remain supplied in these instruction runs.
+
+Assisted QEMU worker-live01 passes11 checks. The native task loads the module,
+then its counter advances2 to5 during free running with the modeled file fixture
+already retired. The worker returns with its running guard clear and native MENU
+input remains operational. No host counter stores or paint callback drives it.
+The existing emulator binary remainsf76609ae...9b45c98; all5source fingerprints
+and binary hash verified. Host11source and probe9source hashes verified. The
+private MENU PNG hash is verified; this is a startup/task compatibility check,
+not full display-feature or camera timing validation. Frozen helper sources are
+retained beside the private run. No physical card or camera was accessed.
+
+This is the execution path needed for future settings loading/saving, not an
+implemented configuration writer. Keep card persistence and shutdown/recovery
+assessment open; no write is registered by existing display profiles.
+
 ## Original-Z7 interface derivation
 
 All instruction inspection uses the pinned stock MAIN SHA-256

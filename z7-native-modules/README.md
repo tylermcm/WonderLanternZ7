@@ -26,6 +26,12 @@ after the original shooting GUI update returns. Earlier API prefixes remain
 compatible. Consumers must revalidate context; this is not a frame/ISP fence.
 The additive API40 `sdk/information.h` provides owned init-only admitted Info-DISP
 and before-Info-update callbacks. Its [validation record](../Z7_INFORMATION_APP_RESEARCH.md#implemented-additive-host-interface) separates instruction sinks from native live compatibility.
+The additive API44 `sdk/worker.h` supplies one initialization-only resident-task
+callback after native delay argument1000. It enables background work without
+performing file I/O from paint/menu callbacks. Registration, failed-init cleanup,
+code bounds and recursive-dispatch protection are checked independently. This
+does not implement settings persistence or establish card/shutdown timing;
+see [the worker record](../Z7_MODULE_HOST_RESEARCH.md#resident-worker-callback).
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and
