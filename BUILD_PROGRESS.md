@@ -290,6 +290,20 @@ terminal. Other information, focal length, information app, highlights, portrait
 persistence, menu-return and broader lifecycle remain; full goal stays active.
 No camera/card access, staging, flashing or push.
 
+## Focal native binding and ADL request isolation — November 20, 2026
+
+106 native instruction checks identify original VR widget50/control2 as the
+existing mm text, including whole-mm truncation and32 preparation-prefix cases.
+It cannot substitute directly for the independent fractional live focal feature;
+the live lens source and separate object ownership remain to be implemented.
+15 additional ADL checks establish identical original image requests/reset words
+for the two captured states, while explicitly retaining the65-pixel RGB failure.
+No production C, module binary or emulator renderer changed. New targeted audits
+pass; the root suite was not repeated for instruction-fixture/documentation-only
+changes. See `FOCAL_LENGTH_RESEARCH.md` and source-only evidence
+`evidence/20261120-native-focal-and-adl.json`. Full goal remains active; all jobs
+terminal. No camera/card access, staging, flashing or push.
+
 ## Other information — November 20, 2026
 
 The optional Other01 profile adds18 independently identified native widgets to

@@ -1,5 +1,50 @@
 # Laptop handoff — October 20, 2026
 
+## Native focal-text and ADL request contracts — November 20, 2026
+
+Previous goal turn made progress: Other01 committed cd32b05, with a retained
+horizon ADL pixel failure. This turn narrows that failure and identifies the
+original native mm text. No production C or module binary changed; Other01
+source input hashes still match. All jobs TERMINAL; no QEMU restart this turn.
+Full goal remains active; no camera/card access, staging, flash or push.
+
+`tools/audit_z7_adl_repaint.py` PASSES15 targeted checks using immutable captured
+all-on4 and Other ON states from failed horizon live01. Original102F354E updater,
+dual-image selector102F309A, native output-style query102F3006 and object reset
+102F2B8C execute; dirty predicate, owned substitute objects and drawing sinks are
+supplied. Both paths select2968/2969 with identical draw requests/reset words.
+Snapshot, control records and all masks agree. RGB STILL differs65pixels; result
+explicitly says input_live_run_passed=false, full_rgb_equal=false and
+pixel_mismatch_cleared=false. This does not establish later paint/composition.
+Private result `.private/evidence/20261120-adl-repaint-02.json`.
+
+`tools/audit_z7_focal_native.py` PASSES106checks/18formatting/32prefix cases.
+Original widget50 (VR) has image controls0/1 and mm text2; updater102F6BF7,
+prep1036F2B1, formatter101709A8. Native B0 clamp60..40000 then/10 +%dmm turns245
+into24mm; zero formats6mm if visibility is supplied. Prefix1036F2B0 stops before
+1036F35C context/layout: text visible iff AC!=0/B0!=0/context135 in0,2. Collector
+sourceE4/E8 keys153D/1548 map to snapshotAC/B0. Live electronic-lens provenance
+is NOT established. Raw propertylookup10070204 rejects2014; this namespace is not
+assumed equivalent to pinned Z7II10634177. Widget60 on this Z7 is flash-focus,
+not the Z7II dedicated focal widget. Private focal result native01.
+
+Read `FOCAL_LENGTH_RESEARCH.md` for contracts and implementation constraints.
+NEXT focal: independently identify original live lens-controller getter and
+communication/units/invalid-data rules. Use a separate native text object (or
+prove separate child ownership); reusing VR widget50 parent would couple Focal
+and Other/VR selection. Battery pool1199 and label299 are already reserved;
+never collide or replace a native slot. Native container allocation/teardown in
+battery_percent.c is an existing local lead. No focal implementation claimed.
+NEXT ADL: distinguish native object bitmap state, dirty erase/repaint and final
+overlay composition with NEW observations before another horizon run. Avoid
+blind retries, excluded edge pixels and composed references. Full remaining
+information app/highlights/portrait/persistence and broader lifecycle stay open.
+
+Source-only evidence `evidence/20261120-native-focal-and-adl.json`. Existing graph
+used for exploration, refreshed2267nodes/5745edges, ignored. Source manifest
+refreshed at this local source-only checkpoint. No root suite repeat: production
+code unchanged; both added instruction audits executed on exact stock MAIN.
+
 ## Other information and wide ownership — November 20, 2026
 
 Previous turn made progress (cross-page native information). This checkpoint adds

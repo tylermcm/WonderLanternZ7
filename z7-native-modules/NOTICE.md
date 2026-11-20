@@ -98,3 +98,9 @@ The Other-information grouping concept comes from the same pinned JKWTCN
 and 64-bit conditional ownership are local work. Firmware resources, native
 icons, screenshots and generated packages remain private. Nikon's public display
 reference is used only to cross-check label meanings, never native widget IDs.
+
+The ADL repaint and focal-native audits are independent local MIT instruction
+fixtures. They identify original-Z7 native contracts without incorporating
+firmware bytes or decoded resources. The focal target is informed by pinned
+JKWTCN `sdk/focal_length.h` under the preserved MIT license; no Z7II addresses
+are substituted into an original-Z7 implementation.

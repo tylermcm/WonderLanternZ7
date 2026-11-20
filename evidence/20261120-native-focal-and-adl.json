@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "scope": "Independent original-Z7 native focal-text binding and ADL request-selection diagnostics; no new feature package",
+  "module_changed": false,
+  "existing_module_sha256": "cbadda7a7dfbc27a9c9ca2f955c96dd3c5ae767bc0880178ca8402267c26ae8d",
+  "existing_module_source_inputs_verified": true,
+  "adl": {
+    "checks": 15,
+    "request_audit_passed": true,
+    "native_updater_selection_equivalent": true,
+    "input_live_run_passed": false,
+    "full_rgb_equal": false,
+    "differing_rgb_pixels": 65,
+    "difference_bounds": [
+      626,
+      3,
+      660,
+      51
+    ],
+    "pixel_mismatch_cleared": false,
+    "completed_paint_proven": false,
+    "supplied_boundaries": [
+      "Captured incoming snapshots and controls",
+      "Owned substitute object storage",
+      "Dirty predicate returns1",
+      "Native drawing sinks"
+    ]
+  },
+  "focal": {
+    "checks": 106,
+    "native_audit_passed": true,
+    "native_widget": 50,
+    "native_controls": {
+      "vr_icons": [
+        0,
+        1
+      ],
+      "mm_text": 2
+    },
+    "formatting_cases": 18,
+    "preparation_prefix_cases": 32,
+    "existing_native_formatter": "whole millimeters after clamp60..40000 and divide10",
+    "fractional_example": {
+      "supplied_value": 245,
+      "native_text": "24mm"
+    },
+    "zero_suppressed_by_preparation_before_formatter": true,
+    "source_snapshot_fields": {
+      "vr": "0xac",
+      "focal": "0xb0",
+      "context": "0x135"
+    },
+    "collector_source_keys": {
+      "vr_key": "0x153d",
+      "mm_key": "0x1548"
+    },
+    "live_lens_source_identified": false,
+    "focal_feature_implemented": false,
+    "supplied_boundaries": [
+      "Incoming snapshots and controls",
+      "Dirty predicate",
+      "Drawing sinks and owned object storage"
+    ],
+    "preparation_scope": "Prefix1036F2B0 stops before native context/layout services at1036F35C",
+    "raw_key_lookup_namespace_not_assumed_equivalent_to_z7ii": true
+  },
+  "source_sha256": {
+    "tools/audit_z7_adl_repaint.py": "1483b772d082afdfbb3d3f072c7c7c2bc171642e56aadeb2d3b926b3752a66b8",
+    "tools/audit_z7_focal_native.py": "69660ef3bd85943e9cb09170b07d3161aaaeb302d049bee25c14a7647e122f2c"
+  },
+  "pinned_reference": {
+    "commit": "50a22b24c50619cffa646dac386e8334659f475a",
+    "source": "sdk/focal_length.h",
+    "license": "MIT"
+  },
+  "graph": {
+    "nodes": 2267,
+    "edges": 5745,
+    "ignored": true
+  },
+  "remaining": [
+    "Identify original live lens-controller getter and communication/units/invalid-data contracts",
+    "Allocate independent focal native text ownership without changing VR or coupling Other selection",
+    "Trace ADL object bitmap, native repaint and overlay composition",
+    "Previously recorded information-app/highlights/portrait/persistence and broader lifecycle work"
+  ],
+  "all_jobs_terminal": true,
+  "camera_access": false,
+  "card_access": false,
+  "staged_for_camera": false,
+  "flashed": false,
+  "pushed": false,
+  "full_goal_complete": false
+}
