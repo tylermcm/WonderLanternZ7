@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe', 'settings-files-probe', 'display-persistence-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -49,10 +49,12 @@ def main():
         'information-host-probe': ('examples/information_host_probe.c', 'original-Z7-information-host-diagnostic', 40),
         'worker-probe': ('examples/worker_probe.c', 'original-Z7-resident-worker-diagnostic', 44),
         'settings-storage-probe': ('examples/settings_storage_probe.c', 'original-Z7-settings-storage-diagnostic', 12),
+        'settings-files-probe': ('examples/settings_files_probe.c', 'original-Z7-settings-files-diagnostic', 12),
         'display-histogram-probe': ('examples/display_histogram_probe.c', 'original-Z7-display-histogram-diagnostic', 32),
         'display-groups-probe': ('examples/display_groups_probe.c', 'original-Z7-display-groups-diagnostic', 32),
         'display-other-probe': ('examples/display_other_probe.c', 'original-Z7-display-other-diagnostic', 32),
         'display-information-probe': ('examples/display_information_probe.c', 'original-Z7-display-information-diagnostic', 40),
+        'display-persistence-probe': ('examples/display_persistence_probe.c', 'original-Z7-display-persistence-diagnostic', 44),
         'display-focal-probe': ('examples/display_focal_probe.c', 'original-Z7-display-focal-diagnostic', 32),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
@@ -76,11 +78,11 @@ def main():
         source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
     requested_variant = args.variant
-    if requested_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe'):
+    if requested_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         # The six-group adapter includes the complete histogram/base stack.
         args.variant = 'display-histogram-probe'
         report['information_groups'] = dict(shutter=10, aperture=11, iso=15, shooting=5, release=51, focus=2)
-        if requested_variant in ('display-other-probe', 'display-focal-probe', 'display-information-probe'):
+        if requested_variant in ('display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
             report['other_information_widgets'] = [3,6,7,8,9,13,14,16,17,26,27,34,38,41,44,46,50,53]
             report['readout_ownership_bits'] = 64
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
@@ -101,10 +103,12 @@ def main():
         inputs += [ROOT / 'z7-native-modules/plugins/grids_histogram.c', ROOT / 'z7-native-modules/plugins/battery_percent.c']
     if args.variant in ('clean-probe', 'disp-key-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/combined_display.c', ROOT / 'z7-native-modules/examples/clean_display_policy.h']
-    if args.variant in ('settings-probe', 'settings-storage-probe'):
+    if args.variant in ('settings-probe', 'settings-storage-probe', 'settings-files-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/display_settings.c', ROOT / 'z7-native-modules/plugins/display_settings.h']
-    if requested_variant == 'settings-storage-probe':
+    if requested_variant in ('settings-storage-probe', 'settings-files-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/settings_storage.c', ROOT / 'z7-native-modules/plugins/settings_storage.h']
+    if requested_variant == 'settings-files-probe':
+        inputs += [ROOT / 'z7-native-modules/plugins/settings_files.c', ROOT / 'z7-native-modules/plugins/settings_files.h']
     if args.variant in ('settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/combined_display.c', ROOT / 'z7-native-modules/examples/settings_menu_policy.h',
                    ROOT / 'z7-native-modules/plugins/display_settings.c', ROOT / 'z7-native-modules/plugins/display_settings.h']
@@ -118,18 +122,22 @@ def main():
         inputs += [ROOT / 'z7-native-modules/sdk/gui.h', ROOT / 'z7-native-modules/sdk/disp.h', ROOT / 'z7-native-modules/sdk/update.h']
     if args.variant == 'display-histogram-probe':
         inputs += [ROOT / 'z7-native-modules/examples/display_base_probe.c', ROOT / 'z7-native-modules/examples/display_histogram_policy.h']
-    if requested_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe'):
+    if requested_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         inputs.append(ROOT / 'z7-native-modules/examples/display_histogram_probe.c')
-    if requested_variant in ('display-other-probe', 'display-focal-probe', 'display-information-probe'):
+    if requested_variant in ('display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         inputs += [ROOT / 'z7-native-modules/examples/display_groups_probe.c', ROOT / 'z7-native-modules/examples/display_other_bindings.h']
-    if requested_variant in ('display-focal-probe', 'display-information-probe'):
+    if requested_variant in ('display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         inputs += [ROOT / 'z7-native-modules/examples/display_other_probe.c', ROOT / 'z7-native-modules/examples/display_focal_policy.h', ROOT / 'z7-native-modules/plugins/focal_sample.h']
         report['focal_overlay_scope'] = 'LCD landscape custom presets; EVF and rotation remain open'
         report['focal_owned_slot'] = 1198
         report['focal_label_slot'] = 298
-    if requested_variant == 'display-information-probe':
+    if requested_variant in ('display-information-probe', 'display-persistence-probe'):
         inputs += [ROOT / 'z7-native-modules/examples/display_focal_probe.c', ROOT / 'z7-native-modules/examples/display_information_policy.h', ROOT / 'z7-native-modules/plugins/information_transition.h', ROOT / 'z7-native-modules/sdk/information.h']
         report['information_app_index'] = 13
+    if requested_variant == 'display-persistence-probe':
+        inputs += [ROOT / 'z7-native-modules/examples/display_information_probe.c', ROOT / 'z7-native-modules/examples/display_persistence_policy.h', ROOT / 'z7-native-modules/sdk/worker.h']
+        inputs.extend(ROOT / 'z7-native-modules/plugins' / name for name in ('settings_storage.c', 'settings_storage.h', 'settings_files.c', 'settings_files.h'))
+        report['configuration_storage'] = dict(record_bytes=80, slots=2, worker_api=44, physical_card_verified=False)
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)

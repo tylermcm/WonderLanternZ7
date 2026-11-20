@@ -120,6 +120,87 @@ hashes; existing display/worker profiles were not changed.
 .venv\Scripts\python.exe tools/audit_z7_settings_storage.py --build .private/builds/20261120-display-host-09 --module .private/builds/settings-storage-new --output .private/evidence/settings-storage-new.json
 ```
 
+## Native files and persistent full display profile
+
+November20,2026: the optional `display-persistence-probe` now combines the FULL
+focal/Other/histogram/information profile with startup loading and background
+saves. It requires API44. The older API40 full profile and API32 focal profile
+remain byte-identical when this option is disabled. This is software instruction
+validation with supplied files, not a physical-card or flash-ready release.
+
+`plugins/settings_files.c` owns only `A:\Z7CFG0.DAT` and `A:\Z7CFG1.DAT`.
+Read-only open uses original1027BFA2 with flags0/mode0. Read1027C018 requests81
+bytes to establish the exact80-byte record boundary; a successful short/long
+read is a known unusable record, not confirmed absence. Only native status
+`0x80000010` is classified as absence. Its meaning is bound to original FAT
+root end/exhaustion and read-open propagation, with sector/path services
+supplied. Other driver/card states remain a physical validation gap.
+
+Create1027C0DA passes mode0; original1023F146 forces open flags0301. Executed
+original open instructions select descriptor mode026 and truncate an existing
+writable file, while read mode1 does not truncate. Write1027C048 requires all80
+bytes. Both read and write close via original1027BFCC. Any nonzero close result
+retains the descriptor and parks ALL adapter I/O for that boot. Initialization
+cannot discard that unknown handle, including descriptor0. No raw-close retry
+is used. The journal verifies read-back before reporting saved.
+
+Owned192-byte,64-byte-aligned staging buffers contain every line touched by the
+native helpers. Writes clean with101E9F38 before filesystem submission. Reads
+invalidate with101E9F76 before and after submission. Each80/81-byte request
+covers three64-byte lines in the instruction tests. This is an address/order
+check; physical coherence and durable media flush are unverified. Native
+1027BFEE is a64-bit seek interface, not a flush function.
+
+The combined initializer checks API44 before menu preparation and registers all
+callbacks before starting settings I/O. Loading runs on the existing loader task
+while host readiness and native menu publication remain clear. No failing init
+operation follows that I/O, so uncertain descriptor state remains resident.
+Valid stored settings determine the initial model/battery flag. Confirmed missing
+or invalid records use defaults without auto-writing. Failed/ambiguous startup
+loading keeps volatile defaults and blocks saves for that boot; restart retries
+loading. A worker never publishes a late replacement into active menu state.
+
+Menu edits stage a complete model, then publish changed words atomically between
+odd/even revisions. Menu navigation and rejected edits do not dirty settings.
+The resident worker takes a bounded revision-checked atomic snapshot. It observes
+an edit, waits two further quiet ticks, then attempts a save on the fourth tick.
+Native delay units are not assumed to be milliseconds. Unchanged revisions do
+not write. Failed saves retry after five worker ticks, except an uncertain close
+parks the adapter. An edit arriving during I/O remains dirty after the older
+snapshot is acknowledged, and a later cycle saves the newer edit.
+
+Private files-probe01 is2764bytes, image2688/BSS156, API12, SHA
+`0d724be9f907954787894a5148e04b4f7403327dd5127784b1b89c5ea7da422b`.
+Its215 checks execute original directory/open/cache/wrapper instructions with
+supplied dispatcher/sector/path services. Coverage includes both slots, native
+mode/truncation, lengths, every short-write cut point, read/write/close failures,
+retained descriptor0, cache line/order bounds and journal reload after a short file.
+
+Persistent profile01 is22936bytes, image22656/BSS5584, API44, SHA
+`6ba9f4cfa6c247d3b6d8ce5023084dc16b83e516712bec97ea81769823a85bb6`.
+Forty-eight integration checks execute startup loading, actual native menu
+adapters, publication, quiet ticks/retries and fresh-module reloads. Two supplied
+task-preemption cases run the actual menu callback on a separate emulated stack,
+then restore worker registers/stack/PC: one interrupts a snapshot before a
+multi-field reset, another interrupts filesystem submission before a newer menu
+edit. Complete snapshots and revision acknowledgements are verified. This is
+not a complete native scheduler or physical timing proof. Another54 existing
+five-choice routing checks pass on the persistent profile with separate settings
+files supplied. Root55/no-skips pass. Current10/39 source-input hashes verified
+for the files diagnostic/full profile, respectively.
+
+Assisted-QEMU UI, boot/save/restart observation, current-profile pixel/lifecycle
+validation and clear unsaved-state presentation remain open. No physical card,
+shutdown flush or installation/recovery acceptance is established. The separate
+native information mirroring gap, highlights/portrait and broader lifecycle/real
+statistics work remain open. Firmware, modules and configuration bytes stay private.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-persistence-probe --output .private/builds/display-persistence-new
+.venv\Scripts\python.exe tools/audit_z7_display_persistence.py --build .private/builds/20261120-display-host-09 --module .private/builds/display-persistence-new --legacy-build .private/builds/20261120-display-host-08 --output .private/evidence/display-persistence-new.json
+.venv\Scripts\python.exe tools/audit_z7_display_information.py --build .private/builds/20261120-display-host-09 --module .private/builds/display-persistence-new --persistence-transport --output .private/evidence/display-persistence-routing-new.json
+```
+
 ## Compiled validation
 
 Private settings-probe02 is1,344 bytes, image1,280, BSS172, SHA

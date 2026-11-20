@@ -4,6 +4,9 @@
  */
 #include "module.h"
 #include "display.h"
+#ifdef Z7_SETTINGS_PERSISTENCE
+#include "worker.h"
+#endif
 #ifdef Z7_INFORMATION_APP_PROBE
 #include "information.h"
 #include "information_transition.h"
@@ -75,6 +78,9 @@ static void focal_combined_after_gui(void)
 #ifdef Z7_INFORMATION_APP_PROBE
 #include "../examples/display_information_policy.h"
 #endif
+#ifdef Z7_SETTINGS_PERSISTENCE
+#include "../examples/display_persistence_policy.h"
+#endif
 
 #ifdef Z7_CLEAN_DISPLAY_PROBE
 #include "../examples/clean_display_policy.h"
@@ -116,6 +122,10 @@ uint32_t z7_main(const struct z7_module_api *api)
 {
     if (!api || api->abi != Z7_MODULE_ABI || api->target != Z7_MODULE_TARGET ||
         api->size < sizeof(*api) || !api->register_display || !api->register_grid_menu) return 1;
+#ifdef Z7_SETTINGS_PERSISTENCE
+    const struct z7_module_worker_api *worker_api = (const struct z7_module_worker_api *)api;
+    if (api->size < sizeof(*worker_api) || !worker_api->register_worker) return 1;
+#endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
     const struct z7_module_update_api *update_api = (const struct z7_module_update_api *)api;
     if (api->size < sizeof(*update_api) || !update_api->register_before_update) return 1;
@@ -158,6 +168,10 @@ uint32_t z7_main(const struct z7_module_api *api)
 #else
     if (!gui_api->register_after_gui_update(histogram_after_gui)) return 1;
 #endif
+#endif
+#ifdef Z7_SETTINGS_PERSISTENCE
+    if (!worker_api->register_worker(persistence_worker)) return 1;
+    persistence_prepare();
 #endif
     /* No failing operation follows these native scalar stores. Host readiness
      * and native menu pointer publication still follow successful return.

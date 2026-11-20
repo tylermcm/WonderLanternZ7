@@ -4,6 +4,9 @@
  */
 #include "../plugins/display_settings.c"
 struct z7_display_settings z7_menu_settings;
+#ifdef Z7_SETTINGS_PERSISTENCE
+static void persistence_commit(const struct z7_display_settings *);
+#endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
 #include "display_readouts_policy.h"
 #endif
@@ -110,23 +113,33 @@ static uint32_t sm_action(uint32_t object)
     uint32_t row = *(volatile uint16_t *)(uintptr_t)(object + 22) + *(volatile uint16_t *)(uintptr_t)(object + 24);
     if (row >= 7 || z7_settings_preset >= 4) return 0;
     uint32_t view = z7_settings_view, p = z7_settings_preset;
+#ifdef Z7_SETTINGS_PERSISTENCE
+    struct z7_display_settings staged = z7_menu_settings;
+#define SM_MODEL staged
+#else
+#define SM_MODEL z7_menu_settings
+#endif
     if (!view) {
-        if (row == 0) z7_settings_flag(&z7_menu_settings, 0, !(z7_menu_settings.flags & 1));
+        if (row == 0) z7_settings_flag(&SM_MODEL, 0, !(SM_MODEL.flags & 1));
         else if (row < 5) { z7_settings_preset = row - 1; z7_settings_view = 1; }
-        else if (row == 5) z7_settings_page(&z7_menu_settings, 4, !(z7_menu_settings.enabled_pages & 16));
-        else z7_settings_flag(&z7_menu_settings, 1, !(z7_menu_settings.flags & 2));
+        else if (row == 5) z7_settings_page(&SM_MODEL, 4, !(SM_MODEL.enabled_pages & 16));
+        else z7_settings_flag(&SM_MODEL, 1, !(SM_MODEL.flags & 2));
     } else if (view == 1) {
-        if (!row) z7_settings_page(&z7_menu_settings, p, !(z7_menu_settings.enabled_pages & (1u << p)));
+        if (!row) z7_settings_page(&SM_MODEL, p, !(SM_MODEL.enabled_pages & (1u << p)));
         else if (row == 1) z7_settings_view = 2;
-        else if (row < 6) z7_settings_component(&z7_menu_settings, p, row - 2, !(z7_menu_settings.components[p] & (1u << (row - 2))));
-        else z7_settings_reset(&z7_menu_settings, p);
+        else if (row < 6) z7_settings_component(&SM_MODEL, p, row - 2, !(SM_MODEL.components[p] & (1u << (row - 2))));
+        else z7_settings_reset(&SM_MODEL, p);
     } else if (view == 2) {
-        if (row < 6) z7_settings_information(&z7_menu_settings, p, row, !(z7_menu_settings.information[p] & (1u << row)));
+        if (row < 6) z7_settings_information(&SM_MODEL, p, row, !(SM_MODEL.information[p] & (1u << row)));
         else z7_settings_view = 3;
     } else if (view == 3) {
-        if (row < 2) z7_settings_information(&z7_menu_settings, p, row + 6, !(z7_menu_settings.information[p] & (1u << (row + 6))));
+        if (row < 2) z7_settings_information(&SM_MODEL, p, row + 6, !(SM_MODEL.information[p] & (1u << (row + 6))));
         else if (row == 6) z7_settings_view = 2;
     }
+#ifdef Z7_SETTINGS_PERSISTENCE
+    persistence_commit(&staged);
+#endif
+#undef SM_MODEL
     ++z7_settings_actions;
     z7_battery_enabled = !!(z7_menu_settings.flags & Z7_SETTINGS_BATTERY);
     sm_render(object);

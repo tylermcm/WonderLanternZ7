@@ -46,11 +46,12 @@ class DisplayInformationFixture(FocalOverlayFixture):
             super().hook(u, address, size, context)
 
 
-def audit(raw, host, packet, module):
+def audit(raw, host, packet, module, fixture_class=None):
     if hashlib.sha256(raw).hexdigest() != host['main_payload_sha256'] or hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Host/module fingerprint mismatch')
     checks = []
     symbols = module['symbols']
+    fixture_class = fixture_class or DisplayInformationFixture
 
     def check(name, condition):
         checks.append(dict(name=name, passed=bool(condition)))
@@ -58,7 +59,7 @@ def audit(raw, host, packet, module):
             raise AssertionError(name)
 
     def load(native=3):
-        f = DisplayInformationFixture(raw, host, packet)
+        f = fixture_class(raw, host, packet)
         check('full-module-load-' + str(len(checks)), f.call(host['symbols']['z7_module_load_once'], STATE) == 8)
         f.base = f.words()[12]
         f.model = f.base + symbols['z7_menu_settings']
@@ -241,7 +242,7 @@ def audit(raw, host, packet, module):
     check('master-off-preserves-foreign-mask-without-transition', not f.requests and f.read(mask_address) == foreign)
     legacy = ROOT / '.private/builds/20261119-display-host-07'
     old = json.loads((legacy / 'module-host.emulator.json').read_text(encoding='utf-8'))
-    f = DisplayInformationFixture((legacy / 'module-host.emulator.main.bin').read_bytes(), old, packet)
+    f = fixture_class((legacy / 'module-host.emulator.main.bin').read_bytes(), old, packet)
     check('api32-host-rejects-full-information-profile-before-native-menu-preparation',
           f.call(old['symbols']['z7_module_load_once'], STATE) == 7 and not f.live and not f.labels and not f.words()[23])
     return dict(passed=True, checks=checks, main_sha256=host['main_payload_sha256'], module_sha256=module['module_sha256'],
@@ -256,12 +257,18 @@ def main():
     p.add_argument('--build', type=Path, required=True)
     p.add_argument('--module', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--persistence-transport', action='store_true', help='Supply separate journal files for the API44 persistent profile')
     a = p.parse_args()
     if not a.output.resolve().is_relative_to(ROOT / '.private') or a.output.exists():
         p.error('Choose a new private output')
+    fixture_class = None
+    if a.persistence_transport:
+        from audit_z7_display_persistence import PersistenceFixture
+        fixture_class = PersistenceFixture
     result = audit((a.build / 'module-host.emulator.main.bin').read_bytes(),
                    json.loads((a.build / 'module-host.emulator.json').read_text(encoding='utf-8')),
-                   (a.module / 'Z7APP.BIN').read_bytes(), json.loads((a.module / 'module.json').read_text(encoding='utf-8')))
+                   (a.module / 'Z7APP.BIN').read_bytes(), json.loads((a.module / 'module.json').read_text(encoding='utf-8')), fixture_class)
+    result['separate_settings_files_transport'] = bool(a.persistence_transport)
     a.output.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps(dict(passed=True, checks=len(result['checks']))))
 

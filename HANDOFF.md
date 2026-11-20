@@ -1,5 +1,85 @@
 # Laptop handoff — October 20, 2026
 
+## Native settings files + full background-save profile - November20,2026
+
+Previous39a6dca turn was PROGRESS (journal policy). This turn implements native
+file adapter AND startup/menu/worker integration in FULL profile, not only a
+standalone policy. No physical card/camera access, staging, flash or push.
+
+plugins/settings_files.c/.h owns A:\Z7CFG0.DAT and A:\Z7CFG1.DAT. Raw native
+open1027BFA2 flags0/mode0; read1027C018 capacity81, require80. Native create
+1027C0DA mode0 ->original1023F146 forces0301 ->descriptor mode026 and truncates
+existing writable file. Write1027C048 requires80; close1027BFCC. Failed close
+retains descriptor (including0), parks ALL I/O and prevents reinit/stale close.
+Native absence80000010 bound by original10255D16 FAT root zero/exhaustion paths
+and read-open propagation; sector/path services supplied, other card/driver
+states remain unverified. Do not call every unavailable error 'missing'.
+Owned192byte/aligned64staging, native clean101E9F38 beforewrite, invalidate
+101E9F76 before/afterread. All3touched lines insideowned array; physicalcache/
+durability NOT proved. Native1027BFEE is seek, NOT flush.
+
+Native files01 builds reproducibly2764bytes/image2688/BSS156/API12/SHA
+0d724be9f907954787894a5148e04b4f7403327dd5127784b1b89c5ea7da422b.
+Files audit03 TERMINALPASS215 at.private/evidence/20261120-settings-files-03.json
+on current harness:bothslots/lengths/all81 short-write prefixes/missing vs errors/
+close-latch/caches/order/reloadjournal. Audit01/02 also215 historical; firstattempt
+expected descriptor24 incorrectly, direct original execution showed26 (write bit
+02), fixed fixture expectation. Adapter code was correct. No weakened ABI guards.
+
+New examples/display_persistence_probe.c defines Z7_SETTINGS_PERSISTENCE and
+includes FULL information/focal/Other/histogram stack. API44 checked before menu
+preparation. All callback registrations including worker happen BEFORE config
+I/O; then persistence_prepare loads on original loader task while native menu
+tag and hostready remain0. No later init failure can free uncertain descriptor
+state. Startup applies valid newest settings + batteryflag; missing/invalid uses
+defaults without writing. Failed/ambiguous startup loading stays volatile for
+that boot and BLOCKS saves until restart (no late worker model replacement).
+
+Actual menu edits stage local model and atomically publish words between odd/
+even revisions. Only changes dirty revision, not navigation/rejected no-ops.
+Worker takes bounded3-attempt atomic snapshot, observes revision, waits2quiet
+checks and saves on fourthtick. No paint/menu I/O. Save failures backoff5ticks;
+close-latch parks foreverforboot. An edit during I/O remains dirty while the
+older snapshot acknowledgement is saved; next cycle saves newer model.
+
+Persistent01 reproducible22936bytes/image22656/BSS5584/API44/SHA
+6ba9f4cfa6c247d3b6d8ce5023084dc16b83e516712bec97ea81769823a85bb6.
+.private/builds/20261120-display-persistence-01 is current optional FULL candidate.
+Current39 source hashes verified; host09 unchanged7d7356e7...d7f057/API44/state256.
+Integration02 job50176 TERMINALPASS48 at
+.private/evidence/20261120-display-persistence-02.json. Original menu activation
+adapter, native files/cache wrappers and worker execute with supplied FS/kernel/
+UI services. Actual menu callback runs on SEPARATE emulated stack while worker
+is stopped mid-snapshot, then mid-file-write; workerCPUcontext restored. Tests
+prove complete two-field reset snapshot, newer edit not falsely saved, later
+save, old record retention and ABI/running-guard preservation. NOT actual native
+scheduler/hardware timing proof. Initial integration01 job97924 PASS36 before
+preemption extension. Earlier fixture missed loader stat op16 fallback, then
+looked for optimized-away sm_action/sm_back symbols; fixed to actual sm_activate/
+sm_back_event adapters. No production failure in these harness attempts.
+
+Existing five-choice routing01 job89016 TERMINALPASS54 on SAME persistent01,
+using --persistence-transport. Audit now accepts fixture_class so separate journal
+files are supplied, not accidentally read from module-file bytes. API32host
+rejects44early. Native adapter215 +integration48 +routing54 =317scoped newchecks.
+Root55/no-skips PASS; py_compile PASS. Old API40full rebuildcompat06 EXACT
+same d4981187...15ffcd (32currentinputs); old API32focalcompat06 EXACTsame
+bd3c4cca...65c3b36 (28currentinputs). Modulehost/QEMU renderer unchanged.
+Graph34528 TERMINAL2595nodes/6691edges after final code edits; generated ignored.
+All jobs terminal. Source evidence:evidence/20261120-display-persistence.json.
+
+NEXT: assisted-QEMU native menu save/restart/pixels on persistent01 with explicit
+TWO writable synthetic journal files. Existing ModuleFileFixture retires after
+module close BEFORE config startup reads, so it MUST be extended carefully to
+keep settings service alive without reusing retired module handles or breaking
+unrelated filesystem calls. Do not treat current instruction checks as live UI
+or real-card proof. Also add clear unsaved-state presentation; model/status fields
+exist but menu currently doesn't show save failure. Failed startup loading is
+latched for thisboot intentionally. Lifecycle/card/cache/shutdown assessment stays
+open. Broader EVF/rotation/AF/lens, highlights, portrait and real statistics remain
+in original scope. Native Info mirror unresolved, visual acceptanceFALSE. Do not
+return to rejected global texture flip. No new installation/recovery clearance.
+
 ## Two-slot settings journal policy - November20,2026
 
 Previous5a71983 turn was PROGRESS (resident worker). New independent MIT

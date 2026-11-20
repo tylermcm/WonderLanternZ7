@@ -57,6 +57,13 @@ for comparison. Its direct-file saving mechanism is not embedded here. The
 current transport diagnostic is in-memory; original-Z7 file I/O, shared-state
 coordination and physical durability remain separate work.
 
+The subsequent `plugins/settings_files.c` binding and optional
+`examples/display_persistence_policy.h` are independent local MIT work. Native
+original-Z7 filesystem/cache interfaces, pre-publication loading, menu revision
+publication and resident-worker saves are tested separately from the original
+in-memory policy. Supplied filesystem/sector/task/UI boundaries and remaining
+physical-card/cache/durability limits are recorded in `DISPLAY_SETTINGS.md`.
+
 `examples/settings_menu_policy.h` is independent local MIT native-interface work
 based on original-Z7 instruction/GUI observations. Native contracts were also
 cross-referenced against this lab's separately licensed sound-menu component;
