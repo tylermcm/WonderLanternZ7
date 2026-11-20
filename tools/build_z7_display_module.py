@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -45,6 +45,7 @@ def main():
         'display-disp-probe': ('examples/display_disp_probe.c', 'original-Z7-display-disp-diagnostic', 28),
         'display-base-probe': ('examples/display_base_probe.c', 'original-Z7-display-base-diagnostic', 28),
         'gui-update-probe': ('examples/gui_update_probe.c', 'original-Z7-gui-update-diagnostic', 32),
+        'information-transition-probe': ('examples/information_transition_probe.c', 'original-Z7-information-transition-diagnostic', 12),
         'information-host-probe': ('examples/information_host_probe.c', 'original-Z7-information-host-diagnostic', 40),
         'display-histogram-probe': ('examples/display_histogram_probe.c', 'original-Z7-display-histogram-diagnostic', 32),
         'display-groups-probe': ('examples/display_groups_probe.c', 'original-Z7-display-groups-diagnostic', 32),
@@ -83,6 +84,8 @@ def main():
               ROOT / 'z7-native-modules/sdk/module.ld']
     if requested_variant == 'focal-sample':
         inputs.append(ROOT / 'z7-native-modules/plugins/focal_sample.h')
+    if requested_variant == 'information-transition-probe':
+        inputs.append(ROOT / 'z7-native-modules/plugins/information_transition.h')
     if requested_variant == 'information-host-probe':
         inputs.extend(ROOT / 'z7-native-modules/sdk' / name for name in ('information.h', 'gui.h', 'disp.h', 'update.h'))
     if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe'):

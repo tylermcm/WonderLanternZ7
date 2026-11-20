@@ -1,5 +1,39 @@
 # Laptop handoff — October 20, 2026
 
+## Information transition ledger — November20,2026
+
+Resumed after Windows update. Host API40 is saved in local source-only7c3be7d;
+all388 indexed source hashes verified. New production helper
+`plugins/information_transition.h` and instruction diagnostic compile
+reproducibly: transition01 SHA8b946c864bfaba71208d6423305339990c1700f226cf56653c7760b165f0f2be,
+1088bytes/image1024/BSS20, API12 (no callbacks registered by this diagnostic).
+The helper is NOT yet connected to the combined custom-DISP module.
+
+Transition audit02 PASSES160checks; root55/no-skips and py_compile pass. Actual
+original setter/getter/native request helper and admitted native exit execute;
+property services, parent request sink and manager/application publication are
+supplied. Preserves saved user page separately from applied page and intermediate
+return0; checks asynchronous entry, original-key exit, four saved baselines,
+failed setter partial publication/rollback/retry, foreign bindings/pages, deferred
+output return and non-authoritative parent return. No app/registry changes across
+helper calls. Caller must FIRST verify overlay/mask/base release; boolean precondition
+is tested, actual component release/pixels remain unverified. New source evidence
+20261120-information-transition.json. Does NOT establish five-choice routing.
+No live jobs remain. Sessions14147/7478 terminalPASS137/160 respectively; graph43593
+terminalPASS2418nodes/6164edges; generated graph remains ignored. First loader experiment with a global Unicorn
+write hook failed inside native filesystem; removing that observer restored the
+unchanged loader. Final audit compares app/registry before/after each operation;
+it does not claim temporal memory-write instrumentation.
+
+NEXT: wire ledger into new API40 five-choice diagnostic, preserving old profiles'
+bit16 rejection until complete. Integration needs native admission on both sides,
+component retirement/cleanup, asynchronous pending state, menu disabled-current
+reselection and master-off Info exit; use original native exit contracts, not fake
+DISP keys or direct app writes. Do not mistake isolated transition success for
+actual app initialization/pixels. Full combined focal/histogram profile, orientation,
+EVF/rotation/lifecycle/persistence/highlights/portrait/real stats remain open.
+No camera/card/staging/flash/push. Full goal active.
+
 ## API40 information host completed — November20,2026
 
 Restart recovery: job67221 TERMINAL PASSED21checks/4frames at

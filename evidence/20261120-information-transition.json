@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "main_sha256": "6ea33985de7c0d35c2f6b026157595b56fdd9167aa79df53cded25e2f25c87ac",
+  "module_sha256": "8b946c864bfaba71208d6423305339990c1700f226cf56653c7760b165f0f2be",
+  "native_setter_getter_request_and_exit_execute": true,
+  "supplied_boundaries": [
+    "Incoming app/registry/snapshots",
+    "Property services and parent request sink",
+    "Native manager publication and application initialization",
+    "Loader/kernel/heap/filesystem"
+  ],
+  "overlay_release_verified": false,
+  "custom_five_choice_routing_implemented": false,
+  "actual_pixels": false,
+  "camera_access": false,
+  "schema": 1,
+  "date": "2026-11-20",
+  "check_count": 160,
+  "root_regression_tests": 55,
+  "reproducible_build": true,
+  "independent_original_z7_work": true,
+  "full_goal_complete": false,
+  "admitted_exit_is_delegated_to_original_native_handler": true,
+  "intermediate_native_return0_never_resaved_as_user_baseline": true
+}

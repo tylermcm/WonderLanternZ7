@@ -117,3 +117,23 @@ text remains unresolved and visual acceptance is false. Captured LCD format and
 geometry flags remain identical across these states except buffer addresses.
 See `evidence/20261120-information-host.json` for scoped regressions. The full
 five-choice module and physical installation remain unimplemented/unverified.
+
+## Verified transition ledger
+
+`plugins/information_transition.h` implements conditional entry/return ownership.
+The caller must release custom component ownership before entry. The ledger
+keeps the original user page separately from the native page at entry, verifies
+page4 publication before requesting the original native application transition,
+and observes asynchronous app state. It records admitted native exit without
+replacing the exit handler. Only observed native shooting return/page0 permits
+restoration of the original saved page. Failed native setter publication/rollback
+retains conditional recovery; different foreign page values remain untouched.
+No helper assigns the native application byte or registry.
+
+The reproducible standalone diagnostic passes160 ARM checks, including a saved
+page3 with custom applied page0 and native return0. Original setter/getter,
+request helper and native information DISP exit execute. Property services,
+parent callback and application initialization remain supplied. Actual component
+release is an explicit caller precondition, not established by this test. Root55
+regressions pass. See `evidence/20261120-information-transition.json`.
+The helper is not yet integrated into the five-choice combined module.
