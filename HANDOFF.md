@@ -1,5 +1,46 @@
 # Laptop handoff — October 20, 2026
 
+## Photo-highlight native packet transport research - November 20, 2026
+
+Previous638470e was PROGRESS (startup-blocked menus). This turn starts the
+original photo-highlight port; no native module/host/QEMU changes, camera/card
+access, staging, flash or push. All prior feature gaps remain in the full goal.
+
+New tools/audit_z7_display_parameters.py executes exact stock C3.80 instructions.
+.private/evidence/20261120-display-parameters-03.json TERMINALPASS37. Native
+102396E2 decoder admits42060007 only for selector0 atA180A568 and42062007 only
+for selector1; both normalizegroup0/op6. Original10239840 dispatcher uses
+10629FC8 table withgroup300/state60/op4byte strides. Service states1..4 at
+A1D68E54 route to1023E214 via four original slots1062A01C/058/094/0D0.
+
+Handler copies100bytes fromrequest+14hex payload to* A180A588+28hex, sets
+state+24hex=1 and source+100decimal=1, then completion102396C0(request,0),
+return1. SOURCE NEEDS104accessible bytes, not a100byte scratch buffer. Four
+opaque payload tests prove exact copy, source acknowledgement and surrounding
+buffer/request preservation; eight native routing cases cover both families/
+four service states. Incoming packets/state/service bytes and completion are
+supplied; original decode/table/copy/stores execute. First extension attempt
+missed mapping the service-state RAM page; fixed fixture, not expectations.
+
+Early family literal scan had float/data false positives and no62000 base
+literal. Native execution now proves62007 support despite that search absence.
+Do not interpret search hits or lack thereof as command acceptance. Selector
+physical LCD/EVF mapping, parameter threshold/pattern meanings, converter,
+producer, runtime cancellation and warning pixels remain UNVERIFIED. No
+highlight implementation or hook is installed. Native module stays unchanged.
+
+Detailed source-only research:z7-native-modules/PHOTO_HIGHLIGHTS.md;
+evidence:evidence/20261120-display-parameters.json. Private scans/disassemblies
+under.private/research/z7-photo-zebra-* andz7-display-parameters-table-refs.json.
+NEXT: bind original converter and frame producer before connecting the existing
+Photo highlights preference. Preserve native movie/EVF warning preferences,
+photo context exclusions and ownership/restoration. Portrait/rotation, native
+Info mirror, broader lifecycle, real statistics and physical installation/
+recovery gaps remain. No required broad regression rerun for a new isolated
+read-only research audit; this turn's relevant check is the37 native checks.
+Code graph refreshed after code edits: 2718nodes/7030edges; ignored.
+All jobs terminal.
+
 ## Startup-blocked menus and native header readiness - November 20, 2026
 
 Previous8d7cebd was PROGRESS: queued save/retry refresh accepted. Native module,

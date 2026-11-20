@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "independent_original_z7_research": true,
+  "native_checks": 37,
+  "native_module_host_qemu_unchanged": true,
+  "native_decoder_executes": true,
+  "native_state_dispatcher_executes": true,
+  "commands": [
+    "0x42060007",
+    "0x42062007"
+  ],
+  "matching_selectors": [
+    0,
+    1
+  ],
+  "normalized_group": 0,
+  "normalized_operation": 6,
+  "supported_service_states": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "payload_bytes": 100,
+  "source_acknowledgement_offset": 100,
+  "minimum_source_bytes_for_handler": 104,
+  "original_copy_and_store_instructions_execute": true,
+  "supplied_boundaries": [
+    "Incoming request and state buffers",
+    "Initialized native service-state bytes",
+    "Request completion callback"
+  ],
+  "physical_output_mapping_verified": false,
+  "threshold_or_pattern_semantics_verified": false,
+  "converter_bound": false,
+  "frame_producer_bound": false,
+  "highlight_preference_connected": false,
+  "actual_highlight_pixels": false,
+  "installed_hook": false,
+  "physical_camera_or_card_access": false,
+  "staged_or_flashed": false,
+  "pushed": false,
+  "full_goal_complete": false
+}
