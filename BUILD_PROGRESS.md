@@ -289,3 +289,22 @@ inspection recorded; ignored graph and source manifest refreshed. All jobs
 terminal. Other information, focal length, information app, highlights, portrait,
 persistence, menu-return and broader lifecycle remain; full goal stays active.
 No camera/card access, staging, flashing or push.
+
+## Other information — November 20, 2026
+
+The optional Other01 profile adds18 independently identified native widgets to
+the six separate information groups. Its48 LCD ownership words use64-bit pending
+state; existing six-group output remains byte-identical. Nonzero native capacity,
+flash and metering format selectors preserve complete warning groups. Identity75,
+policy1627, phase22, base68, histogram170, grid282 and55 root/no-skips checks pass.
+Standard-page QEMU passes11checks/eight frames with exact native restoration;
+an independent capture check protects the six core readouts and current card
+warning even where ordinary control boxes overlap ISO. Current horizon results
+and limitations are recorded in `evidence/20261120-native-other-information.json`.
+Horizon live01 fails final Other ON complete-RGB restoration:65 ADL edge pixels
+differ from the ISO-matched all-on reference. Its48 passing checks establish
+selected scope only; master OFF was not reached. This retained failure is the
+next native erase/repaint investigation, and horizon acceptance remains open.
+The host remains unchanged. Native menu lifecycle, focal length, information app,
+highlights, portrait, persistence, real histogram statistics and hardware checks
+remain. No camera/card access, staging, flashing or push; full goal stays active.

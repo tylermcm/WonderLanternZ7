@@ -882,3 +882,51 @@ histogram170/grid282(native geometry109) regressions pass. Key horizon and
 master-off crop were inspected, with exact decoded full-frame equality verified
 independently. Source evidence `evidence/20261120-native-information-pages.json`
 distinguishes both packages. All jobs are terminal; full software goal stays open.
+
+### Other information and shared warnings
+
+The optional `display-other-probe` extends the six-group profile with 18 original
+Z7 widgets under the Other switch: AF-area status3, Active D-Lighting6,
+metering7, AE lock8, FV lock9, flash compensation13, exposure compensation14,
+capacity16, flash mode17, Picture Control26, image area27, microphone/wind34,
+multiple exposure38, touch shooting41, image quality/size44, silent shutter46,
+VR50 and flicker53. Widget numbers are independently derived native bindings.
+[Nikon's display reference](https://onlinemanual.nikonimglib.com/z7_z6/en/14_technical_notes_01.html)
+cross-checks label meanings only. White balance37, battery20, AF frame,
+flash-ready48, temperature and unidentified controls remain native.
+
+Native updater execution identifies all18 ordinary widgets, including separate
+normal Picture Control and N-Log child content. Native preparation prefixes
+identify shared formats2 for capacity,3 for flash and4 for metering; prefix
+execution stops at the original format helper rather than claiming full
+preparation-path coverage. Every nonzero shared format keeps the complete native
+group, so Other OFF preserves warning content. Two LCD words per widget now
+require48 ownership bits; only this profile uses uint64_t pending ownership.
+The existing six-group package rebuilds byte-identically.
+
+Other01 is reproducible SHA
+cbadda7a7dfbc27a9c9ca2f955c96dd3c5ae767bc0880178ca8402267c26ae8d,
+14860bytes/image14592/BSS5380/API32, unchanged host07. Identity75,
+compiled-policy1627, native phase22, base68, histogram170 and grid282 checks pass;
+root55 tests/no-skips pass. Policy coverage includes all128 information masks,
+four presets, native interpreter results, nonzero warning selectors, all18
+abandoned descriptors, pending bits above31 and foreign writes to the last slot.
+
+Standard-page QEMU passes11 checks/eight frames. Other OFF changes only filtered
+Other-control pixels; the active capacity warning stays native. An independent
+immutable-capture check additionally requires all six separate readouts and the
+warning to match the same complete native reference, including regions where
+Other-control boxes overlap ISO. Other ON and master OFF restore captured native
+RGB; all61 descriptor masks restore. Settings setters remain diagnostic calls,
+not native settings-menu/lifecycle proof. See
+`evidence/20261120-native-other-information.json` for current horizon results and
+the precise evidence boundaries. Focal length, native information app,
+highlights, portrait, persistence and broader lifecycle remain open.
+
+Horizon live01 is retained as a failed run:48 of49 checks pass across11 frames.
+Other OFF scope and warning preservation pass; Other ON restores mask words but
+fails complete native RGB restoration. Against the ISO-matched all-on reference,
+65 pixels differ inside ADL widget6 antialiased edges, despite identical current
+snapshot and control6 records. The cause remains under investigation. Master OFF
+was not reached. No pixels are excluded and no synthetic references are used to
+turn that failure into a pass; Other horizon acceptance remains open.

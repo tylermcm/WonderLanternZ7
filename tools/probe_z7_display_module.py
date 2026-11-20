@@ -47,6 +47,7 @@ def main():
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
     parser.add_argument('--grid-components', action='store_true', help='For the base-page DISP probe, set a native golden grid and verify component suppression and same-page edits')
     parser.add_argument('--information-horizon', action='store_true', help='For information-groups, verify selected native information on the horizon base')
+    parser.add_argument('--other-information', action='store_true', help='For information-groups, toggle the independently identified Other status group')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
     parser.add_argument('--histogram-context-fixture', action='store_true',
@@ -60,6 +61,8 @@ def main():
     args = parser.parse_args()
     if args.information_horizon and args.view != 'information-groups':
         parser.error('Information horizon requires information-groups view')
+    if args.other_information and args.view != 'information-groups':
+        parser.error('Other information requires information-groups view')
     if args.histogram_context_fixture and args.view != 'live':
         parser.error('Histogram context fixture requires live view')
     if args.histogram_sample_fixture and args.view != 'histogram':
@@ -241,7 +244,7 @@ def main():
             for widget in range(61):
                 descriptor = int.from_bytes(camera.remote.memory(0x1064d610 + widget * 4, 4), 'little')
                 step['information_masks'].append(camera.remote.memory(descriptor + 4, 36).hex())
-                if widget in (10, 11, 15, 5, 51, 2):
+                if widget in (10, 11, 15, 5, 51, 2) or widget in module.get('other_information_widgets', []):
                     pointer = int.from_bytes(camera.remote.memory(descriptor + 44, 4), 'little')
                     step['information_controls'][str(widget)] = [camera.remote.memory(pointer + row * 48, 48).hex()
                         for row in range(camera.remote.memory(descriptor + 40, 1)[0])]
@@ -356,7 +359,13 @@ def main():
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
         if args.view == 'information-groups':
-            if module['kind'] != 'original-Z7-display-groups-diagnostic': raise ValueError('Six-group diagnostic required')
+            if module['kind'] not in ('original-Z7-display-groups-diagnostic','original-Z7-display-other-diagnostic'): raise ValueError('Information diagnostic required')
+            other_widgets = module.get('other_information_widgets', [])
+            if args.other_information and not other_widgets: raise ValueError('Other-information profile required')
+            readout_widgets = (10,11,15,5,51,2) + tuple(other_widgets)
+            format_by_widget = dict(zip((10,11,15),(0,1,5)))
+            if other_widgets: format_by_widget.update({7:4,16:2,17:3})
+            all_details = 127 if other_widgets else 63
             from display_pixel_geometry import control_scanout_box
             native('Original standard base for ordinary information groups', 0x103673de, [0])
             references = [capture('information-disabled-control-1')]
@@ -371,12 +380,12 @@ def main():
             model = base + module['symbols']['z7_menu_settings']
             def selected_masks(details, formats):
                 expected = list(original_masks)
-                for group, widget in enumerate((10, 11, 15, 5, 51, 2)):
-                    if group < 3 and bytes.fromhex(formats)[(0, 1, 5)[group]]: continue
+                for group, widget in enumerate(readout_widgets):
+                    if widget in format_by_widget and bytes.fromhex(formats)[format_by_widget[widget]]: continue
                     words = list(struct.unpack('<9I', bytes.fromhex(expected[widget])))
                     for bank in (0, 3):
                         photo = (9 if words[bank] & 1 else 0) | (0x900 if words[bank] & 0x100 else 0)
-                        words[bank] = (words[bank] & ~0x909) | (photo if details & (1 << group) else 0)
+                        words[bank] = (words[bank] & ~0x909) | (photo if details & (1 << group if group < 6 else 64) else 0)
                     expected[widget] = struct.pack('<9I', *words).hex()
                 return expected
             def control_boxes(step, widgets, picture):
@@ -408,11 +417,11 @@ def main():
                     step = capture('information-horizon-all-on-' + str(index))
                     check('horizon-all-on-' + str(index) + '-uses-owned-native-page3', step['information_native_page'] == 3 and
                         step['information_base']['active'] == 1 and step['information_base']['saved'] == 0 and step['information_base']['applied'] == 3)
-                    check('horizon-all-on-' + str(index) + '-only-selected-lcd-eligibility-bits', step['information_masks'] == selected_masks(63, step['information_formats']))
+                    check('horizon-all-on-' + str(index) + '-only-selected-lcd-eligibility-bits', step['information_masks'] == selected_masks(all_details, step['information_formats']))
                     picture = Image.open(output / (step['name'] + '.png')).convert('RGB')
                     baseline = Image.open(output / (native_horizon_reference['name'] + '.png')).convert('RGB')
                     difference = ImageChops.difference(picture, baseline)
-                    boxes = control_boxes(step, (10, 11, 15, 5, 51, 2), picture)
+                    boxes = control_boxes(step, readout_widgets, picture)
                     protected = difference.copy()
                     for box in boxes: protected.paste((0, 0, 0), box)
                     check('horizon-all-on-' + str(index) + '-protects-native-horizon-and-all-non-information-pixels', protected.getbbox() is None)
@@ -434,7 +443,8 @@ def main():
                 check('horizon-native-iso-pixel-phases-qualified-with-information-settings-unchanged', observed_iso_phases == wanted_iso_phases)
             def native_membership(step, widget=None):
                 picture = Image.open(output / (step['name'] + '.png')).convert('RGB')
-                boxes = control_boxes(step, (widget,), picture) if widget is not None else []
+                targets = ((widget,) if isinstance(widget,int) else tuple(widget)) if widget is not None else ()
+                boxes = control_boxes(step, targets, picture) if targets else []
                 matches = []
                 for reference in references:
                     if reference['information_formats'] != step['information_formats']: continue
@@ -450,18 +460,34 @@ def main():
                             matches.append(dict(reference=reference['name'], difference_bounds=bounds))
                 result.setdefault('information_pixel_membership', []).append(dict(frame=step['name'], widget=widget, native_control_boxes=boxes, matches=matches))
                 check(step['name'] + ('-only-native-group-pixels-change' if widget is not None else '-complete-native-rgb-restored'), bool(matches))
-            for name, group, widget in (('shooting', 3, 5), ('release', 4, 51), ('focus', 5, 2)):
+            toggles = (('other',6,None),) if args.other_information else (('shooting',3,5),('release',4,51),('focus',5,2))
+            for name, group, widget in toggles:
                 native('Disable ' + name + ' information in preset0', base + module['symbols']['z7_settings_information'], [model, 0, group, 0])
                 native('Enable custom page model', base + module['symbols']['z7_settings_flag'], [model, 0, 1])
                 native('Wait for native information update', 0x1017081e, [500])
                 active = capture('information-' + name + '-off')
-                expected = selected_masks(63 & ~(1 << group), active['information_formats'])
+                expected = selected_masks(all_details & ~(1 << group), active['information_formats'])
                 check(name + '-selected-lcd-mask-policy-matches-native-eligibility', active['information_masks'] == expected)
-                native_membership(active, widget)
+                if group == 6:
+                    formats = bytes.fromhex(active['information_formats'])
+                    targets = tuple(w for w in other_widgets if w not in format_by_widget or not formats[format_by_widget[w]])
+                    native_membership(active, targets)
+                    picture = Image.open(output / (active['name'] + '.png')).convert('RGB')
+                    warning_widgets = [w for w in other_widgets if w in format_by_widget and formats[format_by_widget[w]]]
+                    warning_matches = []
+                    for reference in references:
+                        if reference['information_formats'] != active['information_formats']: continue
+                        baseline = Image.open(output / (reference['name'] + '.png')).convert('RGB')
+                        regions = control_boxes(active, warning_widgets, picture)
+                        if all(picture.crop(box).tobytes() == baseline.crop(box).tobytes() for box in regions):
+                            warning_matches.append(reference['name'])
+                    result['other_warning_pixels'] = dict(widgets=warning_widgets,exact_native_references=warning_matches)
+                    check('other-off-keeps-complete-native-shared-warning-pixels', bool(warning_matches))
+                else: native_membership(active, widget)
                 native('Restore ' + name + ' information', base + module['symbols']['z7_settings_information'], [model, 0, group, 1])
                 native('Wait for native information restoration', 0x1017081e, [500])
                 restored = capture('information-' + name + '-on')
-                check(name + '-all-selected-information-mask-words-restore', restored['information_masks'] == selected_masks(63, restored['information_formats']))
+                check(name + '-all-selected-information-mask-words-restore', restored['information_masks'] == selected_masks(all_details, restored['information_formats']))
                 native_membership(restored)
             native('Disable custom page model', base + module['symbols']['z7_settings_flag'], [model, 0, 0])
             retired = capture('information-master-off')
@@ -470,8 +496,9 @@ def main():
                 check('horizon-master-off-restores-saved-native-page0', retired['information_native_page'] == 0 and not retired['information_base']['active'])
                 references = standard_references
             native_membership(retired)
-            result['information_scope'] = dict(groups_bound=6, settings_setters_supplied=True, snapshot_or_visibility_stores_supplied=False,
-                actual_native_disp_baseline_cycle=True, control_snapshots_are_not_paint_fences=True, other_and_focal_unbound=True,
+            result['information_scope'] = dict(groups_bound=7 if other_widgets else 6,native_widgets=len(readout_widgets),other_group_tested=args.other_information,
+                settings_setters_supplied=True, snapshot_or_visibility_stores_supplied=False,
+                actual_native_disp_baseline_cycle=True, control_snapshots_are_not_paint_fences=True, other_unbound=not bool(other_widgets),focal_unbound=True,
                 custom_horizon_information=args.information_horizon, native_phase_reference_sampling=args.information_horizon,
                 temporal_paint_coherence_proven=False, custom_page_eligibility_from_each_bank_and_operation_standard_bit=True)
         elif args.view == 'histogram':

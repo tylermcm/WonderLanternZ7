@@ -1,5 +1,63 @@
 # Laptop handoff — October 20, 2026
 
+## Other information and wide ownership — November 20, 2026
+
+Previous turn made progress (cross-page native information). This checkpoint adds
+18 independently identified Other widgets:3,6,7,8,9,13,14,16,17,26,27,34,38,41,
+44,46,50,53. Total24 widgets/48 LCD words; uint64_t pending ownership only in
+new display-other-probe. Original groups03 rebuilds byte-identical a951a257...487b83.
+Other01 `.private/builds/20261120-display-other-01` is reproducible SHA
+cbadda7a7dfbc27a9c9ca2f955c96dd3c5ae767bc0880178ca8402267c26ae8d,
+14860bytes/image14592/BSS5380/API32, unchanged host07. Source inputs verified.
+All jobs TERMINAL; old handles60474/69236/87016/57082 must not be polled/restarted.
+No camera/card access, staging, flash or push. Full software goal stays active.
+
+Identity02 PASSES75checks/18normal widgets; full policy02 PASSES1627checks;
+phase22/base68/histogram170/grid282(native geometry109)/root55-no-skips pass.
+Shared formats2(capacity16),3(flash17),4(meter7) preserve complete native groups
+for EVERY nonzero value. Prefix audit stops at original format-helper entry;
+full preparation bodies are not claimed. Picture Control26 has normal4035 and
+N-Log child4734; old all-visible atlas was insufficient. Microphone/wind34=1321.
+White balance37, battery20, AF frame, flash-ready48 and temperature stay native.
+Manual label cross-check (not widget IDs):
+https://onlinemanual.nikonimglib.com/z7_z6/en/14_technical_notes_01.html
+
+Standard Other live01 PASSES11checks/eight frames, private evidence
+`.private/evidence/20261120-other-information-live-01`. Other OFF protects current
+capacity warning16; Other ON/master OFF restore complete captured native RGB
+and all61 masks. Independent `verify_z7_other_pixels.py` PASSES standard01:
+`.private/evidence/20261120-other-core-pixels-01.json`. It additionally requires
+all six core readout regions and warning to equal the SAME complete native
+reference, including overlap between Other14 and ISO15. No composed reference.
+Settings setters are diagnostic calls; operation193=0 only in live coverage.
+
+Horizon Other live01 TERMINAL FAILED48/49checks/11frames, private evidence
+`.private/evidence/20261120-other-horizon-live-01`. Four unchanged-settings
+references qualify both ISO phases. Page3 ownership, selected core glyphs,
+non-information pixels, Other OFF scope/warning16, and Other ON mask restoration
+PASS. Final Other ON full-RGB restoration FAILS: compared with ISO-matched all-on4,
+65 differing pixels confined to ADL widget6 edges, scanout626,3..660,51. Current
+snapshot and all control6 records match exactly between all-on4 and Other ON;
+RGB differs. Other references1/3 have same65edge differences plus ISO phase;
+reference2 differs84 ADL pixels. Underlying RGB transitions vary in antialiased
+edge colors. Do NOT assume cause, invent paint completion, exclude those pixels,
+compose reference frames or call horizon acceptance passed. Master OFF was not
+reached. Private `adl-crop-comparison.png` / `adl-difference-large.png` inspected.
+Full-frame thumbnails may omit HUD layers; trust decoded RGB and private crops.
+
+NEXT: trace native ADL erase/repaint and exact same-settings native reference
+behavior before another horizon run. A new run needs a concrete diagnostic change,
+not merely restarting this failure. Then finish focal length/native information
+app, highlights, portrait, persistence and broader menu/AF/output lifecycle.
+Real histogram statistics and physical card/cache/wake remain unverified.
+User wants software finished first; no camera staging/flash without explicit
+owner authorization and exact installation/recovery review. Source evidence:
+`evidence/20261120-native-other-information.json`. Graph refreshed2248nodes/
+5681edges, ignored; source manifest refreshed at local source-only checkpoint.
+Failed identity01 (missing supplied warning-row8 visibility) and policy01
+(retained supplied page3 accidentally triggered foreign-page release) are retained;
+fixture corrections needed no production C change.
+
 ## Custom information across native states — November 20, 2026
 
 Previous goal turn made progress; this turn fixes cross-page information ON.

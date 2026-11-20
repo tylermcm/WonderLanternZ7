@@ -90,3 +90,11 @@ per-LCD-bank standard-photo permission seed under the preserved MIT license.
 The original-Z7 independently seeded normal/alternate operation bits, nonzero exposure-format preservation, conditional
 ownership/restoration and native instruction/pixel validation are independent
 local modifications, not an upstream or Nikon release.
+
+`examples/display_other_probe.c`, `display_other_bindings.h` and the associated
+identity, policy and pixel audits extend that independently modified MIT adapter.
+The Other-information grouping concept comes from the same pinned JKWTCN
+`sdk/disp.h`; original-Z7 widget identities, shared-format warning preservation
+and 64-bit conditional ownership are local work. Firmware resources, native
+icons, screenshots and generated packages remain private. Nikon's public display
+reference is used only to cross-check label meanings, never native widget IDs.

@@ -1,0 +1,212 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "scope": "Independent original-Z7 Other-information adapter; standard-page pixels accepted, horizon restoration investigation remains open",
+  "module": {
+    "module_sha256": "cbadda7a7dfbc27a9c9ca2f955c96dd3c5ae767bc0880178ca8402267c26ae8d",
+    "file_bytes": 14860,
+    "image_bytes": 14592,
+    "bss_bytes": 5380,
+    "api_minimum_bytes": 32
+  },
+  "source_inputs_verified": true,
+  "host_main_sha256": "9326b595fd4f47719aaa9bcdb157ce35aa9f3cbd812a62f990585a4e2e52db66",
+  "host_changed": false,
+  "pinned_reference": {
+    "commit": "50a22b24c50619cffa646dac386e8334659f475a",
+    "source": "sdk/disp.h",
+    "license": "MIT",
+    "independent_modified_release": true
+  },
+  "other_widgets": [
+    {
+      "widget": 3,
+      "meaning": "af_area_status",
+      "shared_format": null
+    },
+    {
+      "widget": 6,
+      "meaning": "dynamic_lighting",
+      "shared_format": null
+    },
+    {
+      "widget": 7,
+      "meaning": "exposure_meter",
+      "shared_format": 4
+    },
+    {
+      "widget": 8,
+      "meaning": "exposure_lock",
+      "shared_format": null
+    },
+    {
+      "widget": 9,
+      "meaning": "flash_value_lock",
+      "shared_format": null
+    },
+    {
+      "widget": 13,
+      "meaning": "flash_adjustment",
+      "shared_format": null
+    },
+    {
+      "widget": 14,
+      "meaning": "exposure_adjustment",
+      "shared_format": null
+    },
+    {
+      "widget": 16,
+      "meaning": "remaining_capacity",
+      "shared_format": 2
+    },
+    {
+      "widget": 17,
+      "meaning": "flash_mode",
+      "shared_format": 3
+    },
+    {
+      "widget": 26,
+      "meaning": "picture_profile",
+      "shared_format": null
+    },
+    {
+      "widget": 27,
+      "meaning": "image_area",
+      "shared_format": null
+    },
+    {
+      "widget": 34,
+      "meaning": "microphone_wind_filter",
+      "shared_format": null
+    },
+    {
+      "widget": 38,
+      "meaning": "multi_exposure",
+      "shared_format": null
+    },
+    {
+      "widget": 41,
+      "meaning": "touch_release",
+      "shared_format": null
+    },
+    {
+      "widget": 44,
+      "meaning": "image_file_quality",
+      "shared_format": null
+    },
+    {
+      "widget": 46,
+      "meaning": "quiet_shutter",
+      "shared_format": null
+    },
+    {
+      "widget": 50,
+      "meaning": "stabilization",
+      "shared_format": null
+    },
+    {
+      "widget": 53,
+      "meaning": "flicker_status",
+      "shared_format": null
+    }
+  ],
+  "readout_widgets": 24,
+  "owned_lcd_words": 48,
+  "pending_ownership_bits": 64,
+  "warning_policy": "Keep the complete saved native group for every nonzero format2/3/4 selector",
+  "native_updater_identity": true,
+  "native_preparation_scope": "Prefixes stop at original format helper; full preparation bodies are not claimed",
+  "checks": {
+    "identity": {
+      "passed": true,
+      "checks": 75
+    },
+    "policy": {
+      "passed": true,
+      "checks": 1627
+    },
+    "phase": {
+      "passed": true,
+      "checks": 22
+    },
+    "base": {
+      "passed": true,
+      "checks": 68
+    },
+    "histogram": {
+      "passed": true,
+      "checks": 170
+    },
+    "grid": {
+      "passed": true,
+      "checks": 282
+    }
+  },
+  "root_regression": {
+    "passed": true,
+    "tests": 55,
+    "skipped": 0
+  },
+  "six_group_rebuild_byte_identical": true,
+  "standard_qemu": {
+    "passed": true,
+    "checks": 11,
+    "frames": 8,
+    "other_off_protects_all_six_core_readouts_including_overlap": true,
+    "shared_warning_widget": 16,
+    "other_on_and_master_off_complete_native_rgb": true,
+    "all_61_native_masks_restored": true,
+    "native_operation193": 0,
+    "settings_setters_are_diagnostic_calls": true
+  },
+  "horizon_qemu": {
+    "passed": false,
+    "checks_passed": 48,
+    "checks_total": 49,
+    "frames": 11,
+    "failed_check": "information-other-on-complete-native-rgb-restored",
+    "passed_scope": [
+      "Native page3 ownership",
+      "Four all-on horizon references protect non-information pixels",
+      "Native shooting/release/focus glyphs match standard references",
+      "Both actual native ISO pixel phases captured with unchanged settings",
+      "Other OFF changes only selected Other control windows",
+      "Current shared capacity warning preserved",
+      "All selected mask words restored on Other ON"
+    ],
+    "unresolved": "Restored frame differs from ISO-matched all-on reference4 by65 pixels inside native ADL widget6 antialiased edges; native controls and current snapshot match but completed paint differs",
+    "master_off_not_reached": true,
+    "failure_retained_privately": true,
+    "no_reference_compositing_or_pixel_exclusions": true
+  },
+  "unbound_native_widgets": [
+    "White balance37",
+    "Battery20",
+    "AF frame",
+    "Flash-ready48",
+    "Temperature and unidentified controls"
+  ],
+  "remaining": [
+    "Trace ADL horizon restoration mismatch before accepting Other horizon pixels",
+    "Focal length",
+    "Native information app",
+    "Photo highlights",
+    "Portrait",
+    "Persistence",
+    "Native menu-return and broader lifecycle",
+    "Successful real histogram statistics",
+    "Physical card/cache/wake and camera behavior"
+  ],
+  "graph": {
+    "nodes": 2248,
+    "edges": 5681,
+    "generated_graph_ignored": true
+  },
+  "all_jobs_terminal": true,
+  "camera_access": false,
+  "card_access": false,
+  "camera_staged": false,
+  "camera_flashed": false,
+  "pushed": false,
+  "software_goal_complete": false
+}

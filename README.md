@@ -49,6 +49,14 @@ grid checks pass in assisted QEMU. Histogram/horizon integration preserves the
 native restrictions; its live-view fixture gap is recorded separately. This
 candidate remains emulator-only.
 
+The [configurable DISP work](z7-native-modules/DISPLAY_SETTINGS.md) now includes
+four presets, native base-page selection, six separate information groups and
+an Other-information group covering18 independently identified original-Z7
+widgets. Scoped policy and captured-pixel checks preserve shared warnings and
+native restoration on the standard page. An ADL edge-pixel restoration mismatch
+on the horizon page remains under investigation. Focal length, the information app, highlights, portrait,
+persistence and broader lifecycle remain under development.
+
 An [automatic LCD-photo battery module](Z7_BATTERY_DISPLAY_RESEARCH.md) now
 adds bounded native sampling, compact percentage text, warning-color preservation
 and stock-icon restoration. It is a separate SD-module profile with an initial
