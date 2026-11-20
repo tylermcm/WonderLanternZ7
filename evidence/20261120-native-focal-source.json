@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "scope": "Independent original-Z7 native live focal property source and compiled sampler; text overlay not implemented",
+  "module": {
+    "module_sha256": "de0b258fcd6554cc8633c4f6d095404217f1b472c0c96fac6a8d649d2e314398",
+    "file_bytes": 256,
+    "image_bytes": 192,
+    "bss_bytes": 4,
+    "api_minimum_bytes": 12
+  },
+  "reproducible": true,
+  "source_inputs_verified": true,
+  "original_native": {
+    "getter": "0x103fe85e",
+    "live_producer": "0x1016342e",
+    "ptp_current_focal_getter": "0x1034231a",
+    "type_key": "0x1c14",
+    "focal_key": "0x1c01",
+    "type_value_address": "0xa24e2600",
+    "focal_value_address": "0xa24e25a8",
+    "fractional_queries": [
+      "0x309e",
+      "0x309d"
+    ],
+    "encoded_query": "0x601d",
+    "units": "tenths of mm",
+    "native_ptp_scaling": 10
+  },
+  "native_and_compiled_audit": {
+    "passed": true,
+    "checks": 147,
+    "producer_cases": 17,
+    "fractional_example": {
+      "whole": 24,
+      "fraction": 32768,
+      "published_tenths": 245
+    },
+    "type_transition_cases": 5,
+    "native_invalid_type_can_retain_stale_focal": true,
+    "sampler_checks_type_and_value": true,
+    "type_recheck_is_not_atomic_lens_identity": true,
+    "native_ptp_type4_admission_broader_than_feature_type1_3_policy": true,
+    "original_property_lookup_and_read_execute": true,
+    "original_fractional_and_encoded_conversion_execute": true,
+    "supplied_boundaries": [
+      "Incoming lens-controller query values",
+      "Native property publication",
+      "Loader/kernel/filesystem"
+    ]
+  },
+  "root_tests": {
+    "passed": true,
+    "tests": 55,
+    "skips": 0
+  },
+  "previous_other_package_byte_identical": true,
+  "previous_other_module_sha256": "cbadda7a7dfbc27a9c9ca2f955c96dd3c5ae767bc0880178ca8402267c26ae8d",
+  "host_changed": false,
+  "pinned_reference": {
+    "commit": "50a22b24c50619cffa646dac386e8334659f475a",
+    "source": "sdk/focal_length.h",
+    "license": "MIT",
+    "original_z7_keys_independently_derived": true
+  },
+  "protocol_cross_reference": {
+    "property_id_source": "https://github.com/gphoto/libgphoto2/blob/master/camlibs/ptp2/ptp.h",
+    "units_source": "https://github.com/gphoto/libgphoto2/blob/master/camlibs/ptp2/ptp.c",
+    "purpose": "Identify property5008 and its hundredths-of-mm wire units; no external implementation copied"
+  },
+  "graph": {
+    "nodes": 2286,
+    "edges": 5792,
+    "ignored": true
+  },
+  "remaining": [
+    "Separately owned text object and fractional formatting",
+    "Independent preset selection and VR/Other preservation",
+    "GUI/menu/output/lens teardown and reconnect lifecycle",
+    "Existing Other horizon ADL paint mismatch",
+    "Information app, highlights, portrait, persistence and broader lifecycle",
+    "Physical lens/card/cache/camera verification"
+  ],
+  "all_jobs_terminal": true,
+  "camera_access": false,
+  "card_access": false,
+  "camera_staged": false,
+  "flashed": false,
+  "pushed": false,
+  "full_goal_complete": false
+}

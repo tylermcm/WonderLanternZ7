@@ -290,6 +290,21 @@ terminal. Other information, focal length, information app, highlights, portrait
 persistence, menu-return and broader lifecycle remain; full goal stays active.
 No camera/card access, staging, flashing or push.
 
+## Native live focal sampler — November 20, 2026
+
+Independently bound original getter103FE85E and live producer1016342E: type1C14,
+focal1C01 in tenths of mm. New standalone `focal-sample` compiles reproducibly
+to256bytes and reads the native properties without GUI or property writes.
+147 scoped instruction checks execute native reads, PTP scaling, fractional and
+encoded producer conversions and the compiled sampler. Type transitions and
+stale values are rejected by the feature's type1/3 policy; physical telemetry
+and atomic lens identity remain unverified. Root55/no-skips pass; Other01
+rebuilds byte-identically. Independent text ownership, fractional presentation
+and GUI/output/reconnect lifecycle are next. ADL repaint and the remaining
+display features remain open. Source evidence:
+`evidence/20261120-native-focal-source.json`. No camera/card access, staging,
+flashing or push; all jobs terminal and full goal active.
+
 ## Focal native binding and ADL request isolation — November 20, 2026
 
 106 native instruction checks identify original VR widget50/control2 as the

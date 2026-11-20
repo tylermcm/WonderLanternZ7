@@ -104,3 +104,9 @@ fixtures. They identify original-Z7 native contracts without incorporating
 firmware bytes or decoded resources. The focal target is informed by pinned
 JKWTCN `sdk/focal_length.h` under the preserved MIT license; no Z7II addresses
 are substituted into an original-Z7 implementation.
+
+`plugins/focal_sample.h` and its diagnostic independently bind the original-Z7
+native lens producer/property getter. The pinned focal feature's type filtering
+concept is adapted under the same preserved MIT license. libgphoto2's public PTP
+definitions were consulted only to identify the protocol property and units;
+no libgphoto2 implementation is incorporated in these MIT sources.

@@ -1,14 +1,51 @@
 # Original-Z7 focal-length port research
 
 November 20, 2026. Independent original Nikon Z7 C3.80 work informed by the
-pinned JKWTCN MIT focal-length feature. No focal-length module is implemented
-yet. Native firmware, generated packages, screenshots and dumps remain private.
+pinned JKWTCN MIT focal-length feature. No focal-length display module is implemented
+yet. A standalone native sampler is now implemented; the text overlay remains
+open. Native firmware, generated packages, screenshots and dumps remain private.
 
 The target remains live focal length from an electronically communicating lens,
 including manual zoom, independent per-preset selection, missing/invalid-data
 suppression and LCD/EVF context handling. Taking a photo or reading EXIF is not
 a substitute for that live source. Fractional values must remain representable.
 The port must preserve native VR, lens-controller and existing display behavior.
+
+## Live source independently bound
+
+The original native PTP property5008 description10341856 and current-value
+handler103418B6 call1034231A. That getter reads property1C01 through103FE85E and
+multiplies it by10. [libgphoto2's primary protocol definitions](https://github.com/gphoto/libgphoto2/blob/master/camlibs/ptp2/ptp.h)
+identify5008 as FocalLength; its [native value rendering table](https://github.com/gphoto/libgphoto2/blob/master/camlibs/ptp2/ptp.c)
+uses0.01mm per wire unit. Combined with the original scaling instructions, this
+establishes the original1C01 value's tenths-of-mm representation. The new module
+reads the native property directly; it makes no PTP transaction or EXIF read.
+
+Original producer1016342E updates that property from live lens queries. Type1
+uses309E/309D and original fractional conversion1015BE8C; supplied24/32768
+publishes245. Type3 uses601D and original encoded-value table10204FCC. Stable
+values avoid repeated publication. Original1C14 is the lens type property;
+native property descriptors bind1C01 toA24E25A8 and1C14 toA24E2600. This is an
+independent original-Z7 binding, not a shifted-address port.
+
+`plugins/focal_sample.h` reads1C14, accepts types1/3, reads1C01, rejects zero and
+FFFFFFFF, and rechecks the type before returning the value. Invalid type states
+can leave a previously valid native focal property unchanged, so value alone is
+insufficient. The type recheck rejects an observed transition; it is not an
+atomic lens-identity or same-type reconnect guarantee. GUI lifecycle must still
+invalidate cached presentation across menu/output/lens changes.
+
+Reproducible diagnostic `focal-sample` is256bytes/image192/BSS4/API12, SHA
+de0b258fcd6554cc8633c4f6d095404217f1b472c0c96fac6a8d649d2e314398.
+`tools/audit_z7_focal_source.py` passes147 checks: actual native property lookup
+and reads, compiled sampler, five observed type transitions, original PTP
+scaling, three fractional and14 encoded producer cases, stable-value suppression
+and stale-value rejection. Incoming lens-query data, native property publication
+and loader/kernel services are supplied. Actual lens hardware is unverified.
+The first audit attempt incorrectly assumed the native PTP gate rejected type4;
+the original gate accepts it. The feature's type1/3 policy remains explicit and
+separate from that broader native PTP admission. No production correction was
+needed. Existing Other01 rebuilds byte-identically; root55/no-skips pass.
 
 ## Native shared text identified
 
@@ -44,8 +81,8 @@ Original widget50 is already included in Other information; routing independent
 focal text through that parent without separating ownership would couple the
 Focal switch to the Other/VR switch. That would violate the intended behavior.
 
-Next identify the original live lens-controller source and its communication,
-invalid-data and units contracts. Then use a separately owned native text object
+The live property source above is now identified and instruction-validated with
+supplied lens inputs. Next use a separately owned native text object
 or derive rigorously separate child ownership, preserving the existing VR field.
 The battery overlay's native container allocation is an existing local lead, but
 its pool slot1199 and text label299 are already reserved. An independent focal

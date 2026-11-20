@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'gui-update-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'gui-update-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -32,6 +32,7 @@ def main():
         'grids': ('plugins/grids_histogram.c', 'original-Z7-grids-histogram-module', 20),
         'battery-probe': ('examples/battery_display_probe.c', 'original-Z7-battery-text-diagnostic', 16),
         'battery-sample': ('examples/battery_sample_probe.c', 'original-Z7-battery-sample-diagnostic', 12),
+        'focal-sample': ('examples/focal_sample_probe.c', 'original-Z7-focal-sample-diagnostic', 12),
         'battery-native': ('examples/battery_native_display_probe.c', 'original-Z7-battery-native-sample-diagnostic', 16),
         'battery-percent': ('plugins/battery_percent.c', 'original-Z7-battery-percent-module', 16),
         'combined': ('plugins/combined_display.c', 'original-Z7-combined-display-module', 20),
@@ -78,6 +79,8 @@ def main():
             report['readout_ownership_bits'] = 64
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
               ROOT / 'z7-native-modules/sdk/module.ld']
+    if requested_variant == 'focal-sample':
+        inputs.append(ROOT / 'z7-native-modules/plugins/focal_sample.h')
     if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe'):
         inputs.append(ROOT / 'z7-native-modules/plugins/battery_sample.h')
     if args.variant == 'battery-native':

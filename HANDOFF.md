@@ -1,5 +1,59 @@
 # Laptop handoff — October 20, 2026
 
+## Live focal source and compiled sampler — November 20, 2026
+
+Previous goal turn made progress (native mm text and ADL request isolation,
+f98fd35). This turn independently binds the original live focal source and adds
+a compiled sampler. All jobs TERMINAL. No QEMU run, camera/card access, staging,
+flash or push. Full goal stays active; display overlay is still to implement.
+
+Original PTP property5008 descriptor10341856/get-value103418B6 call1034231A.
+That native function uses103FE85E to read1C01 and multiplies by10. Primary
+libgphoto2 ptp.h identifies5008 as FocalLength; ptp.c's rendering table uses0.01mm
+per wire unit. Thus original1C01 is tenths of mm. These sources were consulted
+only for protocol semantics; no gphoto implementation copied. Original keys,
+not upstream Z7II20xx:1C14 type @A24E2600,1C01 focal @A24E25A8. Raw bank20 has
+only6entries; LensInfo selector2001 returns0/2014 reads one packet flag. Those
+alternate namespaces are NOT this live source. Private query-xrefs JSON records
+exploration only, not semantic proof.
+
+Live producer1016342E (LensInfo.c) reads type fromA18D3E90+6. Type1 uses native
+queries309E/309D then1015BE8C; supplied24/32768 publishes245. Type3 uses601D then
+original encoded LUT10204FCC. Native setter101645EC publishes1C01 only on change.
+Types0/2/4 may retain a previous valid property when cached value is already
+valid: module MUST gate on type, never solely value. PTP's native admission also
+accepts4; the new electronic-lens feature deliberately accepts only1/3 as pinned.
+Initial audit01 had the wrong PTP-type4 expectation; corrected fixture02 passes,
+no production fix. No successful hardware telemetry or lens reconnect claimed.
+
+New `plugins/focal_sample.h`: original getter103FE85F, reads1C14, accepts1/3,
+reads1C01, rejects0/FFFFFFFF, rechecks type before publishing. Type recheck is
+NOT atomic lens identity or same-type detach/reattach proof. Diagnostic profile
+`focal-sample` exposes z7_focal_resample/valid/tenths; API12/no GUI mutation.
+Private reproducible `.private/builds/20261120-focal-sample-01`:
+SHAde0b258fcd6554cc8633c4f6d095404217f1b472c0c96fac6a8d649d2e314398,
+256bytes/image192/BSS4. `tools/audit_z7_focal_source.py` PASSES147checks/17native
+producer cases; native lookup/read/PTP scaling, fractional/encoded conversions,
+stable suppression and compiled sampler execute. Incoming lens queries, native
+property publication and loader services supplied. Private focal-source-02.json.
+Root55/no-skips pass. Existing Other profile rebuild is BYTE IDENTICAL cbadda7a...
+6ae8d. Host07 unchanged. Source evidence `evidence/20261120-native-focal-source.json`.
+
+NEXT: implement independent focal text overlay using owned native container slot
+and dynamic label (battery uses1199/299; do not collide). Preserve native VR and
+independent Other/Focal selection, decimal text, missing/invalid values and
+menu/output/teardown/reconnect behavior. Existing battery_percent.c allocation/
+label/paint code is a local lead; current Other stack registers
+histogram_after_gui in display_histogram_policy.h:191 via GUI API32, so optional
+focal integration must retain that callback and existing histogram/combined
+behavior. Original VR widget50/control2 is whole-mm and shares Other masks;
+widget60 is flash-focus. Do not hijack either as a dedicated focal control.
+ADL horizon live01 still fails65edge pixels; prior15check request equivalence
+only narrowed it. Continue object/dirty/overlay diagnostics with new observations.
+Remaining information app/highlights/portrait/persistence and broader lifecycle
+remain in scope. Read FOCAL_LENGTH_RESEARCH.md. Graph used/refreshed2286nodes/
+5792edges ignored; manifest refreshed at local source-only checkpoint.
+
 ## Native focal-text and ADL request contracts — November 20, 2026
 
 Previous goal turn made progress: Other01 committed cd32b05, with a retained
