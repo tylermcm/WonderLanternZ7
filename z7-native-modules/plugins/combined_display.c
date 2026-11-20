@@ -4,6 +4,10 @@
  */
 #include "module.h"
 #include "display.h"
+#ifdef Z7_HIGHLIGHT_CONTEXT_PROBE
+#include "highlight.h"
+static void highlight_gui_publish(void);
+#endif
 #ifdef Z7_SETTINGS_PERSISTENCE
 #include "worker.h"
 #endif
@@ -73,6 +77,9 @@ static void focal_combined_after_gui(void)
 #ifdef Z7_INFORMATION_APP_PROBE
     information_after_gui();
 #endif
+#ifdef Z7_HIGHLIGHT_CONTEXT_PROBE
+    highlight_gui_publish();
+#endif
 }
 #endif
 #ifdef Z7_INFORMATION_APP_PROBE
@@ -80,6 +87,9 @@ static void focal_combined_after_gui(void)
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
 #include "../examples/display_persistence_policy.h"
+#endif
+#ifdef Z7_HIGHLIGHT_CONTEXT_PROBE
+#include "../examples/display_highlight_context_policy.h"
 #endif
 
 #ifdef Z7_CLEAN_DISPLAY_PROBE
@@ -126,6 +136,10 @@ uint32_t z7_main(const struct z7_module_api *api)
     const struct z7_module_worker_api *worker_api = (const struct z7_module_worker_api *)api;
     if (api->size < sizeof(*worker_api) || !worker_api->register_worker) return 1;
 #endif
+#ifdef Z7_HIGHLIGHT_CONTEXT_PROBE
+    const struct z7_module_highlight_api *highlight_api = (const struct z7_module_highlight_api *)api;
+    if (api->size < sizeof(*highlight_api) || !highlight_api->register_highlight) return 1;
+#endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
     const struct z7_module_update_api *update_api = (const struct z7_module_update_api *)api;
     if (api->size < sizeof(*update_api) || !update_api->register_before_update) return 1;
@@ -170,7 +184,12 @@ uint32_t z7_main(const struct z7_module_api *api)
 #endif
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
+#ifdef Z7_HIGHLIGHT_CONTEXT_PROBE
+    if (!highlight_api->register_highlight(&highlight_hooks) ||
+        !worker_api->register_worker(highlight_combined_worker)) return 1;
+#else
     if (!worker_api->register_worker(persistence_worker)) return 1;
+#endif
     persistence_prepare();
 #endif
     /* No failing operation follows these native scalar stores. Host readiness

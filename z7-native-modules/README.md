@@ -39,6 +39,12 @@ documents its77 scoped instruction checks and diagnostic-only context policy.
 Default API44 host and full persistent module binaries remain byte-identical.
 These hooks do not yet connect the Photo highlights preference or prove warning
 pixels, physical output mapping, camera acceptance or recovery.
+The optional `display-highlight-context-probe` now connects that preference to
+the full persistent profile's shared GUI/source/worker epoch. Its
+[validation record](PHOTO_HIGHLIGHTS.md#shared-settingscontext-epoch-in-the-persistent-profile)
+distinguishes61 compiled checks from the still-unconnected parameter submission,
+restoration and warning pixels. It requires API48; the default profile remains
+API44 and byte-identical.
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

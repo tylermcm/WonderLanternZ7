@@ -243,6 +243,9 @@ def main():
     p.add_argument('--legacy-build', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     a = p.parse_args()
+    if not all((a.legacy_build / name).is_file() for name in
+               ('module-host.emulator.json', 'module-host.emulator.main.bin')):
+        p.error('--legacy-build must name a host bundle containing its report and main binary')
     out = a.output.resolve()
     if not out.is_relative_to(ROOT / '.private') or out.exists():
         p.error('Choose a new private output')

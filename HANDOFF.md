@@ -1,5 +1,87 @@
 # Laptop handoff — October 20, 2026
 
+## Full persistent profile settings/context epoch - November 20, 2026
+
+Previousf2d4767 was PROGRESS (mode/output/context reader). This turn connects a
+shared epoch to the actual full persistent profile's GUI/source/worker callbacks
+and native menu/DISP behavior. Full goal ACTIVE, no camera/card/stage/flash/push.
+This remains a DEVELOPMENT CONTEXT PROFILE, not a visible highlight feature.
+No native warning parameters or per-frame permission writes, no request submits.
+
+NEW --variant display-highlight-context-probe requires API48; composes unchanged
+focal/Other/histogram/information/persistence functions plus epoch observation.
+.private/builds/20261120-display-highlight-context-03 is reproducible,
+SHA d429674d261aeea3685906ef166159691634724e489833312dc8fc0cb1470409,
+25412file/25088image/5740BSS. Host remains accepted optional API48
+.private/builds/20261120-highlight-host-03, SHA512f06c17c712b6a4503532098c4f521deef681b6839346a739d3151f361d02c.
+
+plugins/highlight_epoch.h: one GUI writer, twelve atomic payload words: seven
+native context fields +settings revision/preset/wanted/eligible/DISP generation.
+Odd/even sequence and monotonic epoch, reader bounded3 attempts, no partial out.
+Unchanged GUI ticks keep epoch. Readers recheck BOTH sequence and epoch; repeated
+sequence cannot pair old epoch/new partial view. EpochMAX change parks untilboot,
+never recycles queued identity. No native transaction/fence/physical timing claim.
+
+examples/display_highlight_context_policy.h publishes at end of existing composed
+after-GUI callback. Uses even-revision persistence_snapshot and RAM contextreader,
+current LCD DISP ownership; EVF/movie/menu/Info remain delegated. Source callback
+returns observation epoch, after records it WITHOUT changing frame. Worker
+records currently eligible epoch then runs existing persistence worker. Descriptor
+is registered but NEVER queued; before_consumer parks. Allfour callbacks/worker
+registered BEFORE persistence_prepare I/O. API44 rejects before settings/menu I/O.
+Actual Photo highlights checkbox now feeds wanted epoch bit, NOT warning pixels.
+Capture native z7_preset_cycles: four cycles away/back cannot reuse prior epoch
+even if preset number matches. Recheck revision/preset/generation/UI/live context
+and publication epoch before source/worker accepts. Existing fullprofile is LCD;
+this does not redefine full EVF/native preservation goal as completed.
+
+.private/evidence/20261120-highlight-epoch-05/result.json PASS61 on EXACT03.
+Compiled ledger +actual full GUI/source/menu/DISP/worker callbacks execute.
+Every field/unchanged tick/odd writer/wrap/exhaustion; reader paused after first
+payload word while compiled writer executes on separate stack. Supply repeated
+sequence to require monotonic epoch retry. Full preset round-trip, menu revision,
+live mode/output/selector/service/menu/app invalidation and API44earlyreject pass.
+FS/UI/after-GUI delta sync/frame-apply and explicit interleavings supplied. Native
+source route executes, frame-apply itself supplied in this combined fixture
+(separate original frame/gate audit remains66). Caller frame4B8 bytes unchanged.
+
+Existing persistence/status acceptance PASS84 on EXACT03:
+.private/evidence/20261120-highlight-context-persistence-02.json.
+Root71/no skips:.private/evidence/20261120-highlight-epoch-root-tests.log.
+Default API44 persistent profile rebuilt BYTE-IDENTICAL
+.private/builds/20261120-highlight-epoch-compat-01,
+SHA719c1db3ca5cf1c78d82ebedcdbbb4cc7b67312b34b7982d11a718e4b39af85c.
+First regression reached last check then failed because a MODULE directory was
+passed as legacy HOST. Correct API40host is20261120-display-host-08 (SHA6ea33985de7c0d35c2f6b026157595b56fdd9167aa79df53cded25e2f25c87ac),
+NOT20261120-menu-status-compat-01. Audit now preflights host report/main presence;
+wrong module-only directory verified fails immediately/no output artifact.
+Source evidence:evidence/20261120-highlight-epoch.json; details/commands:
+z7-native-modules/PHOTO_HIGHLIGHTS.md. All jobs terminal at checkpoint.
+Final module input hashes/epoch audit sources verified current. Graph refreshed
+after code edits:2896nodes/7545edges; generated graph ignored. Root source-only
+manifest refreshed; no firmware/private artifacts or generated graphs indexed.
+
+NEXT ACTUAL FEATURE IMPLEMENTATION: connect epoch to native parameter ownership
+and both pinned paths. Re-read .private/research/z7ii-50a22b2/sdk/photo_zebra.h:
+zebra_packet_update/apply change eligible100-byte native payload BEFORE original
+dispatch, preserve descriptor/callback; zebra_evf_request submits owned packet
+for output switches that need not produce native packets. Owned-only async queue
+is NOT a substitute for incoming native parameter conversion. Current API48
+always delegates foreign descriptor addresses; add explicit opted-in narrow
+parameter-packet hook (likely API52) while keeping default API44/API48 unchanged.
+Filter exact original42060007/42062007, correct active/photo/UI/epoch; ordinary
+non-highlight/ineligible/native movie packets stay byte-identical. Original GUI
+payload100 remains live until callback; mutate converted100 before native handler,
+keep descriptor/source pointer/callback/ack contract (do not restore after wake
+and risk returned caller stack). Native36-byte GUI request remains unchanged.
+Convert owned requests at consumer boundary with current context/palette rather
+than relying on earlier worker conversion. Restore/cancel owned state only with
+validated ownership, preserve foreign changes, account for deferred frame copies.
+Only enable per-frame+34 after matching current applied epoch/parameters. Existing
+resident owner helper's59check scope still separate; adapt and retest lifetime.
+Then actual warning pixels/EVF/movie preservation. Portrait/rotation, Info mirror,
+real histogram data, full lifecycle and exact installation/recovery still open.
+
 ## Highlight native mode/output and bounded RAM context - November 20, 2026
 
 Previousae19d3e was PROGRESS (optional API48 host bridges). This turn binds

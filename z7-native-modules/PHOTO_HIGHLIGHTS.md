@@ -319,11 +319,81 @@ bytes are unchanged by these isolated helpers/audits.
 
 Source evidence: `evidence/20261120-highlight-context.json`.
 
+## Shared settings/context epoch in the persistent profile
+
+The optional `display-highlight-context-probe` now composes the full persistent
+focal/Other/histogram/information profile with API48 source observation and a
+shared GUI publication. It is a development stage of the highlight port, not a
+visible warning feature. No frame permission or native parameter writes occur.
+The accepted API44 persistent profile still rebuilds byte-identically.
+
+`plugins/highlight_epoch.h` publishes twelve words: seven native context fields,
+settings revision, preset, wanted/eligible flags and native DISP cycle generation.
+Only the GUI callback writes; source/worker readers make at most three attempts.
+All shared payload words use atomic word accesses. A writer marks the sequence
+odd before copying and publishes the new epoch/even sequence with release
+ordering. Readers check both sequence and epoch after collecting the view, so a
+repeated32-bit sequence value cannot pair an old epoch with a partially new view.
+Unchanged GUI ticks keep the epoch stable. Epoch exhaustion parks publication
+permanently for this boot rather than recycling an old queued identity.
+
+The existing composed after-GUI callback publishes only after its focal,
+histogram and information work. It uses the persistence layer's even-revision
+settings snapshot and current native RAM context. Source/worker validation
+rechecks live mode, output, source/readiness/service, settings revision, preset,
+DISP generation and current UI ownership. The current full profile owns LCD DISP;
+its EVF/movie/information/menu contexts remain delegated. This is not a replacement
+for the remaining EVF port or broader native lifecycle acceptance.
+
+The source callback returns an observation epoch and its after callback records
+it without modifying the frame. The worker records the currently eligible epoch
+then runs the existing persistence worker. The registered descriptor submits no
+requests yet and its consumer callback parks. All four callbacks and the worker
+are registered before startup settings I/O, with host readiness/menu publication
+still delayed until successful init. API44 hosts reject before settings/menu I/O.
+The Photo highlights switch now drives the wanted epoch bit, not warning pixels.
+
+`tools/audit_z7_highlight_epoch.py` passes61 checks using compiled ARM publication
+and the actual full-profile GUI/source/menu/DISP/worker callbacks. It tests every
+view field, unchanged ticks, odd writer, sequence wrap, exhausted epochs, and a
+reader paused after one payload load while the compiled GUI publisher runs on a
+separate stack. Supplying a repeated sequence value forces epoch validation to
+retry to one whole new view. Full-profile tests cover startup ordering, live
+context invalidation before GUI republishing, actual menu checkbox revision,
+four native DISP cycles back to the original preset and API44 early rejection.
+The round trip cannot reuse its prior epoch because the native cycle generation
+changed. Filesystem/UI/after-GUI delta synchronization, frame-apply boundary and
+explicit task interleavings are supplied. No physical scheduling/fence is claimed.
+
+Private context03 module SHA
+`d429674d261aeea3685906ef166159691634724e489833312dc8fc0cb1470409`,
+25412 file/25088 image/5740 BSS bytes, minimum API48, reproducible. Root71 tests
+pass/no skips. Default persistent module remains SHA719c1db3ca5cf1c78d82ebedcdbbb4cc7b67312b34b7982d11a718e4b39af85c.
+The existing full persistence/status audit passes84 checks on this exact context03
+module/API48 host, including startup failures, menu edits, retry and save-state
+handling. Its API40 legacy rejection uses host bundle20261120-display-host-08.
+The persistence audit now validates its legacy-host bundle path before expensive
+emulation; passing a module-only directory is rejected immediately.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-highlight-context-probe --output .private/builds/highlight-context-profile-new
+.venv\Scripts\python.exe tools/audit_z7_highlight_epoch.py --build .private/builds/20261120-highlight-host-03 --module .private/builds/highlight-context-profile-new --legacy-build .private/builds/20261120-highlight-compat-host-02 --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-epoch-new
+```
+
+Source evidence: `evidence/20261120-highlight-epoch.json`.
+
 ## Remaining implementation work
 
-Publish/revalidate a shared settings/context epoch, then integrate the
-validated optional host bridges and resident asynchronous owner with the full
-profile's worker and Photo highlights preference. Original source-submit
+Connect the published/revalidated settings/context epoch to parameter ownership,
+native packet conversion and owned asynchronous requests in the full profile.
+The pinned photo_zebra implementation changes eligible native100-byte parameter
+payloads before dispatch, preserving the descriptor/callback, and also submits
+owned requests for output switches that generate no native packet. Both paths
+must be ported; owned-only submission is not a substitute for native packet
+conversion. Convert owned work at the consumer boundary with current context,
+retain lifetime through completion/dispatch return, and conditionally restore
+native state. Ordinary non-highlight/ineligible packets must remain native.
+Original source-submit
 boundary1034866E, frame+34 permission, rear/EVF source routing and mode property's
 RAM backing execute in diagnostics. Physical output/timing acceptance and the foreign
 context/image chain remains unbound. Do not reuse Z7II callback

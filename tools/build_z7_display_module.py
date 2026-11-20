@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe', 'settings-files-probe', 'display-persistence-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe', 'settings-files-probe', 'display-persistence-probe', 'display-highlight-context-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -55,6 +55,7 @@ def main():
         'display-other-probe': ('examples/display_other_probe.c', 'original-Z7-display-other-diagnostic', 32),
         'display-information-probe': ('examples/display_information_probe.c', 'original-Z7-display-information-diagnostic', 40),
         'display-persistence-probe': ('examples/display_persistence_probe.c', 'original-Z7-display-persistence-diagnostic', 44),
+        'display-highlight-context-probe': ('examples/display_highlight_context_probe.c', 'original-Z7-display-highlight-context-diagnostic', 48),
         'display-focal-probe': ('examples/display_focal_probe.c', 'original-Z7-display-focal-diagnostic', 32),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
@@ -78,11 +79,12 @@ def main():
         source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
     requested_variant = args.variant
-    if requested_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
+    dependency_variant = 'display-persistence-probe' if requested_variant == 'display-highlight-context-probe' else requested_variant
+    if dependency_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         # The six-group adapter includes the complete histogram/base stack.
         args.variant = 'display-histogram-probe'
         report['information_groups'] = dict(shutter=10, aperture=11, iso=15, shooting=5, release=51, focus=2)
-        if requested_variant in ('display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
+        if dependency_variant in ('display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
             report['other_information_widgets'] = [3,6,7,8,9,13,14,16,17,26,27,34,38,41,44,46,50,53]
             report['readout_ownership_bits'] = 64
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
@@ -122,22 +124,27 @@ def main():
         inputs += [ROOT / 'z7-native-modules/sdk/gui.h', ROOT / 'z7-native-modules/sdk/disp.h', ROOT / 'z7-native-modules/sdk/update.h']
     if args.variant == 'display-histogram-probe':
         inputs += [ROOT / 'z7-native-modules/examples/display_base_probe.c', ROOT / 'z7-native-modules/examples/display_histogram_policy.h']
-    if requested_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
+    if dependency_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         inputs.append(ROOT / 'z7-native-modules/examples/display_histogram_probe.c')
-    if requested_variant in ('display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
+    if dependency_variant in ('display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         inputs += [ROOT / 'z7-native-modules/examples/display_groups_probe.c', ROOT / 'z7-native-modules/examples/display_other_bindings.h']
-    if requested_variant in ('display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
+    if dependency_variant in ('display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         inputs += [ROOT / 'z7-native-modules/examples/display_other_probe.c', ROOT / 'z7-native-modules/examples/display_focal_policy.h', ROOT / 'z7-native-modules/plugins/focal_sample.h']
         report['focal_overlay_scope'] = 'LCD landscape custom presets; EVF and rotation remain open'
         report['focal_owned_slot'] = 1198
         report['focal_label_slot'] = 298
-    if requested_variant in ('display-information-probe', 'display-persistence-probe'):
+    if dependency_variant in ('display-information-probe', 'display-persistence-probe'):
         inputs += [ROOT / 'z7-native-modules/examples/display_focal_probe.c', ROOT / 'z7-native-modules/examples/display_information_policy.h', ROOT / 'z7-native-modules/plugins/information_transition.h', ROOT / 'z7-native-modules/sdk/information.h']
         report['information_app_index'] = 13
-    if requested_variant == 'display-persistence-probe':
+    if dependency_variant == 'display-persistence-probe':
         inputs += [ROOT / 'z7-native-modules/examples/display_information_probe.c', ROOT / 'z7-native-modules/examples/display_persistence_policy.h', ROOT / 'z7-native-modules/sdk/worker.h']
         inputs.extend(ROOT / 'z7-native-modules/plugins' / name for name in ('settings_storage.c', 'settings_storage.h', 'settings_files.c', 'settings_files.h'))
         report['configuration_storage'] = dict(record_bytes=80, slots=2, worker_api=44, physical_card_verified=False)
+    if requested_variant == 'display-highlight-context-probe':
+        inputs.extend(ROOT / 'z7-native-modules' / name for name in (
+            'examples/display_persistence_probe.c', 'examples/display_highlight_context_policy.h',
+            'plugins/highlight_context.h', 'plugins/highlight_epoch.h', 'sdk/highlight.h'))
+        report['highlight_scope'] = 'GUI epoch publication and source/worker observation only; no parameter submission or warning writes'
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)
