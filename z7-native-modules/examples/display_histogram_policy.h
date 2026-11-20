@@ -42,7 +42,8 @@ static uint32_t histogram_context(void)
         (!!B(0xa201d4d0u + 0x192) << 6) |
         (((W(0xa1829b0cu) != 0x1030da57u) || (W(0xa1829b10u) != 0x1030dd1fu)) << 7) |
         (!!B(0xa201f698u + 0x1f) << 8) |
-        ((F(0x103fef81u, uint32_t, void)() != 1) << 9);
+        ((F(0x103fef81u, uint32_t, void)() != 1) << 9) |
+        (((W(0xa1821370u + 0x24) & 7u) != 1) << 14);
     z7_histogram_context_bits = bits;
     return !bits;
 }
@@ -75,6 +76,15 @@ static void histogram_layout(void)
 static uint32_t histogram_painter(uint32_t object, uint32_t next, uint32_t c, uint32_t d)
 {
     ++z7_histogram_paints;
+    /* Render callbacks must use RAM-only guards; do not re-enter property or
+     * display-wait services while native rendering holds its own locks. */
+    if (!histogram_bindings() || W(HG_CONTROL + 0x24) != object ||
+        !z7_base_active || base_blocked || base_releasing ||
+        !z7_settings_valid(&z7_menu_settings) || !(z7_menu_settings.flags & Z7_SETTINGS_CUSTOM) ||
+        (z7_menu_settings.enabled_pages & 16u) ||
+        z7_readout_preset >= 4 || !(z7_menu_settings.components[z7_readout_preset] & Z7_COMPONENT_HISTOGRAM) ||
+        !base_gui_memory_context() || B(0xa201d4d0u + 0x18a) != z7_base_applied ||
+        (W(0xa1821370u + 0x24) & 7u) != 1) return 1;
     if (W(object + 0x28)) histogram_visible = 1;
     return F(HG_DRAW, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t)(object, next, c, d);
 }
@@ -168,7 +178,10 @@ __attribute__((noinline)) static enum z7_histogram_result histogram_update(void)
     }
     B(HG_STATE + 0x10) = 0;
     B(HG_CONTROL) = 1; B(HG_CONTROL + 1) = 0;
-    histogram_layout();
+    /* Do not run the new output's placement code against our old LCD object
+     * after an output transition. Native hide/dirty is output-independent. */
+    if (!B(0xa18237c6u) && !B(0xa201d4d0u + 0x40) &&
+        (W(0xa1821370u + 0x24) & 7u) == 1) histogram_layout();
     if (histogram_bindings() && W(HG_CONTROL + 0x24) == object) {
         F(0x103fb32fu, uint32_t, uint32_t, uint32_t)(object, 0);
         F(0x103fb303u, void, uint32_t, uint32_t)(object, 1);

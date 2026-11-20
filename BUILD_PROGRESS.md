@@ -219,3 +219,22 @@ Failed context/ISO-phase runs remain private. Base68/grid282 and39 root/no-skips
 pass; accepted base-grid04 rebuilds byte-identically. Full statistics success,
 successful histogram pixels, active-output transition checks and broader display
 scope remain. No camera/card access, staging, flash or push; goal stays active.
+
+## Native histogram pixel integration — November 19, 2026
+
+Histogram08 rejects active-output/context changes before painting and avoids
+layout on a replaced output.170 compiled component checks,52 native painter/
+output checks,68 ownership cases and282 grid cases pass. Root51/no-skips pass,
+including12 tests for the explicit sample fixture, RSP pause/register handling
+and bottom-up native rectangle mapping. Host07 remains unchanged.
+
+Assisted-QEMU pixels-live05 passes12checks/nine frames. Immutable sample bins
+are supplied solely for the exact cleared owned getter destination/caller;
+event completion and framebuffer pixels are never invented. Native drawing
+changes37360 pixels entirely within the original histogram rectangle, with all
+other pixels protected exactly. Re-enable repeats this; component-off and
+master-off restore complete captured native RGB. Failed runs are retained and
+their fixture/checker faults documented. This proves successful native pixel
+integration with test bins, not real statistics production or physical-camera
+acceptance. Remaining components, information app/groups, persistence and broader
+lifecycle stay open. No camera/card access, staging, flashing or push.

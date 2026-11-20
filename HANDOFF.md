@@ -1,5 +1,49 @@
 # Laptop handoff — October 20, 2026
 
+## Native histogram pixels and active-output guards — November 19, 2026
+
+Current histogram08 supersedes06 below: reproducible SHA
+29155d3343a98ffa9f9edc126fa68b027d9b715699eba4093a3ec3ce39dc91b2,
+14540bytes/image14272/BSS5060/API32, unchanged host07. No camera/card access,
+staging, flash or push. Full software goal remains active.
+
+Original103FBCCA confirms active outputs at A1821370+0x24. Require sole-active
+LCD, including in the RAM-only painter guard. Reject output/page/ownership
+changes before native painting. Failure cleanup avoids layout against a changed
+output/scene, while native hide/dirty still retires the owned object. Never
+re-enter native property services or display waits from the painter guard.
+170 compiled component checks,52 original-painter/output cases,68 base ownership
+and282 grid cases pass on08. Root51 tests/no skips pass, including12 new fixture
+ownership/RSP/register/pause/coordinate cases.
+
+Positive private run `.private/evidence/20261119-histogram-pixels-live-05` passes
+12checks/9frames. Supplies immutable bins ONLY at104070AC for the exact cleared
+owned BSS buffer and in-module Thumb caller. Foreign callers execute original
+getter. No statistics event completion or framebuffer pixels supplied. Actual
+native layout/updater/painter/submit/present execute. Active and same-page
+re-enabled histogram each change37360 RGB pixels, all inside the exact native
+rectangle; every other pixel matches a captured native reference. Component-off
+and master-off restore complete native RGB exactly. Key active frame inspected.
+Native720x480 bitmap rows are bottom-up (existing spiral research); original
+fill endpoints are exclusive. Rect475,269,675,370 maps to675,156,960,300 at
+1024x682. Raw ISO control snapshots are diagnostic, never a completed-paint fence.
+
+Retain pixels-live01 native readiness failure;02 fixture swallowed an explicit
+pause at a queued getter stop (fixed/tested);03 wrong top-down coordinate test;
+04 invalid requirement that raw ISO visibility fence actual painting. None
+required a renderer patch or pixel exclusions.05 uses actual captured RGB and
+native format membership, retaining control snapshots diagnostically. Real
+statistics production remains UNVERIFIED; prior real-getter failure run remains
+separate evidence. Source summary `evidence/20261119-native-histogram-pixels.json`.
+
+NEXT: remaining display components (highlights/information app/groups), native
+menu-return coherence, persistence and broader lifecycle. Preserve the explicit
+sample boundary; do not call supplied bins real statistics success. Physical
+card/cache/wake and exact installation/recovery assessment remain hardware gaps.
+User wants software finished before flashing. Never flash without explicit
+authorization and a concrete exact-candidate installation/recovery assessment.
+Graph/source manifest refreshed at this checkpoint; all jobs terminal.
+
 ## Native histogram extra pass and real getter failure — November 19, 2026
 
 Previous goal turn made progress; this turn implements the histogram component.

@@ -42,6 +42,8 @@ class HistogramFixture(BaseFixture):
         self.module_base = 0
         self.execute_native_painter = False
         self.rectangles = []
+        self.painter_entry = self.painter_return = 0
+        self.inside_painter = False
 
     def read(self, address):
         return int.from_bytes(self.u.mem_read(address, 4), 'little')
@@ -51,6 +53,12 @@ class HistogramFixture(BaseFixture):
 
     def hook(self, u, address, size, context):
         if self.active_histogram:
+            if address == self.painter_return: self.inside_painter = False
+            if address == self.painter_entry:
+                from unicorn.arm_const import UC_ARM_REG_LR
+                self.inside_painter = True; self.painter_return = u.reg_read(UC_ARM_REG_LR) & ~1
+            if self.inside_painter and address in (0x104065a4, 0x104065b0, 0x103673ac, 0x103fa770, 0x103ecf90):
+                raise AssertionError('Painter re-entered property or display-wait service')
             if address in (0x10369248, 0x10369214, 0x102f27a8, 0x102f2ada, 0x102f5540):
                 self.layout_entries.append((address, u.reg_read(UC_ARM_REG_R0)))
                 HostFixture.hook(self, u, address, size, context)
@@ -109,6 +117,7 @@ class HistogramFixture(BaseFixture):
                     # Supplied synchronous renderer consumes the installed
                     # module callback. Its native painter call is a boundary.
                     u.reg_write(UC_ARM_REG_R0, OBJECT)
+                    if self.submit_mode == 'output-before-paint': self.write(0xa1821370 + 0x24, 4)
                     for reg in (UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3): u.reg_write(reg, 0)
                     u.reg_write(UC_ARM_REG_PC, self.read(OBJECT + 0x4c))
                 return
@@ -118,6 +127,7 @@ class HistogramFixture(BaseFixture):
                     HostFixture.hook(self, u, address, size, context); return
                 if self.submit_mode == 'replace-object': self.write(CONTROL + 36, OBJECT + 512)
                 if self.submit_mode == 'change-page': u.mem_write(SNAPSHOT + 0x18a, b'\1')
+                if self.submit_mode == 'change-output': self.write(0xa1821370 + 0x24, 4)
                 self.ret(1); return
             if address == 0x102f11b6:
                 self.presents += 1; self.ret(0); return
@@ -134,6 +144,7 @@ def audit(raw, host, packet, module, legacy):
     f = HistogramFixture(raw, host, packet)
     check('module-loads', f.call(host['symbols']['z7_module_load_once'], STATE) == 8)
     base, symbols = f.words()[12], module['symbols']
+    f.painter_entry = (base + symbols['histogram_painter']) & ~1
     model = base + symbols['z7_menu_settings']
     def word(name): return f.read(base + symbols['z7_histogram_' + name])
     def component(bit, value): f.call(base + symbols['z7_settings_component'], model, 0, bit, value)
@@ -155,6 +166,7 @@ def audit(raw, host, packet, module, legacy):
         f.write(0xa1829b0c, 0x1030da57); f.write(0xa1829b10, 0x1030dd1f)
         f.u.mem_write(0xa18237c6, b'\0'); f.write(0xa2c41008, 0)
         f.write(0xa1821370 + 0x30, 0); f.write(0xa1821370 + 0x34, 0)
+        f.write(0xa1821370 + 0x24, 1)
         f.u.mem_write(DESC + 4, MASKS); f.write(DESC + 44, CONTROL)
         f.u.mem_write(CONTROL, bytes(3)); f.write(CONTROL + 36, OBJECT)
         f.u.mem_write(OBJECT, bytes(284)); f.write(OBJECT + 4, 4)
@@ -198,6 +210,9 @@ def audit(raw, host, packet, module, legacy):
         ('menu', lambda: setattr(f, 'menu', 1), 2),
         ('update-blocked', lambda: setattr(f, 'blocked', 1), 2),
         ('widget-excluded', lambda: setattr(f, 'exclude', 1), 2),
+        ('inactive-output', lambda: f.write(0xa1821370 + 0x24, 0), 2),
+        ('evf-active', lambda: f.write(0xa1821370 + 0x24, 4), 2),
+        ('mixed-outputs', lambda: f.write(0xa1821370 + 0x24, 3), 2),
         ('foreign-key-callback', lambda: f.write(0xa1829b0c, 0), 2),
         ('foreign-event-callback', lambda: f.write(0xa1829b10, 0), 2),
         ('pending-event', lambda: setattr(f, 'pending', 1), 3),
@@ -216,6 +231,7 @@ def audit(raw, host, packet, module, legacy):
         ('total-overflow', lambda: setattr(f, 'samples', [0xffffffff] * 256), 10),
         ('page-changed-during-sampling', lambda: setattr(f, 'change_after_sample', lambda: f.u.mem_write(SNAPSHOT + 0x18a, b'\1')), 11),
         ('slot-changed-during-sampling', lambda: setattr(f, 'change_after_sample', lambda: f.write(CONTROL + 36, OBJECT + 512)), 11),
+        ('output-changed-during-sampling', lambda: setattr(f, 'change_after_sample', lambda: f.write(0xa1821370 + 0x24, 4)), 11),
     ]:
         reset(); component(1, 1); f.samples = [1 + (i % 16) * 10 for i in range(256)]
         before_gets, before_submits, before_presents = f.gets, f.submits, f.presents
@@ -224,13 +240,17 @@ def audit(raw, host, packet, module, legacy):
         check(name + '-no-native-sample-or-mask-stores', bytes(f.u.mem_read(BINS, 1024)) == native_before and bytes(f.u.mem_read(DESC + 4, 36)) == masks_before and f.read(CONTEXT + 0x34) == 0x12345678)
         check(name + '-no-submit-or-present', f.submits == before_submits and f.presents == before_presents)
         if expected < 8 or expected == 13: check(name + '-does-not-sample', f.gets == before_gets)
-    for mode in ('fail', 'no-paint', 'change-page', 'replace-object'):
-        reset(); f.submit_mode = mode; before = f.presents
+    for mode in ('fail', 'no-paint', 'change-page', 'replace-object', 'change-output', 'output-before-paint'):
+        reset(); f.submit_mode = mode; before = f.presents; paints_before = f.native_paints
         result = update()
         check(mode + '-submit-failure-or-change-not-presented', result == (11 if mode == 'replace-object' else 14) and f.presents == before)
         check(mode + '-module-painter-always-restored', f.read(OBJECT + 0x4c) == 0x10433913 and bytes(f.u.mem_read(DESC + 4, 36)) == MASKS)
         if mode != 'replace-object':
             check(mode + '-context-cleared-and-widget-hidden', f.u.mem_read(CONTEXT + 0x10, 1) == b'\0' and f.u.mem_read(CONTROL + 1, 1) == b'\0' and not f.read(OBJECT + 0x28))
+        if mode in ('change-output', 'output-before-paint'):
+            check(mode + '-no-placement-on-replacement-output', sum(address == 0x102f27a8 for address, _ in f.layout_entries) == 1)
+        if mode == 'output-before-paint':
+            check(mode + '-ram-guard-skips-native-painter', f.native_paints == paints_before)
     for retirement in ('component-off', 'master-off', 'foreign-painter', 'replacement-object'):
         reset(); component(1, 1)
         f.call(base + symbols['z7_settings_flag'], model, 0, 1)
@@ -271,6 +291,7 @@ def audit(raw, host, packet, module, legacy):
     return dict(passed=True, checks=checks, main_sha256=host['main_payload_sha256'], module_sha256=module['module_sha256'],
         native_layout_and_updater_execute=True, native_unavailable_event_chain_executes=True,
         native_histogram_painter_and_scale_getter_execute=True,
+        painter_property_or_display_wait_reentry=False,
         supplied_boundaries=['Loader/kernel/heap/property/GUI inputs', 'Successful/empty/failed sample data',
         'Synchronous render submit', 'Painter result in failure-injection cases',
         'Low-level rectangle/barrier services in native painter case', 'Present request'],

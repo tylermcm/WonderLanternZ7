@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 native histogram pixel integration with explicitly supplied owned sample bins",
+  "status": "Successful native drawing and exact retirement validated in assisted QEMU; real statistics production remains unverified",
+  "module": {
+    "module_sha256": "29155d3343a98ffa9f9edc126fa68b027d9b715699eba4093a3ec3ce39dc91b2",
+    "file_bytes": 14540,
+    "image_bytes": 14272,
+    "bss_bytes": 5060,
+    "api_minimum_bytes": 32
+  },
+  "source_inputs_verified": true,
+  "host_main_sha256": "9326b595fd4f47719aaa9bcdb157ce35aa9f3cbd812a62f990585a4e2e52db66",
+  "host_changed": false,
+  "policy": {
+    "sole_active_lcd_required": true,
+    "active_output_word": "0xA1821394",
+    "original_output_reader": "0x103FBCCA",
+    "ram_only_painter_context_guard": true,
+    "no_native_property_or_wait_reentry_from_guard": true,
+    "changed_output_scene_skips_failure_layout": true,
+    "native_hide_dirty_retirement_retained": true
+  },
+  "audits": {
+    "component": {
+      "passed": true,
+      "checks": 170,
+      "private_evidence": ".private/evidence/20261119-histogram-output-02.json"
+    },
+    "native_painter_and_outputs": {
+      "passed": true,
+      "checks": 52,
+      "private_evidence": ".private/evidence/20261119-histogram-painter-02.json"
+    },
+    "base_ownership": {
+      "passed": true,
+      "checks": 68,
+      "private_evidence": ".private/evidence/20261119-histogram-output-base-01.json"
+    },
+    "grid": {
+      "passed": true,
+      "checks": 282,
+      "private_evidence": ".private/evidence/20261119-histogram-output-grid-01.json"
+    }
+  },
+  "root_tests": {
+    "passed": true,
+    "tests": 51,
+    "skipped": 0,
+    "new_sample_fixture_tests": 12
+  },
+  "live": {
+    "private_evidence": ".private/evidence/20261119-histogram-pixels-live-05",
+    "passed": true,
+    "checks": 12,
+    "frames": 9,
+    "scope": {
+      "supplied_samples": true,
+      "statistics_event_completion_invented": false,
+      "native_getter_executed": false,
+      "native_pixel_histogram_success_proven": true,
+      "real_statistics_production_proven": false,
+      "control_snapshot_is_not_a_paint_fence": true
+    },
+    "owned_sample_calls": 11,
+    "sample_sha256": "2d0c358bd29511873a3e97f6719981fd88e9b7347b1c08b097df7e72a86f735e",
+    "helper_sha256": "64d204857364dcf3724f3c5dc2d7670876aebd3f038e05f0f14d604120dbc06e",
+    "native_rectangle": [
+      475,
+      269,
+      675,
+      370
+    ],
+    "native_bitmap_size": [
+      720,
+      480
+    ],
+    "bitmap_rows": "bottom-up",
+    "fill_endpoints": "exclusive",
+    "scanout_size": [
+      1024,
+      682
+    ],
+    "pixel_membership": [
+      {
+        "frame": "histogram-custom-active",
+        "native_histogram_box": [
+          675,
+          156,
+          960,
+          300
+        ],
+        "matches": [
+          {
+            "reference": "histogram-disabled-control-1",
+            "changed_histogram_pixels": 37360,
+            "difference_bounds": [
+              676,
+              156,
+              960,
+              300
+            ],
+            "same_iso_control_snapshot": true
+          },
+          {
+            "reference": "histogram-disabled-control-2",
+            "changed_histogram_pixels": 37360,
+            "difference_bounds": [
+              676,
+              156,
+              960,
+              300
+            ],
+            "same_iso_control_snapshot": true
+          }
+        ]
+      },
+      {
+        "frame": "histogram-reenabled",
+        "native_histogram_box": [
+          675,
+          156,
+          960,
+          300
+        ],
+        "matches": [
+          {
+            "reference": "histogram-disabled-native-cycle-0",
+            "changed_histogram_pixels": 37360,
+            "difference_bounds": [
+              676,
+              156,
+              960,
+              300
+            ],
+            "same_iso_control_snapshot": true
+          }
+        ]
+      }
+    ],
+    "retired_membership": [
+      {
+        "frame": "histogram-component-off",
+        "exact_native_references": [
+          "histogram-disabled-control-1",
+          "histogram-disabled-control-2"
+        ]
+      },
+      {
+        "frame": "histogram-master-off",
+        "exact_native_references": [
+          "histogram-disabled-native-cycle-0"
+        ]
+      }
+    ],
+    "outside_pixel_exclusions": 0,
+    "active_frame_visually_inspected": true,
+    "counter_snapshots_are_not_paint_fences": true
+  },
+  "retained_failed_runs": [
+    {
+      "suffix": "pixels-live-01",
+      "reason": "Native RAW advanced but ISP/LCD readiness did not qualify; sample fixture never enabled"
+    },
+    {
+      "suffix": "pixels-live-02",
+      "reason": "Fixture swallowed explicit pause at queued getter stop; fixed with pause admission and regression test"
+    },
+    {
+      "suffix": "pixels-live-03",
+      "reason": "Checker assumed top-down bitmap rows; corrected using established native bottom-up geometry"
+    },
+    {
+      "suffix": "pixels-live-04",
+      "reason": "Checker treated raw ISO visibility snapshot as completed-paint fence; actual protected RGB already matched native reference"
+    }
+  ],
+  "graph": {
+    "nodes": 2163,
+    "edges": 5441,
+    "generated_graph_ignored": true
+  },
+  "remaining": [
+    "Successful real statistics production",
+    "Highlights and remaining display components",
+    "Information app and remaining information groups",
+    "Native menu-return coherence",
+    "Persistence and broader lifecycle",
+    "Physical card/cache/wake validation",
+    "Exact-candidate installation and recovery assessment"
+  ],
+  "camera_access": false,
+  "physical_card_access": false,
+  "firmware_staged": false,
+  "flashed": false,
+  "pushed": false,
+  "full_software_goal_complete": false
+}

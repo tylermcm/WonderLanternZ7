@@ -723,3 +723,37 @@ submit/present pixel path and visible-widget retirement with explicit supplied
 bins if the emulator has no real statistics producer. Keep that boundary labeled;
 real successful statistics production remains unverified. Other display scope,
 physical card/cache/wake and exact installation/recovery remain open.
+
+### Successful native histogram pixels with explicit test bins
+
+Histogram08 adds sole-active-LCD checks using original103FBCCA's output word
+A1821370+0x24. A RAM-only paint guard checks current bindings, base ownership,
+settings/page and output before calling the original painter. It never invokes
+property services or native waits. Cleanup skips layout if output/scene changes,
+then uses output-independent native hide/dirty retirement.170 compiled component
+checks and52 original painter/output checks pass; base68/grid282 also pass.
+
+Private pixels-live05 passes12 checks/nine frames using immutable sample bins
+at the exact owned getter boundary. Only the cleared aligned module BSS buffer
+and an owned Thumb return address qualify. Other native getter callers pass
+through unchanged. No event completion, framebuffer pixels or native display
+service returns are supplied by this fixture. Actual native histogram painting
+changes37360 pixels entirely inside its original rectangle, with every outside
+pixel equal to a captured native reference. Same-page re-enable repeats this;
+component-off and master-off restore complete captured native RGB exactly.
+
+Native bitmap rows are bottom-up and fill endpoints exclusive: native rectangle
+475,269,675,370 maps to675,156,960,300 on1024x682 scanout. The checker derives
+this box, requires visible changes inside, and excludes no outside pixels.
+Native format must match the reference. Raw ISO flags remain diagnostic because
+they can precede painting; actual captured RGB establishes membership. Failed
+readiness, queued-pause, wrong-coordinate and ISO-state-filter runs are retained
+privately. The pause fix and coordinate/ownership/register boundary have12 tests;
+all51 root tests pass without skips. Fixture/helper sources are frozen with
+private evidence. See `evidence/20261119-native-histogram-pixels.json`.
+
+Current package14540bytes/image14272/BSS5060/API32 has reproducible SHA
+29155d3343a98ffa9f9edc126fa68b027d9b715699eba4093a3ec3ce39dc91b2.
+Host07 is unchanged. Successful real statistics production, physical output
+transitions and hardware presentation remain unverified. This advances renderer
+integration and retirement, while remaining display/software scope stays open.

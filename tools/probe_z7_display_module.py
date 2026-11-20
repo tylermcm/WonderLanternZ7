@@ -13,7 +13,7 @@ import struct
 import threading
 import time
 
-from PIL import Image
+from PIL import Image, ImageChops
 from build_z7_module_host import ROOT, STATE, validate_candidate
 from probe_z7_module_host import HostCamera, bind_module_fixture, ui
 from cmos_config import active_manifest, active_ingress
@@ -22,6 +22,16 @@ LAYOUTS = [('fourths', 1, 3), ('thirds', 2, 2), ('golden', 3, 2), ('center', 4, 
 
 
 class DisplayCamera(HostCamera):
+    def pause(self):
+        # A getter breakpoint can already be queued when the caller requests a
+        # pause. Return that stop without auto-resuming it through the fixture.
+        active = getattr(getattr(self, 'remote', None), 'histogram_enabled', False)
+        if active: self.remote.histogram_pause_requested = True
+        try:
+            return super().pause()
+        finally:
+            if active: self.remote.histogram_pause_requested = False
+
     def call(self, packet, name, function, payload, arguments):
         if name == 'Waiting for the native display':
             arguments = [getattr(self, 'native_display_wait_ms', 100)]
@@ -40,6 +50,8 @@ def main():
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
     parser.add_argument('--histogram-context-fixture', action='store_true',
                         help='Explicitly supply native histogram context 1; not a camera-derived observation')
+    parser.add_argument('--histogram-sample-fixture', action='store_true',
+                        help='Supply bins only to the owned module getter boundary; histogram view only, not real statistics')
     parser.add_argument('--trace-histogram-writes', action='store_true', help='Record bounded native histogram control watchpoints')
     parser.add_argument('--trace-histogram-context', action='store_true', help='Observe native context producer instead of widget stores')
     parser.add_argument('--battery-text-trial', action='store_true', help='Diagnostic native text object with supplied 63 percent; inspect view only')
@@ -47,6 +59,8 @@ def main():
     args = parser.parse_args()
     if args.histogram_context_fixture and args.view != 'live':
         parser.error('Histogram context fixture requires live view')
+    if args.histogram_sample_fixture and args.view != 'histogram':
+        parser.error('Supplied histogram samples require histogram view')
     if args.battery_text_trial and args.view != 'inspect':
         parser.error('Battery text trial requires inspect view')
     if args.battery_icon_fixture and args.view not in ('battery-auto', 'settings-battery'):
@@ -77,6 +91,14 @@ def main():
     if hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Module fingerprint mismatch')
     fixture = bind_module_fixture(output, packet, host)
+    sample_fixture = None
+    fixture_source_hash = None
+    if args.histogram_sample_fixture:
+        from histogram_sample_fixture import HistogramSampleFixture, sample_remote, histogram_scanout_box
+        fixture_source = Path(__file__).with_name('histogram_sample_fixture.py').read_bytes()
+        (output / 'histogram-fixture-source.py').write_bytes(fixture_source)
+        fixture_source_hash = hashlib.sha256(fixture_source).hexdigest()
+        ui.Remote = sample_remote(ui.Remote)
     options = {} if args.view in ('menu', 'settings-menu', 'settings-entry') else dict(capture_control_test=True,
         raw_source=active_manifest('native0'), exmcu_no_lens=True, tg_periodic_test=True,
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
@@ -90,6 +112,7 @@ def main():
         main_sha256=host['main_payload_sha256'], modeled_module_file=True, camera_access=False, physical_card=False,
         supplied_histogram_context=args.histogram_context_fixture)
     result['probe_script_sha256'] = hashlib.sha256(probe_source).hexdigest()
+    if fixture_source_hash: result['histogram_fixture_source_sha256'] = fixture_source_hash
     if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
     def save():
         (output / 'result.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
@@ -158,6 +181,7 @@ def main():
             step['histogram']['object'] = hex(obj)
             step['histogram']['object_words'] = list(struct.unpack('<25I', camera.remote.memory(obj, 100))) if obj else []
             step['histogram']['scale'] = int.from_bytes(camera.remote.memory(0xa201d33c, 4), 'little')
+            step['histogram']['active_outputs'] = int.from_bytes(camera.remote.memory(0xa1821394, 4), 'little')
             step['histogram']['native_formats'] = camera.remote.memory(0xa18237b8, 7).hex()
             iso_descriptor = 0xa1824654
             iso_control = int.from_bytes(camera.remote.memory(iso_descriptor + 44, 4), 'little')
@@ -319,23 +343,58 @@ def main():
                 key('disp', lambda: camera.remote.memory(0xa201d4d0 + 0x18a, 1)[0] == target)
                 step = capture('histogram-disabled-native-cycle-' + str(target))
                 if target == 0: histogram_references.append(step)
+            if args.histogram_sample_fixture:
+                sample_fixture = HistogramSampleFixture(base, module['image_bytes'], module['image_bytes'] + module['bss_bytes'],
+                    module['symbols']['histogram_samples'])
+                camera.remote.enable_histogram_samples(sample_fixture)
+            def histogram_word(name):
+                return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_histogram_' + name], 4), 'little')
+            def wait_histogram(previous_draws=0):
+                for _ in range(5):
+                    native('Wait for native histogram drawing' if args.histogram_sample_fixture else 'Wait for native histogram sampling', 0x1017081e, [500])
+                    if histogram_word('draws' if args.histogram_sample_fixture else 'attempts') > previous_draws:
+                        return
+            def histogram_visible_pixels(step):
+                picture = Image.open(output / (step['name'] + '.png')).convert('RGB')
+                x1, y1, x2, y2 = struct.unpack_from('<4h', bytes.fromhex(step['histogram']['control']), 10)
+                box = histogram_scanout_box((x1, y1, x2, y2), picture.size)
+                matches = []
+                for reference in histogram_references:
+                    if reference['histogram']['native_formats'] != step['histogram']['native_formats']: continue
+                    baseline = Image.open(output / (reference['name'] + '.png')).convert('RGB')
+                    difference = ImageChops.difference(picture, baseline)
+                    bounds = difference.getbbox()
+                    changed = sum(pixel != (0, 0, 0) for pixel in difference.crop(box).getdata())
+                    if bounds and changed > 50 and box[0] <= bounds[0] <= bounds[2] <= box[2] and box[1] <= bounds[1] <= bounds[3] <= box[3]:
+                        matches.append(dict(reference=reference['name'], changed_histogram_pixels=changed, difference_bounds=bounds,
+                            same_iso_control_snapshot=reference['histogram']['native_iso_visibility'] == step['histogram']['native_iso_visibility']))
+                result.setdefault('histogram_pixel_membership', []).append(dict(frame=step['name'], native_histogram_box=box, matches=matches))
+                check(step['name'] + '-native-histogram-visible-and-all-other-pixels-protected', bool(matches))
+            def histogram_retired_pixels(step):
+                picture = Image.open(output / (step['name'] + '.png')).convert('RGB').tobytes()
+                # Native visibility flags can precede actual painting. Require
+                # complete captured-native RGB, not a control snapshot as fence.
+                matches = [r['name'] for r in histogram_references if r['histogram']['native_formats'] == step['histogram']['native_formats'] and
+                    Image.open(output / (r['name'] + '.png')).convert('RGB').tobytes() == picture]
+                result.setdefault('histogram_retired_membership', []).append(dict(frame=step['name'], exact_native_references=matches))
+                check(step['name'] + '-complete-native-frame-restored', bool(matches))
             native('Enable histogram component in preset0', base + module['symbols']['z7_settings_component'],
                    [base + module['symbols']['z7_menu_settings'], 0, 1, 1])
             native('Enable custom display model', base + module['symbols']['z7_settings_flag'],
                    [base + module['symbols']['z7_menu_settings'], 0, 1])
-            for _ in range(5):
-                native('Wait for native histogram sampling', 0x1017081e, [500])
-                if int.from_bytes(camera.remote.memory(base + module['symbols']['z7_histogram_attempts'], 4), 'little'):
-                    break
+            wait_histogram()
             active = capture('histogram-custom-active')
-            check('histogram-pass-reaches-real-native-getter', active['histogram']['attempts'] > 0)
+            check('histogram-pass-reaches-owned-getter-boundary' if args.histogram_sample_fixture else 'histogram-pass-reaches-real-native-getter', active['histogram']['attempts'] > 0)
             check('histogram-temporary-masks-restored', active['histogram']['masks'] == struct.pack('<9I', *([0x444] * 6 + [0x440] * 3)).hex())
-            if not active['histogram']['draws']:
+            if args.histogram_sample_fixture:
+                check('supplied-bins-reach-native-painter-and-present-request',
+                    active['histogram']['draws'] > 0 and active['histogram']['paints'] > 0 and active['histogram']['presents'] > 0)
+                histogram_visible_pixels(active)
+            elif not active['histogram']['draws']:
                 check('unavailable-or-empty-native-samples-fail-closed',
                     sum(active['histogram']['outcomes'][8:10]) > 0 and not active['histogram']['paints'] and not active['histogram']['presents'])
                 references = [Image.open(output / (step['name'] + '.png')).convert('RGB').tobytes()
-                    for step in histogram_references if all(step['histogram'][field] == active['histogram'][field]
-                        for field in ('native_formats', 'native_iso_visibility'))]
+                    for step in histogram_references if step['histogram']['native_formats'] == active['histogram']['native_formats']]
                 check('sample-failure-keeps-complete-native-frame', Image.open(output / 'histogram-custom-active.png').convert('RGB').tobytes() in references)
             else:
                 result['native_histogram_success_observed'] = True
@@ -344,11 +403,22 @@ def main():
             retired = capture('histogram-component-off')
             check('component-off-does-not-retain-module-painter', not retired['histogram']['object_words'] or
                 retired['histogram']['object_words'][19] in (0x10433913, 0x102f1545))
+            if args.histogram_sample_fixture:
+                histogram_retired_pixels(retired)
+                previous = histogram_word('draws')
+                native('Re-enable histogram component on the same native page', base + module['symbols']['z7_settings_component'],
+                       [base + module['symbols']['z7_menu_settings'], 0, 1, 1])
+                wait_histogram(previous)
+                histogram_visible_pixels(capture('histogram-reenabled'))
             native('Disable custom display model', base + module['symbols']['z7_settings_flag'],
                    [base + module['symbols']['z7_menu_settings'], 0, 0])
-            capture('histogram-master-off')
-            result['histogram_scope'] = dict(supplied_samples=False, statistics_event_completion_invented=False,
-                native_getter_executed=True, native_pixel_histogram_success_proven=False)
+            master_off = capture('histogram-master-off')
+            if args.histogram_sample_fixture:
+                histogram_retired_pixels(master_off)
+                checkpoint(); camera.remote.disable_histogram_samples()
+            result['histogram_scope'] = dict(supplied_samples=args.histogram_sample_fixture, statistics_event_completion_invented=False,
+                native_getter_executed=not args.histogram_sample_fixture, native_pixel_histogram_success_proven=args.histogram_sample_fixture,
+                real_statistics_production_proven=False, control_snapshot_is_not_a_paint_fence=True)
         elif args.view == 'gui-update':
             if module['kind'] != 'original-Z7-gui-update-diagnostic':
                 raise ValueError('After-GUI diagnostic required')
@@ -1154,6 +1224,9 @@ def main():
         raise
     finally:
         watchdog.cancel()
+        if sample_fixture:
+            result['histogram_sample_fixture'] = dict(sample_sha256=sample_fixture.sha256,
+                events=sample_fixture.events, scope='Exact owned module buffer/caller only; getter return and bins supplied; no event completion')
         result.update(session=camera.stamp, filesystem_events=fixture.events)
         camera.close_guest()
         save()

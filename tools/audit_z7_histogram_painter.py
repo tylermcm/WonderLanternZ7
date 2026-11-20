@@ -41,6 +41,10 @@ def audit(raw):
         if not good: raise AssertionError(name)
     f = PainterFixture(raw)
     def write(address, value): f.u.mem_write(address, struct.pack('<I', value))
+    for active in range(8):
+        write(0xa1821370 + 0x24, active)
+        for requested in (1, 2, 4):
+            check(f'original-active-output-word-{active}-mask-{requested}', f.call(0x103fbcca, requested) == bool(active & requested))
     for scale in (0, 1, 37, 100, 0xffffffff):
         write(STATE + 0x34, scale)
         check(f'original-gate3-reads-histogram-scale-{scale}', f.call(0x103ea09e, 3) == scale)
