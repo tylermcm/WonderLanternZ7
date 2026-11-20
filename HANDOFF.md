@@ -1,5 +1,42 @@
 # Laptop handoff — October 20, 2026
 
+## Restart recovery and native layout — November 20, 2026
+
+Resumed after Windows update from93a20a2; source and current private module
+fingerprints verified. No production C or package change. New native-layout
+audit PASSES175 checks/20 text cases/five constructor cases. See
+FOCAL_LENGTH_RESEARCH.md and evidence/20261120-native-focal-layout.json.
+Original text/constructor geometry and font selection execute; allocation,
+list insertion and drawing boundaries remain supplied. EVF/rotation
+pixels are not established. Corrected misleading native function names below.
+
+Focal/horizon live01 is TERMINAL FAILED16/17checks,10frames. Native24.5mm
+paints, then whole-frame membership outside the owned window fails on the ADL
+edge:64/65/84 pixels against same-ISO-phase references. ADL masks/controls match;
+the focal-disabled reference frames already vary in that area. Failed run and
+private inspected crops retained. No exclusions, composites or relaxed checks.
+Revised fixture requires whole-native RGB to repeat within each ISO phase.
+Live02 is TERMINAL FAILED61/62checks,33frames on UNCHANGED focal03/host07.
+Baseline converged at23references; fractional/whole text match settled complete
+native RGB outside the owned window. Other OFF retains identical focal crop.
+After Other ON/Focal OFF, RGB matches TRANSIENT reference1, not the settled
+baseline. Focal reenable then differs on40 ADL pixels at626,6..649,50 against
+ALL same-ISO-phase references. No absence/return/master-OFF checks were reached.
+All33 immutable PNG fingerprints and every recorded full-frame membership were
+independently rechecked; failure remains failed. BOTH97949/29488 and Graphify
+jobs34833/22645 are terminal. Do not poll/restart them. No live jobs remain.
+Graph refreshed2337nodes/5956edges and remains ignored. Full goal stays active.
+
+NEXT: focused Other OFF/ON horizon control with Focal NEVER enabled, to isolate
+background reconstruction from the owned focal object. Capture complete native
+RGB before/after that SAME history, qualify phases/repetition, preserve strict
+comparisons. Then inspect original ADL clear/draw/GPU commands as needed. Do not
+blindly rerun the long combined probe, extend sample caps, exclude edges or call
+the failed runs passes. Existing GPU model uses approximate YUV/alpha; this is
+a lead, NOT a proven cause. Native layout bindings above prepare EVF work, but
+base/readout/focal policies still admit LCD only. Remaining full software scope
+continues below. No camera/card, staging, flashing or push.
+
 ## Independent focal overlay — November 20, 2026
 
 Previous turn made progress: live sampler5fc3ff6. This checkpoint adds a separate
@@ -54,8 +91,10 @@ NEXT: focal/horizon live combination, EVF/rotated layout and AF/alternate states
 then native MENU/output/lens reconnect lifecycle. Current focal path rejects
 EVF/rotation/AF rather than applying old LCD coordinates. Original VR widget50
 has separate whole-mm text2 and is already under Other masks; do not hijack it.
-Native placement/style leads:10369214 chooses control geometry,102F27A8 chooses
-native style per output/rotation (not itself a paint fence). Current old ADL
+CORRECTION:10369214 propagates control dirty state;102F27A8 selects native
+permission/visibility masks. Neither identifies text rectangle placement.
+Actual constructor102F17B8 and text wrapper102F32AE copy per-scene rectangles;
+see the175check focal-layout audit and FOCAL_LENGTH_RESEARCH.md. Current old ADL
 horizon65edge-pixel mismatch remains unresolved;15check updater equivalence only
 narrows it. Native information app, highlights, portrait, persistence and broader
 combined lifecycle remain. Read FOCAL_LENGTH_RESEARCH.md / DISPLAY_SETTINGS.md.

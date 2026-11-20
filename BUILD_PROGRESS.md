@@ -292,6 +292,22 @@ No camera/card access, staging, flashing or push.
 
 ## Independent focal text and native repaint — November 20, 2026
 
+Restart follow-up: original constructor/text geometry audit passes175 checks
+(20 text cases/five constructor cases). Scene-specific rectangles/fonts and
+three native output-list registrations are independently bound; rotated pixels
+and an EVF overlay remain unverified. Earlier placement/style function names
+are corrected in HANDOFF.md / FOCAL_LENGTH_RESEARCH.md. First focal/horizon
+live run fails16/17checks: ADL edge pixels differ outside the focal window and
+already vary across focal-disabled references. A stricter complete-frame
+reference-stability fixture qualifies a settled baseline after23 references.
+Live02 still fails61/62 checks/33frames on unchanged focal03: initial fractional/
+whole text match settled RGB and Other OFF retains its crop, but focal reenable
+after Other ON differs on40 ADL edge pixels. Focal OFF matched transient native
+reference1. All33 fingerprints/memberships independently checked; no failed run
+is cleared. Next is an Other-cycle control with Focal never enabled, before any
+further combined run. All jobs terminal; remaining lifecycle checks not reached.
+See `evidence/20261120-native-focal-layout.json`; no production C change.
+
 New optional focal03 adds its own LCD landscape text object1198/label298,
 whole/fractional formatting and independent per-preset selection. It preserves
 battery and VR ownership. Native HUD changes request bounded repaint even when

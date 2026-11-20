@@ -12,12 +12,15 @@ from PIL import Image, ImageChops
 from display_pixel_geometry import control_scanout_box
 
 
-def run_focal_probe(camera, output, module, base, result, capture, native, key, check):
+def run_focal_probe(camera, output, module, base, result, capture, native, key, check, horizon=False):
     if module['kind'] != 'original-Z7-display-focal-diagnostic':
         raise ValueError('Focal overlay diagnostic required')
     source = Path(__file__).read_bytes()
     (output / 'focal-probe-source.py').write_bytes(source)
     result['focal_probe_source_sha256'] = hashlib.sha256(source).hexdigest()
+    geometry = Path(__file__).with_name('display_pixel_geometry.py').read_bytes()
+    (output / 'geometry-source.py').write_bytes(geometry)
+    result['information_geometry_source_sha256'] = hashlib.sha256(geometry).hexdigest()
     result['focal_source_scope'] = 'Supplied original properties1C14/1C01; no live lens hardware'
     originals = {hex(a): camera.remote.memory(a, 4).hex() for a in (0xa24e2600, 0xa24e25a8)}
     result['focal_incoming_property_fixture'] = dict(original_values=originals, updates=[])
@@ -39,8 +42,48 @@ def run_focal_probe(camera, output, module, base, result, capture, native, key, 
         step = capture('focal-disabled-cycle-' + str(page))
         check('focal-disabled-native-cycle-' + str(page), step['information_native_page'] == page)
         if page == 0: references.append(step)
+        elif page == 3: native_horizon_reference = step
     baseline_masks = references[0]['information_masks']
+    standard_references = list(references)
     for bit in (1, 2): native('Disable extra component for focal pixel isolation', base + module['symbols']['z7_settings_component'], [model, 0, bit, 0])
+    if horizon:
+        native('Keep focal off while qualifying complete horizon references', base + module['symbols']['z7_settings_information'], [model, 0, 7, 0])
+        native('Select native horizon component', base + module['symbols']['z7_settings_component'], [model, 0, 2, 1])
+        native('Enable custom horizon baseline', base + module['symbols']['z7_settings_flag'], [model, 0, 1])
+        native('Wait for native horizon baseline', 0x1017081e, [500])
+        def iso_signature(step):
+            rect = struct.unpack_from('<4h', bytes.fromhex(step['information_controls']['15'][0]), 10)
+            picture = image(step)
+            return hashlib.sha256(picture.crop(control_scanout_box(rect, picture.size)).tobytes()).hexdigest()
+        wanted = {iso_signature(s) for s in standard_references}; observed = set(); references = []
+        # ISO phase alone cannot qualify a whole reference. The ADL edge was
+        # still changing before focal was enabled in horizon-live-01. Require
+        # repeated complete native RGB within every observed blink phase.
+        phase_frames, phase_repeats = {}, {}
+        delays = (None, None, 125, 250, 375, 125, 250, 375) + (500,) * 16
+        for index, delay in enumerate(delays, 1):
+            if index == 2: native('Native invalidation with focal still off on horizon', 0x10367c5a, [])
+            if delay: native('Observe unchanged-setting native horizon phase', 0x1017081e, [delay])
+            step = capture('focal-horizon-disabled-reference-' + str(index))
+            check('focal-horizon-reference-' + str(index) + '-owns-native-page3', step['information_native_page'] == 3 and step['information_base']['active'] == 1)
+            picture = image(step); delta = ImageChops.difference(picture, image(native_horizon_reference))
+            for rows in step['information_controls'].values():
+                for raw in rows:
+                    rect = struct.unpack_from('<4h', bytes.fromhex(raw), 10)
+                    if rect[0] < rect[2] and rect[1] < rect[3]: delta.paste((0, 0, 0), control_scanout_box(rect, picture.size))
+            check('focal-horizon-reference-' + str(index) + '-protects-level-and-non-information-pixels', delta.getbbox() is None)
+            phase = iso_signature(step)
+            fingerprint = hashlib.sha256(picture.tobytes()).hexdigest()
+            phase_repeats[phase] = phase_repeats.get(phase, 0) + 1 if phase_frames.get(phase) == fingerprint else 0
+            phase_frames[phase] = fingerprint
+            observed.add(phase); references.append(step)
+            result.setdefault('focal_horizon_reference_stability', []).append(dict(
+                frame=step['name'], iso_phase_sha256=phase, full_rgb_sha256=fingerprint,
+                consecutive_same_phase_repeats=phase_repeats[phase]))
+            if observed == wanted and all(phase_repeats.get(p, 0) >= 2 for p in wanted): break
+        check('focal-horizon-complete-native-iso-phases-qualified', observed == wanted)
+        check('focal-horizon-whole-native-rgb-repeats-in-every-iso-phase',
+              observed == wanted and all(phase_repeats.get(p, 0) >= 2 for p in wanted))
     native('Enable independent focal information', base + module['symbols']['z7_settings_information'], [model, 0, 7, 1])
     native('Enable custom focal preset', base + module['symbols']['z7_settings_flag'], [model, 0, 1])
     def wait_capture(name):
@@ -85,7 +128,10 @@ def run_focal_probe(camera, output, module, base, result, capture, native, key, 
     native('Disable custom focal master', base + module['symbols']['z7_settings_flag'], [model, 0, 0])
     retired = wait_capture('focal-master-off')
     check('master-off-restores-all-native-descriptor-masks', retired['information_masks'] == baseline_masks)
+    if horizon:
+        check('focal-horizon-master-off-restores-saved-native-page0', retired['information_native_page'] == 0 and not retired['information_base']['active'])
+        references = standard_references
     membership(retired)
     result['focal_scope'] = dict(lcd_landscape=True, independent_other_toggle=True, fractional_and_whole_native_text=True,
-        incoming_lens_properties_supplied=True, snapshot_visibility_or_pixels_supplied=False,
+        incoming_lens_properties_supplied=True, snapshot_visibility_or_pixels_supplied=False, native_horizon_combination=horizon,
         evf_rotation_af_and_broader_lifecycle_unverified=True, actual_lens_telemetry_verified=False)

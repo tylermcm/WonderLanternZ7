@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "scope": "Independent original-Z7 native text geometry and horizon regression diagnosis",
+  "module_changed": false,
+  "module_sha256": "bd3c4ccad9a5ec7dbebd4e3075c3119c9bdbde385c688a26a7a089c8e65c3b36",
+  "native_layout": {
+    "passed": true,
+    "checks": 175,
+    "text_cases": 20,
+    "constructor_cases": 5,
+    "constructor": "0x102F17B8",
+    "text_wrapper": "0x102F32AE",
+    "geometry_copy": "0x102F333E",
+    "logical_font": 19,
+    "ordinary_font": 100,
+    "exact_scene2_font": 109,
+    "scene_overflow_geometry_clamped_but_font_not_clamped": true,
+    "orientation_transform_verified": false,
+    "actual_pixels": false,
+    "supplied_boundaries": [
+      "Owned object storage, pool/parent context and incoming controls/snapshot",
+      "Constructor allocation/list insertion sinks",
+      "Text initialization/binding/visibility/draw sinks",
+      "Caller paint argument"
+    ],
+    "native_font_attribute_query": "0x103FBC32 executes, returns1 for fonts100/109; not a height query",
+    "font_table_heights": {
+      "100": 20,
+      "109": 24
+    }
+  },
+  "corrected_function_roles": {
+    "0x10369214": "control dirty-state propagation",
+    "0x102F27A8": "permission/visibility selection"
+  },
+  "horizon_live01": {
+    "passed": false,
+    "checks_passed": 16,
+    "checks_total": 17,
+    "frames": 10,
+    "failure": "Focal-active frame differs outside owned window",
+    "outside_focal_difference_region": "ADL edge",
+    "same_iso_phase_reference_difference_pixels": [
+      65,
+      84,
+      64
+    ],
+    "focal_disabled_native_reference_pixels_vary": true,
+    "cause_proven": false,
+    "failed_evidence_retained": true
+  },
+  "horizon_fixture_followup": {
+    "requires_complete_native_rgb_repetition_in_each_iso_phase": true,
+    "complete_frames_only": true,
+    "tolerance": false,
+    "composed_references": false,
+    "adl_edge_pixels_excluded": false
+  },
+  "evf_overlay_implemented": false,
+  "camera_access": false,
+  "physical_card": false,
+  "flashed": false,
+  "pushed": false,
+  "horizon_live02": {
+    "passed": false,
+    "checks_passed": 61,
+    "checks_total": 62,
+    "frames": 33,
+    "reference_stability_qualified_after": 23,
+    "fractional_and_whole_match_settled_native_frames_outside_owned_window": true,
+    "other_off_keeps_identical_focal_crop": true,
+    "focal_off_after_other_on_matches_transient_reference": 1,
+    "reenabled_outside_focal_adl_pixels": 40,
+    "reenabled_outside_focal_bounds": [
+      626,
+      6,
+      649,
+      50
+    ],
+    "all_frame_fingerprints_and_memberships_independently_verified": true,
+    "absence_return_master_off_reached": false,
+    "failure_cleared": false
+  },
+  "next_control": "Other OFF/ON on native horizon with Focal never enabled; establish background behavior before another combined run",
+  "all_jobs_terminal": true,
+  "graph": {
+    "nodes": 2337,
+    "edges": 5956,
+    "ignored": true
+  }
+}

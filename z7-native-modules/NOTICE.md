@@ -117,3 +117,7 @@ builds on this component's existing MIT battery overlay, which preserves JKWTCN'
 copyright and license. Independent object ownership, native-state invalidation,
 bounded repaint/retry and original-Z7 validation are local modifications. This
 is an experimental modified profile, not an upstream or Nikon release.
+
+The native focal-layout audit and horizon frame-stability diagnostics are
+independent local MIT validation tools. They incorporate no firmware bytes or
+decoded resources; firmware, generated binaries and screenshots remain private.

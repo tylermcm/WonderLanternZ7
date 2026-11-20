@@ -59,6 +59,55 @@ same-type lens reconnect still need implementation or broader live validation.
 Those contexts are rejected by the initial overlay instead of applying LCD
 coordinates to another layout. The full display-port goal remains unfinished.
 
+## Native layout contract after restart
+
+`tools/audit_z7_focal_layout.py` executes original constructor102F17B8 and text
+wrapper102F32AE. Its175 checks cover20 text cases and five constructor cases.
+VR50/control2 has rectangles40,194..107,218;62,292..129,316;284,16..360,40 for
+scenes0/1/2. Other scene values clamp geometry to bank2. Logical font19 maps to
+font100 except exactly scene2, which maps to109. Varying snapshot orientation338
+does not change this wrapper's selection; this does NOT validate rotated pixels.
+The wrapper retains the caller paint argument; the original VR caller supplies1
+ordinarily and2F6 for scene2. No pinned Z7II palette number is borrowed.
+
+The constructor inserts the SAME object into listsA201E3B4/A201E47C/A201E544 when
+their corresponding source rectangles are nonempty; parent comes fromA201E394.
+The audit supplies allocation/list insertion, pool/parent context, text setup
+and draw sinks. Original geometry, font selection, font-attribute query and style
+setter execute. The query103FBC32 returns1 for both mapped fonts; it is not a
+height query. Font-table heights are20/24 for fonts100/109. Source controls
+remain unchanged except the constructor's object
+pointer; snapshot bytes remain unchanged. This identifies native contracts and
+does not implement or establish an EVF overlay, output switching or rotation.
+
+Earlier handoff names were wrong:10369214 propagates control dirty state and
+102F27A8 selects permission/visibility masks. Actual text geometry copy begins
+at102F333E. Neither of the earlier leads is a placement service or paint fence.
+
+The first focal/horizon live run is FAILED:16 checks pass and the owned-window
+comparison fails after native24.5mm is painted. Differences outside that window
+are confined to the earlier ADL edge area,64/65/84 pixels against same-ISO-phase
+references. ADL controls/masks match, but its pixels also vary between captured
+focal-disabled references. These observations do not clear the failure or prove
+its cause. The revised fixture additionally requires whole-native RGB to repeat
+within every observed ISO phase before enabling focal. References remain complete
+captured frames; no compositing, pixel exclusions or tolerance is introduced.
+
+Revised live02 is also FAILED:61/62 checks,33 frames. Whole-native frames repeat
+in both ISO phases by reference23. Fractional and whole focal text then match
+settled references exactly outside the owned window; Other OFF retains the
+identical focal crop. After Other ON/Focal OFF, full RGB matches transient
+reference1. Reenabling focal differs on40 ADL edge pixels against every
+same-ISO-phase reference. Missing-lens/return/master-OFF checks were not reached.
+All33 PNG fingerprints and recorded memberships were independently verified.
+No production C or package was changed, and neither failed run is cleared.
+
+Next control must exercise Other OFF/ON on the horizon with focal NEVER enabled,
+to distinguish background reconstruction from the focal object's contribution.
+The existing GPU model's approximate YUV/alpha handling is only a possible lead.
+Another long combined run needs evidence from that control or the actual repaint
+path first; increasing sample caps or excluding edge pixels does not resolve it.
+
 ## Live source independently bound
 
 The original native PTP property5008 description10341856 and current-value
