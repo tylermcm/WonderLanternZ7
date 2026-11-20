@@ -1,5 +1,44 @@
 # Laptop handoff — October 20, 2026
 
+## Original highlight request converter bound - November 20, 2026
+
+Previousbb689d1 was PROGRESS (native packet transport). New independent
+read-only research audit binds original-Z7 converter1034FE22, not Z7II10578920.
+.private/evidence/20261120-highlight-converter-01.json TERMINALPASS198 in99cases.
+Native converter, enum-table helpers10433B1E/26/2E and raw palette getter10435ACA
+execute. Incoming36byte request and palette state/content are supplied. Palette
+pointer is nativeA1F18FAC; no getter return is faked. Two different palettes
+verify lookup-dependent output bytes. No native module/host/QEMU code changed.
+
+Cases coverflags1/2/4, enabledpatterns1/2, all8thresholds255/248/235/224/213/202/
+191/180, two palettes anddisabled mode. Exact100byte destination+padding,
+input36bytes+padding and original getter calls checked. Thresholds scale256,
+first halfword255 scales257 toFFFF; output flags1/2/4 give targetbyte0/1/2.
+Original enum tables determine pattern/color interpretation. Do not equate
+logical target flags with physical LCD/EVF/movie until original caller proof.
+
+CRITICAL: disabled conversion writes ONLY word0=0. The remaining
+96bytes are untouched; enabled conversion also leaves padding untouched. Clear
+all25 owned words before conversion. Do not send uninitialized padding. Consumer
+acknowledgement still needs104source bytes as proved previously. This agrees
+with the pinned caller's zeroed25-word converted scratch and26-word queue payload.
+
+Sourceaudit:tools/audit_z7_highlight_converter.py. Detailed source research:
+z7-native-modules/PHOTO_HIGHLIGHTS.md. Source evidence:
+evidence/20261120-highlight-converter.json. Newtool is isolated; relevant check
+is198native checks, not a rerun or replacement of prior37transport or71root tests.
+Graph refreshed after code edits: 2733nodes/7067edges;
+generated outputs ignored. All jobs terminal.
+No graphics submission, frame producer, warning pixels or physical camera/card
+access established. No installed hook, stage, flash or push.
+
+NEXT: execute original1034FF1E caller /1034EFB0 request builder, then bind frame
+producer and photo/output context. Caller disassembly shows converter before
+submission/completion; do not call it from GUI hooks and inherit its native wait
+without proving task safety. Existing Photo highlights preference still unbound.
+Full original scope remains active: highlights, portrait/rotation, native Info
+mirror, lifecycle, real statistics producer and physical installation/recovery.
+
 ## Photo-highlight native packet transport research - November 20, 2026
 
 Previous638470e was PROGRESS (startup-blocked menus). This turn starts the

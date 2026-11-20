@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "native_module_host_qemu_unchanged": true,
+  "native_converter": "0x1034fe22",
+  "native_palette_getter": "0x10435aca",
+  "checks": 198,
+  "cases": 99,
+  "input_bytes": 36,
+  "output_payload_bytes": 100,
+  "consumer_source_allocation_minimum_bytes": 104,
+  "output_flags": [
+    1,
+    2,
+    4
+  ],
+  "enabled_patterns": [
+    1,
+    2
+  ],
+  "thresholds": [
+    255,
+    248,
+    235,
+    224,
+    213,
+    202,
+    191,
+    180
+  ],
+  "supplied_palettes": 2,
+  "native_converter_enum_tables_palette_getter_execute": true,
+  "disabled_conversion_writes_only_enable_word": true,
+  "input_and_destination_padding_preserved": true,
+  "incoming_palette_state_supplied": true,
+  "native_request_builder_executed": false,
+  "frame_producer_bound": false,
+  "physical_output_mapping_verified": false,
+  "photo_movie_context_bound": false,
+  "highlight_preference_connected": false,
+  "actual_warning_pixels": false,
+  "hook_installed": false,
+  "physical_camera_card_access": false,
+  "staged_flashed_or_pushed": false,
+  "full_goal_complete": false
+}
