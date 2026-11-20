@@ -1,6 +1,77 @@
 # Laptop handoff — October 20, 2026
 
-## Admitted DISP prototype and active phase-matched run — November 19, 2026
+## Completed DISP-cycle checkpoint — November 19, 2026
+
+All current jobs are TERMINAL. Latest display-disp03 is reproducible:
+SHA71c0780063ebe2466f8e14b4f1860657b0eee22dddf227342276a60e7f7a414b,
+10956bytes/image10688/BSS3844, same28-byte host06 API. New automatic reselection
+moves a disabled active preset to the next enabled one on eligible update,
+without changing native snapshot/page/property or counting a key press. Menu,
+movie, alternate output, master-off and unbound information configuration defer
+it until return. Cycle audit03 passes137 cases (60 enabled/current combinations
+and10 defer/return cases added).119 readout checks and root39/no-skips pass.
+Readout-only package rebuilds byte-identically to the old0aa8f050... package.
+
+New read-only pipeline qualification requires RAW/ISP/LCD progress, processed
+scanout and native ready/stage. It records at most6 original1000ms task delays,
+with no readiness stores or invented device responses. Full preset live09 passes
+21checks/11frames; the first sample advances22RAW/23ISP/30LCD. Native keys select
+all four presets; composition preserves all protected pixels; presets1/3/0 and
+master-off exactly match complete captured disabled native references. Disabled
+mode resumes native cycling. Composition/restored frames visually inspected.
+This is finite-native-image equivalence, not a coherent native paint fence or
+warning-transition pixel proof. Actual menu-return reselection remains open.
+
+Dedicated admission-live01 passes6checks/2frames/22trace events: original key29
+passes the four outer gates, reaches the original inner handler and cycle,
+page0->1. Gate returns are observed, not supplied. This100ms startup is NOT the
+same as the prior5000ms failure and does not explain that failure. Its trace
+records native progress121RAW/115ISP by the after frame. Raw trace stays private.
+
+Next: native base-page/component ownership, information app, remaining groups,
+actual menu/update coherence and persistence. Broader output/lifecycle, hardware
+card/cache/wake and exact installation/recovery assessment remain unfinished.
+Do not repeat the old phase-wait loop. Read the latest DISPLAY_SETTINGS.md and
+evidence/20261119-preset-coherence.json. Graph refreshed1997nodes/5031edges.
+No physical camera/card access, staging, flash or push.
+
+## Resume after stale running status — November 19, 2026
+
+The former live04 job is TERMINAL, not running. Its saved result fails with
+`Native ISO phase did not match the qualified baseline`: 11 checks passed,
+then all24 samples stayed at snapshot+4==0 versus the baseline1. No native
+timer transition back to1 was observed. Do not relaunch that waiting loop.
+
+Native103681BA..103681D0 copies producer packet A201F260+44/+48/+4C to
+snapshot+3C/+4/+24C. Eight original-instruction copy cases now pass, including
+unchanged neighboring bytes, alongside8 formatter and96 visibility cases.
+Producer packet inputs are supplied; actual producer behavior remains open.
+The two saved disabled standard-page references in live04 differ by exactly
+the2,206 ISO AUTO pixels only. This does not establish periodic blinking.
+
+Live07 stopped after11 passing checks because it required matching all ISO
+source fields, including unselected sources. Offline RGB comparison then showed
+preset1 AND preset3 match the complete disabled native baseline exactly, despite
+preset3 controls reporting source0/hidden ISO while that frame contains the label.
+The snapshot/control record therefore is not a completed-native-paint fence.
+Do not infer frame identity from that record or call these signals periodic.
+
+The revised probe accepts only exact full RGB membership in the finite captured
+disabled native standard-page reference set. It records source/control identity
+separately, with no state/pixel writes, pixel exceptions or waiting loop. This
+proves captured-image equivalence only; coherent update/paint timing stays open.
+Live08 is TERMINAL: three startup checks pass, then the disabled native DISP
+control fails after three bounded injections. Startup reports137 RAW batches
+and only1 ISP batch. Custom presets were never enabled in that run. No owned
+guest remains. Do not repeat on elapsed delays; investigate native input
+admission and sensor/ISP readiness before another full rendering probe.
+Live05 failed local socket access. Live06 was explicitly interrupted during
+startup to narrow format qualification to readout groups0/1/5. Live07 is terminal.
+Root39 tests pass, no skips. Identity audit03 passes112 cases total.
+Only validation source changed; host06 and display-disp02 binaries are unchanged.
+No camera/card access, staging, flash or push.
+
+## Historical DISP prototype run status — superseded above
 
 LIVE JOB: exec_command session89208, private evidence20261119-disp-presets-live-04.
 Poll the SAME handle with write_stdin; observation timeout is not termination.

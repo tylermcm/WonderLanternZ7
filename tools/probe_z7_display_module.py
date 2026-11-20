@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
@@ -178,6 +178,7 @@ def main():
                             step['settings_native_value_objects'].append(dict(row=row, child=child, pointer=hex(pointer), words=list(struct.unpack('<25I', record))))
         if args.view == 'disp-presets':
             step['readout_native_snapshot'] = camera.remote.memory(0xa201d4d0, 0x33c).hex()
+            step['readout_native_source_states'] = camera.remote.memory(0xa201f260 + 0x44, 12).hex()
             step['readout_native_formats'] = camera.remote.memory(0xa18237b8, 7).hex()
             step['readout_controls'] = []
             for widget in (10, 11, 15):
@@ -240,6 +241,31 @@ def main():
     try:
         camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry') else camera.boot_shooting()
         checkpoint()
+        if args.view in ('settings-battery', 'readouts', 'disp-presets'):
+            # StartLV acknowledgement and a fixed delay are insufficient. This
+            # diagnostic gate observes native pipeline progress without writing
+            # readiness flags or inventing peripheral completion responses.
+            camera.refresh_device_evidence()
+            previous = dict(camera.device_evidence or {})
+            samples = result.setdefault('native_pipeline_readiness', [])
+            ready = False
+            for attempt in range(6):
+                camera.call(checkpoint(), 'Observe native RAW/ISP/scanout progress', 0x1017081e, bytes(8), [1000])
+                camera.refresh_device_evidence()
+                current = dict(camera.device_evidence or {})
+                health = ui.capture_health(camera.remote, current)
+                application = health['application']
+                progress = {name: current.get(name, 0) - previous.get(name, 0)
+                    for name in ('raw_batches', 'isp_batches', 'lcd_frames_observed')}
+                ready = (all(value > 0 for value in progress.values()) and
+                    current.get('processed_buffer_scanned', False) and
+                    application['ready'] & 3 == 3 and application['stage'] == 0)
+                samples.append(dict(attempt=attempt, previous=previous, current=current,
+                    progress=progress, health=health, qualified=bool(ready)))
+                save()
+                if ready: break
+                previous = current
+            check('native-raw-isp-and-processed-scanout-progress-before-rendering-test', ready)
         if args.view not in ('menu', 'settings-menu', 'settings-entry'):
             result['histogram_source_state'] = dict(
                 viewport_flag=camera.remote.memory(0xa2367974 + 0x28, 1).hex(),
@@ -467,38 +493,58 @@ def main():
             def native_page(): return camera.remote.memory(0xa201d4d0 + 0x18a, 1)[0]
             check('preset-diagnostic-preserves-original-key-binding', camera.remote.memory(0xa1829b0c, 4) == struct.pack('<I', 0x1030da57))
             native('Original standard page for DISP preset diagnostic', 0x103673de, [0])
-            capture('presets-disabled-startup')
+            startup_step = capture('presets-disabled-startup')
+            native_references = []
+            def retain_reference(step):
+                snapshot = bytes.fromhex(step['readout_native_snapshot'])
+                formats = bytes.fromhex(step['readout_native_formats'])
+                if snapshot[0x18a] != 0 or any(formats[index] for index in (0, 1, 5)):
+                    raise RuntimeError('Native reference must be standard page with ordinary formats')
+                native_references.append(step)
+            retain_reference(startup_step)
             # Exercise one complete native cycle while the custom master is off.
             # Retain this separately from the qualified comparison baseline.
             for target in (1, 3, 0):
                 key('disp', lambda: native_page() == target)
-                capture('presets-disabled-control-' + str(target))
+                control_step = capture('presets-disabled-control-' + str(target))
+                if target == 0: retain_reference(control_step)
             result['disabled_native_cycle_control_before_baseline'] = True
             baseline_step = capture('presets-native-baseline')
+            retain_reference(baseline_step)
             baseline = Image.open(io.BytesIO(camera.png)).convert('RGB')
-            baseline_phase = struct.unpack_from('<I', bytes.fromhex(baseline_step['readout_native_snapshot']), 4)[0]
-            baseline_iso = [bytes.fromhex(row['control'])[1] for row in baseline_step['readout_controls'][-1]['rows']]
-            def phase_capture(name):
-                attempts = []
-                for _ in range(24):
-                    phase = int.from_bytes(camera.remote.memory(0xa201d4d0 + 4, 4), 'little')
-                    descriptor = int.from_bytes(camera.remote.memory(0x1064d610 + 15 * 4, 4), 'little')
-                    controls = int.from_bytes(camera.remote.memory(descriptor + 44, 4), 'little')
-                    visible = [camera.remote.memory(controls + row * 48 + 1, 1)[0] for row in range(4)]
-                    attempts.append(dict(phase=phase, visible=visible))
-                    if phase == baseline_phase and visible == baseline_iso:
-                        result.setdefault('native_iso_phase_matches', []).append(dict(name=name, baseline_phase=baseline_phase, attempts=attempts))
-                        return capture(name, settle=0)
-                    advance(.137)
-                result.setdefault('native_iso_phase_matches', []).append(dict(name=name, baseline_phase=baseline_phase, attempts=attempts))
-                save(); raise RuntimeError('Native ISO phase did not match the qualified baseline')
+            def iso_state(step):
+                snapshot = bytes.fromhex(step['readout_native_snapshot'])
+                mode = struct.unpack_from('<I', snapshot, 0x250)[0]
+                # Original102F2586 selects one source. Unselected source words
+                # can change independently and do not determine this ISO label.
+                source = 0x3c if mode == 1 else 0x24c if mode == 3 else 4
+                return ([mode, source, struct.unpack_from('<I', snapshot, source)[0]],
+                    [bytes.fromhex(row['control'])[1] for row in step['readout_controls'][-1]['rows']])
+            def reference_capture(name):
+                step = capture(name)
+                current = Image.open(io.BytesIO(camera.png)).convert('RGB')
+                matching = [reference for reference in native_references
+                    if Image.open(output / (reference['name'] + '.png')).convert('RGB').tobytes() == current.tobytes()]
+                result.setdefault('native_iso_reference_matches', []).append(dict(name=name,
+                    state=iso_state(step), exact_rgb_references=[reference['name'] for reference in matching],
+                    same_control_state_references=[reference['name'] for reference in native_references
+                        if iso_state(reference) == iso_state(step)],
+                    control_snapshot_is_not_a_completed_paint_fence=True))
+                save()
+                # Accept only an entire previously captured native image. State
+                # records are diagnostics: they can precede native painting.
+                # With no exact reference the caller's equality check fails.
+                reference = matching[-1] if matching else baseline_step
+                return Image.open(output / (reference['name'] + '.png')).convert('RGB')
             check('preset-diagnostic-starts-at-zero', preset() == 0)
             native('Compiled custom master for native DISP presets', base + module['symbols']['z7_settings_flag'],
                 [base + module['symbols']['z7_menu_settings'], 0, 1])
             for target in (1, 2, 3, 0):
                 previous = cycles()
                 key('disp', lambda: preset() == target and cycles() > previous)
-                capture('preset-' + str(target)) if target == 2 else phase_capture('preset-' + str(target))
+                reference = None
+                if target == 2: capture('preset-' + str(target))
+                else: reference = reference_capture('preset-' + str(target))
                 current = Image.open(io.BytesIO(camera.png)).convert('RGB')
                 check('admitted-disp-selects-preset-' + str(target), preset() == target and cycles() == previous + 1)
                 check('preset-keeps-native-standard-page-' + str(target), native_page() == 0)
@@ -509,11 +555,11 @@ def main():
                     check('composition-preset-preserves-pixels-outside-readouts', all(baseline.crop(box).tobytes() == current.crop(box).tobytes() for box in protected))
                     check('composition-preset-changes-readout-pixels', current.tobytes() != baseline.tobytes())
                 else:
-                    check('preset-restores-all-three-readout-pixels-' + str(target), current.tobytes() == baseline.tobytes())
+                    check('preset-restores-all-three-readout-pixels-' + str(target), current.tobytes() == reference.tobytes())
             native('Compiled custom master off after preset cycle', base + module['symbols']['z7_settings_flag'],
                 [base + module['symbols']['z7_menu_settings'], 0, 0])
-            phase_capture('presets-native-restored')
-            check('preset-master-off-restores-complete-frame', Image.open(io.BytesIO(camera.png)).convert('RGB').tobytes() == baseline.tobytes())
+            reference = reference_capture('presets-native-restored')
+            check('preset-master-off-restores-complete-frame', Image.open(io.BytesIO(camera.png)).convert('RGB').tobytes() == reference.tobytes())
             key('disp', lambda: native_page() != 0)
             capture('presets-disabled-native-cycle')
             check('disabled-master-resumes-native-page-cycle', native_page() != 0 and cycles() == 4)
@@ -551,7 +597,7 @@ def main():
                   Image.open(io.BytesIO(camera.png)).convert('RGB').tobytes())
             result['native_key_diagnostic'] = dict(accepted=key_word('accepted'), rejected=key_word('rejected'),
                                                   explicit_master_setting=True, full_custom_pages=False)
-        elif args.view == 'disp-input':
+        elif args.view in ('disp-input', 'disp-admission'):
             slot = int.from_bytes(camera.remote.memory(0xa1829b0c, 4), 'little')
             check('original-shooting-key-callback-binding', slot == 0x1030da57)
             capture('disp-input-before')
@@ -564,13 +610,24 @@ def main():
             try:
                 ui.probe.TRACE_CALL = [0x1030d7ac, 0x103673f6, 0x1037061c]
                 ui.probe.TRACE_REPEAT = {0x1030d7ac}
+                if args.view == 'disp-admission':
+                    # Observe original post-call branch inputs. Do not invoke
+                    # the gates separately or supply their return values.
+                    ui.probe.TRACE_CALL += [0x1030da56, 0x1030da60, 0x1030da74,
+                        0x1030da7e, 0x1030daf2, 0x1030db40,
+                        0x1036741a, 0x10367440, 0x10367448, 0x1036744e,
+                        0x10367454, 0x1036745a, 0x10367460]
+                    ui.probe.TRACE_REPEAT = set(ui.probe.TRACE_CALL)
                 values = [0] * 8; values[83 // 32] = 1 << (83 % 32); values[4] = 10
                 observed_calls.append(ui.call_fixture(camera.remote, packet, 0x105230a6,
                     struct.pack('<8I', *values), [('scratch', 0), 5, ('scratch', 20)]))
                 for _ in range(5):
                     packet = 'T05thread:' + observed_calls[-1]['return_cpu'] + ';'
                     observed_calls.append(ui.call_fixture(camera.remote, packet, 0x1017081e, bytes(32), [1000]))
-                    if any(int(e['registers']['r15'], 16) == 0x103673f6 for call in observed_calls for e in call['trace']): break
+                    reached = 0x1030da56 if args.view == 'disp-admission' else 0x103673f6
+                    if any(int(e['registers']['r15'], 16) == reached and
+                        (args.view != 'disp-admission' or int(e['registers']['r0'], 16) == 0x29)
+                        for call in observed_calls for e in call['trace']): break
             finally:
                 ui.probe.TRACE_CALL, ui.probe.TRACE_REPEAT = saved_trace
             (output / 'native-disp-call-trace.json').write_text(json.dumps(observed_calls, indent=2) + '\n', encoding='utf-8')
@@ -578,11 +635,27 @@ def main():
             keys = [e['r0'] for e in events if int(e['r15'], 16) == 0x1030d7ac]
             result['native_disp_input'] = dict(callback_slot=hex(slot), dispatcher='0x1030d7ac', keys=keys,
                                              mode_before=initial_mode, supplied_native_ao_press=True)
-            check('injected-native-disp-reaches-z7-key-29', any(int(k, 16) == 0x29 for k in keys))
-            check('injected-native-disp-reaches-original-admission', any(int(e['r15'], 16) == 0x103673f6 for e in events))
-            capture('disp-input-after')
-            result['native_disp_input']['mode_after'] = camera.remote.memory(0xa201d4d0 + 0x18a, 1).hex()
-            check('original-callback-remains-unchanged-after-key', camera.remote.memory(0xa1829b0c, 4) == struct.pack('<I', slot))
+            if args.view == 'disp-admission':
+                result['native_disp_admission'] = dict(
+                    original_gate_returns_observed=True, native_return_values_supplied=False,
+                    incoming_snapshot=camera.remote.memory(0xa201d4d0, 0x33c).hex(),
+                    device_evidence=camera.device_evidence,
+                    original_callback_key29_observed=any(int(e['r15'], 16) == 0x1030da56 and
+                        int(e['r0'], 16) == 0x29 for e in events),
+                    trace_events=len(events))
+                capture('disp-admission-after')
+                check('native-admission-trace-observes-original-key29-callback',
+                    result['native_disp_admission']['original_callback_key29_observed'])
+                # A rejection is an observation, not a probe failure. Preserve
+                # the branch inputs rather than requiring successful admission.
+                result['native_disp_input']['mode_after'] = camera.remote.memory(0xa201d4d0 + 0x18a, 1).hex()
+                check('original-callback-remains-unchanged-after-key', camera.remote.memory(0xa1829b0c, 4) == struct.pack('<I', slot))
+            else:
+                check('injected-native-disp-reaches-z7-key-29', any(int(k, 16) == 0x29 for k in keys))
+                check('injected-native-disp-reaches-original-admission', any(int(e['r15'], 16) == 0x103673f6 for e in events))
+                capture('disp-input-after')
+                result['native_disp_input']['mode_after'] = camera.remote.memory(0xa201d4d0 + 0x18a, 1).hex()
+                check('original-callback-remains-unchanged-after-key', camera.remote.memory(0xa1829b0c, 4) == struct.pack('<I', slot))
         elif args.view == 'clean':
             if module['kind'] != 'original-Z7-clean-display-diagnostic':
                 raise ValueError('Clean view requires the disabled-by-default clean diagnostic')

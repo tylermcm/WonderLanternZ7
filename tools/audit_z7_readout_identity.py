@@ -57,6 +57,20 @@ def audit(raw):
         if not any((v['widget'], v['text']) == expected for v in f.text): raise AssertionError((name, f.text))
         cases.append(dict(name=name, passed=True, function=hex(function), native_format=fmt, observed=f.text))
     visibility_cases = []
+    # Execute the original snapshot-copy block, stopping before the unrelated
+    # transition counter. The producer packet is supplied, not a real device.
+    producer_cases = []
+    for alternate, normal, secondary in product(range(2), repeat=3):
+        before = bytes([0xa5]) * 0x33c
+        f.u.mem_write(0xa201d4d0, before)
+        f.u.mem_write(0xa201f260 + 0x44, struct.pack('<3I', alternate, normal, secondary))
+        f.u.emu_start(0x103681bb, 0x103681d4, count=8)
+        expected = bytearray(before)
+        for offset, value in ((0x3c, alternate), (4, normal), (0x24c, secondary)):
+            struct.pack_into('<I', expected, offset, value)
+        if bytes(f.u.mem_read(0xa201d4d0, 0x33c)) != expected:
+            raise AssertionError('Native ISO snapshot producer copy or neighboring fields')
+        producer_cases.append(dict(alternate=alternate, normal=normal, secondary=secondary, passed=True))
     descriptor = int.from_bytes(f.u.mem_read(0x1064d610 + 15 * 4, 4), 'little')
     controls = int.from_bytes(f.u.mem_read(descriptor + 44, 4), 'little')
     for mode, normal, alternate, secondary in product((0, 1, 2, 3, 4, 0xffffffff), range(2), range(2), range(2)):
@@ -72,7 +86,8 @@ def audit(raw):
             if visible != selected: raise AssertionError('Native ISO subcontrol visibility')
             visibility_cases.append(dict(mode=mode, normal=normal, alternate=alternate, secondary=secondary,
                 row=row, native_visible=visible, passed=True))
-    return dict(passed=True, cases=cases, iso_visibility_cases=visibility_cases, stock_main_sha256=STOCK_SHA,
+    return dict(passed=True, cases=cases, iso_visibility_cases=visibility_cases,
+        iso_snapshot_producer_cases=producer_cases, stock_main_sha256=STOCK_SHA,
         identified_widgets=dict(shutter=10, aperture=11, iso=15),
         warnings_share_shutter_widget_and_control=True,
         native_iso_phase_selector_and_visibility_helper_execute=True,
@@ -87,7 +102,8 @@ def main():
     if not output.is_relative_to(ROOT / '.private') or output.exists(): p.error('Choose a new private output')
     result = audit(args.stock_main.read_bytes()); output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8', newline='\n')
-    print(json.dumps(dict(passed=True, cases=len(result['cases']), iso_visibility_cases=len(result['iso_visibility_cases']))))
+    print(json.dumps(dict(passed=True, cases=len(result['cases']), iso_visibility_cases=len(result['iso_visibility_cases']),
+        iso_snapshot_producer_cases=len(result['iso_snapshot_producer_cases']))))
 
 
 if __name__ == '__main__': main()

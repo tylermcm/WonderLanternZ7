@@ -414,5 +414,67 @@ The current probe waits for the same native phase and ISO visibility as its
 qualified baseline, then captures the paused frame without another settling
 advance. It retains every sampled phase/visibility value, changes no native
 visibility/phase word and still requires exact full RGB equality. The older
-failed runs stay intact. The phase-matched live04 run is currently pending;
-read the latest source evidence/HANDOFF before claiming a completed cycle.
+failed runs stay intact. That live04 run has now terminated: eleven checks pass,
+then all24 observations retain native source0 instead of baseline1. Waiting
+does not establish that this state is periodic or will return to1.
+
+The original snapshot-copy instructions103681BA..103681D0 copy producer packet
+A201F260+44/+48/+4C to snapshot+3C/+4/+24C respectively. Eight binary-input
+cases execute this block and verify neighboring snapshot bytes remain unchanged.
+The producer packet is supplied; the real producer remains unverified. Combined
+with8 formatter and96 visibility cases, identity audit03 passes112 cases.
+
+Live07 then showed why the control record cannot qualify a completed frame:
+preset3 reports source0/hidden ISO, but its captured RGB exactly matches the
+native reference with the ISO label present. Both preset1 and preset3 match that
+complete disabled native frame. Source/control sampling is ahead of painting.
+A reliable native paint-completion boundary remains unverified.
+
+The revised probe compares each restored frame to the finite set of captured
+disabled native standard-page images. It requires exact full RGB membership,
+without pixel exceptions or state stores, and records source/control matches
+separately as diagnostics. It fails immediately on an unmatched image and does
+not wait for a state transition. Live08 is the pending repeat; host/module
+binaries remain unchanged. This validates captured-image equivalence only,
+not coherent native update/paint timing or warning-transition pixels.
+
+## Active preset coherence and measured native readiness
+
+The DISP diagnostic now resolves an active preset disabled through the model
+setters on the next eligible shooting update. It selects the next enabled preset
+without changing the original native page/property or counting a DISP press.
+Menu, movie, alternate output, master-off and unbound information-app states
+defer this change until eligible return. Sixty enabled-set/current-preset
+combinations and ten defer/return cases extend the cycle audit to137 checks.
+These are compiled-ARM checks with supplied GUI/kernel boundaries; an actual
+native menu roundtrip exercising this reselection is still open.
+
+New disp03 package is10,956bytes/image10,688/BSS3,844, SHA
+71c0780063ebe2466f8e14b4f1860657b0eee22dddf227342276a60e7f7a414b.
+Host06 and its28-byte API are unchanged. The existing readout-only package
+rebuilds byte-identically. The new package passes119 readout checks, and all39
+root tests pass without skips.
+
+A dedicated disp-admission observation runs original gates during native AO
+injection and task delays, supplying no gate-return values. Its first run passes
+six checks/two frames, with22 trace events: original key29 passes all four outer
+filters, reaches the inner handler and original cycle entry, and changes native
+page0 to1. The100ms startup fixture reports27RAW/21ISP initially; after observation
+it has121RAW/115ISP and processed scanout. It does not reproduce the earlier
+5000ms-startup input failure. The after frame was visually inspected.
+
+The rendering probe now requires observed RAW, ISP and LCD-counter progress,
+processed-buffer scanout and native ready/stage state before exercising custom
+DISP. Up to six named1000ms native task delays are recorded with full health
+snapshots. No readiness flags are written and no device completion responses are
+invented. This is an emulator test precondition, not physical readiness proof.
+The first full run using that gate (live09) passes21 checks/11frames. Its first
+readiness sample advances22RAW batches,23ISP batches and30LCD frames. Actual
+native keys select all four logical presets. Composition changes the readout
+strip while every protected pixel remains identical. Presets1/3/0 and master-off
+match complete captured disabled native frames exactly; disabled mode resumes
+the original page cycle. Composition/restored frames were visually inspected.
+This remains a three-readout logical-preset diagnostic: component/base-page and
+information-app bindings, remaining groups, persistence, warning pixels and
+broader lifecycle are unfinished. Captured native equivalence does not prove
+coherent update-to-paint timing. No camera/card operations occurred.

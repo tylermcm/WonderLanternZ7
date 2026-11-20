@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-11-19",
-  "scope": "Independent original-Z7 admitted DISP preset prototype; full phase-matched rendering cycle pending",
+  "scope": "Independent original-Z7 admitted DISP prototype; captured-native-frame cycle passes with remaining bindings/lifecycle open",
   "status": "optional diagnostic, incomplete",
   "host": {
     "main_sha256": "28633855e1daa1ffcf1f2213dfa2b0a41395f65c6a60af7b44a8f02442631958",
@@ -17,10 +17,10 @@
     "cycle_site": "0x1037061C"
   },
   "module": {
-    "sha256": "f57a1b106b201468dda5178bc4d94f5c545dc79dafd12f892ab7350b50a1bbff",
-    "file_bytes": 10892,
-    "image_bytes": 10624,
-    "bss_bytes": 3840,
+    "sha256": "71c0780063ebe2466f8e14b4f1860657b0eee22dddf227342276a60e7f7a414b",
+    "file_bytes": 10956,
+    "image_bytes": 10688,
+    "bss_bytes": 3844,
     "api_minimum_bytes": 28,
     "reproducible": true
   },
@@ -39,7 +39,7 @@
   "instruction_audits": {
     "admitted_cycle": {
       "passed": true,
-      "checks": 67,
+      "checks": 137,
       "supplied_boundaries": [
         "Loader/kernel/filesystem/heap",
         "Incoming GUI/pool/page/output state",
@@ -97,7 +97,7 @@
     "incoming_fields_supplied": true
   },
   "retained_qemu_failures": {
-    "runs": 3,
+    "runs": 5,
     "passes_native_preset_selection_and_composition_suppression": true,
     "fails_exact_return_preset_rgb": true,
     "observed_iso_label_difference_pixels": 2206,
@@ -114,12 +114,16 @@
     "disabled_native_cycle_recorded": true
   },
   "latest_phase_matched_qemu": {
-    "status": "running, no completion claim",
+    "status": "failed: no matching native state across 24 observations",
     "view": "disp-presets",
     "changes_native_phase_or_visibility": false,
     "retains_phase_samples": true,
     "requires_exact_full_rgb": true,
-    "requires_protected_pixels_outside_strip": true
+    "requires_protected_pixels_outside_strip": true,
+    "passed_checks_before_stop": 11,
+    "baseline_phase": 1,
+    "observed_phase": 0,
+    "observations": 24
   },
   "root_regressions": {
     "passed": 39,
@@ -130,7 +134,8 @@
     "Separate information app not bound; configurations enabling it delegate",
     "Remaining information groups and runtime current-preset coherence incomplete",
     "Persistence, output/lifecycle and physical-card/cache/wake validation incomplete",
-    "Exact-candidate camera installation/recovery assessment absent"
+    "Exact-candidate camera installation/recovery assessment absent",
+    "Automatic active-preset reselection passes compiled fixtures; actual native-menu return sequence remains to verify"
   ],
   "camera_access": false,
   "physical_card_access": false,
@@ -139,8 +144,53 @@
   "pushed": false,
   "installation_cleared": false,
   "graph": {
-    "nodes": 1991,
-    "edges": 5019,
+    "nodes": 1997,
+    "edges": 5031,
     "generated_ignored": true
+  },
+  "native_iso_snapshot_copy": {
+    "passed": true,
+    "cases": 8,
+    "original_instructions_execute": true,
+    "entry": "0x103681BA",
+    "stop_before": "0x103681D4",
+    "producer_packet": "0xA201F260",
+    "copies": {
+      "0x44": "snapshot+0x3C",
+      "0x48": "snapshot+4",
+      "0x4C": "snapshot+0x24C"
+    },
+    "neighbor_bytes_unchanged": true,
+    "producer_packet_supplied": true,
+    "real_producer_validated": false
+  },
+  "native_reference_qemu": {
+    "status": "live09 passed 21 checks and 11 frames on disp03",
+    "native_disabled_references_retained": true,
+    "requires_matching_iso_state_and_visibility": false,
+    "requires_exact_full_rgb": true,
+    "changes_native_phase_or_visibility": false,
+    "waiting_for_phase_removed": true,
+    "host_and_module_bytes_unchanged": true,
+    "passed": true,
+    "exact_rgb_membership_in_captured_native_references": true,
+    "control_state_is_diagnostic_not_paint_fence": true,
+    "full_cycle_validated": true,
+    "validation_scope": "Finite captured-disabled-native full-RGB reference set; not a coherent native update/paint fence",
+    "checks": 21,
+    "frames": 11
+  },
+  "resume_attempts": {
+    "live05": "local socket permission failure before guest validation",
+    "live06": "explicitly interrupted during startup to narrow format qualification to the three readout groups",
+    "live07": "11 checks pass, then overstrict source-field matching stops; preset1 and preset3 RGB independently match complete disabled native baseline",
+    "live08": "3 startup checks pass; three bounded native DISP injections do not reach expected page; no custom enable"
+  },
+  "offline_retained_frame_comparison": {
+    "preset1_exact_native_frame": true,
+    "preset3_exact_native_frame": true,
+    "preset3_control_state_matches_pixel_reference": false,
+    "complete_cycle_proven": false,
+    "pixel_exceptions": false
   }
 }

@@ -131,3 +131,33 @@ by this autonomous continuation. Firmware/BINs, dumps, keys, camera frames,
 toolchains and raw traces remain ignored/private. Recovery and actual card/cache/
 wake behavior are unverified. Capture pre-buffering, AF, Wi-Fi and recording-limit
 ports are outside the selected display-first implementation sequence.
+
+## Resume diagnostic checkpoint — November 19, 2026
+
+Recovered the terminal live04 result; stale handoff status caused a false
+impression of an ongoing job. Removed its24-sample native-state waiting loop.
+Eight original snapshot-copy cases bring the identity audit to112 passing
+cases;39 root tests pass with no skips. Live07 captures preset1 and preset3
+exactly equal to a complete disabled native frame, but preset3 control records
+already describe a different ISO state. These records do not fence completed
+painting. The probe now requires full-image membership in the finite captured
+native reference set and keeps control matching diagnostic, with no pixel
+exceptions or state stores. Its complete cycle remains unvalidated: live08
+fails the disabled native DISP control before custom enable, with137 RAW/1 ISP
+batches at startup. All jobs are terminal. Next inspect native readiness and
+input admission, not another elapsed-delay repeat. Host/module bytes unchanged.
+No physical camera/card access, staging, flash or push.
+
+## DISP cycle and active-preset coherence milestone — November 19, 2026
+
+New disp03 adds automatic selection of the next enabled preset after disabling
+the current one.137 compiled cycle cases and119 readout cases pass;39 root tests
+pass without skips. The original readout-only package rebuilds byte-identically.
+Read-only native pipeline qualification replaces elapsed-delay-only readiness.
+Full live09 passes21 checks/11frames, covering native four-preset input,
+composition suppression with protected pixels unchanged, exact captured-native
+frame restoration and native cycle resumption after disable. Frames inspected.
+The dedicated native admission trace passes6checks and supplies no gate returns.
+Base-page/components, information app, remaining groups, actual menu-return
+reselection, persistence, broader lifecycle and physical host validation remain.
+No camera/card access, staging, flashing or push. All current jobs terminal.

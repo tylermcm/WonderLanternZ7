@@ -37,6 +37,18 @@ static uint32_t readout_context(void)
     return z7_settings_valid(&z7_menu_settings) && (z7_menu_settings.flags & Z7_SETTINGS_CUSTOM) &&
         z7_readout_preset < 4 && readout_gui_context();
 }
+#ifdef Z7_SETTINGS_DISP_PROBE
+volatile uint32_t z7_preset_reselections;
+static void readout_sync_preset(void)
+{
+    /* Menu edits can disable the currently selected logical page. Apply the
+     * next enabled page on return to eligible shooting, without counting a
+     * button press or changing a native page/property. */
+    if (!readout_context() || (z7_menu_settings.enabled_pages & (1u << z7_readout_preset))) return;
+    uint32_t next = z7_settings_next(&z7_menu_settings, z7_readout_preset);
+    if (next < 4) { z7_readout_preset = next; ++z7_preset_reselections; }
+}
+#endif
 static uint32_t readout_release(uint32_t words)
 {
     uint32_t changed = 0, pending = 0;
@@ -61,6 +73,9 @@ static uint32_t readout_release(uint32_t words)
 }
 static void readouts_before(void)
 {
+#ifdef Z7_SETTINGS_DISP_PROBE
+    readout_sync_preset();
+#endif
     uint32_t changed = 0, conflict = 0;
     if (readout_pending) changed = readout_release(readout_pending);
     uint32_t master = !!(z7_menu_settings.flags & Z7_SETTINGS_CUSTOM);

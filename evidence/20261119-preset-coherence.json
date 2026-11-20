@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 active-preset coherence and native input diagnostics",
+  "module": {
+    "module_sha256": "71c0780063ebe2466f8e14b4f1860657b0eee22dddf227342276a60e7f7a414b",
+    "file_bytes": 10956,
+    "image_bytes": 10688,
+    "bss_bytes": 3844
+  },
+  "host_unchanged": true,
+  "api_bytes_unchanged": 28,
+  "coherence": {
+    "compiled_native_checks": 137,
+    "enabled_set_current_combinations": 60,
+    "compiled_model_setters_execute": true,
+    "native_page_snapshot_unchanged": true,
+    "native_button_count_unchanged": true,
+    "reselection_deferred_in": [
+      "menu",
+      "movie",
+      "alternate output",
+      "unbound information configuration",
+      "master off"
+    ],
+    "applies_on_eligible_return": true,
+    "supplied_boundaries": [
+      "Loader/kernel/filesystem/heap",
+      "Incoming GUI/pool/page/output state",
+      "Named native admission service returns",
+      "Native property setter result"
+    ],
+    "actual_menu_roundtrip_reselection_verified": false
+  },
+  "readout_checks": 119,
+  "root_tests": 39,
+  "root_skips": 0,
+  "existing_readout_package_byte_identical": true,
+  "native_admission_trace": {
+    "passed": true,
+    "checks": 6,
+    "frames": 2,
+    "trace_events": 22,
+    "native_wait_ms": 100,
+    "native_callback_key": "0x29",
+    "native_page_before": 0,
+    "native_page_after": 1,
+    "original_outer_filters_return_zero": true,
+    "original_cycle_entry_observed": true,
+    "return_values_supplied": false,
+    "raw_batches_at_after_frame": 121,
+    "isp_batches_at_after_frame": 115,
+    "processed_scanout_observed": true,
+    "reproduces_previous_failure": false,
+    "assisted_startup": true
+  },
+  "pipeline_qualification": {
+    "scope": "Read-only bounded rendering-probe precondition, not a physical readiness guarantee",
+    "requires_progress": [
+      "RAW batches",
+      "ISP batches",
+      "LCD frames"
+    ],
+    "requires_processed_buffer_scanout": true,
+    "requires_native_ready_bits": 3,
+    "requires_native_stage": 0,
+    "native_delay_attempts_maximum": 6,
+    "native_delay_ms": 1000,
+    "readiness_flags_written": false,
+    "peripheral_responses_invented": false,
+    "live09_status": "passed: first sample RAW+22, ISP+23, LCD+30"
+  },
+  "camera_access": false,
+  "physical_card_access": false,
+  "staged": false,
+  "flashed": false,
+  "pushed": false,
+  "installation_cleared": false,
+  "graph": {
+    "nodes": 1997,
+    "edges": 5031,
+    "generated_ignored": true
+  },
+  "assisted_qemu_preset_cycle": {
+    "passed": true,
+    "checks": 21,
+    "frames": 11,
+    "all_four_presets_selected_through_native_keys": true,
+    "composition_protected_pixels_unchanged": true,
+    "restored_frames_exactly_match_captured_disabled_native_references": true,
+    "master_off_exact_native_frame": true,
+    "disabled_master_resumes_original_cycle": true,
+    "key_binding_unchanged": true,
+    "finite_native_reference_set": true,
+    "coherent_native_update_paint_fence_proven": false,
+    "warning_transition_pixels_proven": false,
+    "composition_and_restored_frames_visually_inspected": true,
+    "actual_menu_roundtrip_reselection_verified": false
+  }
+}

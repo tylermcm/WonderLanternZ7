@@ -91,6 +91,41 @@ def audit(raw, host, packet, module, diagnostics, stock):
     for page in (0, 2): check('disable-choice-' + str(page), f.call(base + symbols['z7_settings_page'], base + symbols['z7_menu_settings'], page, 0) == 1)
     for expected in (1, 3, 1):
         f.call(0x1030da56, 0x29); check('skip-disabled-to-' + str(expected), word(f, base, 'z7_readout_preset') == expected)
+    g, loaded, status = load()
+    model = loaded + symbols['z7_menu_settings']
+    def reset_selected(current, enabled):
+        g.call(loaded + symbols['z7_settings_defaults'], model)
+        g.call(host['symbols']['z7_display_before_update'])
+        g.u.mem_write(loaded + symbols['z7_readout_preset'], struct.pack('<I', current))
+        for page in range(4):
+            if not enabled & (1 << page):
+                if g.call(loaded + symbols['z7_settings_page'], model, page, 0) != 1:
+                    raise AssertionError('Compiled page-enable setter')
+        master(g, loaded, 1)
+    for enabled in range(1, 16):
+        for current in range(4):
+            reset_selected(current, enabled)
+            cycles = word(g, loaded, 'z7_preset_cycles')
+            changes = word(g, loaded, 'z7_preset_reselections')
+            expected = current if enabled & (1 << current) else next((current + i) % 4 for i in range(1, 5) if enabled & (1 << ((current + i) % 4)))
+            before_snapshot = bytes(g.u.mem_read(SNAPSHOT, 0x33c))
+            g.call(host['symbols']['z7_display_before_update'])
+            check(f'update-reselects-enabled-{enabled}-current-{current}',
+                word(g, loaded, 'z7_readout_preset') == expected and
+                word(g, loaded, 'z7_preset_reselections') == changes + (expected != current) and
+                word(g, loaded, 'z7_preset_cycles') == cycles and
+                bytes(g.u.mem_read(SNAPSHOT, 0x33c)) == before_snapshot)
+    for name, address, value in [('movie', SNAPSHOT + 0x40, b'\1'), ('output', 0xa18237c6, b'\2'),
+            ('menu', 0xa2c41008, struct.pack('<I', 1)), ('unbound-information', model + 4, struct.pack('<I', 18)),
+            ('master-off', model, bytes(4))]:
+        reset_selected(0, 2)
+        saved = bytes(g.u.mem_read(address, len(value))); g.u.mem_write(address, value)
+        changes = word(g, loaded, 'z7_preset_reselections')
+        g.call(host['symbols']['z7_display_before_update'])
+        check(name + '-defers-automatic-preset-reselection', word(g, loaded, 'z7_readout_preset') == 0 and word(g, loaded, 'z7_preset_reselections') == changes)
+        g.u.mem_write(address, saved)
+        g.call(host['symbols']['z7_display_before_update'])
+        check(name + '-return-applies-deferred-preset-reselection', word(g, loaded, 'z7_readout_preset') == 1 and word(g, loaded, 'z7_preset_reselections') == changes + 1)
     probe = json.loads((diagnostics / 'cycle-success.json').read_text()); ps = probe['symbols']
     g, loaded, status = load((diagnostics / 'cycle-success.BIN').read_bytes())
     read = lambda name: int.from_bytes(g.u.mem_read(loaded + ps[name], 4), 'little')
