@@ -955,8 +955,23 @@ Private crops and immutable PNG/RGB comparisons were independently inspected.
 Earlier failed runs remain recorded. See `FOCAL_LENGTH_RESEARCH.md` and source
 evidence `evidence/20261120-native-focal-overlay.json` for hashes and boundaries.
 
-The pixel sequence covers the standard base; the focal/horizon combination
-still needs live validation. This initial path rejects EVF, rotation and AF/alternate operation states. Those
+The standard sequence is now supplemented by horizon live03:88checks/54frames
+pass on unchanged focal03/host07. Native background must repeat exactly in both
+ISO phases before focal entry and after Other ON; both histories retain their
+24reference cap. No ADL edges are excluded. Focal reenable, absence/return and
+master OFF preserve full native RGB outside the owned window; all61masks and
+saved page0 restore. All54PNG fingerprints, seven memberships and18 post-Other
+frames were independently checked and private crops inspected. Old failed runs
+remain failed. See `evidence/20261120-focal-horizon.json`.
+
+This initial path rejects EVF, rotation and AF/alternate operation states. Those
 paths, native MENU return, broader output/lens reconnect lifecycle and physical
 telemetry remain open. This is an independent modified experimental profile;
 the full display port remains unfinished and no installation clearance follows.
+
+Native information contracts are now bound to original application13, descriptor
+A182D16C, key102FD647 and update102FDA09.47 native checks cover registry/requests,
+movie/EVF selection rejection and original key admission. This is not a custom
+information-page implementation; the bit16 configuration guard remains until
+actual owned entry/return/update routing is installed and tested. See
+`Z7_INFORMATION_APP_RESEARCH.md` and `evidence/20261120-information-native.json`.

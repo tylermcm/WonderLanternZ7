@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "application_index": 13,
+  "descriptor": "0xa182d16c",
+  "key": "0x102FD647",
+  "update": "0x102FDA09",
+  "manager_state": "0xa1829af4",
+  "registry": "0xa20207bc",
+  "entry_request": "command4/payload108000",
+  "return_request": "command4/payload100000",
+  "native_entry_checks_property_write_success": false,
+  "manager_prefix_boundary": "0x1030D33E before final app work/initialization",
+  "supplied_boundaries": [
+    "Property reads/writes and parent request callback",
+    "Named admission/gate/monitor/output results",
+    "Incoming GUI snapshots and drawing/refresh sinks"
+  ],
+  "application_initialization_or_pixels_verified": false,
+  "custom_information_choice_implemented": false,
+  "camera_access": false,
+  "date": "2026-11-20",
+  "schema": 1,
+  "check_count": 47,
+  "manager_selection_cases": 16,
+  "native_info_key_admission_cases": 10,
+  "original_registry_index15_is_distinct": true,
+  "full_goal_complete": false,
+  "live_native_control": {
+    "passed": true,
+    "checks": 21,
+    "frames": 4,
+    "native_application_sequence": [
+      0,
+      0,
+      13,
+      0
+    ],
+    "native_page_and_property_sequence": [
+      0,
+      3,
+      4,
+      0
+    ],
+    "focal_and_custom_base_inactive": true,
+    "full_rgb_restoration_asserted": false,
+    "observed_return_difference_contained_in_native_iso_region": true,
+    "all4_png_fingerprints_independently_verified": true,
+    "private_information_panel_inspected": true,
+    "visual_acceptance": false,
+    "vertical_mirroring_observed": true,
+    "orientation_cause_proven": false,
+    "custom_information_implemented": false,
+    "camera_access": false,
+    "original_information_callbacks_and_all61_masks_unchanged": true
+  }
+}

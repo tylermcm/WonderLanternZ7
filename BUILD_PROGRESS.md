@@ -8,6 +8,13 @@ authorization and a concrete exact-candidate installation/recovery assessment.
 
 ## Completed
 
+- November20 combined focal/horizon live03 passes88checks/54frames with supplied
+  lens properties, unchanged focal03/host07 and rebuilt QEMU. Full-native RGB,
+  all61masks and saved page0 restore;54 PNGs/seven memberships independently
+  verified. Native background restoration is qualified before focal reenable;
+  old failures remain failed. Information-app native contracts now pass47checks,
+  binding original application13/key102FD647/update102FDA09; actual five-choice
+  integration remains next. See FOCAL_LENGTH_RESEARCH.md / Z7_INFORMATION_APP_RESEARCH.md.
 - November20 native Other/horizon control passes156checks/50frames with focal
   NEVER enabled. The ADL edge drift is reproduced without its object or painter;
   settled complete native RGB returns in both ISO phases after Other OFF/ON.

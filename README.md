@@ -53,13 +53,15 @@ The [configurable DISP work](z7-native-modules/DISPLAY_SETTINGS.md) now includes
 four presets, native base-page selection, six separate information groups and
 an Other-information group covering18 independently identified original-Z7
 widgets. Scoped policy and captured-pixel checks preserve shared warnings and
-native restoration on the standard page. An ADL edge-pixel restoration mismatch
-on the horizon page remains under investigation. Focal length, the information app, highlights, portrait,
+native restoration on the standard page. A no-focal control isolates native ADL
+edge settling; combined focal/horizon restoration now passes with exact qualified
+native frames. The [native information-page contracts](Z7_INFORMATION_APP_RESEARCH.md)
+are independently bound; its custom-DISP integration, highlights, portrait,
 persistence and broader lifecycle remain under development.
 
 An initial [focal-length overlay](FOCAL_LENGTH_RESEARCH.md) now displays whole
 and fractional millimeters on custom LCD landscape pages, independently of Other
-information. Native rendering/restoration checks pass with supplied lens values;
+information. Standard/horizon rendering and restoration pass with supplied lens values;
 EVF, rotation, broader lifecycle and physical lens telemetry remain unverified.
 
 An [automatic LCD-photo battery module](Z7_BATTERY_DISPLAY_RESEARCH.md) now

@@ -121,3 +121,7 @@ is an experimental modified profile, not an upstream or Nikon release.
 The native focal-layout audit and horizon frame-stability diagnostics are
 independent local MIT validation tools. They incorporate no firmware bytes or
 decoded resources; firmware, generated binaries and screenshots remain private.
+
+The original information-app registry/entry/admission audit is independent local
+MIT work. Its original-Z7 bindings and failure cases are derived independently;
+no Z7II application index, callback address or firmware bytes are substituted.

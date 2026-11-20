@@ -1,5 +1,81 @@
 # Laptop handoff — October 20, 2026
 
+## Focal horizon accepted; information app bound — November20,2026
+
+Previous goal turn progressed0a78afd (native control/GPU correction). Current
+worktree resumed clean. Job14000 is now TERMINAL PASSED88checks/54frames:
+`.private/evidence/20261120-focal-horizon-live-03`.
+Unchanged focal03/host07, rebuilt QEMU91652e21...84c6. Initial whole-native
+reference qualification takes23frames; after Other ON/Focal OFF,18frames restore
+the ORIGINAL settled native RGB twice per ISO phase. Both histories retain
+24reference cap. Fractional/whole, Other OFF, component OFF, reenable, absent
+lens with stale245, return and master OFF pass exact comparisons. All61masks and
+saved page0 restore. Source1C14/1C01 inputs are explicitly supplied, not hardware
+telemetry. No native snapshot/visibility/pixel stores, ADL exclusions, tolerance
+or composed references. All54 PNG fingerprints,7 memberships and18 post-Other
+qualification records independently verified; verified-focal-horizon-crops.png
+viewed. Earlier failures remain failed. New source evidence focal-horizon.json.
+
+Native information control43430 is TERMINAL PASSED21checks/4frames at
+`.private/evidence/20261120-information-native-live-01`, unchanged host07/focal03,
+custom inactive/QEMU91652e21...84c6. Native setter establishes baseline0/3;
+actual DISP enters13/returns0. Native page/property0,3,4,0; all61 masks/key/update
+callbacks unchanged, Focal/base inactive. All4 PNG hashes independently verified.
+Return RGB differs only within native ISO box; full RGB identity was NOT a gate.
+IMPORTANT: inspected information panel is vertically mirrored in emulator.
+Routing21 pass is NOT visual acceptance; cause unproven. Do not flip captured
+images or hardcode an app13 flip. Derive actual display/GPU orientation flags.
+No live jobs remain. Frozen sources/private independent-verification.json kept.
+
+Native information page independently binds application13 (NOT15), descriptor
+A182D16C, key-slotA182D180=102FD647, update-slotA182D188=102FDA09; separate snapshot
+A20210C0/state2Dlow6; current-app byteA1829AF4; registryA20207BC. Native audit01
+PASSES47checks:16 manager-selection cases/10 native key-admission cases plus
+registry/getters/parent registration/entry. Registry construction executes before
+initialization; manager selection stops1030D33E before final app work. This is
+NOT a custom native-information implementation or completed app-transition proof.
+Read Z7_INFORMATION_APP_RESEARCH.md and evidence/20261120-information-native.json.
+
+Actual entry:1037061C page3→4 calls original setter then getter1030D50C/helper
+103EB7C4, emits parent command4/payload108000, returns2. Native selector admits
+photoLCD app13, rejects movie/EVF to0. Native info DISP key29 preserves filters,
+gates, snapshot states2/5 and exclusions, then stores2F15=0 and requests100000
+return. The original entry still requests transition if property write fails;
+a new adapter must verify property/snapshot and retain conditional rollback.
+Adjacent original app15=A182CF00 is distinct; do not borrow Z7II's numeric15.
+
+NEXT actual feature work: implement owned native-information admission/update
+bridges and additive host API, then finish all5-choice module routing, replacing
+bit16 configuration rejection only when complete. Preserve actual native input
+admission, initialization failure cleanup, native return/parameter-display state,
+conditional base/mask/overlay ownership and current variant regressions. Entry/
+return needs live verification. Preserve the ORIGINAL user native page across
+the owned information round trip; do not resave intermediate native return0 as
+the user's baseline. Information-only, disabled-current reselection,
+master-off/MENU/output gates remain. EVF/rotation/AF/focal broader lifecycle,
+highlights/portrait/persistence/real stats remain in full scope. No camera/card,
+staging, flashing or push; full goal stays active.
+
+Implementation lead: native Info DISP has completed original filters/gates/
+state2/5/exclusions at102FD7DA, before native exit work. An additive API40 can
+register an admitted-information-cycle callback and before-information-update
+callback while preserving API32/state256 prefixes. Preserve original R0-R12,
+LR/NZCVQ and native post-key flow; delegated displaced prefix calls1040A4AE,
+conditionally103FEC18, compares3, then resumes102FD7E6 or102FD7E8. Delegated paths
+must restore the original displaced-call LR (102FD7E5 or102FD7DF respectively).
+Consumed path can resume original post-key102FD9B4. Wrapper on initializerA182D188 can run an
+owned pre-update callback then call original102FDA09 if app remains13, always
+delegating unchanged when absent. This is a PROPOSAL, not implemented. Keep
+original Info key/event slots unchanged and test absent/invalid/reentrant/failure
+paths before implementing five-choice ownership. The orientation issue can be
+investigated via read-only LCD/GPU register capture alongside that compatibility
+control; native drivers10241706/10242A2C are leads, not proven flip semantics.
+
+Graph refreshed2367nodes/6032edges after native information tools, ignored;
+graphs12011/16203 TERMINAL. Production C unchanged this turn; no blanket regression
+rerun. Scoped native audit47 and py_compile pass; source manifest refreshed at
+checkpoint. Full software scope is not complete.
+
 ## Native Other control and GPU no-op correction — November20, 2026
 
 Previous goal turn progressed: local checkpoint30ec5d0. This turn's focused

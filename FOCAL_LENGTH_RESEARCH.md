@@ -54,10 +54,24 @@ module returned load status8 in10.703s, beyond the old10s wall budget. Direct PN
 fixtures retain their10s default. Current regression counts and exact source
 identities are recorded in `evidence/20261120-native-focal-overlay.json`.
 
-Focal combined with horizon, EVF, rotated information, AF states, native MENU return, output changes and
+Horizon live03 now passes88 checks/54frames on unchanged module03/host07 and
+rebuilt QEMU91652e21...84c6. Whole/fractional text, Other OFF, component OFF,
+reenable, missing lens with stale245, return and master OFF pass strict complete-
+native-frame comparisons. All61 masks and saved native page0 restore. All54 PNG
+fingerprints, seven pixel memberships and18 post-Other qualification frames were
+independently rechecked; private key-frame crops inspected. Lens properties remain
+explicitly supplied. See `evidence/20261120-focal-horizon.json`.
+
+Native background qualification requires exact repeated frames in both ISO phases
+before focal entry and after Other returns, within24references per history.
+References are complete captures, never composites, and ADL pixels are not
+excluded. Earlier failed runs remain failed. This validates scoped combined
+rendering/restoration; it does not establish instantaneous settling or hardware.
+
+EVF, rotated information, AF states, native MENU return, output changes and
 same-type lens reconnect still need implementation or broader live validation.
-Those contexts are rejected by the initial overlay instead of applying LCD
-coordinates to another layout. The full display-port goal remains unfinished.
+Unsupported layouts remain rejected instead of receiving LCD coordinates.
+The full display-port goal remains unfinished.
 
 ## Native layout contract after restart
 
@@ -120,8 +134,7 @@ settling without the focal object; prior failed runs remain failed.
 The combined fixture therefore keeps focal OFF after Other ON until complete
 RGB repeatedly matches the ORIGINAL settled baseline in each ISO phase, within
 the SAME24reference cap. It introduces no replacement pixels or tolerance. Live03
-on rebuilt QEMU is in progress; reenable/absence/return/master-off are not yet
-established on horizon. The independently tested zero-alpha source-over emulator
+on rebuilt QEMU now passes as recorded above. The independently tested zero-alpha source-over emulator
 fix is recorded separately; the opaque ADL PNGs do not prove it caused this drift.
 
 Reconnect lead1015E508 is independently executed in seven private supplied-context
