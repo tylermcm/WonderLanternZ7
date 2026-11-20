@@ -1,5 +1,62 @@
 # Laptop handoff — October 20, 2026
 
+## Highlight frame gate and resident async owner - November 20, 2026
+
+Previous status-only goal turn was NO PROGRESS. This turn adds compiled ARM
+request ownership code and59 scoped native checks, and records the previously
+uncommitted66-check frame permission audit. Full goal remains ACTIVE. No
+camera/card, stage/flash/push; accepted API44 display module/host/QEMU unchanged.
+
+Frame audit: .private/evidence/20261120-highlight-frame-gate-03.json PASS66.
+Original1034866E source submit ->1023B9D0 primary frame ->1023B76E gate executes,
+including1023B578 parameter transformation. Primary frame+34hex permission is
+copied to state+20hex; both it and global state+28hex must equal1. Do NOT use
+frame+28 as warning permission. Native selector0/1 admit logical outputs0/2;
+physical output/photo-movie binding is still open. Deferred native source copy
+is4B8hex bytes at state+50Chex, ready byte+508hex. Restoring caller metadata
+does not cancel that copy; forced replay can still enable the plane. Incoming
+service/frame/MMIO/palette state, surface checks, mutex success, hardware color
+and plane programming are supplied. No actual warning pixels/hardware accepted.
+
+NEW plugins/highlight_request.h and examples/highlight_request_probe.c supply
+resident28-byte descriptor plus separate104-byte payload. Original converter,
+builder and submit wrappers execute; no native infinite-wait caller. Atomic
+single-owner states prevent overwrite/reentry. Consumer bridge must claim the
+owned packet, execute original dispatcher (or original completion for stale
+context), then retire only AFTER native return. Completion alone cannot release
+storage. Reaping also waits for submitter return, including early consumption
+while submitter is paused at kernel queue on a separate stack. Native ack1
+means100-byte copy; ack0 completed means cancelled/not applied. No completion
+means parked, regardless of time/queue return. No speculative timeout reuse.
+
+.private/evidence/20261120-highlight-request-02/result.json PASS59. Private
+probe SHA51f1df142dab6db2637b1d05bf0ba3b1e3d0edd559fceed6050ad1ccbe4f3aaa.
+Both logical outputs/enabled+disabled, zero padding/ack, busy nonmutation,
+foreign pointer delegation, stale context cancellation, duplicate/reentrant
+consumption, wrong-command/missing completion, four descriptor corruptions,
+supplied queue success/error with late consumption, and early consumer tested.
+Kernel queue latency/error ownership are NOT proved. Consumer bracketing and
+epochs are explicit test inputs, NOT installed host/context hooks. All audits
+terminal; separate scopes66 and59, not a broad full-profile regression rerun.
+Graph refreshed after code edits:2786nodes/7228edges, generated graph ignored.
+Current owner/probe/audit source hashes and private probe binary match the59
+check report. Source-only manifest refreshed; no private/binary files indexed.
+
+Source evidence:evidence/20261120-highlight-frame-gate.json and
+evidence/20261120-highlight-request.json. Details/commands:
+z7-native-modules/PHOTO_HIGHLIGHTS.md. Existing accepted persistent native full
+profile remains .private/builds/20261120-display-save-status-05, API44,
+SHA719c1db3ca5cf1c78d82ebedcdbbb4cc7b67312b34b7982d11a718e4b39af85c.
+
+NEXT: implement exact-byte-validated native source/consumer host bridges,
+resident callback registration/lifetime checks and coherent photo/output epoch
+producer, then integrate async owner into full Photo highlights preference.
+Account for deferred copied metadata and restore/cancel owned parameters on
+context/preset exit. Ordinary native movie/EVF packets must delegate unchanged.
+No foreign image+468 chain bound. Actual warning pixels, portrait/rotation,
+native Info mirror, real histogram data, full lifecycle and exact-candidate
+installation/recovery assessment remain incomplete. No flash authorization.
+
 ## Native highlight request submission/completion handoff - November 20, 2026
 
 Previous95a16b5 was PROGRESS (original converter). New isolated research audit

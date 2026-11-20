@@ -134,12 +134,78 @@ No frame producer, graphics hardware or warning pixels execute.
 
 Source-only evidence: `evidence/20261120-highlight-submission.json`.
 
+## Original frame permission and deferred copy
+
+The read-only `tools/audit_z7_highlight_frame_gate.py` audit executes original
+source application `1034866E`, primary-frame application `1023B9D0`, warning
+gate `1023B76E` and parameter transformation `1023B578`. All66 checks pass.
+For the primary source kind0, the frame permission is the word at **frame+34hex**,
+copied to native state+20hex. The global enable is state+28hex. Both must equal1
+to enable the warning plane; permission2 inhibits it. Frame+28 is not this flag.
+
+Selectors0/1 admit logical source outputs0/2. Incoming active service3/4 and
+ready state+228 are supplied. Wrong output, not-ready, inactive service and
+unsupported source cases do not publish permission or program the plane.
+These logical paths do not establish physical LCD/EVF or photo/movie mapping.
+
+In deferred mode, native code copies exactly4B8hex bytes to state+50Chex and
+sets byte state+508hex. Restoring the caller's frame+34 does not undo this copy.
+Forced native replay consumes the copied permission and can enable the plane.
+Therefore a temporary caller-side flag override alone is insufficient cleanup;
+the eventual extension must reconcile pending metadata and global parameters.
+Clearing the outer lifecycle's pending-ready byte is not established here.
+
+Incoming MMIO/frame/service/palette state, selected surface checks, kernel mutex
+success, hardware color lookup and warning-plane programming are supplied.
+Native parameter transformation executes, but actual hardware programming and
+warning pixels do not. No foreign image+468 offset or producer hook is installed.
+Source evidence: `evidence/20261120-highlight-frame-gate.json`.
+
+## Resident asynchronous request owner prototype
+
+`plugins/highlight_request.h` now supplies a single resident28-byte descriptor
+and separate104-byte payload. It uses original converter1034FE22,
+builder1034EFB0 and submit wrapper10348494 for logical flags1/4. All parameter
+words and acknowledgement are cleared before conversion, including disabled
+requests whose converter otherwise leaves96 bytes untouched. It does not call
+the native infinite-wait wrapper1034FF1E. Kernel queue latency/blocking itself
+remains unverified; this helper is intended for the resident worker.
+
+The consumer bridge contract brackets original dispatch with an atomic claim
+and retirement after native return. Context epochs are supplied by that bridge:
+an owned stale request calls original completion102396C0 without publishing
+parameters. Ordinary packet pointers return a delegate decision unchanged.
+The owned completion callback alone cannot release storage. Reaping also waits
+for the submitter to return, covering consumption before queue-send returns.
+An acknowledgement distinguishes native100-byte application from cancellation.
+Missing completion, unexpected owned descriptors and lost requests stay parked;
+neither a timeout nor a queue error permits reuse. This intentionally lacks a
+speculative retry that might overwrite a still-retained packet.
+
+The compiled ARM probe passes59 checks with original native conversion, builder,
+queue wrappers, dispatch, copy/ack and completion. Tests cover both logical
+outputs, enabled/disabled requests, foreign packets, context cancellation,
+duplicate/reentrant consumption, all four owned descriptor field corruptions,
+wrong-command completion, missing completion, supplied queue success/error,
+late consumption and consumption on a separate stack before submission returns.
+Supplied queue errors do not prove physical kernel error ownership semantics.
+Explicit test calls supply consumer bracketing and context epochs; no host hook,
+coherent context producer, preference connection or warning pixels are claimed.
+The accepted API44 full display module and host remain unchanged.
+
+```powershell
+.venv\Scripts\python.exe tools/audit_z7_highlight_request.py --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-request-new
+```
+
+Source evidence: `evidence/20261120-highlight-request.json`.
+
 ## Remaining implementation work
 
-Bind physical output and photo/movie context, then construct an owned
-asynchronous path before using the verified converter in the resident module.
-Trace the frame producer and its warning-enable metadata; do not reuse Z7II
-callback addresses or assume its context/image offsets. Then integrate owned
+Bind physical output and coherent photo/movie context, then install validated
+host source/consumer bridges for the resident asynchronous owner. The original
+source-submit boundary1034866E and frame+34 permission are candidates; the
+foreign context/image chain remains unbound. Do not reuse Z7II callback
+addresses or assume its context/image offsets. Then integrate owned
 packet interception, cancellation/restoration, preset visibility, and native
 LCD/EVF/movie preservation with the full resident profile. Pixels and output/
 capture/menu/lens transitions require separate acceptance evidence.
