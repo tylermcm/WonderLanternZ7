@@ -930,3 +930,33 @@ fails complete native RGB restoration. Against the ISO-matched all-on reference,
 snapshot and control6 records. The cause remains under investigation. Master OFF
 was not reached. No pixels are excluded and no synthetic references are used to
 turn that failure into a pass; Other horizon acceptance remains open.
+
+### Independent focal text on LCD landscape
+
+Optional `display-focal-probe` adds native text in its own object1198/label298,
+keeping battery1199/299 and VR widget50 separate. The existing Focal information
+bit controls it independently in each preset. Original properties1C14/1C01
+provide type and tenths-of-mm data;24mm and24.5mm are supported. Missing/invalid
+values hide the object. Foreign slots/labels are rejected, native teardown
+detaches ownership, and the painter uses RAM-only guards before native drawing.
+
+Native HUD snapshot delta or mask changes request a repaint even when the label
+is unchanged. This fixes the first candidate's disappearing text after Other OFF.
+Requests remain pending after failed submit, with100ms bounded sampling and
+extra-pass cadence. Delta/control flags are invalidation inputs, not completed
+pixel fences. The composed after-GUI callback retains the histogram pass.
+
+Current03 passes45 overlay checks,68 base,170 histogram,282 grid(native geometry
+109),1627 Other checks and55 root tests/no-skips. QEMU live03 passes20checks/
+13frames using explicitly supplied lens properties: visible whole/fractional
+text, protected outside pixels, independence from Other and complete native RGB
+restoration on Focal OFF, missing lens and master OFF. All61 masks restore.
+Private crops and immutable PNG/RGB comparisons were independently inspected.
+Earlier failed runs remain recorded. See `FOCAL_LENGTH_RESEARCH.md` and source
+evidence `evidence/20261120-native-focal-overlay.json` for hashes and boundaries.
+
+The pixel sequence covers the standard base; the focal/horizon combination
+still needs live validation. This initial path rejects EVF, rotation and AF/alternate operation states. Those
+paths, native MENU return, broader output/lens reconnect lifecycle and physical
+telemetry remain open. This is an independent modified experimental profile;
+the full display port remains unfinished and no installation clearance follows.

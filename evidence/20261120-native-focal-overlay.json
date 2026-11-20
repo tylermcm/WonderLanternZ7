@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "scope": "Independent original-Z7 LCD landscape focal overlay; standard-page pixels with supplied lens values",
+  "module": {
+    "module_sha256": "bd3c4ccad9a5ec7dbebd4e3075c3119c9bdbde385c688a26a7a089c8e65c3b36",
+    "file_bytes": 17420,
+    "image_bytes": 17152,
+    "bss_bytes": 5444,
+    "api_minimum_bytes": 32
+  },
+  "reproducible": true,
+  "source_inputs_verified": true,
+  "host_changed": false,
+  "ownership": {
+    "regular_slot": 1198,
+    "label_slot": 298,
+    "battery_slot_and_label": [
+      1199,
+      299
+    ],
+    "native_vr_widgets_edited_by_focal": false,
+    "lcd_window": [
+      110,
+      194,
+      220,
+      218
+    ]
+  },
+  "policy": {
+    "minimum_sample_and_extra_pass_interval_ms": 100,
+    "fractional_text": true,
+    "independent_focal_selection": true,
+    "native_snapshot_delta_and_mask_changes_request_repaint": true,
+    "snapshot_or_control_flags_are_paint_fences": false,
+    "failed_submit_retains_request": true,
+    "owned_painter_must_run_before_extra_present": true
+  },
+  "checks": {
+    "overlay": {
+      "passed": true,
+      "checks": 45
+    },
+    "base": {
+      "passed": true,
+      "checks": 68
+    },
+    "histogram": {
+      "passed": true,
+      "checks": 170
+    },
+    "grid": {
+      "passed": true,
+      "checks": 282
+    },
+    "other": {
+      "passed": true,
+      "checks": 1627
+    }
+  },
+  "root_tests": {
+    "passed": true,
+    "tests": 55,
+    "skips": 0
+  },
+  "live_qemu": {
+    "passed": true,
+    "checks": 20,
+    "frames": 13,
+    "incoming_lens_property_fixture": true,
+    "native_snapshot_visibility_or_pixel_stores_supplied": false,
+    "fractional_and_whole_text": "24.5mm / 24mm",
+    "outside_window_pixels_protected_exactly": true,
+    "other_off_retains_identical_focal_crop": true,
+    "component_off_absent_lens_and_master_off_complete_native_rgb_restored": true,
+    "all_61_native_masks_restored": true,
+    "master_off_saved_page0_and_inactive_ownership_verified": true,
+    "png_fingerprints_independently_verified": true,
+    "key_crops_inspected_privately": true,
+    "actual_lens_telemetry_verified": false
+  },
+  "retained_failures": {
+    "live01": "Baseline fixture single DISP press reached native page2 rather than3; corrected key helper",
+    "live02_module01": {
+      "module_sha256": "e532e7b4cc4f231ef891e1ddf2bdd0af7873d91d38828beba4086113067390c5",
+      "failure": "Other OFF erased unchanged focal text; fixed with native invalidation/repaint request"
+    },
+    "initial_current_regressions": "Loader did not return under10s wall bound; unchanged-module diagnostic returned status8 with full APCS guards in10.703s. Current host fixtures allow30s and retain10M instruction cap."
+  },
+  "existing_other_module_byte_identical": true,
+  "existing_other_module_sha256": "cbadda7a7dfbc27a9c9ca2f955c96dd3c5ae767bc0880178ca8402267c26ae8d",
+  "pinned_reference": {
+    "commit": "50a22b24c50619cffa646dac386e8334659f475a",
+    "source": "sdk/focal_length.h",
+    "license": "MIT",
+    "independent_modified_work": true
+  },
+  "graph": {
+    "nodes": 2324,
+    "edges": 5914,
+    "ignored": true
+  },
+  "remaining": [
+    "Focal/horizon live combination",
+    "EVF and rotated layout",
+    "AF and alternate operation states",
+    "Native MENU/output/lens reconnect lifecycle",
+    "Physical lens telemetry",
+    "Retained Other horizon ADL edge mismatch",
+    "Native information app",
+    "Photo highlights",
+    "Portrait",
+    "Persistence",
+    "Broader combined lifecycle and physical card/cache/camera validation"
+  ],
+  "all_jobs_terminal": true,
+  "camera_access": false,
+  "card_access": false,
+  "camera_staged": false,
+  "flashed": false,
+  "pushed": false,
+  "full_goal_complete": false
+}

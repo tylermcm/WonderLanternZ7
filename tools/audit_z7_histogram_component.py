@@ -149,7 +149,8 @@ def audit(raw, host, packet, module, legacy):
     def word(name): return f.read(base + symbols['z7_histogram_' + name])
     def component(bit, value): f.call(base + symbols['z7_settings_component'], model, 0, bit, value)
     check('stock-histogram-masks-retained-at-init', bytes(f.u.mem_read(DESC + 4, 36)) == MASKS)
-    check('after-gui-registered', f.words()[41] == 1 and f.words()[40] == base + symbols['histogram_after_gui'])
+    after_gui = 'focal_combined_after_gui' if module['kind'] == 'original-Z7-display-focal-diagnostic' else 'histogram_after_gui'
+    check('after-gui-registered', f.words()[41] == 1 and f.words()[40] == base + symbols[after_gui])
     f.call(base + symbols['z7_settings_flag'], model, 0, 1)
     component(1, 1); component(2, 0)
     f.call(host['symbols']['z7_display_before_update'])

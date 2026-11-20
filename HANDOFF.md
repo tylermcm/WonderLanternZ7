@@ -1,5 +1,69 @@
 # Laptop handoff — October 20, 2026
 
+## Independent focal overlay — November 20, 2026
+
+Previous turn made progress: live sampler5fc3ff6. This checkpoint adds a separate
+native focal object1198/label298, LCD landscape window110,194..220,218, decimal
+text and100ms bounded source/repaint cadence. Battery1199/299 and native VR50
+controls remain separate; Other OFF retains focal text. Optional after-GUI
+wrapper retains the histogram callback. Full goal stays active. No camera/card,
+staging, flash or push. ALL jobs TERMINAL; do not poll/restart old handles.
+
+Current module03 `.private/builds/20261120-display-focal-03` is reproducible SHA
+bd3c4ccad9a5ec7dbebd4e3075c3119c9bdbde385c688a26a7a089c8e65c3b36,
+17420bytes/image17152/BSS5444/API32, host07 unchanged. Source inputs verified.
+Module01 e532e7b4...390c5 was17292/image17024; transient02 b26ca512...31e2b is
+superseded. Existing Other rebuilt on current source remains byte-identical
+cbadda7a...6ae8d. Root55/no-skips pass after final C/timing edits.
+
+Current03 policy focal-overlay-04 PASSES45checks: native allocation/initialization
+and source reads, fractional/integer text, independent Focal/Other, all4 supplied
+current preset states, foreign labels/slots, detached objects, missing data,
+RAM-only painter guards, native HUD delta and failed-submit retry. Actual native
+key cycling is separate prior coverage, not inferred from supplied preset states.
+Current03 base02 PASSES68/histogram02 PASSES170/grid02 PASSES282(nativegeometry109)
+and Other01 PASSES1627. Private files have prefix20261120-focal-current-.
+
+Live03 `.private/evidence/20261120-focal-live-03` PASSES20checks/13frames on03.
+Properties1C14/1C01 are explicitly SUPPLIED lens inputs, not hardware telemetry;
+no native snapshot, visibility or pixel stores. Native24.5mm/24mm differ only
+inside the owned window. Other OFF keeps the SAME focal crop. Focal OFF, absent
+lens with stale245, and master OFF restore complete captured-native RGB. All61
+masks restore; saved native page0 returns with base ownership inactive. All PNG
+fingerprints and7 whole-native-reference membership comparisons independently
+rechecked; exact Other-OFF crop equality verified. Private verified-focal-crops.png
+inspected. No composed references/excluded pixels. Independent-verification.json
+preserves the checks. Standard base covered; focal/horizon combination still open.
+
+Retain failed live01 (baseline raw DISP reached2 rather than3; fixed with existing
+key-and-wait helper). Retain live02/module01 REAL repaint failure: Other OFF
+erased focal pixels with cached24mm, paints/presents stayed2; private crop viewed.
+03 fix: mask changes OR actual current/previous native HUD snapshot delta request
+repaint even when label unchanged. This is INVALIDATION INPUT, NEVER a completed-
+paint fence. After GUI revalidates context/ownership/busy, maintains100ms cadence,
+requires own painter invocation before extra present and retains failed-submit
+requests. Labels/objects are reused. No legacy VR controls edited by focal.
+
+Earlier current base/histogram/grid01 calls did not return under10s wall bound.
+An unchanged-module load diagnostic with SAME10M cap/APCS guards returned8 in
+10.703s under30s. Shared HostFixture now allows30s; direct NativePNG still defaults
+10s. All original instruction caps/stack/callee-save checks remain. Current02
+regressions above pass; module C was not changed for the harness timing issue.
+
+NEXT: focal/horizon live combination, EVF/rotated layout and AF/alternate states;
+then native MENU/output/lens reconnect lifecycle. Current focal path rejects
+EVF/rotation/AF rather than applying old LCD coordinates. Original VR widget50
+has separate whole-mm text2 and is already under Other masks; do not hijack it.
+Native placement/style leads:10369214 chooses control geometry,102F27A8 chooses
+native style per output/rotation (not itself a paint fence). Current old ADL
+horizon65edge-pixel mismatch remains unresolved;15check updater equivalence only
+narrows it. Native information app, highlights, portrait, persistence and broader
+combined lifecycle remain. Read FOCAL_LENGTH_RESEARCH.md / DISPLAY_SETTINGS.md.
+
+Source-only evidence `evidence/20261120-native-focal-overlay.json`. Graph used and
+refreshed2324nodes/5914edges, ignored; manifest refreshed at local source-only
+checkpoint. No hardware lens/card/cache/installation/recovery claim is made.
+
 ## Live focal source and compiled sampler — November 20, 2026
 
 Previous goal turn made progress (native mm text and ADL request isolation,

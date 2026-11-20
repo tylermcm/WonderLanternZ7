@@ -290,6 +290,25 @@ terminal. Other information, focal length, information app, highlights, portrait
 persistence, menu-return and broader lifecycle remain; full goal stays active.
 No camera/card access, staging, flashing or push.
 
+## Independent focal text and native repaint — November 20, 2026
+
+New optional focal03 adds its own LCD landscape text object1198/label298,
+whole/fractional formatting and independent per-preset selection. It preserves
+battery and VR ownership. Native HUD changes request bounded repaint even when
+the label is unchanged; failed submit retains the request. This fixes the real
+live02 failure where Other OFF erased focal text. Current03 passes45 overlay,
+68 base,170 histogram,282 grid(native geometry109),1627 Other and55 root/no-skips
+checks. Assisted-QEMU live03 passes20checks/13frames:24.5mm/24mm pixels, Other
+independence and complete native RGB/mask restoration after hiding/absence/master
+OFF. Lens properties are supplied inputs; physical telemetry is unverified.
+Private immutable frames/crops were independently checked; failures retained.
+The host fixture's wall budget now permits30s with unchanged10M instruction/APCS
+guards; an unchanged binary's loader was measured at10.703s. Existing Other output
+remains byte-identical and host07 is unchanged. Focal/horizon, EVF, rotation, AF,
+MENU/output/reconnect and remaining display components/lifecycle stay open.
+Source evidence `evidence/20261120-native-focal-overlay.json`. All jobs terminal;
+no camera/card access, staging, flashing or push. Full goal remains active.
+
 ## Native live focal sampler — November 20, 2026
 
 Independently bound original getter103FE85E and live producer1016342E: type1C14,

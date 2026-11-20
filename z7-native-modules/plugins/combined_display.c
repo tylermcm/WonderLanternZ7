@@ -14,6 +14,10 @@
 #include "gui.h"
 static uint32_t histogram_before(void);
 #endif
+#ifdef Z7_FOCAL_OVERLAY_PROBE
+static uint32_t focal_before_update(void);
+static void focal_note_update(uint32_t changed);
+#endif
 
 /* Component initializers prepare owned data through a local staging API. Only
  * this entrypoint registers with the host and commits native scalar masks.
@@ -35,6 +39,14 @@ static uint32_t histogram_before(void);
 #endif
 #ifdef Z7_HISTOGRAM_EXTRA_PROBE
 #include "../examples/display_histogram_policy.h"
+#endif
+#ifdef Z7_FOCAL_OVERLAY_PROBE
+#include "../examples/display_focal_policy.h"
+static void focal_combined_after_gui(void)
+{
+    histogram_after_gui();
+    focal_after_gui();
+}
 #endif
 
 #ifdef Z7_CLEAN_DISPLAY_PROBE
@@ -105,7 +117,11 @@ uint32_t z7_main(const struct z7_module_api *api)
     if (!disp_api->register_disp_cycle(preset_cycle)) return 1;
 #endif
 #ifdef Z7_HISTOGRAM_EXTRA_PROBE
+#ifdef Z7_FOCAL_OVERLAY_PROBE
+    if (!gui_api->register_after_gui_update(focal_combined_after_gui)) return 1;
+#else
     if (!gui_api->register_after_gui_update(histogram_after_gui)) return 1;
+#endif
 #endif
     /* No failing operation follows these native scalar stores. Host readiness
      * and native menu pointer publication still follow successful return.

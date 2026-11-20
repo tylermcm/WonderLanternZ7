@@ -57,6 +57,11 @@ native restoration on the standard page. An ADL edge-pixel restoration mismatch
 on the horizon page remains under investigation. Focal length, the information app, highlights, portrait,
 persistence and broader lifecycle remain under development.
 
+An initial [focal-length overlay](FOCAL_LENGTH_RESEARCH.md) now displays whole
+and fractional millimeters on custom LCD landscape pages, independently of Other
+information. Native rendering/restoration checks pass with supplied lens values;
+EVF, rotation, broader lifecycle and physical lens telemetry remain unverified.
+
 An [automatic LCD-photo battery module](Z7_BATTERY_DISPLAY_RESEARCH.md) now
 adds bounded native sampling, compact percentage text, warning-color preservation
 and stock-icon restoration. It is a separate SD-module profile with an initial

@@ -110,3 +110,10 @@ native lens producer/property getter. The pinned focal feature's type filtering
 concept is adapted under the same preserved MIT license. libgphoto2's public PTP
 definitions were consulted only to identify the protocol property and units;
 no libgphoto2 implementation is incorporated in these MIT sources.
+
+The optional focal overlay uses independently derived original-Z7 native object,
+label, font and GUI bindings. Its transparent-clear/native text-object pattern
+builds on this component's existing MIT battery overlay, which preserves JKWTCN's
+copyright and license. Independent object ownership, native-state invalidation,
+bounded repaint/retry and original-Z7 validation are local modifications. This
+is an experimental modified profile, not an upstream or Nikon release.

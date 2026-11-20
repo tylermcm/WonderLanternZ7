@@ -22,6 +22,11 @@ from build_z7_module_host import ROOT, STATE, STATE_BYTES, MAGIC, CURSOR, HEAP_S
 class HostFixture(NativePNG):
     def __init__(self, raw, report, packet, case='success'):
         super().__init__(raw, fail_allocation={'alloc-raw': 1, 'alloc-body': 2}.get(case, 0))
+        # CRC over larger linked modules plus Python instruction hooks can
+        # exceed10s. Keep the10M instruction limit and original ABI guards;
+        # extend only this host fixture's wall budget. Direct PNG audits retain
+        # their existing10s budget.
+        self.native_call_timeout_us = 30000000
         self.report, self.packet, self.case = report, packet, case
         self.u.mem_map(STATE - 4096, 12288)
         self.u.mem_map(0xa2900000, 0x100000)

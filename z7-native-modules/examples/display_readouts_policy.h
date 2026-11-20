@@ -170,5 +170,9 @@ static void readouts_before(void)
      * recompute the transition; leave permissions, text, layout and painting
      * entirely to the following native pipeline.
      */
+#ifdef Z7_FOCAL_OVERLAY_PROBE
+    changed |= focal_before_update();
+    focal_note_update(changed);
+#endif
     if (changed) F(0x10367c5bu, void, void)();
 }

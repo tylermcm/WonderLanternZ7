@@ -1,15 +1,63 @@
 # Original-Z7 focal-length port research
 
 November 20, 2026. Independent original Nikon Z7 C3.80 work informed by the
-pinned JKWTCN MIT focal-length feature. No focal-length display module is implemented
-yet. A standalone native sampler is now implemented; the text overlay remains
-open. Native firmware, generated packages, screenshots and dumps remain private.
+pinned JKWTCN MIT focal-length feature. The sampler and initial LCD landscape
+overlay are implemented. EVF, rotation and broader lifecycle remain open.
+Native firmware, generated packages, screenshots and dumps remain private.
 
 The target remains live focal length from an electronically communicating lens,
 including manual zoom, independent per-preset selection, missing/invalid-data
 suppression and LCD/EVF context handling. Taking a photo or reading EXIF is not
 a substitute for that live source. Fractional values must remain representable.
 The port must preserve native VR, lens-controller and existing display behavior.
+
+## Initial independent LCD overlay
+
+Optional `display-focal-probe` includes the existing Other-information and
+histogram stack and requires GUI API32. Its native text object uses regular
+slot1198 and label298, separate from battery1199/299 and VR widget50. The initial
+landscape window is110,194..220,218 in the original LCD coordinate space. It
+formats both24mm and24.5mm and obeys the independent per-preset Focal switch.
+Occupied slots/labels are rejected; detached objects cannot paint through stale
+pointers. Native object construction, visibility, dirty and font-cache helpers
+remain in use. No native VR control or descriptor is edited by this overlay.
+
+Current module03 is reproducible SHA
+bd3c4ccad9a5ec7dbebd4e3075c3119c9bdbde385c688a26a7a089c8e65c3b36,
+17420bytes/image17152/BSS5444/API32, unchanged host07. The targeted overlay audit
+passes45 checks, including four supplied current preset states, Other/Focal
+independence, fractional formatting, missing data, foreign ownership, native
+state invalidation and failed-submit retry. Native key cycling has separate
+coverage; supplied current preset states do not establish new physical key flows.
+
+Assisted-QEMU live03 passes20 checks/13 frames. It supplies incoming properties
+1C14/1C01 explicitly, with no native snapshot, visibility or pixel stores.
+Fractional and whole text change real pixels only inside the owned window.
+Other OFF retains identical focal pixels. Focal OFF, absent lens with a stale
+value, and master OFF restore complete captured native RGB; master OFF restores
+all61 native descriptor masks. PNG fingerprints and decoded RGB comparisons
+were independently rechecked, and private key-frame crops inspected. This
+establishes scoped rendering with supplied lens values, not physical telemetry.
+
+Live01 stopped in baseline setup because a single DISP press reached native
+page2 rather than3. The established key-and-wait helper corrected that fixture.
+Live02 on module01 exposed a production bug: Other OFF erased focal pixels while
+the cached label remained24mm. Module03 requests repaint after native snapshot
+delta or custom-mask changes, preserving the100ms cadence and label caching.
+These are invalidation inputs, never completed-paint fences. Failed submit keeps
+the request pending; successful extra submission must actually invoke the owned
+painter before presentation. Earlier failures remain private and are not passes.
+
+The host instruction fixture now allows30s wall time while retaining its10M
+instruction cap and all stack/callee-save guards. A diagnostic on the unchanged
+module returned load status8 in10.703s, beyond the old10s wall budget. Direct PNG
+fixtures retain their10s default. Current regression counts and exact source
+identities are recorded in `evidence/20261120-native-focal-overlay.json`.
+
+Focal combined with horizon, EVF, rotated information, AF states, native MENU return, output changes and
+same-type lens reconnect still need implementation or broader live validation.
+Those contexts are rejected by the initial overlay instead of applying LCD
+coordinates to another layout. The full display-port goal remains unfinished.
 
 ## Live source independently bound
 

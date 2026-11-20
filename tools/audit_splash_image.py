@@ -97,7 +97,7 @@ class NativePNG:
             u.reg_write(reg, value)
         u.reg_write(UC_ARM_REG_SP, STACK)
         u.reg_write(UC_ARM_REG_LR, STOP | 1)
-        u.emu_start(address | 1, STOP, timeout=10000000, count=10000000)
+        u.emu_start(address | 1, STOP, timeout=getattr(self, 'native_call_timeout_us', 10000000), count=10000000)
         if u.reg_read(UC_ARM_REG_PC) != STOP or u.reg_read(UC_ARM_REG_SP) != STACK:
             raise ValueError('Native call did not return with its original stack')
         if any(u.reg_read(reg) != value for reg, value in guards.items()):

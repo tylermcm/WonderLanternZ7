@@ -42,7 +42,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
     parser.add_argument('--grid-components', action='store_true', help='For the base-page DISP probe, set a native golden grid and verify component suppression and same-page edits')
@@ -110,7 +110,7 @@ def main():
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
         orientation_fixture=0, keep_awake=True, photo_liveview=True)
     camera = DisplayCamera(0, profile='menu' if args.view == 'menu' else 'shooting', **options)
-    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups'):
+    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
         # Retain the base fixture's native StartLV settling delay before MENU.
         # Acknowledgement alone can precede the first completed native draw.
         camera.native_display_wait_ms = 5000
@@ -123,7 +123,7 @@ def main():
         geometry_source = Path(__file__).with_name('display_pixel_geometry.py').read_bytes()
         (output / 'geometry-source.py').write_bytes(geometry_source)
         result['information_geometry_source_sha256'] = hashlib.sha256(geometry_source).hexdigest()
-    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
+    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
     def save():
         (output / 'result.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     def check(name, passed):
@@ -232,7 +232,7 @@ def main():
                         if pointer:
                             record = camera.remote.memory(pointer, 100)
                             step['settings_native_value_objects'].append(dict(row=row, child=child, pointer=hex(pointer), words=list(struct.unpack('<25I', record))))
-        if args.view == 'information-groups':
+        if args.view in ('information-groups', 'focal'):
             step['information_formats'] = camera.remote.memory(0xa18237b8, 7).hex()
             step['information_native_snapshot'] = camera.remote.memory(0xa201d4d0, 0x33c).hex()
             step['information_phase_source'] = camera.remote.memory(0xa201f260 + 0x44, 12).hex()
@@ -248,6 +248,13 @@ def main():
                     pointer = int.from_bytes(camera.remote.memory(descriptor + 44, 4), 'little')
                     step['information_controls'][str(widget)] = [camera.remote.memory(pointer + row * 48, 48).hex()
                         for row in range(camera.remote.memory(descriptor + 40, 1)[0])]
+        if args.view == 'focal':
+            step['focal'] = {name: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_focal_' + name], 4), 'little')
+                for name in ('object', 'tenths', 'samples', 'paints', 'presents', 'status')}
+            record = camera.remote.memory(0xa2019e78 + 298 * 12, 12)
+            length, pointer, font = struct.unpack('<3I', record)
+            step['focal']['text'] = camera.remote.memory(pointer, min(length, 55)).decode('ascii', errors='replace') if pointer and length else ''
+            step['focal']['label_font'] = font
         if args.view == 'disp-presets':
             step['readout_native_snapshot'] = camera.remote.memory(0xa201d4d0, 0x33c).hex()
             step['native_grid_descriptor'] = camera.remote.memory(0xa2020c2c, 32).hex()
@@ -319,7 +326,7 @@ def main():
     try:
         camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry') else camera.boot_shooting()
         checkpoint()
-        if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups'):
+        if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
             # StartLV acknowledgement and a fixed delay are insufficient. This
             # diagnostic gate observes native pipeline progress without writing
             # readiness flags or inventing peripheral completion responses.
@@ -358,7 +365,10 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'information-groups':
+        if args.view == 'focal':
+            from focal_pixel_probe import run_focal_probe
+            run_focal_probe(camera, output, module, base, result, capture, native, key, check)
+        elif args.view == 'information-groups':
             if module['kind'] not in ('original-Z7-display-groups-diagnostic','original-Z7-display-other-diagnostic'): raise ValueError('Information diagnostic required')
             other_widgets = module.get('other_information_widgets', [])
             if args.other_information and not other_widgets: raise ValueError('Other-information profile required')
