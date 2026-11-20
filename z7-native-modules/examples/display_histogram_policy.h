@@ -81,7 +81,7 @@ static uint32_t histogram_painter(uint32_t object, uint32_t next, uint32_t c, ui
     if (!histogram_bindings() || W(HG_CONTROL + 0x24) != object ||
         !z7_base_active || base_blocked || base_releasing ||
         !z7_settings_valid(&z7_menu_settings) || !(z7_menu_settings.flags & Z7_SETTINGS_CUSTOM) ||
-        (z7_menu_settings.enabled_pages & 16u) ||
+        (Z7_INFORMATION_CONFIG_BLOCKED) ||
         z7_readout_preset >= 4 || !(z7_menu_settings.components[z7_readout_preset] & Z7_COMPONENT_HISTOGRAM) ||
         !base_gui_memory_context() || B(0xa201d4d0u + 0x18a) != z7_base_applied ||
         (W(0xa1821370u + 0x24) & 7u) != 1) return 1;

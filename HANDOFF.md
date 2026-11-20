@@ -1,5 +1,56 @@
 # Laptop handoff — October 20, 2026
 
+## Full five-choice routing validated — November20,2026
+
+Previous5159f8b turn was PROGRESS. New API40 `display-information-probe` includes
+FULL focal/Other/histogram stack. Current04 is20748bytes/image20480/BSS5508,
+reproducible SHAd49811875af0304f5c18a2f6b182fb2bf79419fe43b7ad6d316ecefabd15ffcd.
+Comment-only rebuild05 has EXACT same package bytes and current32 source-input
+hashes verified. Host08 unchanged. Deferred native Info entry waits for masks/base/painters,
+rechecks native eligibility and preserves user baseline. Native admitted exit,
+information-only, master-off and disabled-current routing implemented. No fake
+keys or app/registry/snapshot/pixel stores implement transitions. Ordinary native
+settings-exit primitives retain delayed-property0/app13 as pending and handle
+partial publication/retry. Failed entry parks until master OFF; foreign state
+preserved. API40 checked BEFORE native menu preparation. Old API32 focal rebuilt
+compat05 exact bd3c4cca...65c3b36. Current04 module source-input hashes verified.
+
+Current04 audit06 PASSED54 routing checks; helper03 audit05 PASSED182transition;
+current04 focal audit04 PASSED45; current04 root55/no-skips PASS. Native setter,
+key admission, request primitives and native exit execute in instruction tests;
+manager/app initialization, property services/rendering remain supplied there.
+Earlier first-audit disabled-Info reselection bug fixed to next enabled preset0.
+Deferred secondary-gate test initially failed because inherited histogram fixture
+supplied gate2/2A as0; dedicated native DISP gates fixed fixture, not weakened test.
+Superseded candidates01/02/03 remain historical, not current accepted artifacts.
+
+Live02 job21326 TERMINAL PASS43checks/15frames at
+`.private/evidence/20261120-information-routing-live-02` on CURRENT04/host08.
+Actual apps0→13→0; four presets, all61 masks, saved native page3,
+information-only DISP consume and master-off restore. Later explicitly supplied
+lens1/245 phase paints24.5mm, native painter retires before Info entry, then focal
+reappears on return and master-off restores native horizon/page3. No native app,
+snapshot, mask or pixel stores supplied. All15PNG hashes/frozen helper verified;
+fixed focal crop[156,275,313,310] changes from pre-focal control, returned crop is
+EXACT, master-off window matches original native background. Raw visible/returned/
+retired/master-off frames VIEWED. No whole-RGB identity claim. Private independent-
+verification.json retained. Source evidence20261120-display-information.json.
+Native Info text is still vertically mirrored; visual acceptance FALSE.
+
+Live01 job7745 terminalPASS35/11 on superseded02, all11PNG hashes verified. Main
+jobs43556/44078/62588 terminalPASS54/45/182; previous87837 handle expired but
+its audit05 result independently verifiedPASS51. No live jobs remain. Graphs84241/62426
+terminal2462nodes/6309edges after final code/comment edits; generated graph ignored.
+Host99/316/122/116 are existing scoped HOST checks, not a broad five-choice claim.
+
+NEXT: native-information orientation investigation and MENU/output/lifecycle
+integration on the current full profile. Do not flip screenshots or hardcode an
+app13 flip. Prior readonly LCD geometry/format flags match across states except
+buffers; GPU texture/orientation semantics need native contracts. Preserve strict
+focal retirement/return pixels; do not blindly rerun or relax earlier failures.
+Broader EVF/rotation/AF/lens lifecycle, highlights/portrait/persistence/real histogram
+statistics remain in full scope. No camera/card/staging/flash/push. Goal active.
+
 ## Information transition ledger — November20,2026
 
 Resumed after Windows update. Host API40 is saved in local source-only7c3be7d;

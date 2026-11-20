@@ -70,6 +70,9 @@ static uint32_t context_visible(void)
     /* LCD photo only. Existing native control visibility keeps warning and
      * page/output exclusions with the stock battery updater.
      */
+#ifdef Z7_INFORMATION_APP_PROBE
+    if (information_components_blocked()) return 0;
+#endif
     if (z7_battery_enabled != 1 || B(0xa18237c6u) || B(0xa201d4d0u + 0x40) ||
         W(0xa18b4de8u) || !pool()) return 0;
     uint32_t font = B(0xa18237e8u + 19 * 2);

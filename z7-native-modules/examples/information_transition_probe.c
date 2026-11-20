@@ -11,6 +11,7 @@ uint32_t z7_information_operation(uint32_t operation, uint32_t saved, uint32_t r
     case 0: return information_enter(&z7_information_ledger, saved, released);
     case 1: return information_observe(&z7_information_ledger);
     case 2: return information_exit_admitted(&z7_information_ledger);
+    case 3: return information_request_return(&z7_information_ledger);
     default: return 0;
     }
 }

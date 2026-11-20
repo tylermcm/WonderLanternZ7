@@ -37,7 +37,7 @@ static uint32_t focal_memory_context(void)
 {
     if (!base_gui_memory_context() || !z7_base_active || base_blocked || base_releasing ||
         !z7_settings_valid(&z7_menu_settings) || !(z7_menu_settings.flags & Z7_SETTINGS_CUSTOM) ||
-        (z7_menu_settings.enabled_pages & 16u) || z7_readout_preset >= 4 ||
+        (Z7_INFORMATION_CONFIG_BLOCKED) || z7_readout_preset >= 4 ||
         !(z7_menu_settings.information[z7_readout_preset] & Z7_INFO_FOCAL) ||
         B(0xa201d4d0u) || B(0xa201d4d0u + 0x192) || B(0xa201d4d0u + 0x193) ||
         *(volatile uint16_t *)(uintptr_t)(0xa201d4d0u + 0x338) ||

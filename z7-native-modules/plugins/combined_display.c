@@ -4,6 +4,27 @@
  */
 #include "module.h"
 #include "display.h"
+#ifdef Z7_INFORMATION_APP_PROBE
+#include "information.h"
+#include "information_transition.h"
+struct z7_information_transition z7_information_ledger;
+volatile uint32_t z7_information_suspended, z7_information_pending, z7_information_target;
+volatile uint32_t z7_information_entries, z7_information_returns, z7_information_errors;
+static uint32_t information_saved, information_previous;
+static uint32_t information_preset_cycle(void);
+static uint32_t information_native_cycle(void);
+static void information_sync_preset(void);
+static void information_before_update(void);
+static void information_after_gui(void);
+static uint32_t information_components_blocked(void)
+{
+    return z7_information_suspended || z7_information_ledger.phase != IT_IDLE ||
+        *(volatile uint8_t *)(uintptr_t)0xa1829af4u != 0;
+}
+#define Z7_INFORMATION_CONFIG_BLOCKED information_components_blocked()
+#else
+#define Z7_INFORMATION_CONFIG_BLOCKED (z7_menu_settings.enabled_pages & 16u)
+#endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
 #include "update.h"
 #endif
@@ -46,7 +67,13 @@ static void focal_combined_after_gui(void)
 {
     histogram_after_gui();
     focal_after_gui();
+#ifdef Z7_INFORMATION_APP_PROBE
+    information_after_gui();
+#endif
 }
+#endif
+#ifdef Z7_INFORMATION_APP_PROBE
+#include "../examples/display_information_policy.h"
 #endif
 
 #ifdef Z7_CLEAN_DISPLAY_PROBE
@@ -104,6 +131,11 @@ uint32_t z7_main(const struct z7_module_api *api)
     const struct z7_module_gui_api *gui_api = (const struct z7_module_gui_api *)api;
     if (api->size < sizeof(*gui_api) || !gui_api->register_after_gui_update) return 1;
 #endif
+#ifdef Z7_INFORMATION_APP_PROBE
+    const struct z7_module_information_api *information_api = (const struct z7_module_information_api *)api;
+    if (api->size < sizeof(*information_api) || !information_api->register_information_cycle ||
+        !information_api->register_before_information_update) return 1;
+#endif
 #ifdef Z7_SETTINGS_MENU_PROBE
     if (!sm_prepare()) return 1;
 #endif
@@ -115,6 +147,10 @@ uint32_t z7_main(const struct z7_module_api *api)
 #endif
 #ifdef Z7_SETTINGS_DISP_PROBE
     if (!disp_api->register_disp_cycle(preset_cycle)) return 1;
+#endif
+#ifdef Z7_INFORMATION_APP_PROBE
+    if (!information_api->register_information_cycle(information_native_cycle) ||
+        !information_api->register_before_information_update(information_before_update)) return 1;
 #endif
 #ifdef Z7_HISTOGRAM_EXTRA_PROBE
 #ifdef Z7_FOCAL_OVERLAY_PROBE

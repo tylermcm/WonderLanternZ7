@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "independent_original_z7_work": true,
+  "main_sha256": "6ea33985de7c0d35c2f6b026157595b56fdd9167aa79df53cded25e2f25c87ac",
+  "module_sha256": "d49811875af0304f5c18a2f6b182fb2bf79419fe43b7ad6d316ecefabd15ffcd",
+  "module_file_bytes": 20748,
+  "module_image_bytes": 20480,
+  "module_bss_bytes": 5508,
+  "api_minimum_bytes": 40,
+  "reproducible_build": true,
+  "current_module_source_inputs_verified": true,
+  "instruction_checks": {
+    "routing": 54,
+    "transition": 182,
+    "focal": 45
+  },
+  "root_regression_tests": 55,
+  "legacy_api32_focal_byte_identical": true,
+  "legacy_focal_module_sha256": "bd3c4ccad9a5ec7dbebd4e3075c3119c9bdbde385c688a26a7a089c8e65c3b36",
+  "full_focal_other_histogram_profile": true,
+  "native_information_app_index": 13,
+  "live": {
+    "passed": true,
+    "checks": 43,
+    "frames": 15,
+    "all_png_fingerprints_independently_verified": true,
+    "frozen_probe_source_verified": true,
+    "raw_focal_visible_returned_retired_and_master_off_images_inspected": true,
+    "four_presets_and_native_information_routed": true,
+    "information_only_disp_consumed": true,
+    "master_off_from_information_restores_original_native_page3": true,
+    "disabled_current_reselection": "Instruction fixture coverage",
+    "all61_masks_restored": true,
+    "owned_focal_box": [
+      156,
+      275,
+      313,
+      310
+    ],
+    "focal_crop_changes_against_pre_focal_control": true,
+    "returned_focal_crop_exact": true,
+    "master_off_owned_window_exact_native_background": true,
+    "full_rgb_identity_asserted": false,
+    "incoming_lens_fixture": {
+      "type": 1,
+      "tenths": 245,
+      "only_later_focal_phase": true,
+      "actual_hardware_telemetry": false
+    },
+    "app_snapshot_mask_or_pixel_writes_supplied": false
+  },
+  "supplied_boundaries": [
+    "Instruction fixture: incoming GUI/app/lens state, property/parent-request services, manager/app initialization and rendering services",
+    "Assisted QEMU: read-only filesystem, sensor/calibration boundaries and later explicit incoming lens type1/value245"
+  ],
+  "visual_acceptance": false,
+  "native_information_vertical_mirroring_observed": true,
+  "orientation_cause_proven": false,
+  "camera_access": false,
+  "physical_card_access": false,
+  "flash_performed": false,
+  "full_goal_complete": false
+}

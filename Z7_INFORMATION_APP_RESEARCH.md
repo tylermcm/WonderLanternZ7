@@ -1,8 +1,9 @@
 # Original-Z7 native information page
 
 November20,2026. Independent original Nikon Z7 C3.80 work for the fifth custom
-DISP choice. This binds original native contracts; the choice is not yet enabled
-in the compiled custom-DISP profiles. Firmware/resources remain private.
+DISP choice. The API40 `display-information-probe` now composes the full
+focal/Other/histogram stack with the native information app. Earlier API32
+profiles retain their bit16 rejection. Firmware/resources remain private.
 
 `tools/audit_z7_information_native.py` passes47 checks:16 manager-selection cases
 and10 original information-key admission cases, plus native registry, callback
@@ -53,11 +54,11 @@ For the admitted ordinary-LCD path it clears native view state, stores property
 The audit supplies drawing/refresh and parent-request services, so it does not
 establish native app initialization, a rendered information page or return pixels.
 
-## Implementation work still required
+## Original implementation plan (historical)
 
-Current custom profiles reject configurations containing native-information bit16
-because ownership/routing is not installed. Remove that rejection only as part of
-the complete five-choice implementation. Preserve actual native DISP admission
+The earlier API32 custom profiles reject native-information bit16. The new
+API40 profile installs ownership/routing separately; this rejection is retained
+in older profiles. The original integration requirements follow. Preserve actual native DISP admission
 on both sides; do not replace it with the model's next-index calculation. Preserve
 native keys/events, failure cleanup, settings reselection and output/movie gates.
 
@@ -91,8 +92,8 @@ validate the model against it. The live control does not implement custom DISP.
 An owned bridge at native admitted-DISP point102FD7DA and a guarded pre-update
 wrapper on initializerA182D188 are implementation leads. Original key/event slots
 can remain unchanged. An additive API40 can preserve the current API32 prefix and
-state256 layout. These bridges are not implemented yet; register/flag preservation,
-original delegation, failure cleanup, reentry and native return need verification.
+state256 layout. This was the original proposal; the implemented bridges and
+register/flag, delegation, cleanup and reentry verification are recorded below.
 
 Source evidence: `evidence/20261120-information-native.json`. These scoped native
 contracts do not grant installation or physical-camera recovery clearance.
@@ -115,8 +116,7 @@ execute through the resident updater. All PNG hashes were independently checked;
 information RGB exactly matches the previous API32-host control. Vertical mirrored
 text remains unresolved and visual acceptance is false. Captured LCD format and
 geometry flags remain identical across these states except buffer addresses.
-See `evidence/20261120-information-host.json` for scoped regressions. The full
-five-choice module and physical installation remain unimplemented/unverified.
+See `evidence/20261120-information-host.json` for scoped regressions. Physical installation remains unverified; later combined-profile work is recorded below.
 
 ## Verified transition ledger
 
@@ -136,4 +136,40 @@ request helper and native information DISP exit execute. Property services,
 parent callback and application initialization remain supplied. Actual component
 release is an explicit caller precondition, not established by this test. Root55
 regressions pass. See `evidence/20261120-information-transition.json`.
-The helper is not yet integrated into the five-choice combined module.
+The helper is now used by the API40 combined profile below.
+
+## Five-choice combined profile
+
+`display-information-probe` includes the complete focal/Other/histogram stack,
+with API40 information callbacks and an explicit transition ledger. An admitted
+shooting DISP key selects the next enabled preset or stages information entry.
+Custom masks/base and owned painters retire first. The after-GUI callback
+rechecks native eligibility before requesting the original native information
+transition. Only observation of native app13 commits logical choice4.
+
+An admitted information DISP key either keeps an information-only configuration
+or delegates the original native exit to the selected preset. Settings-driven
+master-off/disabled-current return uses independently bound ordinary native LCD
+exit primitives, verifies page-property publication and waits for native manager
+return. No synthetic key or application/registry/snapshot assignment performs a
+transition. The original user page remains separate from intermediate return0.
+Failure rollback and foreign-state conflicts retain conditional ownership; a
+failed entry does not issue another request on every GUI frame.
+
+Current reproducible candidate04 is20748bytes/image20480/BSS5508/API40, SHA
+`d49811875af0304f5c18a2f6b182fb2bf79419fe43b7ad6d316ecefabd15ffcd`.
+The original API32 focal profile remains byte-identical. Native information
+orientation remains unresolved; routing success does not establish visual
+acceptance or camera installation/recovery. Scoped evidence accompanies the
+checkpoint; highlights, portrait, persistence and broader lifecycle remain open.
+
+Candidate04 validation:54 compiled routing checks,182 transition checks,45 focal
+overlay checks and55 root regressions pass. Assisted QEMU passes43 checks across
+15 frames. Actual native entry/return, information-only DISP/master-off and saved
+page3/all61-mask restoration execute. A later supplied lens1/245 phase verifies
+focal painter retirement and text reappearance. All15 PNG hashes and frozen helper
+source were independently verified. Fixed focal crop changes against its disabled
+control, returns exactly, and master-off restores the original native background
+in that window. Raw frames were inspected. No whole-RGB or physical telemetry
+claim is made. See `evidence/20261120-display-information.json`. Native information
+text remains mirrored; full visual acceptance and broader lifecycle remain open.

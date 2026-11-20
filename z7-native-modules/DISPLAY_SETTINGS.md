@@ -27,6 +27,19 @@ not establish those features' original-Z7 native bindings or render eligibility.
 In particular, the new model does not enable a globally disabled grid/highlight
 feature or claim that warning/AF controls have been identified.
 
+## Five-choice native application diagnostic
+
+The API40 `display-information-probe` now combines all four configurable presets
+with native information application13, including the focal/Other/histogram stack.
+Entry waits for custom mask/base release and owned painter retirement; return
+preserves the original user native page across intermediate native page0.
+Information-only, master-off and disabled-current reselection are implemented.
+Older API32 profiles keep their bit16 rejection and remain independently usable.
+See [the information-app record](../Z7_INFORMATION_APP_RESEARCH.md#five-choice-combined-profile)
+for exact candidate and scoped evidence. Native information text remains vertically
+mirrored in the emulator, so routing tests do not establish visual acceptance.
+No card persistence or physical installation/recovery clearance is added.
+
 ## Independent 64-byte format
 
 All words are little endian. Length must be exactly64 bytes. This is original-Z7

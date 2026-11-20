@@ -25,7 +25,7 @@ static uint32_t base_grid_suppressed(void)
 {
     return z7_base_active && !base_blocked && !base_releasing &&
         z7_settings_valid(&z7_menu_settings) && (z7_menu_settings.flags & Z7_SETTINGS_CUSTOM) &&
-        !(z7_menu_settings.enabled_pages & 16u) && z7_readout_preset < 4 &&
+        !(Z7_INFORMATION_CONFIG_BLOCKED) && z7_readout_preset < 4 &&
         /* This is called inside native scalar reads. Ownership is validated
          * by base_before; do not re-enter the property service here. */
         base_gui_memory_context() && B(0xa201d4d0u + 0x18a) == z7_base_applied &&
@@ -63,7 +63,7 @@ static uint32_t base_before(void)
         changed = base_release();
         if (base_releasing) return changed;
     }
-    if (!z7_settings_valid(&z7_menu_settings) || (z7_menu_settings.enabled_pages & 16u) ||
+    if (!z7_settings_valid(&z7_menu_settings) || (Z7_INFORMATION_CONFIG_BLOCKED) ||
         z7_readout_preset >= 4 || !base_gui_context()) return changed | base_release();
     if (base_blocked) return changed;
     uint32_t current = base_property();

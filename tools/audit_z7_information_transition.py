@@ -101,6 +101,9 @@ def audit(raw, host, packet, module):
         f.call(0x102fd646, 0x29)
         check(f'entry-{saved}-original-native-exit-executes', f.events == [[4, 0x100000]] and
               f.properties[0x2f15] == 0 and f.stores == [[0x2f15, 0]])
+        before = list(f.stores)
+        check(f'entry-{saved}-partial-native-exit-retains-ledger', op(f, 1) == 0 and
+              ledger(f)[0] == 3 and f.stores == before)
         # Native manager return/app startup supplies the shooting snapshot.
         native_app(f, 0, 0)
         check(f'entry-{saved}-restores-original-user-page', op(f, 1) == 1 and ledger(f)[0] == 0 and
@@ -189,6 +192,34 @@ def audit(raw, host, packet, module):
     check('unrelated-app-delays-without-writes', op(f, 1) == 0 and f.stores == before and ledger(f)[1] == 1)
     native_app(f, 0, 0)
     check('rejected-entry-native-return-restores-baseline', op(f, 1) == 1 and f.properties[0x2f15] == 1)
+    f = setup(3); op(f, saved=1); native_app(f, 13, 4); op(f, 1)
+    f.store_plan = [(0, False)]
+    check('settings-exit-failed-publish-does-not-request', op(f, 3) == 0 and ledger(f)[0] == 6 and
+          f.events == [[4, 0x108000]] and f.properties[0x2f15] == 4)
+    check('settings-exit-can-retry-verified-property', op(f, 3) == 1 and ledger(f)[0] == 7 and
+          f.events[-1:] == [[4, 0x100000]] and f.properties[0x2f15] == 0)
+    before = (list(f.events), list(f.stores))
+    check('settings-exit-pending-does-not-repeat', op(f, 1) == 0 and op(f, 3) == 0 and
+          ledger(f)[0] == 7 and (f.events, f.stores) == before)
+    native_app(f, 0, 4, )
+    f.properties[0x2f15] = 0
+    check('manager-switch-before-snapshot-return-remains-pending', op(f, 1) == 0 and ledger(f)[0] == 7)
+    native_app(f, 0, 0)
+    check('settings-exit-restores-original-page', op(f, 1) == 1 and f.properties[0x2f15] == 1)
+    for state in (2, 5):
+        f = setup(3); op(f, saved=1); native_app(f, 13, 4); op(f, 1)
+        f.u.mem_write(INFO + 0x2d, bytes([state])); before = (list(f.events), list(f.stores))
+        check('settings-exit-defers-native-state-' + str(state), op(f, 3) == 0 and ledger(f)[0] == 2 and
+              (f.events, f.stores) == before)
+    f = setup(3); op(f, saved=1); native_app(f, 13, 4); op(f, 1)
+    f.store_plan = [(0, True)]
+    check('failed-settings-exit-can-have-published-property0', op(f, 3) == 0 and ledger(f)[0] == 6 and
+          f.properties[0x2f15] == 0 and f.events == [[4, 0x108000]])
+    native_app(f, 13, 0)
+    check('settings-exit-retries-after-native-snapshot-follows-owned-property0', op(f, 1) == 0 and
+          ledger(f)[0] == 6 and op(f, 3) == 1 and f.events[-1:] == [[4, 0x100000]])
+    native_app(f, 0, 0)
+    check('partial-settings-exit-restores-original-user-page', op(f, 1) == 1 and f.properties[0x2f15] == 1)
     check('application-and-registry-unchanged-across-all-helper-calls', all(not f.forbidden_writes for f in fixtures))
     return dict(passed=True, checks=checks, main_sha256=host['main_payload_sha256'],
                 module_sha256=module['module_sha256'], native_setter_getter_request_and_exit_execute=True,

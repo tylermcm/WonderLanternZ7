@@ -50,6 +50,7 @@ def main():
     parser.add_argument('--focal-horizon', action='store_true', help='For focal view, validate focal text with the native horizon base')
     parser.add_argument('--focal-horizon-control', action='store_true', help='For focal view, isolate Other OFF/ON on horizon with focal never enabled')
     parser.add_argument('--information-native-control', action='store_true', help='For focal view, observe original information-page DISP entry/return with custom settings inactive')
+    parser.add_argument('--information-routing', action='store_true', help='For focal view, exercise full five-choice native-information routing')
     parser.add_argument('--other-information', action='store_true', help='For information-groups, toggle the independently identified Other status group')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
@@ -70,6 +71,9 @@ def main():
         parser.error('Native information control requires focal view without focal horizon modes')
     if args.information_horizon and args.view != 'information-groups':
         parser.error('Information horizon requires information-groups view')
+    if args.information_routing and (args.view != 'focal' or args.information_native_control or
+                                    args.focal_horizon_control or args.focal_horizon):
+        parser.error('Information routing requires focal view without other focal/control modes')
     if args.other_information and args.view != 'information-groups':
         parser.error('Other information requires information-groups view')
     if args.histogram_context_fixture and args.view != 'live':
@@ -375,7 +379,10 @@ def main():
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
         if args.view == 'focal':
-            if args.information_native_control:
+            if args.information_routing:
+                from information_routing_probe import run_information_routing_probe
+                run_information_routing_probe(camera, output, module, base, result, capture, native, key, query, check)
+            elif args.information_native_control:
                 from information_native_probe import run_information_native_probe
                 run_information_native_probe(camera, output, module, base, result, capture, native, key, query, check, host=host)
             elif args.focal_horizon_control:

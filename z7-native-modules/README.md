@@ -30,6 +30,10 @@ The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and
 the still-open successful pixel/statistics validation.
+The API40 `display-information-probe` composes the full focal/Other/histogram
+profile with native information-app routing and conditional user-page restoration.
+Older API32 focal builds remain byte-identical. Native information orientation,
+complete lifecycle and physical acceptance remain open.
 No Z7II native addresses are exported. Native modules are
 trusted code, not sandboxed. CRC detects corruption; it does not authenticate a
 module or make arbitrary code safe.

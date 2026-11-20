@@ -60,10 +60,10 @@ static uint32_t readout_context(void)
     if (base_blocked || base_releasing) return 0;
 #endif
 #ifdef Z7_SETTINGS_DISP_PROBE
-    /* Information-app ownership is not bound in this diagnostic yet. Reject
-     * that configuration as a whole rather than silently skipping its choice.
+    /* API32 profiles reject the unbound information choice. The API40
+     * profile instead suspends custom components during owned app transitions.
      */
-    if (z7_menu_settings.enabled_pages & 16u) return 0;
+    if (Z7_INFORMATION_CONFIG_BLOCKED) return 0;
 #endif
     return z7_settings_valid(&z7_menu_settings) && (z7_menu_settings.flags & Z7_SETTINGS_CUSTOM) &&
         z7_readout_preset < 4 && readout_gui_context();
@@ -72,12 +72,16 @@ static uint32_t readout_context(void)
 volatile uint32_t z7_preset_reselections;
 static void readout_sync_preset(void)
 {
+#ifdef Z7_INFORMATION_APP_PROBE
+    information_sync_preset();
+#else
     /* Menu edits can disable the currently selected logical page. Apply the
      * next enabled page on return to eligible shooting, without counting a
      * button press or changing a native page/property. */
     if (!readout_context() || (z7_menu_settings.enabled_pages & (1u << z7_readout_preset))) return;
     uint32_t next = z7_settings_next(&z7_menu_settings, z7_readout_preset);
     if (next < 4) { z7_readout_preset = next; ++z7_preset_reselections; }
+#endif
 }
 #endif
 static uint32_t readout_release(readout_ownership words)
