@@ -196,3 +196,35 @@ unproven. No application-specific flip or edited screenshot is accepted as a fix
 See `evidence/20261120-information-menu-graphics.json`. Firmware, textures and
 camera/emulator images remain private. Native information mirroring still blocks
 visual acceptance; broader original software scope remains open.
+
+## Native texture controls and rejected origin shortcut
+
+The production sampler and preview remain byte-identical to checkpointd3a932a.
+A proposed global V reversal was rejected by a native HUD registration control:
+it moved an existing window. The initial assumption that the captured negative-Y
+draw was an identity copy was invalid. Accepted351 renderer checks preserve
+positive/reflected transforms, composition, A8/YUV rows, HUD placement and GUI
+preview origin. No experimental shader was used in live QEMU.
+
+A bounded read-only API observer now retires its hardware breakpoints before
+free-running screenshot capture. The first harness timeout remains failed; the
+corrected run passes24 checks/five frames and observes nine original vgDrawImage
+prologues (callsite LR10430A9B). All frame hashes were verified.63 supported LCD
+parameter registers, including both overlays, differ only in four buffer addresses
+between horizon and information. No interrupt/W1C reads were used.
+
+An original-instruction audit passes104 checks binding12 named standard/DMP
+exports,28 image-descriptor initializer cases and64 sampler-control cases. Native
+code copies the quality argument to descriptor24; source sampler mask06 depends
+on its quality mask0x4 plus context value4. Kind4 independently sets bit0. Therefore
+captured values1 and7 cannot be treated as row-origin switches. These prefixes
+use supplied descriptors/context and do not establish complete image creation or
+hardware row layout. The [OpenVG1.1 specification](https://registry.khronos.org/OpenVG/specs/openvg-1.1.pdf)
+sections10.1/10.8 describe image coordinates and applied transforms; that API
+contract alone does not define this chip's physical texture representation.
+
+The remaining investigation concerns native DMP external-image/backing-store and
+path-state contracts. See `evidence/20261120-native-texture-contracts.json`.
+Information-page mirroring and visual acceptance remain unresolved; this known
+stock-emulator gap does not implement the still-open persistence, highlights,
+portrait or broader lifecycle features.

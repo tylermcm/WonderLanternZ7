@@ -53,6 +53,7 @@ def main():
     parser.add_argument('--information-routing', action='store_true', help='For focal view, exercise full five-choice native-information routing')
     parser.add_argument('--information-lifecycle', action='store_true', help='For focal view, compare native MENU lifecycle with owned information routing')
     parser.add_argument('--graphics-information', action='store_true', help='Capture settled native information refresh and repeated MENU controls; requires information-native-control')
+    parser.add_argument('--graphics-api-trace', action='store_true', help='Observe bounded native OpenVG entry arguments; requires information-native-control')
     parser.add_argument('--other-information', action='store_true', help='For information-groups, toggle the independently identified Other status group')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
@@ -81,6 +82,8 @@ def main():
         parser.error('Information lifecycle requires focal view without other focal/control modes')
     if args.graphics_information and (args.view != 'focal' or not args.information_native_control):
         parser.error('Graphics information capture requires focal view with information-native-control')
+    if args.graphics_api_trace and (args.view != 'focal' or not args.information_native_control or args.graphics_information):
+        parser.error('Graphics API observation requires information-native-control without graphics-information')
     if args.other_information and args.view != 'information-groups':
         parser.error('Other information requires information-groups view')
     if args.histogram_context_fixture and args.view != 'live':
@@ -117,6 +120,11 @@ def main():
     if hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Module fingerprint mismatch')
     fixture = bind_module_fixture(output, packet, host)
+    if args.graphics_api_trace:
+        from graphics_api_observer import observing_remote
+        source = Path(__file__).with_name('graphics_api_observer.py').read_bytes()
+        (output / 'graphics-api-observer-source.py').write_bytes(source)
+        ui.Remote = observing_remote(ui.Remote, output)
     sample_fixture = None
     fixture_source_hash = None
     if args.histogram_sample_fixture:

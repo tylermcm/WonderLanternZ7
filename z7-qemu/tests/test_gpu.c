@@ -100,6 +100,93 @@ int main(void) {
             z7_gpu_path_free(p);
         }
     }
+    /* Captured negative-Y image-to-surface/texture matrices reflect rows;
+     * two such draws compose to identity. A positive-Y control preserves rows.
+     * Do not relabel a reflected vgDrawImage as an untransformed pixel copy.
+     * Matrices are the reduced8x6 form of native720x480 packets0031/0032.
+     */
+    {
+        Z7GPUPath *copy_path=rectangle(2,false,0x100);
+        copy_path->regs[0x45]=fbits(-1);copy_path->regs[0x48]=fbits(6);
+        g_array_set_size(copy_path->edges,0);z7_gpu_flatten(copy_path);CHECK(copy_path->valid);
+        uint32_t copy_regs[512]={0};copy_regs[0x1a3]=(6<<16)|8;
+        copy_regs[0xc0]=7<<16;copy_regs[0xc1]=5<<16;copy_regs[0x184]=2;
+        copy_regs[0x152]=(8<<16)|6;copy_regs[0x10c]=0x3c0000;
+        copy_regs[0x110]=0xbc5555;copy_regs[0x111]=copy_regs[0x114]=0x3f0000;
+        uint8_t expected[8*6*4],reflected[8*6*4];
+        for(unsigned y=0;y<6;y++)for(unsigned x=0;x<8;x++) {
+            unsigned i=(y*8+x)*4;
+            expected[i]=1+y*30;expected[i+1]=3+x*20;expected[i+2]=x+y*8;expected[i+3]=255;
+        }
+        memcpy(memory+0x3000,expected,sizeof(expected));
+        for(unsigned y=0;y<6;y++)memcpy(reflected+y*32,expected+(5-y)*32,32);
+        copy_regs[0x155]=0xa1003000;copy_regs[0x1a4]=0xa1001000;copy_regs[0x156]=0x100;
+        CHECK(z7_gpu_draw(&g,copy_regs,copy_path));
+        CHECK(!memcmp(memory+0x1000,reflected,sizeof(expected)));
+        copy_regs[0x155]=0xa1001000;copy_regs[0x1a4]=0xa1002000;
+        CHECK(z7_gpu_draw(&g,copy_regs,copy_path));
+        CHECK(!memcmp(memory+0x2000,expected,sizeof(expected)));
+        copy_regs[0x155]=0xa1003000;copy_regs[0x110]=0x3c5555;copy_regs[0x111]=0;
+        CHECK(z7_gpu_draw(&g,copy_regs,copy_path));
+        CHECK(!memcmp(memory+0x2000,expected,sizeof(expected)));
+        copy_regs[0x110]=0xbc5555;copy_regs[0x111]=0x3f0000;
+        copy_regs[0x156]=0x18;copy_regs[0x155]=0xa1003000;
+        copy_regs[0x184]=14;copy_regs[0x185]=0xffffffff;
+        for(unsigned y=0;y<6;y++)for(unsigned x=0;x<8;x++) {
+            unsigned i=y*8+x;memory[0x3000+i]=1+i;
+            memcpy(expected+i*4,(uint8_t[]){255,255,255,1+i},4);
+        }
+        for(unsigned y=0;y<6;y++)memcpy(reflected+y*32,expected+(5-y)*32,32);
+        CHECK(z7_gpu_draw(&g,copy_regs,copy_path));
+        CHECK(!memcmp(memory+0x2000,reflected,sizeof(expected)));
+        for(unsigned format=0x105;format<=0x107;format++) {
+            copy_regs[0x156]=format;copy_regs[0x184]=2;copy_regs[0x15a]=0xa1004000;
+            memset(memory+0x4000,format==0x105?128:255,48);
+            for(unsigned y=0;y<6;y++)for(unsigned x=0;x<8;x++) {
+                unsigned i=y*8+x;uint8_t luma=16+y*24,gray=(5-y)*28;
+                if(format==0x105)memory[0x3000+i]=luma;
+                else if(!(x&1))memcpy(memory+0x3000+i*2,(uint8_t[]){luma,luma,128,128},4);
+                memcpy(expected+i*4,(uint8_t[]){gray,gray,gray,255},4);
+            }
+            CHECK(z7_gpu_draw(&g,copy_regs,copy_path));
+            CHECK(!memcmp(memory+0x2000,expected,sizeof(expected)));
+        }
+        z7_gpu_path_free(copy_path);
+    }
+    /* Registration control from the ordinary native HUD: a window at low
+     * RGBA rows is converted to the high LCD rows by the captured negative-Y
+     * texture matrix. A global sampler reversal must not move that window.
+     */
+    {
+        Z7GPUPath *window=rectangle(2,false,0x100);
+        uint32_t draw[512]={0};draw[0x1a3]=(6<<16)|8;
+        draw[0xc0]=draw[0xc1]=1<<16;draw[0x184]=8;
+        draw[0x1a4]=0xa1001000;draw[0x185]=0xffffffff;
+        memset(memory+0x1000,0,192);CHECK(z7_gpu_draw(&g,draw,window));
+        draw[0x184]=2;draw[0xc0]=7<<16;draw[0xc1]=5<<16;
+        draw[0x1a4]=0xa1002000;draw[0x1a2]=0x107;draw[0x1b5]=0xa1002060;
+        draw[0x152]=(8<<16)|6;draw[0x155]=0xa1001000;draw[0x156]=0x100;
+        draw[0x10c]=0x3c0000;draw[0x110]=0xbc5555;
+        draw[0x111]=draw[0x114]=0x3f0000;
+        CHECK(z7_gpu_draw(&g,draw,window));
+        uint8_t alpha[48]={0};alpha[32]=alpha[33]=alpha[40]=alpha[41]=255;
+        CHECK(!memcmp(alpha,memory+0x2060,sizeof(alpha)));
+        z7_gpu_path_free(window);
+    }
+    /* GUI-only preview converts lower-left surface coordinates to top rows;
+     * it must not update the console while native LCD scanout owns it. */
+    {
+        g.console=&test_console;qemu_console_resize(g.console,720,480);
+        g.present_address=0xa1000000;g.lcd_scanout=false;
+        memset(memory,0,720*480*4);
+        memcpy(memory,(uint8_t[]){255,0,0,255},4);
+        memcpy(memory+479*720*4,(uint8_t[]){0,0,255,255},4);
+        z7_gpu_present(&g);
+        CHECK(ldl_le_p(test_console.surface.data)==0x0000ff);
+        CHECK(ldl_le_p(test_console.surface.data+479*720*4)==0xff0000);
+        g.lcd_scanout=true;stl_p(test_console.surface.data,0x123456);
+        z7_gpu_present(&g);CHECK(ldl_le_p(test_console.surface.data)==0x123456);
+    }
     Z7GPUPath *p=rectangle(2,false,0x100);
     uint32_t r[512]={0}; r[0x1a3]=(8<<16)|8; r[0xc0]=7<<16; r[0xc1]=7<<16;
     r[0x184]=8; r[0x1a4]=0xa1001000; r[0x185]=0xffffffff;

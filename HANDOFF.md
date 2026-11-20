@@ -1,5 +1,60 @@
 # Laptop handoff — October 20, 2026
 
+## Native texture contracts; global flip REJECTED — November20,2026
+
+Previousd3a932a turn was PROGRESS. This turn does NOT fix native Info mirroring.
+Production GPU header is BYTE-IDENTICAL tod3a932a (and original QEMU manifest);
+no experimental shader was built/run in QEMU. Emulator remainsf76609ae...9b45c98,
+all5 source/binary fingerprints verified. Module05 d4981187...15ffcd and host08
+unchanged. Never add app13 flips, flip evidence images or relabel failed runs.
+
+A global V reversal + GUI-preview reversal experiment was tested ONLY in standalone
+C. Initial 'negative-Y copy is identity' expectation was INVALID. The added
+native HUD registration control REJECTED the candidate (line172 in private saved
+candidate), because it moved the registered output window. Production code was
+restored. Accepted tests now explicitly cover reflected vs positive transforms,
+two reflections composing to identity, A8/YUV rows, native HUD registration and
+lower-left GUI-only preview.351renderer checks PASS; all prior330 expectations
+retained. Larger console test adapter permits actual720x480 preview checks.
+Private `.private/research/texture-origin-experiment/README.txt` marks candidate
+REJECTED; do not apply its .h. Root55 and QEMU Python23/no-skips PASS.
+
+New tools/graphics_api_observer.py installs bounded hardware breakpoints and
+single-steps ORIGINAL native prologues, without rewriting guest code/arguments/
+returns. Native public entry map derived from ORIGINAL RAM export names/pointers.
+Failed live01 job66985 retained: capture pause timed out while hooks remained
+active (64valid native prefix observations do not make that run a pass).
+Fix: api_stop BEFORE free-running capture. Live02 job57164 TERMINAL PASS24checks/
+5frames at `.private/evidence/20261120-information-api-live-02` with same f766/
+module05/host08.9observed vgDrawImage calls, ALL LR10430A9B, original push executed
+nextPC10450C88; no count cap reached. All5PNG hashes verified. Timing is diagnostic,
+NOT hardware timing.63supported read-only LCD parameters per frame include BOTH
+overlays and region/bank controls; horizon→Info differs ONLY four buffer addresses
+(2440/24C0/210/220). No interrupt/W1C reads. No live jobs remain.
+
+New audit_z7_texture_controls.py PASSES104checks:12named exports,28initializer
+prefix cases,64sampler prefix cases. Exact original stock required. Native
+1047E814..E844 copies allowed-quality→descriptor24 and kind→48; supplied args only,
+not complete image creation. Native104B92EA..9318 sets sampler bit0 for kind4,
+mask06 only when descriptor quality mask0x4 and context value4, and20 for formatC.
+Thus flags1 versus7 are QUALITY-dependent; don't treat them as orientation flags.
+Hardware row origin remains UNPROVEN. Source evidence native-texture-contracts.json.
+OpenVG1.1 spec10.1/10.8 distinguishes image coordinates and applied transforms;
+it does NOT specify this chip's raw-memory/register interpretation.
+
+Useful next native leads: DMP image extensions vgCreateImageStandardDataDMP
+104514E8 (kind4 initializer path10483BD4), vgCreateImageBufferPointerDMPX104516C6
+(wrapper→10483D7C), constructor calls10483B7C/10483D16→1047E814. Standard vgCreateImage
+10450B36→1047EAC4 passes kind1. Inspect external-image/backing-store and path-state
+contracts before another shader change. Public sampler0x153 header01531004 is
+loaded104B9436/104B99E2, not full-mask0153F004. Naming/quality do not prove origin.
+
+Keep the Info mismatch recorded as an independent emulator-model gap (it occurs
+with custom routing OFF); it must not monopolize progress on the remaining real
+feature ports: persistence, highlights/portrait and broader EVF/rotation/AF/lens
+lifecycle/real statistics. Full scope stays active, visual acceptance remains false.
+Graph refreshed:2494 nodes/6396 edges; generated graph remains ignored. No camera/card/staging/flash/push.
+
 ## Native Info MENU preserved; gated GPU capture — November20,2026
 
 Previousc688d4d turn was PROGRESS (full five-choice routing). This turn makes NO

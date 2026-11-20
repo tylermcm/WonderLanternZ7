@@ -46,7 +46,16 @@ def run_information_native_probe(camera, output, module, base, result, capture, 
         observed = step['native_information_app']
         step['native_lcd_registers'] = {hex(offset): hex(word(0x20144000 + offset)) for offset in (
             0x200, 0x204, 0x600, 0x604, 0x2110, 0x2200, 0x2204, 0x2208,
-            0x2210, 0x2214, 0x2218, 0x2400, 0x2440, 0x24c0, 0x2500, 0x2540, 0x2580, 0x25c0)}
+            0x2210, 0x2214, 0x2218, 0x2400, 0x2440, 0x24c0, 0x2500, 0x2540, 0x2580, 0x25c0,
+            # Supported parameter registers only: no interrupt/W1C registers.
+            # Include both overlay components and the previously unobserved
+            # region/bank controls; their hardware meaning is not inferred here.
+            0x210, 0x214, 0x218, 0x21c, 0x220, 0x224, 0x228, 0x22c, 0x240, 0x250, 0x260,
+            0x2444, 0x2448, 0x244c, 0x25c4, 0x25e0, 0x25e4, 0x25e8, 0x25ec, 0x25f0,
+            0x2600, 0x2604, 0x2810, 0x2814, 0x2818,
+            0x3110, 0x3200, 0x3204, 0x3208, 0x3210, 0x3214, 0x3218, 0x3400,
+            0x3440, 0x3444, 0x3448, 0x344c, 0x34c0, 0x3500, 0x3540, 0x3580,
+            0x35c0, 0x35c4, 0x3600, 0x3604)}
         check(name + '-keeps-original-information-key-event-and-expected-update',
               observed['key'] == '0x102fd647' and observed['event'] == '0x102fdaef' and
               observed['update'] == hex(expected_update))
@@ -65,6 +74,14 @@ def run_information_native_probe(camera, output, module, base, result, capture, 
     check('native-information-control-horizon-page3', horizon['information_native_page'] == 3)
     key('disp', lambda: app() == 13)
     information = observe('native-information-visible')
+    if hasattr(camera.remote, 'api_start'):
+        camera.remote.api_start()
+        native('Observe original OpenVG calls during information refresh', 0x1017081e, [1500])
+        camera.remote.api_stop()
+        observe('native-information-api-observed')
+        scope['native_graphics_api_observations'] = len(camera.remote.api_records)
+        scope['native_graphics_api_limit_reached'] = len(camera.remote.api_records) == 64
+        check('native-information-refresh-observes-native-graphics-api', bool(camera.remote.api_records))
     if getattr(camera, 'gpu_draw_gate', None):
         # Initial app construction can consume the draw cap before the final
         # present. Observe a settled native refresh, avoiding shooting cleanup

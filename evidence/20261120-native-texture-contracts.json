@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "independent_original_z7_work": true,
+  "live_api_control": {
+    "checks": 24,
+    "frames": 5,
+    "all_png_sha256_verified": true,
+    "native_original_prologues_observed": 9,
+    "observed_public_api": "vgDrawImage",
+    "native_callsite_lr": "0x10430a9b",
+    "observer_limit_reached": false,
+    "observer_retired_before_free_running_capture": true,
+    "argument_return_or_code_rewrites": false,
+    "diagnostic_timing_affected": true
+  },
+  "lcd_controls": {
+    "supported_parameter_registers_per_frame": 63,
+    "includes_both_overlays": true,
+    "no_interrupt_or_w1c_registers_read": true,
+    "horizon_to_information_differences": {
+      "0x2440": [
+        "0xda72b000",
+        "0xda3a7000"
+      ],
+      "0x24c0": [
+        "0xda880000",
+        "0xda4fc000"
+      ],
+      "0x210": [
+        "0xdc71e800",
+        "0xdc8e2800"
+      ],
+      "0x220": [
+        "0xdc84bc00",
+        "0xdca0fc00"
+      ]
+    },
+    "only_buffer_addresses_differ": true
+  },
+  "native_instruction_audit": {
+    "checks": 104,
+    "named_exports": 12,
+    "quality_and_kind_initializer_prefix_cases": 28,
+    "sampler_prefix_cases": 64,
+    "quality_dependent_sampler_mask": "0x6",
+    "kind4_sampler_mask": "0x1",
+    "hardware_texture_origin_established": false,
+    "complete_image_creation_exercised": false
+  },
+  "software_renderer_checks": 351,
+  "root_tests": 55,
+  "qemu_python_tests": 23,
+  "rejected_experiment": {
+    "global_texture_and_preview_reversal": true,
+    "initial_identity_assumption_invalid": true,
+    "native_hud_registration_control_failed": true,
+    "experimental_shader_used_in_live_qemu": false,
+    "production_renderer_restored_byte_exact_to": "d3a932a"
+  },
+  "production_gpu_source_sha256": "08804951411640863a56b23f9e020e7a6abb6340ccfab3c76f87888d46473945",
+  "emulator_binary_unchanged": "f76609ae4cb96060ca1593a352a7ec3fc6af7e29473db756b4bbebf699b45c98",
+  "module_and_firmware_host_unchanged": true,
+  "previous_api_control_failure": {
+    "status": "failed diagnostic harness",
+    "reason": "capture pause timed out while API breakpoints remained active",
+    "retained": true
+  },
+  "native_information_mirroring_fixed": false,
+  "visual_acceptance": false,
+  "camera_access": false,
+  "card_access": false,
+  "flash_performed": false,
+  "full_goal_complete": false
+}
