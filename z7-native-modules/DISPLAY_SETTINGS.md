@@ -478,3 +478,52 @@ This remains a three-readout logical-preset diagnostic: component/base-page and
 information-app bindings, remaining groups, persistence, warning pixels and
 broader lifecycle are unfinished. Captured native equivalence does not prove
 coherent update-to-paint timing. No camera/card operations occurred.
+
+## Native base-page ownership prototype
+
+Optional `--variant display-base-probe` extends the admitted-DISP package with
+native standard/horizon selection. Preset horizon OFF requests native page0;
+ON requests page3. The independently derived original selector must identify
+photo-LCD property2F15 before ownership is acquired. The saved property and
+snapshot must agree. Calls use the original103673DE snapshot/property setter,
+not raw snapshot stores or a borrowed Z7II callback.
+
+Disable or context exit conditionally restores the saved native property only
+if it still equals our applied value. An inactive output's property is restored
+without changing the shared current-output snapshot. Foreign property/snapshot
+changes suspend custom rendering until master-off; those foreign snapshot
+values remain untouched. Setter failures roll back through the same native API,
+retain conditional cleanup and retry failed restoration on later updates. A
+failed acquisition cannot apply readout masks. Native invalidation follows an
+accepted page change so preparation and layout use the new native page.
+
+Current base02 package is11,660bytes/image11,392/BSS3,876, SHA
+17448f7f58b0f3efcd19be59438a15a67b3c0a351bbaffa48f1921db7ca98dd7.
+It requires the unchanged28-byte host06 API.68 compiled-ARM checks pass with
+original selector/setter instructions executing and explicit property storage,
+GUI and loader boundaries supplied. These cover all saved native pages, all16
+component combinations, foreign changes, rollback/retry, other-output cleanup
+and older24-byte-host rejection before native stores. Root39 tests pass without
+skips. The accepted disp03 package rebuilds byte-identically.
+
+The assisted QEMU native-key/full-RGB repeat passes22 checks/11frames. Its
+readiness gate rejects an initial sample with22RAW/22ISP/0LCD progress and accepts
+the following21RAW/21ISP/30LCD sample. Native keys select standard or horizon
+according to each preset. Composition on native horizon page3 preserves all
+pixels outside the readout strip relative to the disabled native horizon frame.
+Return presets and master-off exactly match captured disabled native standard
+frames. Master-off releases base ownership; subsequent DISP resumes the native
+cycle. Horizon/composition and restored frames were visually inspected.
+These are synthetic assisted-emulator pixels, not physical orientation/EVF,
+warning-transition or coherent native update-to-paint boundary validation.
+Grid, histogram and highlights switches remain unbound in this prototype;
+information app, remaining groups, persistence and broader lifecycle remain.
+
+Pinned reference research now includes the original grid/histogram glue and
+implementation files listed by hash in evidence/20261119-native-base-pages.json.
+The upstream custom histogram uses a guarded extra GUI pass with real statistics,
+not merely native page masks. Original-Z7 statistics/getter and native-control
+leads already exist, but the extra pass still needs independent derivation.
+Grid suppression must use original-Z7 LCD descriptor count offsets10/22; upstream
+uses different offsets. No foreign geometry offsets or histogram addresses may
+be copied by analogy. Fetched upstream source remains private under MIT.

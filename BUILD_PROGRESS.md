@@ -161,3 +161,16 @@ The dedicated native admission trace passes6checks and supplies no gate returns.
 Base-page/components, information app, remaining groups, actual menu-return
 reselection, persistence, broader lifecycle and physical host validation remain.
 No camera/card access, staging, flashing or push. All current jobs terminal.
+
+## Native base-page ownership milestone — November 19, 2026
+
+Optional display-base-probe selects the original standard/horizon page from the
+preset horizon switch. It conditionally restores the saved photo-LCD selection,
+preserves foreign writes/current-output snapshots, rolls back failed setters
+and retries failed cleanup.68 compiled-ARM ownership/rollback checks pass.
+Assisted QEMU passes22 checks/11frames with actual native DISP, native horizon+
+composition protected-pixel equality, exact captured-native standard restoration,
+master-off release and resumed original cycling. Key frames visually inspected.
+Root39/no-skips pass; accepted DISP package rebuilds byte-identically. Remaining
+components, information app, groups, persistence and broader lifecycle remain.
+No hardware/card access, staging, flash or push. All current jobs terminal.

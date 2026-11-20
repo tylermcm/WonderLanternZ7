@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 native standard/horizon base-page ownership prototype",
+  "status": "instruction and assisted-QEMU prototype validation passed; feature port incomplete",
+  "module": {
+    "module_sha256": "17448f7f58b0f3efcd19be59438a15a67b3c0a351bbaffa48f1921db7ca98dd7",
+    "file_bytes": 11660,
+    "image_bytes": 11392,
+    "bss_bytes": 3876,
+    "api_minimum_bytes": 28
+  },
+  "host_unchanged": true,
+  "independent_modified_work": true,
+  "license": "MIT; JKWTCN attribution preserved in NOTICE.md",
+  "native_interfaces": {
+    "selector": "0x103673AC",
+    "snapshot_setter": "0x103673DE",
+    "property_read": "0x104065A4",
+    "property_store": "0x104065B0",
+    "photo_lcd_property": "0x2F15",
+    "standard_page": 0,
+    "horizon_page": 3
+  },
+  "instruction_checks": 68,
+  "supplied_boundaries": [
+    "Loader/kernel/filesystem/heap",
+    "Incoming GUI/pool/page/output state",
+    "Property read/storage and display-kind service results"
+  ],
+  "original_selector_and_snapshot_setter_execute": true,
+  "coverage": [
+    "All four saved native pages",
+    "All sixteen component sets; only horizon currently bound",
+    "No redundant native property writes",
+    "Conditional restore and foreign property/snapshot preservation",
+    "Failure rollback and failed-restore retry",
+    "Inactive-output property-only restoration",
+    "Older24-byte host rejection before native stores"
+  ],
+  "root_tests": 39,
+  "root_skips": 0,
+  "accepted_disp_module_byte_identical": true,
+  "assisted_qemu": {
+    "status": "passed",
+    "view": "disp-presets",
+    "requires_exact_rgb_for_matching_native_base": true,
+    "requires_protected_composition_pixels": true,
+    "native_pipeline_samples": [
+      {
+        "raw": 22,
+        "isp": 22,
+        "lcd": 0,
+        "qualified": false
+      },
+      {
+        "raw": 21,
+        "isp": 21,
+        "lcd": 30,
+        "qualified": true
+      }
+    ],
+    "checks": 22,
+    "frames": 11,
+    "native_key_cycle": true,
+    "native_standard_and_horizon_pages": true,
+    "composition_protected_pixels_unchanged": true,
+    "return_frames_exact_native_rgb": true,
+    "master_off_releases_native_base_ownership": true,
+    "disabled_master_resumes_original_cycle": true,
+    "composition_and_restored_frames_visually_inspected": true,
+    "coherent_native_update_paint_fence_proven": false,
+    "warning_transition_pixels_verified": false
+  },
+  "remaining": [
+    "Grid/histogram/highlights component binding",
+    "Information-app ownership",
+    "Remaining information groups",
+    "Configuration persistence",
+    "Actual menu-return and broader lifecycle",
+    "Physical card/cache/wake",
+    "Exact-candidate installation/recovery assessment"
+  ],
+  "additional_pinned_reference_sources": {
+    "commit": "50a22b24c50619cffa646dac386e8334659f475a",
+    "sha256": {
+      "plugins/grid_live.c": "337d1aad95a5dc88822e8cc936a30c7df33a6806d15a20e6973496266cae16e0",
+      "plugins/grid_trace.c": "d82b300e9a7ce551a44a1807da9a354d0d8c83b4f70a2ad6f087e8977b537792",
+      "plugins/portrait_menu.c": "8cf6cf8f4bf69375221e9df0e7903aa1361127ca406f5e2637cf16e04d808c87",
+      "plugins/grid_histogram_horizon_ram.c": "04397e372ca7f8f59ad8ea2171cbbfd780ce1d57d5d8b7bce4ca49321a8a2af4",
+      "plugins/histogram_horizon_ram.c": "0c5514215007f83c64cdaaf15f4d258586056b96aab8ded97994eba438603494"
+    },
+    "kept_private": true
+  },
+  "camera_access": false,
+  "physical_card_access": false,
+  "staged": false,
+  "flashed": false,
+  "pushed": false,
+  "installation_cleared": false,
+  "graph": {
+    "nodes": 2020,
+    "edges": 5092,
+    "generated_ignored": true
+  }
+}

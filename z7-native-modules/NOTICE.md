@@ -45,8 +45,9 @@ logic are local modifications. Physical battery telemetry is still unverified.
 The configurable-page/component concepts are informed by pinned upstream
 `sdk/disp.h` and `docs/custom-disp.md`, copyright (c)2026 JKWTCN under MIT.
 The original-Z7 wire format is separate; no upstream configuration bytes or
-native Z7II interfaces are copied. The model does not yet provide native UI or
-card persistence. See `DISPLAY_SETTINGS.md` for scoped compiled validation.
+native Z7II interfaces are copied. The model itself contains no native UI or
+card I/O. Independent native menu adapters are described in `DISPLAY_SETTINGS.md`;
+card persistence remains open.
 
 `examples/settings_menu_policy.h` is independent local MIT native-interface work
 based on original-Z7 instruction/GUI observations. Native contracts were also
@@ -54,3 +55,9 @@ cross-referenced against this lab's separately licensed sound-menu component;
 that component retains its community license. No sound-menu implementation or
 firmware bytes are embedded in the new profile. Generated native structures,
 frames, traces and binaries remain private.
+
+`examples/display_base_policy.h` independently adapts the native-page ownership
+design from pinned upstream `sdk/disp.h`, copyright (c) 2026 JKWTCN, under the
+preserved MIT license. Original-Z7 selector/setter interfaces, conditional
+snapshot handling, error rollback, foreign-write handling and audits are local
+work. This remains an independent modified prototype, not an upstream release.

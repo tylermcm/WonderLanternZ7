@@ -1,5 +1,48 @@
 # Laptop handoff — October 20, 2026
 
+## Native base-page ownership checkpoint — November 19, 2026
+
+Previous goal turn made progress; this turn adds native base-page ownership.
+All current jobs are TERMINAL. Optional display-base-probe/base02 package SHA
+17448f7f58b0f3efcd19be59438a15a67b3c0a351bbaffa48f1921db7ca98dd7,
+11660bytes/image11392/BSS3876, uses unchanged host06/28-byte API. It selects
+native standard0 or horizon3 from the preset's horizon flag, after original
+selector103673AC confirms photo-LCD property2F15. It calls original103673DE,
+saves the native selection and conditionally restores it on disable/context exit.
+Foreign property/snapshot writes suspend custom policy until master-off.
+Setter failures roll the snapshot back through the same native API; failed
+restores retain conditional ownership/retry. Other-output cleanup changes only
+the saved photo-LCD property, never the shared current-output snapshot.
+
+New audit_z7_display_base.py passes68 actual compiled-ARM checks with original
+selector/setter instructions; storage/GUI/kernel inputs remain supplied. Covers
+all four native starting pages, all16 component sets, no redundant stores,
+foreign changes, rollback/retry, other-output pending cleanup and older24-byte
+host rejection before native stores. Root39/no-skips pass. Accepted disp03
+rebuilds byte-identically (71c07800...), so earlier scoped evidence is retained.
+
+Private disp-base-live01 passes22checks/11frames. Readiness rejects RAW22/ISP22/
+LCD0 and accepts RAW21/ISP21/LCD30. Actual native keys select bases0/3; horizon+
+composition preserves all pixels outside the readout strip versus the disabled
+native horizon reference. Return presets/master-off exactly match complete
+captured native standard frames. Disable releases native base ownership and
+subsequent DISP resumes original cycling. Horizon/composition/restored frames
+were inspected. Not warning pixels, physical orientation/EVF or a coherent native
+update/paint fence. No camera/card access, staging, flash or push.
+
+Next implement grid/histogram/highlights component bindings, information-app
+ownership, remaining groups and persistence. Pinned upstream missing grid and
+histogram files are now fetched privately at the SAME50a22b24... commit; hashes
+in evidence/20261119-native-base-pages.json. Upstream custom histogram uses a
+guarded extra statistics/layout/paint pass, NOT only page masks. Derive original
+Z7 callbacks and failure cleanup before porting it. Original Z7 grid LCD descriptor
+count fields are offsets10/22 (not upstream18/30); existing geometry hook sees
+only0xA2020C2C. Suppression needs native recomputation/retirement when component
+choices change even if native base stays0. Do not silently leave existing pixels.
+Native menu-return reselection, warning pixels and broader lifecycle remain open.
+Hardware card/cache/wake and exact installation/recovery are still unverified.
+Graph refreshed2020nodes/5092edges. Keep goal active; software scope unfinished.
+
 ## Completed DISP-cycle checkpoint — November 19, 2026
 
 All current jobs are TERMINAL. Latest display-disp03 is reproducible:

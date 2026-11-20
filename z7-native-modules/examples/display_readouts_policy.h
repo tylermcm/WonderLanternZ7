@@ -9,6 +9,12 @@ static const uint8_t readout_widgets[3] = {10, 11, 15};
 static const uint8_t readout_formats[3] = {0, 1, 5};
 static const uint8_t readout_bits[3] = {Z7_INFO_SHUTTER, Z7_INFO_APERTURE, Z7_INFO_ISO};
 static const uint32_t readout_updaters[3] = {0x102f378du, 0x102f3951u, 0x102f3b5bu};
+#ifdef Z7_SETTINGS_BASE_PROBE
+#include "display_base_policy.h"
+#define READOUT_RENDER_CONTEXT() (readout_context() && z7_base_active)
+#else
+#define READOUT_RENDER_CONTEXT() readout_context()
+#endif
 static uint32_t readout_bindings(void)
 {
     for (uint32_t i = 0; i < 3; ++i) {
@@ -20,14 +26,21 @@ static uint32_t readout_bindings(void)
 }
 static uint32_t readout_gui_context(void)
 {
+#ifdef Z7_SETTINGS_BASE_PROBE
+    return base_gui_context();
+#else
     if (B(0xa18237c6u) || B(0xa201d4d0u + 0x40) || !pool()) return 0;
     uint32_t page = B(0xa201d4d0u + 0x18a);
     if (page != 0 && page != 3) return 0;
     uint32_t pages = W(0xa181f91cu);
     return ram(pages, 16) && !W(pages + 8);
+#endif
 }
 static uint32_t readout_context(void)
 {
+#ifdef Z7_SETTINGS_BASE_PROBE
+    if (base_blocked || base_releasing) return 0;
+#endif
 #ifdef Z7_SETTINGS_DISP_PROBE
     /* Information-app ownership is not bound in this diagnostic yet. Reject
      * that configuration as a whole rather than silently skipping its choice.
@@ -77,7 +90,10 @@ static void readouts_before(void)
     readout_sync_preset();
 #endif
     uint32_t changed = 0, conflict = 0;
-    if (readout_pending) changed = readout_release(readout_pending);
+#ifdef Z7_SETTINGS_BASE_PROBE
+    changed = base_before();
+#endif
+    if (readout_pending) changed |= readout_release(readout_pending);
     uint32_t master = !!(z7_menu_settings.flags & Z7_SETTINGS_CUSTOM);
     if (!master) readout_blocked = 0;
     if (z7_readout_active) {
@@ -86,9 +102,9 @@ static void readouts_before(void)
             for (uint32_t bank = 0; bank < 2; ++bank)
                 if (W(readout_descriptors[i] + 4 + bank * 12) != readout_applied[i][bank]) conflict = 1;
         if (conflict) { readout_blocked = master; ++z7_readout_conflicts; }
-        if (conflict || !readout_context()) changed |= readout_release(0x3fu);
+        if (conflict || !READOUT_RENDER_CONTEXT()) changed |= readout_release(0x3fu);
     }
-    if (!readout_pending && !readout_blocked && !conflict && readout_context() && readout_bindings()) {
+    if (!readout_pending && !readout_blocked && !conflict && READOUT_RENDER_CONTEXT() && readout_bindings()) {
         if (!z7_readout_active) {
             /* Validate all bindings before recording or editing any mask. */
             for (uint32_t i = 0; i < 3; ++i) for (uint32_t bank = 0; bank < 2; ++bank)

@@ -487,7 +487,9 @@ def main():
                 check('settings-back-restores-grid-page-without-changing-grid-setting', on_page(0x153) and camera.remote.memory(0xa24f182c, 4) == bytes(4))
             result['settings_menu'] = dict(model=settings(), explicit_diagnostic_entry=args.view == 'settings-menu', card_io=False, battery_binding=True, custom_page_renderer_binding=False)
         elif args.view == 'disp-presets':
-            if module['kind'] != 'original-Z7-display-disp-diagnostic': raise ValueError('DISP preset diagnostic required')
+            base_bound = module['kind'] == 'original-Z7-display-base-diagnostic'
+            if module['kind'] not in ('original-Z7-display-disp-diagnostic', 'original-Z7-display-base-diagnostic'):
+                raise ValueError('DISP preset diagnostic required')
             def preset(): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_readout_preset'], 4), 'little')
             def cycles(): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_preset_cycles'], 4), 'little')
             def native_page(): return camera.remote.memory(0xa201d4d0 + 0x18a, 1)[0]
@@ -498,8 +500,8 @@ def main():
             def retain_reference(step):
                 snapshot = bytes.fromhex(step['readout_native_snapshot'])
                 formats = bytes.fromhex(step['readout_native_formats'])
-                if snapshot[0x18a] != 0 or any(formats[index] for index in (0, 1, 5)):
-                    raise RuntimeError('Native reference must be standard page with ordinary formats')
+                if snapshot[0x18a] not in ((0, 3) if base_bound else (0,)) or any(formats[index] for index in (0, 1, 5)):
+                    raise RuntimeError('Native reference must be an eligible base page with ordinary formats')
                 native_references.append(step)
             retain_reference(startup_step)
             # Exercise one complete native cycle while the custom master is off.
@@ -507,7 +509,7 @@ def main():
             for target in (1, 3, 0):
                 key('disp', lambda: native_page() == target)
                 control_step = capture('presets-disabled-control-' + str(target))
-                if target == 0: retain_reference(control_step)
+                if target == 0 or (base_bound and target == 3): retain_reference(control_step)
             result['disabled_native_cycle_control_before_baseline'] = True
             baseline_step = capture('presets-native-baseline')
             retain_reference(baseline_step)
@@ -520,13 +522,15 @@ def main():
                 source = 0x3c if mode == 1 else 0x24c if mode == 3 else 4
                 return ([mode, source, struct.unpack_from('<I', snapshot, source)[0]],
                     [bytes.fromhex(row['control'])[1] for row in step['readout_controls'][-1]['rows']])
-            def reference_capture(name):
+            def reference_capture(name, expected_page=0):
                 step = capture(name)
                 current = Image.open(io.BytesIO(camera.png)).convert('RGB')
                 matching = [reference for reference in native_references
-                    if Image.open(output / (reference['name'] + '.png')).convert('RGB').tobytes() == current.tobytes()]
+                    if bytes.fromhex(reference['readout_native_snapshot'])[0x18a] == expected_page and
+                    Image.open(output / (reference['name'] + '.png')).convert('RGB').tobytes() == current.tobytes()]
                 result.setdefault('native_iso_reference_matches', []).append(dict(name=name,
-                    state=iso_state(step), exact_rgb_references=[reference['name'] for reference in matching],
+                    state=iso_state(step), expected_native_base_page=expected_page,
+                    exact_rgb_references=[reference['name'] for reference in matching],
                     same_control_state_references=[reference['name'] for reference in native_references
                         if iso_state(reference) == iso_state(step)],
                     control_snapshot_is_not_a_completed_paint_fence=True))
@@ -542,30 +546,39 @@ def main():
             for target in (1, 2, 3, 0):
                 previous = cycles()
                 key('disp', lambda: preset() == target and cycles() > previous)
+                expected_page = 0
+                if base_bound:
+                    components = int.from_bytes(camera.remote.memory(base + module['symbols']['z7_menu_settings'] + 8 + target * 4, 4), 'little')
+                    expected_page = 3 if components & 4 else 0
                 reference = None
                 if target == 2: capture('preset-' + str(target))
-                else: reference = reference_capture('preset-' + str(target))
+                else: reference = reference_capture('preset-' + str(target), expected_page)
                 current = Image.open(io.BytesIO(camera.png)).convert('RGB')
                 check('admitted-disp-selects-preset-' + str(target), preset() == target and cycles() == previous + 1)
-                check('preset-keeps-native-standard-page-' + str(target), native_page() == 0)
+                check('preset-selects-native-base-page-' + str(target), native_page() == expected_page)
                 if target == 2:
-                    width, height = baseline.size
+                    native_baseline = Image.open(output / 'presets-disabled-control-3.png').convert('RGB') if expected_page == 3 else baseline
+                    width, height = native_baseline.size
                     left, top, right = round(116 * width / 720), round(420 * height / 480), round(590 * width / 720)
                     protected = ((0, 0, width, top), (0, top, left, height), (right, top, width, height))
-                    check('composition-preset-preserves-pixels-outside-readouts', all(baseline.crop(box).tobytes() == current.crop(box).tobytes() for box in protected))
-                    check('composition-preset-changes-readout-pixels', current.tobytes() != baseline.tobytes())
+                    check('composition-preset-preserves-pixels-outside-readouts', all(native_baseline.crop(box).tobytes() == current.crop(box).tobytes() for box in protected))
+                    check('composition-preset-changes-readout-pixels', current.tobytes() != native_baseline.tobytes())
                 else:
                     check('preset-restores-all-three-readout-pixels-' + str(target), current.tobytes() == reference.tobytes())
             native('Compiled custom master off after preset cycle', base + module['symbols']['z7_settings_flag'],
                 [base + module['symbols']['z7_menu_settings'], 0, 0])
             reference = reference_capture('presets-native-restored')
             check('preset-master-off-restores-complete-frame', Image.open(io.BytesIO(camera.png)).convert('RGB').tobytes() == reference.tobytes())
+            if base_bound:
+                check('preset-master-off-releases-native-base-page-ownership', native_page() == 0 and
+                    int.from_bytes(camera.remote.memory(base + module['symbols']['z7_base_active'], 4), 'little') == 0)
             key('disp', lambda: native_page() != 0)
             capture('presets-disabled-native-cycle')
             check('disabled-master-resumes-native-page-cycle', native_page() != 0 and cycles() == 4)
             result['preset_cycle'] = dict(native_key_injection=True, original_key_binding_retained=True,
                 compiled_master_setter=True, preset_word_supplied=False, explicit_native_standard_page=True,
-                information_app_bound=False, base_component_selection_bound=False, readout_groups_bound=3)
+                information_app_bound=False, base_component_selection_bound=base_bound,
+                remaining_grid_histogram_highlights_components_bound=False, readout_groups_bound=3)
         elif args.view == 'disp-key':
             if module['kind'] != 'original-Z7-disp-key-diagnostic': raise ValueError('Native-key diagnostic required')
             def key_word(name): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_disp_key_' + name], 4), 'little')
