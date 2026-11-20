@@ -42,7 +42,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
     parser.add_argument('--grid-components', action='store_true', help='For the base-page DISP probe, set a native golden grid and verify component suppression and same-page edits')
@@ -104,7 +104,7 @@ def main():
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
         orientation_fixture=0, keep_awake=True, photo_liveview=True)
     camera = DisplayCamera(0, profile='menu' if args.view == 'menu' else 'shooting', **options)
-    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram'):
+    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups'):
         # Retain the base fixture's native StartLV settling delay before MENU.
         # Acknowledgement alone can precede the first completed native draw.
         camera.native_display_wait_ms = 5000
@@ -113,7 +113,11 @@ def main():
         supplied_histogram_context=args.histogram_context_fixture)
     result['probe_script_sha256'] = hashlib.sha256(probe_source).hexdigest()
     if fixture_source_hash: result['histogram_fixture_source_sha256'] = fixture_source_hash
-    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
+    if args.view == 'information-groups':
+        geometry_source = Path(__file__).with_name('display_pixel_geometry.py').read_bytes()
+        (output / 'geometry-source.py').write_bytes(geometry_source)
+        result['information_geometry_source_sha256'] = hashlib.sha256(geometry_source).hexdigest()
+    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
     def save():
         (output / 'result.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     def check(name, passed):
@@ -222,6 +226,17 @@ def main():
                         if pointer:
                             record = camera.remote.memory(pointer, 100)
                             step['settings_native_value_objects'].append(dict(row=row, child=child, pointer=hex(pointer), words=list(struct.unpack('<25I', record))))
+        if args.view == 'information-groups':
+            step['information_formats'] = camera.remote.memory(0xa18237b8, 7).hex()
+            step['information_masks'] = []
+            step['information_controls'] = {}
+            for widget in range(61):
+                descriptor = int.from_bytes(camera.remote.memory(0x1064d610 + widget * 4, 4), 'little')
+                step['information_masks'].append(camera.remote.memory(descriptor + 4, 36).hex())
+                if widget in (5, 51, 2):
+                    pointer = int.from_bytes(camera.remote.memory(descriptor + 44, 4), 'little')
+                    step['information_controls'][str(widget)] = [camera.remote.memory(pointer + row * 48, 48).hex()
+                        for row in range(camera.remote.memory(descriptor + 40, 1)[0])]
         if args.view == 'disp-presets':
             step['readout_native_snapshot'] = camera.remote.memory(0xa201d4d0, 0x33c).hex()
             step['native_grid_descriptor'] = camera.remote.memory(0xa2020c2c, 32).hex()
@@ -293,7 +308,7 @@ def main():
     try:
         camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry') else camera.boot_shooting()
         checkpoint()
-        if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram'):
+        if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups'):
             # StartLV acknowledgement and a fixed delay are insufficient. This
             # diagnostic gate observes native pipeline progress without writing
             # readiness flags or inventing peripheral completion responses.
@@ -332,7 +347,65 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'histogram':
+        if args.view == 'information-groups':
+            if module['kind'] != 'original-Z7-display-groups-diagnostic': raise ValueError('Six-group diagnostic required')
+            from display_pixel_geometry import control_scanout_box
+            native('Original standard base for ordinary information groups', 0x103673de, [0])
+            references = [capture('information-disabled-control-1')]
+            native('Native invalidation with custom pages disabled', 0x10367c5a, [])
+            references.append(capture('information-disabled-control-2'))
+            for target in (1, 3, 0):
+                key('disp', lambda: camera.remote.memory(0xa201d4d0 + 0x18a, 1)[0] == target)
+                reference = capture('information-disabled-native-cycle-' + str(target))
+                if target == 0: references.append(reference)
+            original_masks = references[0]['information_masks']
+            model = base + module['symbols']['z7_menu_settings']
+            def native_membership(step, widget=None):
+                picture = Image.open(output / (step['name'] + '.png')).convert('RGB')
+                boxes = []
+                if widget is not None:
+                    for control in step['information_controls'][str(widget)]:
+                        rectangle = struct.unpack_from('<4h', bytes.fromhex(control), 10)
+                        if rectangle[0] < rectangle[2] and rectangle[1] < rectangle[3]:
+                            boxes.append(control_scanout_box(rectangle, picture.size))
+                matches = []
+                for reference in references:
+                    if reference['information_formats'] != step['information_formats']: continue
+                    baseline = Image.open(output / (reference['name'] + '.png')).convert('RGB')
+                    difference = ImageChops.difference(picture, baseline)
+                    bounds = difference.getbbox()
+                    if widget is None:
+                        if bounds is None: matches.append(dict(reference=reference['name']))
+                    elif bounds:
+                        protected = difference.copy()
+                        for box in boxes: protected.paste((0, 0, 0), box)
+                        if protected.getbbox() is None:
+                            matches.append(dict(reference=reference['name'], difference_bounds=bounds))
+                result.setdefault('information_pixel_membership', []).append(dict(frame=step['name'], widget=widget, native_control_boxes=boxes, matches=matches))
+                check(step['name'] + ('-only-native-group-pixels-change' if widget is not None else '-complete-native-rgb-restored'), bool(matches))
+            for name, group, widget in (('shooting', 3, 5), ('release', 4, 51), ('focus', 5, 2)):
+                native('Disable ' + name + ' information in preset0', base + module['symbols']['z7_settings_information'], [model, 0, group, 0])
+                native('Enable custom page model', base + module['symbols']['z7_settings_flag'], [model, 0, 1])
+                native('Wait for native information update', 0x1017081e, [500])
+                active = capture('information-' + name + '-off')
+                expected = list(original_masks)
+                words = list(struct.unpack('<9I', bytes.fromhex(expected[widget])))
+                for bank in (0, 3): words[bank] &= ~0x909
+                expected[widget] = struct.pack('<9I', *words).hex()
+                check(name + '-only-two-lcd-mask-words-change', active['information_masks'] == expected)
+                native_membership(active, widget)
+                native('Restore ' + name + ' information', base + module['symbols']['z7_settings_information'], [model, 0, group, 1])
+                native('Wait for native information restoration', 0x1017081e, [500])
+                restored = capture('information-' + name + '-on')
+                check(name + '-all-native-mask-words-restore', restored['information_masks'] == original_masks)
+                native_membership(restored)
+            native('Disable custom page model', base + module['symbols']['z7_settings_flag'], [model, 0, 0])
+            retired = capture('information-master-off')
+            check('information-master-off-restores-native-masks', retired['information_masks'] == original_masks)
+            native_membership(retired)
+            result['information_scope'] = dict(groups_bound=6, settings_setters_supplied=True, snapshot_or_visibility_stores_supplied=False,
+                actual_native_disp_baseline_cycle=True, control_snapshots_are_not_paint_fences=True, other_and_focal_unbound=True)
+        elif args.view == 'histogram':
             if module['kind'] != 'original-Z7-display-histogram-diagnostic':
                 raise ValueError('Histogram component diagnostic required')
             native('Original standard base for histogram diagnostic', 0x103673de, [0])

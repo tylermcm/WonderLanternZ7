@@ -141,3 +141,14 @@ retire through native layout/plane controls, including same-page edits. It uses 
 conditional property ownership, failure rollback, compiled checks, actual native
 key/pixel observations and unfinished component/persistence work. This remains
 private emulator research, not an installation-cleared camera update.
+
+## Ordinary information-group diagnostic
+
+`tools/build_z7_display_module.py --variant display-groups-probe --output .private/builds/NEW`
+extends the32-byte histogram/base stack with independently identified original-Z7
+Shooting mode, Release mode and Focus mode widgets, in addition to the existing
+shutter/aperture/ISO groups. It changes only owned photo-LCD mask bits and leaves
+native selection, formatting, warnings and painting to the original pipeline.
+Other information, focal length and the separate information app remain open.
+See [DISPLAY_SETTINGS.md](DISPLAY_SETTINGS.md) for validation scope. Earlier
+histogram08 still rebuilds byte-identically with the optional extension disabled.

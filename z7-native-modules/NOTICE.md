@@ -75,3 +75,12 @@ from pinned upstream `plugins/histogram_horizon_ram.c` at
 preserved MIT license. Original-Z7 addresses, mask banks, state ownership,
 sample clearing/overflow handling, explicit retirement and audits are independent
 local modifications. This experimental port is an independent modified work.
+
+`examples/display_groups_probe.c` and the six-group additions to
+`examples/display_readouts_policy.h` independently extend the pinned upstream
+`sdk/disp.h` information-group concepts under the preserved MIT license.
+Original-Z7 widget identities were derived from original updater execution and
+private native-icon inspection: shooting5, release51 and focus2. Z7II release3
+and focus6 identify different original-Z7 content and are not reused. The native
+identity/mask audits and private pixel-check adapter are independent local MIT
+validation tools. Firmware resources and decoded native icons remain private.

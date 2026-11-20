@@ -238,3 +238,28 @@ their fixture/checker faults documented. This proves successful native pixel
 integration with test bins, not real statistics production or physical-camera
 acceptance. Remaining components, information app/groups, persistence and broader
 lifecycle stay open. No camera/card access, staging, flashing or push.
+
+## Shooting, release and focus information groups — November 19, 2026
+
+New optional groups01 binds original-Z7 Shooting mode5, Release mode51 and Focus
+mode2 alongside shutter10/aperture11/ISO15. Native updater execution and private
+icon inspection pass38 identity cases; Z7II release3/focus6 identify AF-area and
+Active D-Lighting on the original Z7 and are not reused.641 compiled cases pass
+for four presets/all64group combinations, native suppression and conditional
+twelve-word restoration. Histogram170/base68/grid282 regressions and55 root
+tests/no-skips pass. Old histogram08 rebuilds byte-identically.
+
+Assisted-QEMU live02 passes18checks/12frames: actual native DISP baseline cycle,
+each new group's isolated pixel suppression, exact outside-pixel preservation,
+and complete native RGB restoration after every ON and final master-off. Settings
+setters are diagnostic calls; native visibility/snapshot stores are not supplied.
+Failed live01 retained: ordinary HUD control coordinates are top-down, unlike
+the histogram low-level fill. The corrected transform has four regressions and
+frozen private source. Key frames inspected; source-only evidence recorded.
+
+ON retains native eligibility; horizon-page extension of ordinary groups remains
+to be reviewed against pinned upstream semantics. Other information, focal
+length, native information app, highlights, portrait, persistence and broader
+lifecycle remain. Real histogram statistics and hardware behavior stay unverified.
+All jobs terminal; graph/manifest refreshed. No camera/card access, staging,
+flashing or push. Full goal stays active.

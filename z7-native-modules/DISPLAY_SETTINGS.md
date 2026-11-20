@@ -757,3 +757,59 @@ Current package14540bytes/image14272/BSS5060/API32 has reproducible SHA
 Host07 is unchanged. Successful real statistics production, physical output
 transitions and hardware presentation remain unverified. This advances renderer
 integration and retirement, while remaining display/software scope stays open.
+
+### Six ordinary information groups
+
+The optional `display-groups-probe` adds original-Z7 Shooting mode, Release mode
+and Focus mode to the existing shutter/aperture/ISO selections. Its native widget
+IDs are10/11/15/5/51/2, independently derived from original updater execution and
+decoded native icons. In particular, original3 is AF-area,6 is Active D-Lighting,
+and51 selects single/continuous/self-timer icons. The Z7II3/6 assignments cannot
+be copied. Focus here controls the native MF/AF-S/AF-C/AF-F information widget;
+the AF-area status and AF frame layer remain unchanged.
+
+All six groups share the existing conditional mask-ownership protocol: only
+photo-LCD words0/3 and bits0x909 can be suppressed; ON retains the native mask.
+All other outputs, movie bits, third bank, controls, snapshot values and native
+updater bindings stay native. Exposure nonzero formats retain their complete
+native group. Native invalidation prepares the following original update/layout
+pipeline; the policy never draws or dispatches widgets directly. Twelve-word
+restoration preserves foreign writes, latches ownership loss, and defers cleanup
+when a descriptor is replaced.
+
+Private status-identity01 passes38 original-updater/icon cases. Private
+information-groups-04 passes641 compiled cases across four presets and all64
+six-group combinations, exposure formats, native mask selection and each new
+group's foreign-word/descriptor/updater handling. Snapshot preservation is tested
+with horizon disabled so the independent native base-page setter is isolated.
+Groups01 package14604bytes/image14336/BSS5060/API32 is reproducible SHA
+063d91a6c8231f0d6124ad4ebff5fbfc1692596441e0aa86ce459683ca206fcf.
+The earlier histogram08 package remains byte-identical with the extension off.
+
+Ordinary HUD controls use top-down native720x480 layout coordinates; the
+histogram low-level fill has a different bottom-up convention. Four geometry
+regressions protect that distinction. Failed live01 records actual shooting
+suppression at scanout3,3,54,54 but rejects it using the wrong bottom-up box.
+The corrected geometry helper is separate and frozen with subsequent live
+evidence. Root55 tests/no-skips pass. Histogram170, base68 and grid282/native
+geometry109 regressions also pass on this package.
+
+Corrected live02 passes18 checks/twelve frames. A full native DISP1/3/0 baseline
+cycle precedes filtering. Shooting/release/focus OFF each changes pixels only
+inside its original top-down HUD control rectangles. Every outside pixel matches
+a captured native reference; each ON and final master-off restores complete
+captured native RGB exactly. All61 descriptor masks are compared, with only the
+target's two LCD words changed. Native snapshot/mode/visibility stores are not
+supplied. The diagnostic invokes compiled settings setters, so these results do
+not establish native settings-menu editing/lifecycle. Native formats must match;
+raw control snapshots are never treated as a completed-paint fence. Key focus-off
+and master-off frames were inspected. Source evidence:
+`evidence/20261119-native-information-groups.json`.
+
+ON still retains native page eligibility. Some ordinary native masks omit the
+horizon page; selecting ON does not currently extend those masks. Review this
+against pinned upstream custom-DISP semantics before finalizing the feature.
+The new live sequence covers standard page0; contract suppression covers0/3.
+Other information, focal length, information app, highlights, portrait,
+persistence and broader lifecycle remain open. This is an independent modified
+experimental package, not a completed or installation-cleared release.

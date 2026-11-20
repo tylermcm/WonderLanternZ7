@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'gui-update-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'gui-update-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -45,6 +45,7 @@ def main():
         'display-base-probe': ('examples/display_base_probe.c', 'original-Z7-display-base-diagnostic', 28),
         'gui-update-probe': ('examples/gui_update_probe.c', 'original-Z7-gui-update-diagnostic', 32),
         'display-histogram-probe': ('examples/display_histogram_probe.c', 'original-Z7-display-histogram-diagnostic', 32),
+        'display-groups-probe': ('examples/display_groups_probe.c', 'original-Z7-display-groups-diagnostic', 32),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
     packet, report = build(source, zig=args.zig.resolve())
@@ -66,6 +67,11 @@ def main():
         module_sha256=hashlib.sha256(packet).hexdigest(), file_bytes=len(packet),
         source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
+    requested_variant = args.variant
+    if requested_variant == 'display-groups-probe':
+        # The six-group adapter includes the complete histogram/base stack.
+        args.variant = 'display-histogram-probe'
+        report['information_groups'] = dict(shutter=10, aperture=11, iso=15, shooting=5, release=51, focus=2)
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
               ROOT / 'z7-native-modules/sdk/module.ld']
     if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe'):
@@ -91,6 +97,8 @@ def main():
         inputs += [ROOT / 'z7-native-modules/sdk/gui.h', ROOT / 'z7-native-modules/sdk/disp.h', ROOT / 'z7-native-modules/sdk/update.h']
     if args.variant == 'display-histogram-probe':
         inputs += [ROOT / 'z7-native-modules/examples/display_base_probe.c', ROOT / 'z7-native-modules/examples/display_histogram_policy.h']
+    if requested_variant == 'display-groups-probe':
+        inputs.append(ROOT / 'z7-native-modules/examples/display_histogram_probe.c')
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)

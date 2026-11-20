@@ -1,0 +1,312 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 six ordinary information groups with native rendering and conditional mask ownership",
+  "module": {
+    "module_sha256": "063d91a6c8231f0d6124ad4ebff5fbfc1692596441e0aa86ce459683ca206fcf",
+    "file_bytes": 14604,
+    "image_bytes": 14336,
+    "bss_bytes": 5060,
+    "api_minimum_bytes": 32
+  },
+  "source_inputs_verified": true,
+  "host_main_sha256": "9326b595fd4f47719aaa9bcdb157ce35aa9f3cbd812a62f990585a4e2e52db66",
+  "host_changed": false,
+  "identified_widgets": {
+    "shutter": 10,
+    "aperture": 11,
+    "iso": 15,
+    "shooting": 5,
+    "release": 51,
+    "focus": 2
+  },
+  "native_identity": {
+    "passed": true,
+    "cases": 38,
+    "original_updaters_execute": true,
+    "private_evidence": ".private/evidence/20261119-status-identity-01",
+    "native_icons_visually_inspected": true,
+    "negative_controls": {
+      "original_z7_widget3": "AF-area status",
+      "original_z7_widget6": "Active D-Lighting"
+    },
+    "firmware_icons_published": false
+  },
+  "policy": {
+    "owned_lcd_bank_words": 12,
+    "photo_suppression_mask": "0x909",
+    "native_permissions_never_synthesized": true,
+    "nonzero_exposure_formats_native": true,
+    "foreign_writes_preserved": true,
+    "abandoned_descriptor_cleanup_pending": true,
+    "af_area_and_af_frame_unchanged": true,
+    "ordinary_policy_no_direct_dispatch_or_paint": true
+  },
+  "audits": {
+    "six_groups": {
+      "passed": true,
+      "checks": 641,
+      "private_evidence": ".private/evidence/20261119-information-groups-04.json"
+    },
+    "histogram": {
+      "passed": true,
+      "checks": 170,
+      "private_evidence": ".private/evidence/20261119-groups-histogram-02.json"
+    },
+    "base_ownership": {
+      "passed": true,
+      "checks": 68,
+      "private_evidence": ".private/evidence/20261119-groups-base-02.json"
+    },
+    "grid": {
+      "passed": true,
+      "checks": 282,
+      "private_evidence": ".private/evidence/20261119-groups-grid-02.json"
+    }
+  },
+  "root_tests": {
+    "passed": true,
+    "tests": 55,
+    "skipped": 0,
+    "new_hud_geometry_regressions": 4
+  },
+  "previous_histogram_module": {
+    "rebuild_byte_identical": true,
+    "module_sha256": "29155d3343a98ffa9f9edc126fa68b027d9b715699eba4093a3ec3ce39dc91b2"
+  },
+  "live": {
+    "private_evidence": ".private/evidence/20261119-information-groups-live-02",
+    "passed": true,
+    "checks": 18,
+    "frames": 12,
+    "scope": {
+      "groups_bound": 6,
+      "settings_setters_supplied": true,
+      "snapshot_or_visibility_stores_supplied": false,
+      "actual_native_disp_baseline_cycle": true,
+      "control_snapshots_are_not_paint_fences": true,
+      "other_and_focal_unbound": true
+    },
+    "native_control_coordinates": "720x480 top-down with exclusive endpoints",
+    "helper_sha256": "70e79469f4a835c5f3afc09e11e5a6412562fe965f0bcac596873fcc819f184a",
+    "pixel_membership": [
+      {
+        "frame": "information-shooting-off",
+        "widget": 5,
+        "native_control_boxes": [
+          [
+            0,
+            0,
+            57,
+            57
+          ],
+          [
+            2,
+            2,
+            55,
+            54
+          ],
+          [
+            56,
+            5,
+            103,
+            52
+          ],
+          [
+            59,
+            8,
+            100,
+            49
+          ]
+        ],
+        "matches": [
+          {
+            "reference": "information-disabled-control-1",
+            "difference_bounds": [
+              3,
+              3,
+              54,
+              54
+            ]
+          },
+          {
+            "reference": "information-disabled-control-2",
+            "difference_bounds": [
+              3,
+              3,
+              54,
+              54
+            ]
+          }
+        ]
+      },
+      {
+        "frame": "information-shooting-on",
+        "widget": null,
+        "native_control_boxes": [],
+        "matches": [
+          {
+            "reference": "information-disabled-native-cycle-0"
+          }
+        ]
+      },
+      {
+        "frame": "information-release-off",
+        "widget": 51,
+        "native_control_boxes": [
+          [
+            281,
+            2,
+            379,
+            54
+          ],
+          [
+            284,
+            5,
+            376,
+            52
+          ]
+        ],
+        "matches": [
+          {
+            "reference": "information-disabled-control-1",
+            "difference_bounds": [
+              304,
+              6,
+              356,
+              51
+            ]
+          },
+          {
+            "reference": "information-disabled-control-2",
+            "difference_bounds": [
+              304,
+              6,
+              356,
+              51
+            ]
+          }
+        ]
+      },
+      {
+        "frame": "information-release-on",
+        "widget": null,
+        "native_control_boxes": [],
+        "matches": [
+          {
+            "reference": "information-disabled-native-cycle-0"
+          }
+        ]
+      },
+      {
+        "frame": "information-focus-off",
+        "widget": 2,
+        "native_control_boxes": [
+          [
+            402,
+            2,
+            474,
+            54
+          ],
+          [
+            405,
+            5,
+            471,
+            52
+          ]
+        ],
+        "matches": [
+          {
+            "reference": "information-disabled-control-1",
+            "difference_bounds": [
+              410,
+              6,
+              467,
+              51
+            ]
+          },
+          {
+            "reference": "information-disabled-control-2",
+            "difference_bounds": [
+              410,
+              6,
+              467,
+              51
+            ]
+          }
+        ]
+      },
+      {
+        "frame": "information-focus-on",
+        "widget": null,
+        "native_control_boxes": [],
+        "matches": [
+          {
+            "reference": "information-disabled-native-cycle-0"
+          }
+        ]
+      },
+      {
+        "frame": "information-master-off",
+        "widget": null,
+        "native_control_boxes": [],
+        "matches": [
+          {
+            "reference": "information-disabled-native-cycle-0"
+          }
+        ]
+      }
+    ],
+    "outside_pixel_exclusions": 0,
+    "control_state_is_not_a_paint_fence": true
+  },
+  "retained_failed_live": {
+    "private_evidence": ".private/evidence/20261119-information-groups-live-01",
+    "reason": "Checker reused bottom-up histogram service convention for top-down native HUD controls",
+    "actual_shooting_difference_bounds": [
+      3,
+      3,
+      54,
+      54
+    ],
+    "correct_shooting_control_bounds": [
+      0,
+      0,
+      57,
+      57
+    ],
+    "production_module_changed_for_geometry_fix": false
+  },
+  "audit_fixture_corrections": [
+    "Disable horizon to isolate mask-only snapshot preservation; native base setter intentionally changes page",
+    "Preserve foreign mask writes after ownership loss; do not expect ownership to revive on a later matching value"
+  ],
+  "validation_scheduling": {
+    "parallel_heavy_unicorn_loads_hit_per_call_timeout": true,
+    "serial_native_load_diagnostic_status": 8,
+    "serial_load_seconds": 6.97
+  },
+  "graph": {
+    "nodes": 2200,
+    "edges": 5539,
+    "generated_graph_ignored": true
+  },
+  "remaining": [
+    "Cross-page ON eligibility versus pinned upstream custom-DISP semantics; new live test covers standard page0 only",
+    "Other information and focal length",
+    "Native information app",
+    "Photo highlights",
+    "Portrait display",
+    "Persistence",
+    "Native menu-return and broader lifecycle",
+    "Successful real histogram statistics production",
+    "Physical card/cache/wake validation",
+    "Exact-candidate installation/recovery assessment"
+  ],
+  "camera_access": false,
+  "physical_card_access": false,
+  "firmware_staged": false,
+  "flashed": false,
+  "pushed": false,
+  "full_software_goal_complete": false
+}

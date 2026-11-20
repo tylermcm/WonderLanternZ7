@@ -1,5 +1,65 @@
 # Laptop handoff — October 20, 2026
 
+## Six ordinary information groups — November 19, 2026
+
+Previous goal turn completed histogram pixels. This turn implements three more
+ordinary groups, retaining the full goal. New private groups01 is reproducible
+SHA063d91a6c8231f0d6124ad4ebff5fbfc1692596441e0aa86ce459683ca206fcf,
+14604bytes/image14336/BSS5060/API32, unchanged host07. Variant
+display-groups-probe includes histogram08 plus Z7_INFORMATION_GROUPS_PROBE.
+Old histogram08 rebuild in groups-histogram-regression-01 remains byte-identical.
+No camera/card access, staging, flash or push.
+
+Native updater execution and private decoded-icon inspection independently
+identify shooting5 (102F346E, snapshot+8), release51 (102F6D00,+5B), and focus2
+(102F31A6,+1F7). Do not reuse Z7II release3/focus6: original3 is AF-area and6 is
+Active D-Lighting. Original60 is flash-focus, not a derived focal-text binding.
+38 identity cases pass; private icons retained, never published. The six-group
+adapter covers10/11/15/5/51/2, two owned LCD bank words each,0x909 suppression
+only. ON preserves original permissions. Exposure nonzero formats remain native;
+other native status/warning/AF-area layers are untouched. Conditional restoration,
+foreign-write latch and pending abandoned descriptors extend to all12 words.
+641 compiled cases pass across4presets/all64combinations, native mask interpreter,
+exposure formats and per-new-group ownership failures. Histogram170 passes.
+Root55/no-skips pass, including4 ordinary HUD geometry regressions.
+
+Live01 terminal failed the checker's wrong bottom-up transform, after actual
+native shooting-mode suppression. Correct actual difference vs initial native
+refs is3,3,54,54 within top-left0,0,57,57. Ordinary image/text control layout is
+TOP-DOWN; histogram low-level fill uses a separate BOTTOM-UP convention. New
+display_pixel_geometry.py encodes ordinary720x480/exclusive-endpoint scaling;
+do not reuse the histogram helper. Live02 uses frozen probe/geometry source.
+
+Live02 PASSES18checks/12frames. Actual native DISP cycles1/3/0 before filtering.
+Each of shooting/release/focus OFF changes only pixels within its original HUD
+control rectangles. Difference bounds respectively3,3,54,54 /304,6,356,51 /
+410,6,467,51. Every outside pixel matches a captured native reference. Each ON
+and final master-off restores the complete captured native RGB exactly, with
+native format matching and no outside pixel exclusions. All61 descriptor masks
+are compared; only the target's two LCD words change. Native mode/visibility/
+snapshot stores are NOT supplied. Compiled settings setters are invoked by the
+diagnostic; this is not native menu editing coverage. Focus-off and master-off
+frames visually inspected. Source evidence:
+`evidence/20261119-native-information-groups.json`.
+
+Base68 and grid282/native geometry109 regressions also pass on groups01. All
+current jobs are TERMINAL. Parallel heavy Unicorn fixture loads hit the existing
+10-second per-call watchdog; serial native-load diagnostic completed status8 in
+6.97s with original stack preserved. Do not run multiple heavy audits concurrently
+with QEMU. Graph refreshed2200nodes/5539edges; generated graph stays ignored.
+Source manifest refreshed at this local source-only checkpoint. Goal stays active.
+
+NEXT: Other information, focal length, information app, highlights, portrait,
+persistence, native menu-return and broader lifecycle. Review cross-page ON
+semantics against pinned sdk/disp.h before finalizing custom DISP: current ON
+preserves native eligibility, so ordinary groups whose native masks omit horizon
+page3 do not become visible there merely by selecting ON. The new live test
+covers standard page0 only; suppression/native interpreter tests cover0/3. Do
+not claim all enabled information/horizon combinations complete. Successful real
+histogram statistics and physical card/cache/wake remain unverified. No camera
+staging/flashing until explicit authorization plus exact installation/recovery
+assessment; user wants software finished first.
+
 ## Native histogram pixels and active-output guards — November 19, 2026
 
 Current histogram08 supersedes06 below: reproducible SHA
