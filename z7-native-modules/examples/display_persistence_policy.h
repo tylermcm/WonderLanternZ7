@@ -14,6 +14,7 @@ static uint32_t persistence_state;
 static void persistence_set_state(uint32_t state)
 {
     __atomic_store_n(&persistence_state, state, __ATOMIC_RELEASE);
+    persistence_menu_notify();
 }
 static uint32_t persistence_display_status(void)
 {
@@ -76,7 +77,7 @@ static void persistence_prepare(void)
         z7_persistence_result == Z7_STORAGE_DEFAULTS ? PS_DEFAULTS : PS_CLEAN);
     z7_battery_enabled = !!(z7_menu_settings.flags & Z7_SETTINGS_BATTERY);
 }
-static void persistence_worker(void)
+static void persistence_save_worker(void)
 {
     /* Failed startup loading stays volatile for this boot; never save defaults
      * over an unread original or publish late worker writes into menu state.
@@ -105,4 +106,10 @@ static void persistence_worker(void)
         persistence_retry = 5;
         persistence_set_state(z7_persistence_files.retained_fd != UINT32_MAX ? PS_BLOCKED : PS_RETRY);
     }
+}
+
+static void persistence_worker(void)
+{
+    persistence_menu_notify();
+    persistence_save_worker();
 }

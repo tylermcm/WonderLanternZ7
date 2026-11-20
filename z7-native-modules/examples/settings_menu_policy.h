@@ -10,13 +10,16 @@ enum persistence_state { PS_STARTING, PS_DEFAULTS, PS_CLEAN, PS_SAVING, PS_RETRY
 enum persistence_display { PD_DEFAULTS, PD_SAVED, PD_UNSAVED, PD_SAVING, PD_RETRY, PD_BLOCKED };
 static uint32_t persistence_display_status(void);
 static uint32_t sm_save_status = UINT32_MAX;
+volatile uint32_t z7_menu_status_events, z7_menu_status_paints, z7_menu_status_notifications;
+static uint32_t sm_menu_dispatch(uint32_t event, uint32_t data);
+static void persistence_menu_notify(void);
 static char sm_title[50];
 static const char *sm_persistent_title(const char *base, uint32_t status)
 {
     static const char *const suffix[] = {"Defaults", "Saved", "Unsaved", "Saving", "Save retry", "Restart to save"};
     uint32_t length = 0;
     while (*base && length < sizeof(sm_title) - 1) sm_title[length++] = *base++;
-    const char *separator = " - ";
+    const char *separator = ": ";
     while (*separator && length < sizeof(sm_title) - 1) sm_title[length++] = *separator++;
     const char *text = suffix[status <= PD_BLOCKED ? status : PD_BLOCKED];
     while (*text && length < sizeof(sm_title) - 1) sm_title[length++] = *text++;
@@ -175,11 +178,11 @@ static uint32_t sm_render(uint32_t object)
     const char *title = !z7_settings_view ? "Display settings" : z7_settings_view == 1 ? roots[z7_settings_preset + 1] : "Shooting information";
 #ifdef Z7_SETTINGS_PERSISTENCE
     uint32_t save_status = persistence_display_status();
-    title = sm_persistent_title(title, save_status);
+    title = sm_persistent_title(!z7_settings_view ? "Display" : z7_settings_view == 1 ? title : "Information", save_status);
 #endif
     sm_text_put(230, title);
 #ifdef Z7_SETTINGS_PERSISTENCE
-    sm_save_status = save_status;
+    __atomic_store_n(&sm_save_status, save_status, __ATOMIC_RELEASE);
 #endif
     for (uint32_t row = 0; row < 7; ++row) {
         const char *value = "--";
@@ -215,8 +218,55 @@ static uint32_t sm_render(uint32_t object)
     if (ram(W(object + 12), 96)) W(W(object + 12) + 0x44) = 1;
     return 0;
 }
+#ifdef Z7_SETTINGS_PERSISTENCE
+/* Native menu state1 handles queued key/input notifications on the menu task.
+ * Delegate the complete native event FIRST. Only the owned, focused page may
+ * then refresh its title. There are no synthetic keys or borrowed timer slots.
+ */
+static uint32_t sm_menu_dispatch(uint32_t event, uint32_t data)
+{
+    ++z7_menu_status_events;
+    uint32_t result = F(0x1048bffdu, uint32_t, uint32_t, uint32_t)(event, data);
+    if (W(0xa182ed34u) != (uint32_t)(uintptr_t)sm_menu_dispatch ||
+        B(0xa182ed2cu) != 1 || !sm_owned(0xa1833548u) ||
+        F(0x104061edu, uint32_t)() != 0xa1833548u ||
+        !W(0xa1833548u + 12) || !sm_label_ownership()) return result;
+    if (persistence_display_status() != __atomic_load_n(&sm_save_status, __ATOMIC_ACQUIRE)) {
+        sm_render(0xa1833548u);
+        sm_redraw_request();
+        ++z7_menu_status_paints;
+    }
+    return result;
+}
+static uint32_t sm_menu_visible(void)
+{
+    uint32_t pages = W(0xa181f91cu);
+    if (!ram(pages, 16)) return 0;
+    uint32_t stride = W(pages), count = W(pages + 8), data = W(pages + 12);
+    if (stride < 4 || stride > 1024 || stride % 4 || !count || count > 20 ||
+        count > W(pages + 4) || !ram(data, count * stride)) return 0;
+    return W(data + (count - 1) * stride) == 0xa1833548u;
+}
+static void persistence_menu_notify(void)
+{
+    /* The original event-flag setter wakes the native menu wait loop. Bit2
+     * polls its existing input queue; an empty queue is handled natively. No
+     * input is enqueued or synthesized and no widget/label is touched here.
+     */
+    if (W(0xa182ed34u) == (uint32_t)(uintptr_t)sm_menu_dispatch &&
+        B(0xa182ed2cu) == 1 && sm_owned(0xa1833548u) && sm_menu_visible() &&
+        persistence_display_status() != __atomic_load_n(&sm_save_status, __ATOMIC_ACQUIRE) &&
+        W(0xa181f910u)) {
+        ++z7_menu_status_notifications;
+        F(0x104064cdu, void, uint32_t, uint32_t)(0xa181f910u, 2);
+    }
+}
+#endif
 static uint32_t sm_prepare(void)
 {
+#ifdef Z7_SETTINGS_PERSISTENCE
+    if (W(0xa182ed34u) != 0x1048bffdu) return 0;
+#endif
     for (uint32_t i = 0; i < 11; ++i) if (W(0xa1833548u + i * 4)) return 0;
     const uint32_t *leaf = (const uint32_t *)(uintptr_t)(0xa1833548u + 42 * 44);
     if (leaf[0] != 0x002a0002u || leaf[1] != 0xa1833574u || !readable(leaf[10], 28)) return 0;
@@ -257,6 +307,10 @@ static void sm_publish(void)
     for (uint32_t i = 1; i < 11; ++i) W(0xa1833548u + i * 4) = sm_object[i];
     __asm__ volatile("dmb sy" ::: "memory");
     W(0xa1833548u) = sm_object[0];
+#ifdef Z7_SETTINGS_PERSISTENCE
+    __asm__ volatile("dmb sy" ::: "memory");
+    W(0xa182ed34u) = (uint32_t)(uintptr_t)sm_menu_dispatch;
+#endif
 }
 static void sm_before(void)
 {
@@ -271,8 +325,8 @@ static void sm_before(void)
     uint32_t header = F(0x103faebfu, uint32_t, uint32_t, uint32_t)(0x203, W(0xa1833548u + 12));
     uint32_t changed = 0;
 #ifdef Z7_SETTINGS_PERSISTENCE
-    /* Only the existing active-menu GUI hook updates native text. The worker
-     * publishes scalar state; it never calls the UI or performs menu paint.
+    /* Native menu/paint paths update text. The worker publishes scalar state
+     * and requests a native event-flag wake; it never edits labels or paints.
      */
     changed = persistence_display_status() != sm_save_status;
 #endif

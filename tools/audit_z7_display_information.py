@@ -5,6 +5,7 @@ supplied boundaries. Actual native setters/key admission execute; no pixels or
 complete application initialization are claimed by this instruction fixture.
 """
 import argparse
+import gc
 import hashlib
 import json
 from pathlib import Path
@@ -59,6 +60,9 @@ def audit(raw, host, packet, module, fixture_class=None):
             raise AssertionError(name)
 
     def load(native=3):
+        # Retire unreachable emulator/hook cycles before allocating another
+        # complete firmware fixture. Existing live fixtures remain referenced.
+        gc.collect()
         f = fixture_class(raw, host, packet)
         check('full-module-load-' + str(len(checks)), f.call(host['symbols']['z7_module_load_once'], STATE) == 8)
         f.base = f.words()[12]

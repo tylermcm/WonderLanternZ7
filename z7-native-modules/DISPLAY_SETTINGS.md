@@ -120,21 +120,36 @@ hashes; existing display/worker profiles were not changed.
 .venv\Scripts\python.exe tools/audit_z7_settings_storage.py --build .private/builds/20261120-display-host-09 --module .private/builds/settings-storage-new --output .private/evidence/settings-storage-new.json
 ```
 
-## Save-status presentation in progress
+## Queued save-status presentation
 
-The optional persistent profile now publishes atomic save state to menu-only
-header rendering: Defaults, Saved, Unsaved, Saving, Save retry and Restart to
-save. The extended instruction audit passes84 checks, including menu edits on
-a separate stack while a save is in progress, startup failures and close-latch
-failures. Worker ticks never update native labels. Root69 and routing54 pass.
+The API44 persistent profile now publishes atomic save state and displays
+Defaults, Saved, Unsaved, Saving, Save retry or Restart to save in its header.
+A guarded wrapper around the original menu state1 callback delegates the native
+event first, then refreshes only the owned focused settings page. Worker
+notifications use the original event-flag service and mask0x2 input-queue poll;
+they do not inject keys, borrow timers, update labels or paint on the worker.
+Foreign callback ownership rejects initialization before settings I/O.
 
-This presentation is **not live accepted**. Private save-status-live01 verifies
-the initial Defaults title, then fails because the header remains Unsaved after
-the worker saves. The existing before-paint hook does not schedule an idle menu
-refresh. A native queued refresh/task mechanism and longest-title width checks
-remain necessary. Automatic current-header checks are retained. The prior
-persistent01 two-boot result below remains the accepted baseline; it does not
-establish completion of the new status presentation.
+The menu dispatcher audit passes15 checks and the full persistence/status audit
+passes84; the extended routing audit passes54 on the same native bytes.
+Live save-status05 passes39 checks across two fresh guests/16 PNGs:
+an explicitly modeled create error preserves the old record and shows Save
+retry, clearing it permits Saved, and restart restores settings without writes.
+All three final menu comparisons match complete720x480 RGB across restart.
+All16 PNG and four closed-journal hashes were independently verified. Status
+publication and menu paint are asynchronous: every ready candidate is retained,
+and the bounded capture waits for current title text as well as clean row nodes.
+This does not establish a hardware presentation fence or SD durability.
+
+Final private source build05 is byte-identical to tested04:
+`719c1db3ca5cf1c78d82ebedcdbbb4cc7b67312b34b7982d11a718e4b39af85c`.
+Root70 tests pass without skips. The previous live failures remain failures.
+Source evidence: `evidence/20261120-menu-status-refresh.json`.
+
+Startup-blocked/uncertain-close status pixels, longest-title fit and broader
+menu/lifecycle behavior remain open. In particular, Composition/Information
+with Restart to save need width checks. The native information mirror,
+physical card/cache/shutdown and installation/recovery assessments remain open.
 
 ## Native files and persistent full display profile
 
@@ -217,8 +232,8 @@ native-delay waits starved queued repaint work; an experimental firmware rebind
 change was rejected and reverted. See source evidence
 `evidence/20261120-persistence-menu-restart.json` and root HANDOFF.md.
 
-Broader current-profile pixel/lifecycle validation and clear unsaved-state
-presentation remain open. No physical card,
+Basic unsaved/save-retry presentation is implemented and scoped above; broader
+current-profile pixel/lifecycle validation and all blocked-state visuals remain open. No physical card,
 shutdown flush or installation/recovery acceptance is established. The separate
 native information mirroring gap, highlights/portrait and broader lifecycle/real
 statistics work remain open. Firmware, modules and configuration bytes stay private.

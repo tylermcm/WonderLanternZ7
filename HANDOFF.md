@@ -1,5 +1,81 @@
 # Laptop handoff — October 20, 2026
 
+## Queued menu save-status refresh and live retry - November 20, 2026
+
+Previousad4f3d0 was PROGRESS (status publication, idle-refresh failure). This
+milestone implements a guarded native menu event wrapper and worker wake-up.
+NO camera/card access, staging, flash or push. Full goal remains active.
+
+Current private profile: .private/builds/20261120-display-save-status-05;
+reproducible24048bytes/image23744/BSS5648/API44/SHA
+719c1db3ca5cf1c78d82ebedcdbbb4cc7b67312b34b7982d11a718e4b39af85c.
+Final05 differs from tested04 in a source comment only, and builds EXACT same
+native bytes; all39 current input hashes verified. Host09/QEMU remain unchanged.
+Old nonpersistent API40 compat01 still d4981187...15ffcd exactly.
+
+The native menu application atA182ECB8 uses state1 callback slotA182ED34,
+original1048BFFD. sm_prepare rejects foreign ownership BEFORE settings I/O;
+sm_publish installs the wrapper only after all init failures are past. The
+wrapper always delegates the complete original event first, preserves its
+result, then verifies installed-slot ownership, menu state1, owned page identity,
+focused native page, component existence and label ownership. Only a changed
+save status causes native menu text and paint. The worker publishes atomic state
+and calls original104064CC on the original event-flag handleA181F910, mask0x2.
+Original1048B324 wait/clear loop dispatches mask0x2 as event3, whose original handler
+polls the existing input queue; no key is injected and no timer slot borrowed.
+Worker notification additionally checks bounded native menu stack/top-page and
+its handle. It never writes native labels or performs paint.
+
+Menu dispatch audit05 TERMINALPASS15: original event-flag wrapper, state
+callback dispatcher and empty-queue handler execute; kernel event delivery,
+empty input queue, incoming GUI state and text/paint services supplied. Guards
+cover other focused page, inactive state, foreign slot, empty stack and absent
+handle. Foreign callback rejects init before settings files and frees allocation.
+Early audit fixtures omitted host status publication, then counted loader cache
+operations as settings I/O; corrected observation/setup, not production guards.
+
+Live .private/evidence/20261120-save-status-live-05 TERMINALPASS39, two fresh
+QEMU processes/16PNG. Explicit owned create error80000002 preserves prior valid
+record and dirty revision; native menu shows Save retry without another key.
+Clearing the supplied error permits worker retry and Saved title. Fresh process
+restores exact settings without rewriting files. Root/Standard/information final
+comparisons match complete720x480 RGB across restart. All16 PNG hashes, four
+closed-journal hashes, both journal CRCs and all14 captured row paint flags
+independently verified. Saved/retry and restart information PNGs visually viewed.
+Frozen helper code retained; final probe removes one trailing space only (exact
+normalized-line identity verified), other two helpers match exactly.
+
+Keep failed live02/03/04 as failures. Live02 remained stale. Live03 hit stock
+Setup focus skipping unavailable rows; row navigation now follows native stock
+focus movement while owned page0 still asserts exact adjacent rows. Live04
+caught Saving after worker completed: two event-flag wakes may coalesce during
+paint. Worker retries notification on its next normal tick. Capture now retains
+ALL ready raw candidates and waits within the original bounded30-attempt paint
+window for BOTH clean rows and current header; it never navigates or rewrites
+text to settle. Final current-header check stays mandatory. This is bounded
+asynchronous status observation, not a hardware/display fence.
+
+Full persistence/status instruction05 PASS84 and root70/no skips PASS. Routing04
+TERMINALPASS54 on current native bytes at
+.private/evidence/20261120-save-status-routing-04.json. It adds native-call
+elapsed/timeout diagnostics and gc.collect before each independent fixture load
+to release unreachable old emulator/hook cycles. All54 original checks,30s wall,
+10M instruction and ABI guards remain unchanged. This pass does not by itself
+isolate why prior runs stopped in CRC loading. All jobs terminal; guests closed.
+Earlier full/routing attempts stopped at the unchanged native-call guard in CRC
+loading (11FA57xx); earlier output did not separate wall vs instruction limit.
+No guard or timeout was enlarged.
+Final code graph refreshed: 2705nodes/6988edges (ignored). Serialized retry
+of full audit passed84. Do not attribute candidate02's84 to current source.
+
+NEXT: visually validate startup-blocked/close-error states and longest title
+fit (Composition/Information plus Restart to save), then continue original
+highlights, portrait/rotation, EVF/AF/lens lifecycle and real statistics producer.
+Current live scope covers saved/retry titles and three menus, not every status
+pixel or all camera lifecycle states. Header dirty-node readiness is not yet
+sampled separately from14 row nodes. Native Info mirror remains unresolved;
+physical SD/controller/cache/shutdown/recovery gaps remain. No flash clearance.
+
 ## Save-state presentation implementation, idle-refresh gap - November 20, 2026
 
 Previous01b6668 is PROGRESS: accepted two-boot persistence harness checkpoint.

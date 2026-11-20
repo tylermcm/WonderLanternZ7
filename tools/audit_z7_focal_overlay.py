@@ -12,6 +12,7 @@ from pathlib import Path
 import struct
 import time
 
+from unicorn import UC_QUERY_TIMEOUT
 from unicorn.arm_const import UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3, UC_ARM_REG_SP, UC_ARM_REG_LR, UC_ARM_REG_PC
 from audit_splash_image import ARGUMENTS, SAVED, STACK, STOP
 from audit_z7_histogram_component import HistogramFixture
@@ -51,7 +52,7 @@ class FocalOverlayFixture(HistogramFixture):
         u.emu_start(address | 1, STOP, timeout=30000000, count=10000000)
         self.longest_call_seconds = max(self.longest_call_seconds, time.monotonic() - started)
         if u.reg_read(UC_ARM_REG_PC) != STOP or u.reg_read(UC_ARM_REG_SP) != STACK:
-            raise ValueError(f'Incomplete native call:pc={u.reg_read(UC_ARM_REG_PC):08x},sp={u.reg_read(UC_ARM_REG_SP):08x}')
+            raise ValueError(f'Incomplete native call:pc={u.reg_read(UC_ARM_REG_PC):08x},sp={u.reg_read(UC_ARM_REG_SP):08x},elapsed={time.monotonic() - started:.3f}s,wall_timeout={bool(u.query(UC_QUERY_TIMEOUT))}')
         if any(u.reg_read(reg) != value for reg, value in guards.items()):
             raise ValueError('Native call changed a callee-saved register')
         return u.reg_read(UC_ARM_REG_R0)

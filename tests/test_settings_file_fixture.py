@@ -45,6 +45,21 @@ class SettingsFileFixtureTests(unittest.TestCase):
         self.assertEqual(self.fixture.position, 800)
         self.assertEqual(self.fixture.packet, bytes(i % 251 for i in range(800)))
 
+    def test_explicit_create_failure_preserves_both_slots_and_allocates_no_handle(self):
+        self.loaded(); self.path_for(0)
+        self.fixture.files = {0: b'valid-old', 1: b'valid-peer'}
+        self.fixture.fail_create = True
+        self.assertEqual(self.request(13, **{'4': self.path}), 0x80000002)
+        self.assertEqual(self.fixture.files, {0: b'valid-old', 1: b'valid-peer'})
+        self.assertFalse(self.fixture.handles)
+        self.assertFalse(self.fixture.issued)
+        self.assertEqual(self.fixture.events[-1]['injected_error'], '0x80000002')
+        self.fixture.fail_create = False
+        fd = self.request(13, **{'4': self.path})
+        self.assertIn(fd, self.fixture.handles)
+        self.assertEqual(self.fixture.files, {0: b'', 1: b'valid-peer'})
+        self.request(6, **{'7': fd})
+
     def test_exact_write_read_and_close_preserve_other_slot_and_padding(self):
         self.loaded()
         self.fixture.files[1] = b'old-peer'

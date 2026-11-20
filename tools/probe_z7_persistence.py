@@ -26,6 +26,7 @@ def main():
     p.add_argument('--module', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--seed-directory', type=Path, help='Inspect one fresh guest using prior private slot files; not a two-boot acceptance run')
+    p.add_argument('--save-error', action='store_true', help='Supply an owned create error, verify live retry status, then allow retry and restart')
     a = p.parse_args()
     output = a.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
@@ -139,7 +140,12 @@ def main():
                 current = pages()[-1]['row']
                 if current == target: return
                 following = current + (1 if current < target else -1)
-                key('down' if current < target else 'up', lambda: on_page(page) and pages()[-1]['row'] == following)
+                # Stock pages may skip unavailable rows. Owned settings rows remain
+                # an exact one-row assertion; record and follow native stock focus.
+                key('down' if current < target else 'up', lambda: on_page(page) and
+                    (pages()[-1]['row'] == following if page == 0 else pages()[-1]['row'] != current))
+                phase.setdefault('row_navigation', []).append(dict(page=page, previous=current, observed=pages()[-1]['row'], target=target))
+                save()
             raise RuntimeError('Native row limit exceeded')
 
         def widgets():
@@ -163,7 +169,19 @@ def main():
                 rows.append(nodes)
             return rows, pending
 
-        def capture(label):
+        def header_observation():
+            if 'sm_title' not in symbols: return None
+            length, pointer, kind = struct.unpack('<3I', camera.remote.memory(0xa2019e78 + 230 * 12, 12))
+            if not 0 < length < 50 or kind: raise RuntimeError('Invalid native title record')
+            return dict(title=camera.remote.memory(pointer, length).decode('ascii'),
+                menu_state=camera.remote.memory(0xa182ed2c, 1).hex(),
+                menu_dispatch=camera.remote.memory(0xa182ed34, 4).hex(),
+                event_flag=camera.remote.memory(0xa181f910, 4).hex(),
+                diagnostics={key: word(key) for key in ('sm_save_status', 'persistence_state', 'z7_menu_status_events', 'z7_menu_status_paints', 'z7_menu_status_notifications') if key in symbols})
+
+        def capture(label, expected_suffix=None):
+            if expected_suffix is None:
+                expected_suffix = ': Defaults' if name == 'first' and label == 'root-initial' else ': Saved'
             target = result.get('reference_backgrounds', {}).get(label) if name == 'restart' else None
             attempts = []
             for attempt in range(30):
@@ -182,7 +200,13 @@ def main():
                 # Preserve every ready native candidate; select a matching native
                 # pulse phase, never a tolerance, mask or rewritten screenshot.
                 (directory / (label + '-candidate' + str(attempt) + '.png')).write_bytes(camera.png)
+                header = header_observation()
+                observation['header'] = header
                 save()
+                # Worker publication and queued menu paint are asynchronous.
+                # Preserve stale candidates and wait within the same bounded
+                # paint window; never navigate or rewrite the title to settle it.
+                if header and not header['title'].endswith(expected_suffix): continue
                 if target is not None and color != target: continue
                 break
             else:
@@ -190,13 +214,9 @@ def main():
             (directory / (label + '.png')).write_bytes(camera.png)
             if name == 'first' and label.endswith('-comparison'):
                 result.setdefault('reference_backgrounds', {})[label] = color
-            title = None
-            if 'sm_title' in symbols:
-                record = camera.remote.memory(0xa2019e78 + 230 * 12, 12)
-                length, pointer, kind = struct.unpack('<3I', record)
-                if not 0 < length < 50 or kind: raise RuntimeError('Invalid native title record')
-                title = camera.remote.memory(pointer, length).decode('ascii')
-                expected_suffix = ' - Defaults' if name == 'first' and label == 'root-initial' else ' - Saved'
+            title = header['title'] if header else None
+            if header:
+                phase.setdefault('header_observations', {})[label] = header
                 check(name + '-' + label + '-native-header-status-current', title.endswith(expected_suffix))
             phase['steps'].append(dict(name=label, title=title, sha256=hashlib.sha256(camera.png).hexdigest(), pages=pages(), model=settings(), widget_rows=widget_rows,
                                        native_selection_rgb=color, revision=word('z7_settings_revision'), saved_revision=word('z7_persistence_saved_revision'),
@@ -233,7 +253,22 @@ def main():
             if name == 'first':
                 row(0, 0); key('right', lambda: settings()[0] == 1); wait_saved()
                 capture('master-saved')
-                row(0, 6); key('right', lambda: settings()[0] == 3); wait_saved()
+                row(0, 6)
+                if a.save_error:
+                    original_files = dict(fixture.files)
+                    fixture.fail_create = True
+                key('right', lambda: settings()[0] == 3)
+                if a.save_error:
+                    for _ in range(40):
+                        wait_native(500)
+                        if word('z7_persistence_errors'): break
+                    else: raise RuntimeError('Injected create error was not observed by worker')
+                    check('save-failure-retains-dirty-revision-and-original-record',
+                        fixture.files == original_files and not fixture.handles and
+                        word('z7_settings_revision') != word('z7_persistence_saved_revision'))
+                    capture('save-retry', ': Save retry')
+                    fixture.fail_create = False
+                wait_saved()
                 check('two-completed-native-menu-saves-create-both-journal-slots', set(fixture.files) == {0, 1} and all(valid(data) for data in fixture.files.values()))
             row(0, 1); key('right', lambda: word('z7_settings_view') == 1)
             row(0, 2)

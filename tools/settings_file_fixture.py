@@ -23,6 +23,7 @@ class SettingsFileFixture:
         self.handles, self.issued = {}, set()
         self.next_fd = FIRST_FD
         self.finished = False
+        self.fail_create = False  # Explicit diagnostic error; never touches another path.
 
     @property
     def packet(self): return self.module.packet
@@ -64,6 +65,9 @@ class SettingsFileFixture:
                 raise AssertionError('Unexpected native settings create mode')
             event = dict(component='settings', operation='open' if operation == 5 else 'create', slot=slot)
             self.events.append(event)
+            if operation == 13 and self.fail_create:
+                event['injected_error'] = '0x80000002'
+                return 0x80000002
             if operation == 5 and slot not in self.files:
                 event['missing'] = True
                 return NOT_FOUND
