@@ -464,6 +464,30 @@ EVF feature integration, warning pixels and physical lifecycle remain incomplete
 
 Source evidence: `evidence/20261120-native-highlight-parameters.json`.
 
+## Deferred owned-packet conversion
+
+The resident request helper now offers `submit_deferred` and `convert_deferred`.
+Submission clears and queues its separate104-byte payload without touching the
+converter/palette. Only a current claimed consumer may fill its100 parameters
+before original dispatch. Descriptor/callback/context integrity, epoch, state,
+completion and acknowledgement are checked first. Consumed/completed payloads
+cannot be converted again. Stale claims enter an explicit CANCELLING state;
+passing their old epoch cannot revive conversion. Original cancellation completion
+still retires them without a false application acknowledgement. The earlier
+preconverted research entry remains compatible, but is not the intended worker path.
+
+The focused owner audit now passes107 checks, retaining its previous59 lifetime
+checks and adding deferred enabled/disabled requests for both logical outputs,
+palette changes AFTER queueing, zero padding/ack, pre-claim/post-completion guards,
+stale cancellation and attempted revival. Original conversion/native dispatch/
+copy/ack/completion execute; kernel queue, palette state and explicit consumer
+bracketing are supplied. This helper is not yet wired into the full profile's
+worker/consumer, and does not implement parameter lease/restoration or frame gates.
+Existing full profile/host bytes are unaffected; only isolated diagnostic users
+currently include this header. Private final result:
+`.private/evidence/20261120-highlight-request-deferred-02/result.json`.
+Source evidence: `evidence/20261120-owned-highlight-deferred.json`.
+
 ## Remaining implementation work
 
 Complete parameter ownership, owned asynchronous requests and conditional

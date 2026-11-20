@@ -1,5 +1,48 @@
 # Laptop handoff — October 20, 2026
 
+## Deferred owned request helper - November 20, 2026
+
+Previousc9242e5 was PROGRESS (API52 incoming parameter path). This turn adapts
+the resident owner for consumer-time conversion. Full goal ACTIVE. User asked
+status: native parameter conversion is implemented/tested, but owned submission,
+restoration, frame gating/pixels and broader lifecycle remain; no flash advised.
+No camera/card/stage/flash/push. Existing full profile/host bytes unchanged.
+
+highlight_request.h adds submit_deferred (queue zero104-byte source, no palette
+access/conversion) and convert_deferred (only current claimed consumer, intact
+descriptor/callback/source/context, uncompleted/ack0). Original native converter
+runs at consumption with then-current palette. Legacy preconverted research
+entry retained. Only examples/highlight_request_probe.c and highlight_host_probe.c
+include helper currently; full parameter profile still DOES NOT submit owned work.
+
+Added Z7_HR_CANCELLING=5 (old enum values unchanged). A stale begin() transitions
+to cancellation, and convert cannot revive it even when passed its OLD epoch.
+Native completion/end accept cancellation and retire it with ack0. Completion
+still does not permit reuse before native dispatcher AND submitter return; lost
+requests remain parked. All old59 lifetime checks retained.
+
+.private/evidence/20261120-highlight-request-deferred-02/result.json PASS107.
+Probe SHAa95e400a31877a1921f40c0b693c1b464178534beeaf4431989c75ca34e26b9a.
+Enabled/disabled both outputs1/4, changed palette AFTER queueing, zero source,
+before-claim/after-completion guards, wrong epoch and cancellation revival,
+native copy/ack/completion/reap tested. Kernel queue/palette input/explicit
+consumer scheduling supplied. Final current header/probe/audit hashes recorded.
+Source evidence:evidence/20261120-owned-highlight-deferred.json. Isolated helper
+change, not a full profile/persistence regression rerun. No warning pixels.
+Final probe/source hashes verified current; graph refreshed2931nodes/7648edges,
+generated output ignored. All jobs terminal; source-only manifest refreshed.
+
+NEXT: wire deferred helper into full API52 profile with parameter lease/baseline,
+native generation+settings/context epoch; convert after owned claim at dispatch.
+Capture baseline before incoming eligible native rewrite (disabled input only
+defines enableword), preserve newer native updates even if bytes match, conditional
+restore/disable and cancellation. Source/frame permission remains native until
+matched applied ownership AND immediate pending-frame cleanup are implemented.
+See prior chapter for final API52host03/profile03 fingerprints, read-only native
+notices, workspace320 reservation, regression scopes and deferred-copy danger.
+Remaining full goal unchanged: style/threshold prefs, EVF, portrait/rotation,
+Info mirror, real histogram producer, lifecycle, installation/recovery. No flash.
+
 ## Native photo-parameter payload conversion API52 - November 20, 2026
 
 Previous60c5041 was PROGRESS (full-profile epoch). This turn implements incoming

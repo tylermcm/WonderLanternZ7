@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "owned_request_checks": 107,
+  "previous_lifetime_checks_retained": 59,
+  "deferred_submission_queues_zero104_byte_payload_without_conversion": true,
+  "conversion_requires_current_claimed_epoch_and_intact_descriptor": true,
+  "conversion_uses_palette_current_at_consumption": true,
+  "enabled_and_disabled_both_logical_outputs_verified": true,
+  "completion_ack_blocks_further_conversion": true,
+  "cancelled_claim_cannot_be_revived_with_old_epoch": true,
+  "native_copy_ack_completion_and_existing_lifetime_guards_execute": true,
+  "kernel_queue_palette_and_consumer_bracketing_supplied": true,
+  "helper_probe_sha256": "a95e400a31877a1921f40c0b693c1b464178534beeaf4431989c75ca34e26b9a",
+  "full_profile_owned_submission_or_restoration_connected": false,
+  "existing_full_profiles_or_host_bytes_changed": false,
+  "warning_pixels_or_physical_lifecycle_verified": false,
+  "camera_card_access_staging_flash_or_push": false,
+  "full_goal_complete": false
+}

@@ -176,8 +176,52 @@ def audit(raw, packet, metadata):
     check('early-completion-reaps-only-after-both-native-calls-return', f.call_owner('reap') == 2)
     check('invalid-output-and-null-input-do-not-submit', f.call_owner('submit', GUI, 2, 18) == 0 and
           f.call_owner('submit', 0, 1, 18) == 0 and len(f.queued) == 1)
+    del f
+    gc.collect()
+    for output, selector in ((1, 0), (4, 1)):
+        for enabled in (0, 1):
+            f = OwnerFixture(raw, packet, metadata, selector)
+            f.u.mem_write(GUI, request(output, enabled, 213))
+            label = f'deferred-output{output}-enabled{enabled}'
+            check(label + '-queues-zero-payload-without-converter-or-palette-access',
+                  f.call_owner('defer', output, 17) == 1 and len(f.queued) == 1 and
+                  bytes(f.u.mem_read(f.payload, 104)) == bytes(104) and not f.palette_gets)
+            check(label + '-cannot-convert-unclaimed-queued-storage',
+                  f.call_owner('convert', GUI, 17) == 0 and bytes(f.u.mem_read(f.payload, 104)) == bytes(104))
+            check(label + '-consumer-claims-current-request', f.call_owner('begin', f.owner, 17) == 1)
+            # Palette changes AFTER queueing. Conversion must use this new
+            # native pointer/content, not a worker-time converted packet.
+            f.write(0xa1f18fac, MEM + 0x9000)
+            f.u.mem_write(MEM + 0x9000, struct.pack('<256I', *[((255 - i) << 24) | i for i in range(256)]))
+            f.u.mem_write(MEM + 0xa000, bytes(100))
+            f.call(0x1034fe22, MEM + 0xa000, GUI, output)
+            expected = bytes(f.u.mem_read(MEM + 0xa000, 100))
+            check(label + '-claimed-conversion-uses-current-native-palette-and-zero-padding',
+                  f.call_owner('convert', GUI, 17) == 1 and bytes(f.u.mem_read(f.payload, 100)) == expected and f.read(f.payload + 100) == 0)
+            check(label + '-stale-epoch-cannot-reconvert-claimed-storage',
+                  f.call_owner('convert', GUI, 18) == 0 and bytes(f.u.mem_read(f.payload, 100)) == expected)
+            check(label + '-original-consumer-copies-and-completes-converted-owned-payload',
+                  f.call(0x10239840, f.owner) == 1 and f.read(f.payload + 100) == 1 and
+                  bytes(f.u.mem_read(STATE + 0x28, 100)) == expected)
+            completed = bytes(f.u.mem_read(f.payload, 104))
+            check(label + '-completed-payload-is-no-longer-convertible',
+                  f.call_owner('convert', GUI, 17) == 0 and bytes(f.u.mem_read(f.payload, 104)) == completed)
+            f.call_owner('end')
+            check(label + '-reaps-only-after-native-return', f.call_owner('reap') == 2)
+            check(label + '-next-deferred-request-clears-prior-ack',
+                  f.call_owner('defer', output, 18) == 1 and bytes(f.u.mem_read(f.payload, 104)) == bytes(104))
+            check(label + '-changed-epoch-cancels-before-conversion',
+                  f.call_owner('begin', f.owner, 19) == 2 and f.call_owner('convert', GUI, 19) == 0)
+            check(label + '-cancelled-claim-cannot-be-revived-with-its-old-epoch',
+                  f.call_owner('convert', GUI, 18) == 0 and bytes(f.u.mem_read(f.payload, 104)) == bytes(104))
+            f.call(COMPLETION, f.owner, 0)
+            f.call_owner('end')
+            check(label + '-native-cancellation-reaps-without-false-application', f.call_owner('reap') == 1)
+            del f
+            gc.collect()
     return dict(passed=True, checks=checks, stock_main_sha256=STOCK_SHA,
                 compiled_owner_native_converter_builder_submit_consumer_completion_execute=True,
+                deferred_submission_and_claimed_dispatch_time_conversion_verified=True,
                 kernel_queue_palette_service_and_consumer_bracketing_supplied=True,
                 queue_failure_semantics_proven=False, lost_request_timeout_release=False,
                 hook_installed=False, preference_connected=False, actual_warning_pixels=False,
