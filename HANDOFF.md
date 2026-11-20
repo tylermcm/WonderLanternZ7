@@ -1,5 +1,77 @@
 # Laptop handoff — October 20, 2026
 
+## Two-slot settings journal policy - November20,2026
+
+Previous5a71983 turn was PROGRESS (resident worker). New independent MIT
+plugins/settings_storage.c/.h implements a two-slot journal behind an explicit
+read/write transport. No native file adapter, filenames, worker registration or
+menu synchronization added yet. Existing full display module05/host09 unchanged.
+Z7J1 records are80bytes: magic/version/generation/outerCRC plus EXACT64byteZ7C1.
+Both CRCs and all original model/target validation apply. Loader picks newest
+modular generation; identical ties okay, conflicting ties/half-range ambiguous
+and block publication/save. Missing/bad-length/invalid records differ from I/O
+errors. Both known unusable slots -> defaults without writes. A valid peer may
+load despite another I/O error, but any I/O error blocks save. No valid peer +
+I/O error preserves caller settings. Save stages coherent payload before any I/O,
+rescans both slots, skips unchanged, writes ONLY other slot, readback checks80
+exact bytes before success. Old valid slot retained under one-slot transport
+contract. An uncertain failed close may have committed full newer record; next
+scan recognizes it. No assumed rename/replace atomicity or power-loss guarantee.
+
+Storage01 compiled reproducibly SHAab1f6986...c94f944 and PASSED1680 checks.
+Extended interface distinguishes known bad length IO_INVALID3 from I/O error2
+and unknown statuses. Current02 PASS2020 on actual compiled ARM, no boundary
+weakening. Added previous-valid-target torn replacements and pointer guards.
+Current03 header-comment rebuild EXACT SAME BYTES as tested02; current8 input
+source hashes verified.2440bytes/image2368/BSS376/API12; SHA
+2b6daaa17daf46fe1a3eb79e62fd631c8ae6be9f14f67f398c390611f7cc779a.
+.private/builds/20261120-settings-storage-03 is current diagnostic ONLY; it
+registers NO callbacks and has supplied in-memory files, not native card I/O.
+Audit02 at.private/evidence/20261120-settings-storage-02.json (job34071 terminal)
+checks640 single-bit corruptions, sealed fields/lengths, generation ambiguity/
+wrap, all81 cut points with either slot active, reported success/error, partial
+replacement of older valid slot, uncertain commit/rescan, readback failures,
+unknown statuses, no-op saves, mutation during I/O and null/overlap arguments.
+All caller stack/callee-saved guards checked by fixture. Root55/no skips PASS;
+py_compile PASS. Source evidence20261120-settings-storage.json. Job93206 was
+old01 terminalPASS1680; graph41970 terminal2550nodes/6556edges. Final graph79560
+TERMINAL2551nodes/6557edges after final code/comment edits; generated ignored.
+All jobs terminal. No camera/QEMU job is live.
+
+Pinned upstream sdk/config.h was retrieved successfully using GitHub fetch at
+commit50a22b24c50619cffa646dac386e8334659f475a, now saved PRIVATE beneath
+.private/research/z7ii-50a22b2/sdk/config.h with MIT notice intact. It directly
+rewrites its file (no two-slot journal); no code/format/Z7II addresses copied.
+Earlier web raw/blob requests failed but connector succeeded, so do not treat
+this file as still unavailable. No network source execution.
+
+NEXT: bind original-Z7 native IO to the four-state transport and coordinate
+startup load/menu snapshots/worker debounce; no storage I/O from paint/menu.
+Require confirmed missing-file status, not generic open-unavailable. IO_OK means
+exact80 bytes, IO_INVALID3 means known wrong-length record, ABSENT1 means confirmed
+absence, ERROR2/unknown means read unavailable. Short writes and close failures
+must fail and retain unknown descriptor state; no stale-handle retry. Proposed
+slot filenames not bound in code yet. Inspect native filesystem/cache contracts
+below, then implement native adapter+instruction failure audit before live model.
+
+STATIC ORIGINAL leads (NOT yet executed write/rename/cache audits):
+1027C0DA create(path,mode) ->request0D ->handler1027BBE8 ->1023F146 ->10277F78
+with flags0301;1027C048 write(fd,buffer,count,actual) ->request09 ->1027BB96
+->1023F0CC ->1027817A.1027BFCC close(fd)->request06->1027BB4C->1023F086.
+1027C018 read()->request08->1027BB7C->1023F09A.1027BFA2 open(path,flags,mode)
+->request05->1027BB46->1027C616. Native task callback1027BAC0 uses jump table
+1027BADA+2*table[opcode].1027C102 two-path request0E ->1027BC0E ->1023F150
+->10278A98 rename lead; atomicity unproven and two-slot journal doesn't need it.
+1027BFEE request07 is SEEK (64-bit offset in R2/R3), NOT flush; don't use as flush.
+1027C4B8 request21 goes1027BDC8->1027B964.1027B964 is a conditional volume
+maintenance path, NOT established durable flush. Original native cache-clean
+101E9F38 loops MCRc7,c10,1 and adds extra64bytes (pad aligned DMA arrays!),
+invalidate101E9F76 as existing loader. Original write input/output and real card
+cache effects remain unverified. Keep native contracts separate from policy.
+
+Mirror remains unresolved; highlights/portrait/lifecycle/realstats stay in full
+scope. No camera/card/staging/flash/push. Full goal remains active.
+
 ## Resident task callback for persistence - November20,2026
 
 Saved prior native-texture work source-only in58639ac. Continued building beyond

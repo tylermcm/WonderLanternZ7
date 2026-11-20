@@ -66,6 +66,60 @@ between model and wire buffers is supported; callers still own their actual
 buffer allocation/capacity and model alignment. CRC detects corruption and is
 not authentication. A native module is trusted executable code.
 
+## Two-slot storage transaction
+
+November20,2026: `plugins/settings_storage.c` now implements the independent
+storage policy behind a caller-supplied transport. It does not call a native
+camera filesystem or register the resident-worker callback yet. The caller must
+serialize slot operations and supply a coherent menu-settings snapshot. Native
+file/cache bindings, startup loading and shared-state coordination remain open.
+
+Two slots each hold an80-byte little-endian `Z7J1` record. Offsets0/4 are magic
+`Z7J1` and version1; offset8 is a wrapping32-bit generation; offset12 is IEEE
+CRC32 of all80 bytes with that word zero. Offset16 contains the EXACT unchanged
+64-byte `Z7C1` payload above, including its own target and checksum. The outer
+checksum protects the generation as well as the settings. This is not a Z7II
+record or a change to the standalone64-byte serializer. Filenames are not bound.
+
+Loading checks both records and chooses the newer valid generation by modular
+serial order. Identical tied records are accepted; conflicting tied records or
+an exact half-range generation difference are ambiguous and block publication
+and saves. Invalid checksums/fields and confirmed bad lengths are unusable slots.
+Two confirmed absent/unusable slots yield defaults without writing. A read error
+is distinct from confirmed absence: a readable valid peer can still load, but
+any slot I/O error blocks saving. Without a valid peer, I/O errors preserve the
+caller's current output rather than publishing defaults.
+
+Saving stages the64-byte settings snapshot BEFORE transport callbacks, rescans
+both slots and skips an unchanged record. It writes only the other slot, then
+reads the complete record back and checks byte identity before reporting saved.
+The previous valid slot is never the write target. Failed writes, short writes,
+close failures and failed verification leave the prior valid slot available
+under the transport's one-slot ownership contract. A fully written record with
+an uncertain close result may be selected at restart; the next save rescans and
+recognizes it without rewriting. This provides a bounded recovery policy, not
+physical power-loss durability: real filesystems/cards can fail beyond these
+modeled slot operations. No rename/replace semantics are assumed by the policy.
+
+Private `settings-storage02` builds reproducibly:2440bytes, image2368/BSS376,
+SHA `2b6daaa17daf46fe1a3eb79e62fd631c8ae6be9f14f67f398c390611f7cc779a`.
+Its ARM diagnostic passes2020 checks against independent Python bytes/CRC/serial
+expectations. Coverage includes640 single-bit corruptions, resealed invalid
+fields, record lengths, overlaps/null arguments, generation wrap/ambiguity,
+all81 write cut points with either slot active and success/error returns,
+partially replacing an older valid slot, read/verification failures, uncertain
+commits, unknown I/O statuses, write-free unchanged settings and a snapshot
+changed by a supplied transport callback. Loader/kernel/filesystem services are
+supplied to load this diagnostic; journal transport itself is in-memory.
+These are not real-card or menu/worker integration checks. A header-comment-only
+rebuild03 has the EXACT same package bytes and verifies all8 current source-input
+hashes; existing display/worker profiles were not changed.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant settings-storage-probe --output .private/builds/settings-storage-new
+.venv\Scripts\python.exe tools/audit_z7_settings_storage.py --build .private/builds/20261120-display-host-09 --module .private/builds/settings-storage-new --output .private/evidence/settings-storage-new.json
+```
+
 ## Compiled validation
 
 Private settings-probe02 is1,344 bytes, image1,280, BSS172, SHA

@@ -49,6 +49,14 @@ native Z7II interfaces are copied. The model itself contains no native UI or
 card I/O. Independent native menu adapters are described in `DISPLAY_SETTINGS.md`;
 card persistence remains open.
 
+`plugins/settings_storage.c` and its header are independent local MIT work.
+Its two-slot Z7J1 journal wraps the unchanged independent Z7C1 settings payload;
+it does not copy the pinned Z7II configuration format or native addresses.
+The pinned upstream `sdk/config.h` (copyright (c)2026 JKWTCN, MIT) was inspected
+for comparison. Its direct-file saving mechanism is not embedded here. The
+current transport diagnostic is in-memory; original-Z7 file I/O, shared-state
+coordination and physical durability remain separate work.
+
 `examples/settings_menu_policy.h` is independent local MIT native-interface work
 based on original-Z7 instruction/GUI observations. Native contracts were also
 cross-referenced against this lab's separately licensed sound-menu component;
