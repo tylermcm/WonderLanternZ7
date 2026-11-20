@@ -1,5 +1,43 @@
 # Laptop handoff — October 20, 2026
 
+## Native readout computation hook — November 19, 2026
+
+Read the final DISPLAY_SETTINGS.md section and evidence/20261119-native-readout-update.json.
+Optional display-readouts-probe05 SHA0aa8f050419560d030e907fc1dc14aa72893b4ccda8a2e28e6a9aa9935aa6846,
+10828bytes/image10560/BSS3832, requires additive24-byte API. New display-host04
+MAIN SHAf5b991a726a2f3e732b98488b66db14996a84fd460dc245c1dbf3c696fbd1858,
+33056916bytes/host3129. BaseAPI20, display-hooks32 and state256 retain layouts.
+
+New original1036B10C prefix callback runs before snapshot comparison/computation.
+Readout policy changes only six owned LCD mask words for shutter/aperture/ISO;
+original10367C5A invalidation then lets native computation/layout/painting run.
+Do NOT move it back to sm_before paint or directly dispatch groups/blanket-dirty
+HUD: retained private late-phase experiments lost HUD/restoration or drew stale
+text and unrelated OK/Exit footer. First new bridge clobberedr12; prefix differential
+caught it and corrected local literal thunk preserves native input/flags/stack.
+
+Independent original mask audit30240matrix+7invariants derives0x909, not upstream
+0x99 (which touches Z7 movie bits). Original formatter/string-copy8cases identify
+widgets10/11/15 and shared shutter warnings. Policy leaves every already-present
+nonzero format native; same-update warning transitions/pixels remain OPEN.
+
+120readout checks including old20-byte-host rejection before native stores;
+24update registration/prefix,99loader,316existing display-host checks pass.
+Root39tests pass none skipped. Ordinary settings regression02 remains identical
+SHA3ae795ed... New QEMU readouts-live05 on corrected host04 passes13checks/3frames:
+all3normalgroups qualified, hide via masks, outside strip unchanged, disable exact
+full RGB/mask restoration. Frames inspected; diff only(193,611)-(838,679) at1024x682.
+Explicit native standard-page setter and diagnostic preset2/compiled model setter;
+no raw mask/visibility fixture writes. Earlier host03 live04 also passed13/3.
+No actual DISP routing, warning-transition, every-output/lifecycle or hardware proof.
+
+Graph refreshed1953nodes/4914edges. All current guests/jobs terminal, no QEMU
+process remains. Next: validate warning transition timing before broader integration,
+then wire validated native DISP/preset selection and remaining information groups.
+Persistence, battery real-telemetry/lifecycle readiness and physical-card/cache/wake
+plus exact-candidate installation/recovery remain unfinished. No card/camera access,
+staging, flash or push occurred. Keep goal active; this is a scoped milestone.
+
 ## Immediate native menu paint/focus — November 19, 2026
 
 Latest optional display-settings entry06 SHA

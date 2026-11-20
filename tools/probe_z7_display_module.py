@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
@@ -79,7 +79,7 @@ def main():
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
         orientation_fixture=0, keep_awake=True, photo_liveview=True)
     camera = DisplayCamera(0, profile='menu' if args.view == 'menu' else 'shooting', **options)
-    if args.view == 'settings-battery':
+    if args.view in ('settings-battery', 'readouts'):
         # Retain the base fixture's native StartLV settling delay before MENU.
         # Acknowledgement alone can precede the first completed native draw.
         camera.native_display_wait_ms = 5000
@@ -87,7 +87,7 @@ def main():
         main_sha256=host['main_payload_sha256'], modeled_module_file=True, camera_access=False, physical_card=False,
         supplied_histogram_context=args.histogram_context_fixture)
     result['probe_script_sha256'] = hashlib.sha256(probe_source).hexdigest()
-    if args.view == 'settings-battery': result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
+    if args.view in ('settings-battery', 'readouts'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
     def save():
         (output / 'result.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     def check(name, passed):
@@ -240,7 +240,58 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'settings-battery':
+        if args.view == 'readouts':
+            if module['kind'] != 'original-Z7-display-readouts-diagnostic': raise ValueError('Readout diagnostic required')
+            def readout_word(name): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_readout_' + name], 4), 'little')
+            descriptors = [int.from_bytes(camera.remote.memory(0x1064d610 + i * 4, 4), 'little') for i in (10, 11, 15)]
+            controls = [int.from_bytes(camera.remote.memory(p + 44, 4), 'little') for p in descriptors]
+            def readout_state():
+                return [dict(widget=widget, format=camera.remote.memory(0xa18237b8 + fmt, 1).hex(),
+                    visible=[camera.remote.memory(control + row * 48 + 1, 1).hex()
+                        for row in range(camera.remote.memory(p + 40, 1)[0])],
+                    masks=camera.remote.memory(p + 4, 36).hex())
+                    for widget, fmt, p, control in zip((10, 11, 15), (0, 1, 5), descriptors, controls)]
+            native('Select original native standard photo page for readout diagnostic', 0x103673de, [0])
+            capture('readouts-native-baseline')
+            baseline_rgb = Image.open(io.BytesIO(camera.png)).convert('RGB')
+            initial = readout_state(); original_masks = [row['masks'] for row in initial]
+            result['readout_fixture'] = dict(explicit_native_standard_page=True, preset_selection_diagnostic=True,
+                compiled_model_setter=True, native_menu_callback_outside_menu=False, direct_mask_or_visibility_writes=False, initial=initial)
+            check('readouts-default-master-disabled', not readout_word('active'))
+            camera.remote.write_memory(base + module['symbols']['z7_readout_preset'], struct.pack('<I', 2))
+            native('Compiled validated settings master for readout diagnostic', base + module['symbols']['z7_settings_flag'],
+                [base + module['symbols']['z7_menu_settings'], 0, 1])
+            for _ in range(30):
+                advance(.3)
+                if readout_word('active') and all(row['format'] != '00' or not any(v == '01' for v in row['visible']) for row in readout_state()): break
+            capture('readouts-composition-filter')
+            filtered_rgb = Image.open(io.BytesIO(camera.png)).convert('RGB')
+            filtered = readout_state(); result['readout_fixture']['filtered'] = filtered
+            eligible = [i for i, row in enumerate(initial) if row['format'] == '00' and any(v == '01' for v in row['visible'])]
+            check('readout-baseline-has-ordinary-visible-groups', bool(eligible))
+            check('compiled-settings-master-applies-owned-readout-policy', readout_word('active') == 1 and readout_word('changes') > 0)
+            check('native-updaters-hide-ordinary-readout-controls', all(not any(v == '01' for v in filtered[i]['visible']) for i in eligible))
+            check('readout-frame-dimensions-stable', filtered_rgb.size == baseline_rgb.size)
+            width, height = baseline_rgb.size
+            left, top, right = round(116 * width / 720), round(420 * height / 480), round(590 * width / 720)
+            protected = ((0, 0, width, top), (0, top, left, height), (right, top, width, height))
+            result['readout_fixture']['pixel_scope'] = dict(native_readout_strip=[116, 420, 590, 480],
+                scaled_strip=[left, top, right, height])
+            check('readout-filter-preserves-all-pixels-outside-bottom-readout-strip', all(
+                baseline_rgb.crop(box).tobytes() == filtered_rgb.crop(box).tobytes() for box in protected))
+            check('readout-filter-changes-target-strip-pixels', baseline_rgb.crop((left, top, right, height)).tobytes() !=
+                filtered_rgb.crop((left, top, right, height)).tobytes())
+            native('Compiled validated settings master disable for readout restoration', base + module['symbols']['z7_settings_flag'],
+                [base + module['symbols']['z7_menu_settings'], 0, 0])
+            for _ in range(30):
+                advance(.3)
+                if not readout_word('active') and all(any(v == '01' for v in row['visible']) for i, row in enumerate(readout_state()) if i in eligible): break
+            capture('readouts-native-restored')
+            restored = readout_state(); result['readout_fixture']['restored'] = restored
+            check('readout-disable-restores-all-six-mask-words-exactly', [row['masks'] for row in restored] == original_masks)
+            check('native-updaters-restore-ordinary-readout-controls', all(any(v == '01' for v in restored[i]['visible']) for i in eligible))
+            check('readout-disable-restores-complete-rgb-frame', Image.open(io.BytesIO(camera.png)).convert('RGB').tobytes() == baseline_rgb.tobytes())
+        elif args.view == 'settings-battery':
             if module['kind'] != 'original-Z7-display-settings-module': raise ValueError('Native settings-entry module required')
             def battery_word(name): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_battery_' + name], 4), 'little')
             def battery_visible():

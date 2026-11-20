@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 readout filtering and additive native computation API; optional diagnostic only",
+  "upstream": {
+    "repository": "https://github.com/JKWTCN/z7ii-extensions",
+    "commit": "50a22b24c50619cffa646dac386e8334659f475a",
+    "original_z7_bindings_independently_derived": true
+  },
+  "host": {
+    "main_sha256": "f5b991a726a2f3e732b98488b66db14996a84fd460dc245c1dbf3c696fbd1858",
+    "main_bytes": 33056916,
+    "host_bytes": 3129,
+    "api_bytes": 24,
+    "base_api_bytes_unchanged": 20,
+    "display_hooks_bytes_unchanged": 32,
+    "state_bytes_unchanged": 256,
+    "reproducible": true
+  },
+  "module": {
+    "sha256": "0aa8f050419560d030e907fc1dc14aa72893b4ccda8a2e28e6a9aa9935aa6846",
+    "file_bytes": 10828,
+    "image_bytes": 10560,
+    "bss_bytes": 3832,
+    "api_minimum_bytes": 24,
+    "reproducible": true
+  },
+  "ordinary_settings_package": {
+    "byte_identical": true,
+    "sha256": "3ae795ed00a9ae165852ddc5d2a6d34f1ab830a9350047552aaa28d6f850298a"
+  },
+  "native_mask_audit": {
+    "matrix_cases": 30240,
+    "additional_invariants": 7,
+    "photo_page_mask": "0x909",
+    "movie_bits_preserved": true,
+    "original_snapshot_invalidator_executes": true,
+    "supplied_snapshot_and_control_data": true
+  },
+  "native_identity_audit": {
+    "cases": 8,
+    "widgets": [
+      10,
+      11,
+      15
+    ],
+    "groups": [
+      "shutter",
+      "aperture",
+      "ISO"
+    ],
+    "native_formatters_and_string_copy_execute": true,
+    "drawing_sinks_supplied": true
+  },
+  "instruction_audits": {
+    "readouts": {
+      "passed": true,
+      "checks": 120,
+      "supplied_boundaries": [
+        "Loader services",
+        "GUI pool/page/output/control state",
+        "Prohibited direct dispatch and drawing calls are trapped",
+        "Native menu label and drawing services"
+      ],
+      "older_host_rejects_before_native_stores": true
+    },
+    "update_registration_and_prefix": {
+      "passed": true,
+      "checks": 24,
+      "supplied_boundaries": [
+        "Loader kernel/filesystem/heap services",
+        "Native initial snapshot comparison return"
+      ]
+    },
+    "loader": {
+      "passed": true,
+      "checks": 99,
+      "supplied_boundaries": "Compiled Thumb host and C module with original Z7 wrappers; kernel/filesystem/heap boundaries modeled"
+    },
+    "existing_display_host": {
+      "passed": true,
+      "checks": 316,
+      "supplied_boundaries": "Owned display API and native no-module geometry/scalar fallbacks; supplied file/kernel/heap/UI boundaries"
+    }
+  },
+  "assisted_qemu": {
+    "passed": true,
+    "checks": 13,
+    "frames": 3,
+    "all_three_normal_groups_qualified": true,
+    "complete_rgb_restoration": true,
+    "filter_difference_bbox": [
+      193,
+      611,
+      838,
+      679
+    ],
+    "outside_native_readout_strip_identical": true,
+    "native_readout_strip": [
+      116,
+      420,
+      590,
+      480
+    ],
+    "frames_visually_inspected": true,
+    "explicit_native_standard_page_setter": true,
+    "preset_selection_diagnostic": true,
+    "compiled_settings_model_setter": true,
+    "direct_mask_or_visibility_stores": false,
+    "modeled_read_only_file": true,
+    "assisted_sensor_and_isp": true
+  },
+  "root_regressions": {
+    "passed": 39,
+    "skipped": 0
+  },
+  "graph": {
+    "nodes": 1953,
+    "edges": 4914,
+    "generated_ignored": true
+  },
+  "failed_experiments_retained": [
+    "Calling native menu activation outside a menu stopped at unmodeled flash write; no response invented",
+    "Global invalidation during paint lost unrelated HUD content and failed restoration",
+    "Targeted late permission/update plus blanket parent dirty request produced stale readout pixels and unrelated footer",
+    "First new computation bridge clobbered r12; native-prefix differential caught it and corrected literal thunk passes"
+  ],
+  "limitations": [
+    "Diagnostic preset selection; no complete custom DISP routing",
+    "Already-present nonzero native format states retain native permissions; same-update warning transitions and warning pixels unverified",
+    "Only identified shutter/aperture/ISO information groups bound",
+    "Broader output/menu/playback/AF/lifecycle and persistence unfinished",
+    "Instruction GUI/kernel/filesystem/heap boundaries supplied; QEMU file is modeled",
+    "No physical card/cache/wake, camera update acceptance or recovery validation"
+  ],
+  "camera_access": false,
+  "card_access": false,
+  "staged": false,
+  "flashed": false,
+  "pushed": false,
+  "installation_cleared": false
+}

@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -40,6 +40,7 @@ def main():
         'settings-probe': ('examples/display_settings_probe.c', 'original-Z7-display-settings-diagnostic', 12),
         'settings-menu-probe': ('examples/settings_menu_probe.c', 'original-Z7-display-settings-menu-diagnostic', 20),
         'display-settings': ('examples/settings_menu_entry.c', 'original-Z7-display-settings-module', 20),
+        'display-readouts-probe': ('examples/display_readouts_probe.c', 'original-Z7-display-readouts-diagnostic', 24),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
     packet, report = build(source, zig=args.zig.resolve())
@@ -63,19 +64,21 @@ def main():
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
               ROOT / 'z7-native-modules/sdk/module.ld']
-    if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings'):
+    if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe'):
         inputs.append(ROOT / 'z7-native-modules/plugins/battery_sample.h')
     if args.variant == 'battery-native':
         inputs.append(ROOT / 'z7-native-modules/examples/battery_display_probe.c')
-    if args.variant in ('combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings'):
+    if args.variant in ('combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/grids_histogram.c', ROOT / 'z7-native-modules/plugins/battery_percent.c']
     if args.variant in ('clean-probe', 'disp-key-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/combined_display.c', ROOT / 'z7-native-modules/examples/clean_display_policy.h']
     if args.variant == 'settings-probe':
         inputs += [ROOT / 'z7-native-modules/plugins/display_settings.c', ROOT / 'z7-native-modules/plugins/display_settings.h']
-    if args.variant in ('settings-menu-probe', 'display-settings'):
+    if args.variant in ('settings-menu-probe', 'display-settings', 'display-readouts-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/combined_display.c', ROOT / 'z7-native-modules/examples/settings_menu_policy.h',
                    ROOT / 'z7-native-modules/plugins/display_settings.c', ROOT / 'z7-native-modules/plugins/display_settings.h']
+    if args.variant == 'display-readouts-probe':
+        inputs += [ROOT / 'z7-native-modules/examples/settings_menu_entry.c', ROOT / 'z7-native-modules/examples/display_readouts_policy.h', ROOT / 'z7-native-modules/sdk/update.h']
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)
@@ -84,6 +87,8 @@ def main():
         variants = [
             ('probes', 'success', 'examples/display_probe.c', None),
             ('probes', 'failure', 'examples/display_probe.c', 'Z7_DISPLAY_PROBE_FAIL'),
+            ('probes', 'update-success', 'examples/update_probe.c', None),
+            ('probes', 'update-failure', 'examples/update_probe.c', 'Z7_UPDATE_PROBE_FAIL'),
             ('failures', 'failed-init', 'plugins/grids_histogram.c', 'Z7_DISPLAY_MODULE_FAIL'),
             ('failures', 'foreign-controls', 'plugins/grids_histogram.c', 'Z7_DISPLAY_MENU_FOREIGN_CONTROLS'),
             ('failures', 'foreign-callback', 'plugins/grids_histogram.c', 'Z7_DISPLAY_MENU_BAD_CALLBACK'),

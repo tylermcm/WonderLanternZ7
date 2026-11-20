@@ -214,3 +214,15 @@ this does not establish GUI lifetime or real battery telemetry.
 The producer audit additionally distinguishes copied telemetry from the native
 bar-based fallback. See [battery display research](Z7_BATTERY_DISPLAY_RESEARCH.md)
 for the owned HUD-text module and its exact full-frame restoration observation.
+
+## Optional native computation hook
+
+The host now offers a24-byte additive API via `sdk/update.h`, preserving the
+20-byte base API and32-byte display-hook layout. Init-only registration stages
+one owned Thumb callback and releases it on initializer failure. Publication
+uses the existing acquire/release readiness barrier. Existing module binaries
+remain compatible. The native1036B10C computation prefix invokes the callback
+before original103690C0, preserving native register inputs/stack/flags. See the
+[readout filtering evidence](z7-native-modules/DISPLAY_SETTINGS.md#readout-filtering-through-the-native-update-pipeline)
+for exact candidates, scoped checks and the paint-phase failures that motivated
+this hook. This is emulator research, with no installation/recovery clearance.

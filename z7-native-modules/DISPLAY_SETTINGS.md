@@ -257,3 +257,78 @@ next shooting work must inspect actual pipeline readiness/native update sources,
 without inventing flash responses or treating an adapter frame as a battery
 baseline. The independent native-menu28 checks and compiled51+38 checks remain
 successful. No guest remains from these completed runs.
+
+## Readout filtering through the native update pipeline
+
+The optional `display-readouts-probe` now binds the first three information
+settings to independently identified original-Z7 shutter, aperture and ISO
+widgets (10,11,15). It is an independent diagnostic, not the completed custom
+DISP implementation. Preset selection is still a supplied diagnostic word;
+the master setting uses the compiled validated model setter. Normal
+`display-settings` still builds byte-identically to entry06 (SHA3ae795ed...).
+
+The original mask interpreter102F2690 was executed over30,240 cases, with7
+additional invariants. Original-Z7 photo pages0/3 use bits0/3, or8/11 in the
+alternate operation state, so suppression uses0x909. Copying the Z7II0x99 mask
+would also edit original-Z7 movie bits. Only LCD words in the first two banks
+are changed; alternate outputs, movie permissions, the third bank and other
+widgets retain their native values. ON preserves the native baseline rather
+than synthesizing permission. Foreign bindings/writes cause conditional owned
+restoration and a latch until the master is turned off; abandoned owned words
+remain pending until their original descriptor returns.
+
+Independent original updater/formatter execution identifies the three groups
+and shared shutter warning formats in8 cases. Every nonzero native format is
+left fully native. This covers already-present special states, not warning
+transitions arriving in the same update: transition timing and actual warning
+pixels remain unverified. Broader output/menu/reentry/AF lifetimes remain open.
+
+Changing masks during paint was too late. A global invalidation there lost
+unrelated HUD content and failed readout restoration. Targeted permission/update
+dispatch plus a blanket HUD dirty request produced stale pixels and unrelated
+OK/Exit footer content. Those failed private runs are retained. The current
+policy calls neither direct dispatch nor drawing helpers. It changes masks on
+the native widget-computation path before103690C0, then calls the independently
+audited original snapshot invalidator10367C5A. The subsequent original pipeline
+computes permissions, layout, strings and pixels normally.
+
+`sdk/update.h` adds an optional24-byte host API tail while preserving the20-byte
+base and32-byte display-hook layout. Registration is init-only, accepts owned
+Thumb image code, rejects duplicates and publishes only after initializer
+success. Failed init clears the callback before freeing memory. Two reserved
+state words are used without moving existing fields or guards. The displaced
+1036B10C prefix preserves native register inputs, stack and flags; a differential
+check caught and corrected an r12 clobber in the first long-call bridge.
+Older20-byte hosts reject this diagnostic before native stores and free its image.
+
+Current reproducible private host04 MAIN SHA
+`f5b991a726a2f3e732b98488b66db14996a84fd460dc245c1dbf3c696fbd1858`
+is33,056,916 bytes with3,129 host bytes. Readouts05 module SHA
+`0aa8f050419560d030e907fc1dc14aa72893b4ccda8a2e28e6a9aa9935aa6846`
+is10,828 bytes, image10,560, BSS3,832. Instruction audits pass120 readout
+cases,24 update-registration/prefix cases,99 loader cases and316 existing
+display-host cases (2,114 native indexed scalar reads per image). Root39 tests
+pass without skips. Incoming control snapshots and GUI/loader boundaries are
+supplied in the instruction fixtures; they do not establish physical operation.
+
+Assisted QEMU live04 on the earlier host03 passes13 checks/3frames: Composition
+suppresses ordinary readouts, all pixels outside the native bottom strip
+(116,420)-(590,480) remain identical, and disable restores every RGB pixel and
+all mask words. The fixture explicitly calls the original standard-page setter,
+selects diagnostic preset2 and invokes the compiled model setter; it supplies no
+mask/visibility stores. It uses the modeled read-only module file and existing
+assisted sensor/ISP startup. These are not physical card or DISP-key results.
+The corrected host04 repeat live05 also passes13 checks/3frames with all three
+ordinary groups qualified and exact complete RGB restoration; its source-only
+record is evidence/20261119-native-readout-update.json.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_module_host.py --display-hooks --output .private/builds/update-host-new
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-readouts-probe --output .private/builds/readouts-new
+.venv\Scripts\python.exe tools/audit_z7_display_readouts.py --build .private/builds/update-host-new --module .private/builds/readouts-new --legacy-build .private/builds/20261119-display-host-02 --output .private/evidence/readouts-new.json
+.venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/update-host-new --module .private/builds/readouts-new --view readouts --output .private/evidence/readouts-live-new
+```
+
+No camera/card operation, installation clearance, staging, flash or push is
+implied. The host remains one installed firmware component plus a resident
+startup-loaded `Z7APP.BIN`; new hook requirements need a compatible host.

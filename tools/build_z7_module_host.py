@@ -34,7 +34,7 @@ def add_display_hooks(plan, symbols):
     """Thin stock-fallback bridges; module callbacks are staged by the C host."""
     helpers = {name: plan.alloc(bytes(size)) for name, size in
                dict(grid_source=128, grid_geometry=192, scalar_original=64,
-                    scalar=224, histogram=192, widget=160, before_paint=192, after_paint=192).items()}
+                    scalar=224, histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192).items()}
     c, call = constant, invoke
     tail = lambda address: f'.balign 4; ldr.w pc,[pc,#0]; .word {address | 1};'
     code = {}
@@ -81,8 +81,14 @@ def add_display_hooks(plan, symbols):
         {preserve(symbols['z7_display_after_paint'])}
         {c('r2', 0xa1821370)} movs r1,#0; str r1,[r2,#0x34]; {tail(0x103fcc60)}
     '''
+    code['before_update'] = f'''
+        push.w {{r4-r8,lr}};
+        {preserve(symbols['z7_display_before_update'])}
+        movs r4,#0; bl original_compare; {tail(0x1036b116)}
+        original_compare: {tail(0x103690c0)}
+    '''
     sizes = dict(grid_source=128, grid_geometry=192, scalar_original=64, scalar=224,
-                 histogram=192, widget=160, before_paint=192, after_paint=192)
+                 histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192)
     for name, text in code.items():
         plan.put(helpers[name], assemble(text, helpers[name], sizes[name]))
     for site, name, expected in (
@@ -92,7 +98,8 @@ def add_display_hooks(plan, symbols):
         (0x103ebb6c, 'histogram', '2e4810b5002490f88a01022812d1'),
         (0x1036d58c, 'widget', '90f88a01022803d1'),
         (0x103fcc44, 'before_paint', '70b50c46054642f21070fdf795fe2146'),
-        (0x103fcc54, 'after_paint', '284698f6e4fd114a00215163')):
+        (0x103fcc54, 'after_paint', '284698f6e4fd114a00215163'),
+        (0x1036b10c, 'before_update', '2de9f0410024fdf7d5ff')):
         window = bytes.fromhex(expected)
         plan.edit(site, jump(site, helpers[name], len(window)),
                   'Module-owned display bridge: ' + name, expected=window)

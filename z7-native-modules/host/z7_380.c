@@ -8,7 +8,10 @@
 #define FN(address, result, ...) ((result (*)(__VA_ARGS__))(uintptr_t)(address))
 static uint32_t register_display(const struct z7_display_hooks *hooks);
 static uint32_t register_grid_menu(const struct z7_grid_menu *menu);
-static const struct z7_module_api api = {Z7_MODULE_ABI, sizeof(api), Z7_MODULE_TARGET, register_display, register_grid_menu};
+static uint32_t register_before_update(void (*callback)(void));
+static const struct z7_module_update_api api = {
+    {Z7_MODULE_ABI, sizeof(api), Z7_MODULE_TARGET, register_display, register_grid_menu}, register_before_update
+};
 static void *allocate(uint32_t n) { return FN(0x1016fe39u, void *, uint32_t, uint32_t)(n, 0); }
 static void release(void *p) { FN(0x1016fe4bu, void, void *)(p); }
 static void delay(uint32_t n) { FN(0x1017081fu, void, uint32_t)(n); }
@@ -95,6 +98,15 @@ static uint32_t register_grid_menu(const struct z7_grid_menu *menu)
     s->grid_menu_registered = 1;
     return 1;
 }
+static uint32_t register_before_update(void (*callback)(void))
+{
+    struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->update_registered || s->display_ready ||
+        !loading_code(s, (uint32_t)(uintptr_t)callback)) return 0;
+    s->before_update = (uint32_t)(uintptr_t)callback;
+    s->update_registered = 1;
+    return 1;
+}
 static struct z7_host_state *display_state(void)
 {
     struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
@@ -160,6 +172,12 @@ void z7_display_after_paint(void)
     struct z7_host_state *s = display_state();
     if (s && s->display.after_paint) s->display.after_paint();
 }
+void z7_display_before_update(void)
+{
+    struct z7_host_state *s = display_state();
+    if (s && s->update_registered && s->before_update)
+        ((void (*)(void))(uintptr_t)s->before_update)();
+}
 
 /* Original cache helpers step by 64 bytes and invalidate one or more extra
  * lines. The private staging array below reserves 127 bytes beyond the largest
@@ -179,7 +197,7 @@ __attribute__((noinline)) void z7_module_publish(uint8_t *body, uint32_t n)
 __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
 {
     return ((uint32_t (*)(const struct z7_module_api *))
-             ((uintptr_t)body + entry + 1))(&api);
+             ((uintptr_t)body + entry + 1))(&api.base);
 }
 __attribute__((noinline)) void z7_module_result(struct z7_host_state *s)
 {
@@ -261,6 +279,7 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->loading_image_size = info.image_size;
     s->loading_memory_size = memory;
     s->display_registered = 0;
+    s->before_update = s->update_registered = 0;
     s->grid_metadata = s->grid_callbacks = s->grid_menu_registered = s->grid_menu_committed = 0;
     for (uint32_t i = 0; i < sizeof(s->display) / 4; ++i)
         ((volatile uint32_t *)&s->display)[i] = 0;
@@ -268,6 +287,7 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->loading_image = s->loading_image_size = s->loading_memory_size = 0;
     if (s->module_result) {
         s->display_registered = 0;
+        s->before_update = s->update_registered = 0;
         s->grid_metadata = s->grid_callbacks = s->grid_menu_registered = s->grid_menu_committed = 0;
         for (uint32_t i = 0; i < sizeof(s->display) / 4; ++i)
             ((volatile uint32_t *)&s->display)[i] = 0;
@@ -279,7 +299,8 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->memory_size = memory;
     s->entry_offset = info.entry_offset;
     __asm__ volatile("dmb sy" ::: "memory");
-    if (s->display_registered || s->grid_menu_registered) __atomic_store_n(&s->display_ready, 1, __ATOMIC_RELEASE);
+    if (s->display_registered || s->grid_menu_registered || s->update_registered)
+        __atomic_store_n(&s->display_ready, 1, __ATOMIC_RELEASE);
     return Z7_HOST_LOADED;
 }
 
