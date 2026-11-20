@@ -7,6 +7,9 @@
 #ifdef Z7_SETTINGS_READOUT_PROBE
 #include "update.h"
 #endif
+#ifdef Z7_SETTINGS_DISP_PROBE
+#include "disp.h"
+#endif
 
 /* Component initializers prepare owned data through a local staging API. Only
  * this entrypoint registers with the host and commits native scalar masks.
@@ -71,6 +74,10 @@ uint32_t z7_main(const struct z7_module_api *api)
     const struct z7_module_update_api *update_api = (const struct z7_module_update_api *)api;
     if (api->size < sizeof(*update_api) || !update_api->register_before_update) return 1;
 #endif
+#ifdef Z7_SETTINGS_DISP_PROBE
+    const struct z7_module_disp_api *disp_api = (const struct z7_module_disp_api *)api;
+    if (api->size < sizeof(*disp_api) || !disp_api->register_disp_cycle) return 1;
+#endif
 #ifdef Z7_DISP_KEY_PROBE
     if (W(0xa1829b0cu) != 0x1030da57u) return 1;
 #endif
@@ -82,6 +89,9 @@ uint32_t z7_main(const struct z7_module_api *api)
     if (!api->register_display(&combined_hooks) || !api->register_grid_menu(pending_menu)) return 1;
 #ifdef Z7_SETTINGS_READOUT_PROBE
     if (!update_api->register_before_update(readouts_before)) return 1;
+#endif
+#ifdef Z7_SETTINGS_DISP_PROBE
+    if (!disp_api->register_disp_cycle(preset_cycle)) return 1;
 #endif
     /* No failing operation follows these native scalar stores. Host readiness
      * and native menu pointer publication still follow successful return.

@@ -9,6 +9,7 @@ import hashlib
 import json
 from pathlib import Path
 import struct
+from itertools import product
 
 from unicorn.arm_const import UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3
 from audit_splash_image import NativePNG, STOCK_SHA
@@ -55,9 +56,26 @@ def audit(raw):
         f.text = []; f.call(function)
         if not any((v['widget'], v['text']) == expected for v in f.text): raise AssertionError((name, f.text))
         cases.append(dict(name=name, passed=True, function=hex(function), native_format=fmt, observed=f.text))
-    return dict(passed=True, cases=cases, stock_main_sha256=STOCK_SHA,
+    visibility_cases = []
+    descriptor = int.from_bytes(f.u.mem_read(0x1064d610 + 15 * 4, 4), 'little')
+    controls = int.from_bytes(f.u.mem_read(descriptor + 44, 4), 'little')
+    for mode, normal, alternate, secondary in product((0, 1, 2, 3, 4, 0xffffffff), range(2), range(2), range(2)):
+        f.u.mem_write(0xa201d4d0, bytes(0x33c))
+        for offset, value in ((4, normal), (0x3c, alternate), (0x24c, secondary), (0x250, mode)):
+            f.u.mem_write(0xa201d4d0 + offset, struct.pack('<I', value))
+        selected = alternate if mode == 1 else secondary if mode == 3 else normal
+        if f.call(0x102f2586, 15) != selected: raise AssertionError('Native ISO phase selector')
+        for row in (1, 2):
+            f.u.mem_write(controls + row * 48, b'\0\0\1')
+            f.call(0x102f2656, 15, row)
+            visible = f.u.mem_read(controls + row * 48 + 1, 1)[0]
+            if visible != selected: raise AssertionError('Native ISO subcontrol visibility')
+            visibility_cases.append(dict(mode=mode, normal=normal, alternate=alternate, secondary=secondary,
+                row=row, native_visible=visible, passed=True))
+    return dict(passed=True, cases=cases, iso_visibility_cases=visibility_cases, stock_main_sha256=STOCK_SHA,
         identified_widgets=dict(shutter=10, aperture=11, iso=15),
         warnings_share_shutter_widget_and_control=True,
+        native_iso_phase_selector_and_visibility_helper_execute=True,
         supplied_boundaries=['Snapshot and control visibility', 'Text/glyph drawing sinks'],
         camera_access=False, pixel_validation=False)
 
@@ -69,7 +87,7 @@ def main():
     if not output.is_relative_to(ROOT / '.private') or output.exists(): p.error('Choose a new private output')
     result = audit(args.stock_main.read_bytes()); output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8', newline='\n')
-    print(json.dumps(dict(passed=True, cases=len(result['cases']))))
+    print(json.dumps(dict(passed=True, cases=len(result['cases']), iso_visibility_cases=len(result['iso_visibility_cases']))))
 
 
 if __name__ == '__main__': main()

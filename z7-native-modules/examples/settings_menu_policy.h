@@ -7,6 +7,9 @@ struct z7_display_settings z7_menu_settings;
 #ifdef Z7_SETTINGS_READOUT_PROBE
 #include "display_readouts_policy.h"
 #endif
+#ifdef Z7_SETTINGS_DISP_PROBE
+#include "display_disp_policy.h"
+#endif
 volatile uint32_t z7_settings_view, z7_settings_preset, z7_settings_actions;
 static uint32_t sm_object[11], sm_meta[7], sm_callbacks[8], sm_controls[7][7], sm_maps[7];
 static uint32_t sm_events[14][4], sm_layout[24], sm_geometry[4];

@@ -34,7 +34,7 @@ def add_display_hooks(plan, symbols):
     """Thin stock-fallback bridges; module callbacks are staged by the C host."""
     helpers = {name: plan.alloc(bytes(size)) for name, size in
                dict(grid_source=128, grid_geometry=192, scalar_original=64,
-                    scalar=224, histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192).items()}
+                    scalar=224, histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192, disp_cycle=224).items()}
     c, call = constant, invoke
     tail = lambda address: f'.balign 4; ldr.w pc,[pc,#0]; .word {address | 1};'
     code = {}
@@ -82,13 +82,23 @@ def add_display_hooks(plan, symbols):
         {c('r2', 0xa1821370)} movs r1,#0; str r1,[r2,#0x34]; {tail(0x103fcc60)}
     '''
     code['before_update'] = f'''
-        push.w {{r4-r8,lr}};
+        push {{r4,lr}};
         {preserve(symbols['z7_display_before_update'])}
-        movs r4,#0; bl original_compare; {tail(0x1036b116)}
-        original_compare: {tail(0x103690c0)}
+        bl original_first; bl original_second; {tail(0x1036ae4e)}
+        original_first: {tail(0x1036ad1a)}
+        original_second: {tail(0x1036a83a)}
+    '''
+    code['disp_cycle'] = f'''
+        push.w {{r0-r3,r12,lr}}; mrs r0,apsr; push {{r0,r1}};
+        {call(symbols['z7_display_disp_cycle'])} cmp r0,#0; beq native_cycle;
+        str r0,[sp,#8]; pop {{r0,r1}}; msr APSR_nzcvq,r0;
+        pop.w {{r0-r3,r12,lr}}; bx lr;
+        native_cycle: pop {{r0,r1}}; msr APSR_nzcvq,r0; pop.w {{r0-r3,r12,lr}};
+        {c('r0', 0xa201d4d0)} movw r1,#0x138d; push {{r4-r6,lr}};
+        {c('r5', 0x1064db04)} {tail(0x10370626)}
     '''
     sizes = dict(grid_source=128, grid_geometry=192, scalar_original=64, scalar=224,
-                 histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192)
+                 histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192, disp_cycle=224)
     for name, text in code.items():
         plan.put(helpers[name], assemble(text, helpers[name], sizes[name]))
     for site, name, expected in (
@@ -99,7 +109,8 @@ def add_display_hooks(plan, symbols):
         (0x1036d58c, 'widget', '90f88a01022803d1'),
         (0x103fcc44, 'before_paint', '70b50c46054642f21070fdf795fe2146'),
         (0x103fcc54, 'after_paint', '284698f6e4fd114a00215163'),
-        (0x1036b10c, 'before_update', '2de9f0410024fdf7d5ff')):
+        (0x1036ae44, 'before_update', '10b5fff768fffff7f6fc'),
+        (0x1037061c, 'disp_cycle', '674841f28d3170b5644d')):
         window = bytes.fromhex(expected)
         plan.edit(site, jump(site, helpers[name], len(window)),
                   'Module-owned display bridge: ' + name, expected=window)

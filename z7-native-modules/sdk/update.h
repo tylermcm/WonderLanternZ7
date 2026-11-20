@@ -4,8 +4,8 @@
 #include "module.h"
 
 /* Optional tail extension: existing API fields and display-hook layout retain
- * their offsets. Runs on the native widget-computation path, before its initial
- * snapshot comparison. Registration is init-only and published on success.
+ * their offsets. Runs after current format selection, before native control
+ * preparation and widget layout. Registration is init-only and published on success.
  * This callback must return promptly and must not draw or recurse into updates.
  */
 struct z7_module_update_api {

@@ -332,3 +332,87 @@ record is evidence/20261119-native-readout-update.json.
 No camera/card operation, installation clearance, staging, flash or push is
 implied. The host remains one installed firmware component plus a resident
 startup-loaded `Z7APP.BIN`; new hook requirements need a compatible host.
+
+## Native admitted-DISP preset prototype and warning order
+
+The optional `display-disp-probe` adds native input routing for the four logical
+presets and their three mapped readout groups. It does not yet bind component
+selection, native base-page selection or the separate information app. A model
+that enables the unbound information choice delegates the whole diagnostic to
+native behavior instead of silently skipping that enabled choice. These remain
+implementation requirements, not completed features.
+
+The original shooting-key callback remains1030DA57 in its original RAM slot.
+A guarded host bridge at1037061C runs only when native shooting DISP admission
+reaches the page-cycle call. A complete Thumb BL scan finds one direct caller,
+10367468, after the original outer filters and inner exclusions; no literal
+function-pointer references to this cycle entry were found in the stock MAIN.
+The callback returns0 to delegate,100hex for a consumed normal update, or2 for
+an already-performed native app transition. Other return values delegate. The
+native caller still issues its own GUI update request after a consumed cycle.
+
+`sdk/disp.h` is an additive28-byte API, embedding the unchanged24-byte update
+extension and20-byte base. Its init-only owned-code registration stages one
+callback, rejects duplicates and clears it before freeing a failed initializer.
+Existing fields,32-byte display hooks and256-byte host state retain offsets.
+The previous settings and readout packages rebuild byte-identically. The newer
+preset package rejects the older24-byte host before native stores.
+
+Current preset02 package SHA
+`f57a1b106b201468dda5178bc4d94f5c545dc79dafd12f892ab7350b50a1bbff`
+is10,892bytes/image10,624/BSS3,840. Reproducible host06 MAIN SHA
+`28633855e1daa1ffcf1f2213dfa2b0a41395f65c6a60af7b44a8f02442631958`
+is33,057,312bytes with3,301 host bytes. Native instruction checks cover admitted
+cycling, disabled-choice skipping, native fallback, original admission/filter
+blocks, output/movie/menu/configuration exclusions, registration failures and
+differential native register/stack/flag preservation on delegated cycles.
+
+The warning audit now executes original selector10369192 and native Card/Err/
+Full predicates with supplied status properties/error-list snapshots. Sixteen
+appearance, clearance and priority cases pass. The original caller instructions
+run the selector before the module callback, so the policy sees the current
+warning format in that iteration. Native ISO preparation10369C06 and its
+computation execute in the latest audit. Six other preparation-helper results,
+unrelated warning predicates and three context services remain supplied. This
+is mask/control-order evidence; actual warning pixels and real producers remain
+unverified.
+
+Full QEMU preset runs on host05 exposed an unmatched native visibility phase. Presets1/2/3
+advance through injected native DISP events and hide the readout strip correctly,
+but exact restoration fails at the native ISO AUTO label. The difference is
+2,206pixels in(626,618)-(680,672) at1024x682 in the first run. A disabled-only
+native cycle in the second run also changes the ISO label relative to startup;
+its qualified baseline then loses that label on the custom return. The three
+native ISO control records distinguish this from an unrelated HUD change.
+Do not treat either run as a completed rendering-cycle result.
+
+The hook-order review also found that1036B10C runs after native control
+preparation1036AE44.
+Host06 moves the callback to the start of1036AE44, after warning selection and
+before both preparation and layout. The displaced original preparation calls
+use local literal thunks to preserve native input registers. Its24-case prefix/
+registration audit passes; the exact-pixel repeat is separate and its result
+must be read in the latest source evidence. Historical readout-only full-frame
+results above retain their original scope and do not prove this full DISP cycle.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-disp-probe --output .private/builds/disp-presets-new
+.venv\Scripts\python.exe tools/audit_z7_disp_cycle.py --build .private/builds/20261119-display-host-06 --module .private/builds/disp-presets-new --diagnostics .private/builds/20261119-combined-regression-07/probes --legacy-build .private/builds/20261119-display-host-04 --output .private/evidence/disp-cycle-new.json
+.venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-06 --module .private/builds/disp-presets-new --view disp-presets --output .private/evidence/disp-presets-live-new
+```
+
+Native ISO visibility is now independently audited: original102F2586 selects
+snapshot+4 for ISO mode+250==2 (also the default), +3C for mode1 and +24C for
+mode3. Original102F2656 applies that selected value to each ISO subcontrol.
+All96 cases pass with supplied binary source fields and original selector/
+visibility instructions executing. In both instrumented QEMU failures, the
+baseline had+4==1 and the return frame+4==0, with ISO controls1/2 following that
+phase exactly. The2,206pixel difference is confined to the ISO AUTO label.
+It must not be classified as a proven restoration defect or silently ignored.
+
+The current probe waits for the same native phase and ISO visibility as its
+qualified baseline, then captures the paused frame without another settling
+advance. It retains every sampled phase/visibility value, changes no native
+visibility/phase word and still requires exact full RGB equality. The older
+failed runs stay intact. The phase-matched live04 run is currently pending;
+read the latest source evidence/HANDOFF before claiming a completed cycle.

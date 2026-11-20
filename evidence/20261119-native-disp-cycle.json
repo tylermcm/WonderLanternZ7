@@ -1,0 +1,146 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 admitted DISP preset prototype; full phase-matched rendering cycle pending",
+  "status": "optional diagnostic, incomplete",
+  "host": {
+    "main_sha256": "28633855e1daa1ffcf1f2213dfa2b0a41395f65c6a60af7b44a8f02442631958",
+    "main_bytes": 33057312,
+    "host_bytes": 3301,
+    "api_bytes": 28,
+    "base_bytes_unchanged": 20,
+    "update_extension_bytes_unchanged": 24,
+    "display_hooks_bytes_unchanged": 32,
+    "state_bytes_unchanged": 256,
+    "reproducible": true,
+    "update_site": "0x1036AE44",
+    "cycle_site": "0x1037061C"
+  },
+  "module": {
+    "sha256": "f57a1b106b201468dda5178bc4d94f5c545dc79dafd12f892ab7350b50a1bbff",
+    "file_bytes": 10892,
+    "image_bytes": 10624,
+    "bss_bytes": 3840,
+    "api_minimum_bytes": 28,
+    "reproducible": true
+  },
+  "existing_packages_byte_identical": {
+    "combined": "f7dbdf87c9280edf65d5ff495e2079152221740c27009ac0bd316cddf7ff395f",
+    "settings": "3ae795ed00a9ae165852ddc5d2a6d34f1ab830a9350047552aaa28d6f850298a",
+    "readouts": "0aa8f050419560d030e907fc1dc14aa72893b4ccda8a2e28e6a9aa9935aa6846"
+  },
+  "native_cycle_entry_scan": {
+    "direct_bl_callers": [
+      "0x10367468"
+    ],
+    "literal_references_found": 0,
+    "scope": "Thumb BL scan and exact literal search; not proof against computed indirect calls"
+  },
+  "instruction_audits": {
+    "admitted_cycle": {
+      "passed": true,
+      "checks": 67,
+      "supplied_boundaries": [
+        "Loader/kernel/filesystem/heap",
+        "Incoming GUI/pool/page/output state",
+        "Named native admission service returns",
+        "Native property setter result"
+      ]
+    },
+    "update_prefix": {
+      "passed": true,
+      "checks": 24,
+      "supplied_boundaries": [
+        "Loader kernel/filesystem/heap services",
+        "Native first two control-preparation helper returns"
+      ]
+    },
+    "loader": {
+      "passed": true,
+      "checks": 99,
+      "supplied_boundaries": "Compiled Thumb host and C module with original Z7 wrappers; kernel/filesystem/heap boundaries modeled"
+    },
+    "existing_display": {
+      "passed": true,
+      "checks": 316,
+      "supplied_boundaries": "Owned display API and native no-module geometry/scalar fallbacks; supplied file/kernel/heap/UI boundaries"
+    },
+    "readout_policy": {
+      "passed": true,
+      "checks": 120,
+      "supplied_boundaries": [
+        "Loader services",
+        "GUI pool/page/output/control state",
+        "Prohibited direct dispatch and drawing calls are trapped",
+        "Native menu label and drawing services"
+      ]
+    }
+  },
+  "warning_order": {
+    "passed": true,
+    "cases": 16,
+    "original_selector_and_selected_predicates_execute": true,
+    "native_iso_preparation_executes_after_callback": true,
+    "other_six_preparation_helpers_supplied": true,
+    "status_properties_and_error_list_supplied": true,
+    "warning_pixels_verified": false
+  },
+  "native_iso_visibility": {
+    "passed": true,
+    "cases": 96,
+    "selector": "0x102F2586",
+    "visibility_helper": "0x102F2656",
+    "mode_field": "snapshot+0x250",
+    "mode2_source": "snapshot+4",
+    "mode1_source": "snapshot+0x3C",
+    "mode3_source": "snapshot+0x24C",
+    "incoming_fields_supplied": true
+  },
+  "retained_qemu_failures": {
+    "runs": 3,
+    "passes_native_preset_selection_and_composition_suppression": true,
+    "fails_exact_return_preset_rgb": true,
+    "observed_iso_label_difference_pixels": 2206,
+    "difference_bbox": [
+      626,
+      618,
+      680,
+      672
+    ],
+    "instrumented_baseline_phase": 1,
+    "instrumented_return_phase": 0,
+    "iso_subcontrols_follow_native_phase": true,
+    "unmatched_phase_does_not_prove_restoration_defect": true,
+    "disabled_native_cycle_recorded": true
+  },
+  "latest_phase_matched_qemu": {
+    "status": "running, no completion claim",
+    "view": "disp-presets",
+    "changes_native_phase_or_visibility": false,
+    "retains_phase_samples": true,
+    "requires_exact_full_rgb": true,
+    "requires_protected_pixels_outside_strip": true
+  },
+  "root_regressions": {
+    "passed": 39,
+    "skipped": 0
+  },
+  "limitations": [
+    "Logical four-preset diagnostic only; native base-page/component binding incomplete",
+    "Separate information app not bound; configurations enabling it delegate",
+    "Remaining information groups and runtime current-preset coherence incomplete",
+    "Persistence, output/lifecycle and physical-card/cache/wake validation incomplete",
+    "Exact-candidate camera installation/recovery assessment absent"
+  ],
+  "camera_access": false,
+  "physical_card_access": false,
+  "staged": false,
+  "flashed": false,
+  "pushed": false,
+  "installation_cleared": false,
+  "graph": {
+    "nodes": 1991,
+    "edges": 5019,
+    "generated_ignored": true
+  }
+}

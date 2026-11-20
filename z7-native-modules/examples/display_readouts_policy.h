@@ -28,6 +28,12 @@ static uint32_t readout_gui_context(void)
 }
 static uint32_t readout_context(void)
 {
+#ifdef Z7_SETTINGS_DISP_PROBE
+    /* Information-app ownership is not bound in this diagnostic yet. Reject
+     * that configuration as a whole rather than silently skipping its choice.
+     */
+    if (z7_menu_settings.enabled_pages & 16u) return 0;
+#endif
     return z7_settings_valid(&z7_menu_settings) && (z7_menu_settings.flags & Z7_SETTINGS_CUSTOM) &&
         z7_readout_preset < 4 && readout_gui_context();
 }
@@ -92,8 +98,8 @@ static void readouts_before(void)
         __asm__ volatile("dmb sy" ::: "memory");
         ++z7_readout_changes;
     }
-    /* This callback runs before the native snapshot comparison and widget
-     * computation, never during paint. Force the original delta machinery to
+    /* This callback runs after format selection and before native control
+     * preparation/layout, never during paint. Force the original delta machinery to
      * recompute the transition; leave permissions, text, layout and painting
      * entirely to the following native pipeline.
      */

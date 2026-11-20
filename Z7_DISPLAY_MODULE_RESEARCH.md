@@ -226,3 +226,12 @@ before original103690C0, preserving native register inputs/stack/flags. See the
 [readout filtering evidence](z7-native-modules/DISPLAY_SETTINGS.md#readout-filtering-through-the-native-update-pipeline)
 for exact candidates, scoped checks and the paint-phase failures that motivated
 this hook. This is emulator research, with no installation/recovery clearance.
+
+The later admitted-DISP prototype adds the28-byte `sdk/disp.h` tail. It keeps the
+original key callback and places its optional interception at the native page
+cycle, after original admission. The update hook was subsequently moved from
+1036B10C to1036AE44 to include native control preparation before widget layout. The
+ISO label pixel mismatch instead tracks a native visibility phase and remains
+subject to the full phase-matched rendering repeat. See the final DISPLAY_SETTINGS.md section for the exact current
+candidate and the retained failed cycles; earlier scoped frame successes are
+not proof of a completed custom-DISP implementation.

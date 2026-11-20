@@ -1,7 +1,7 @@
 """Audit optional update registration and the displaced native entry prefix.
 
-SPDX-License-Identifier: MIT. Compiled host/modules execute. Native comparison
-is a supplied return boundary here; complete widget layout and pixels are not.
+SPDX-License-Identifier: MIT. Compiled host/modules execute. The first two native
+control-preparation helpers have supplied returns; layout and pixels are not tested.
 """
 import argparse
 import hashlib
@@ -18,14 +18,14 @@ from build_z7_module_host import ROOT, STATE
 class UpdateFixture(HostFixture):
     prefix = False
     def hook(self, u, address, size, context):
-        if self.prefix and address == 0x103690c0:
+        if self.prefix and address in (0x1036ad1a, 0x1036a83a):
             self.native_calls += 1
-            self.native_input = tuple(u.reg_read(r) for r in (*ARGUMENTS, *SAVED, UC_ARM_REG_R12, UC_ARM_REG_SP))
-            self.native_flags = u.reg_read(UC_ARM_REG_CPSR) & 0xf8000000
+            self.native_input.append(tuple(u.reg_read(r) for r in (*ARGUMENTS, *SAVED, UC_ARM_REG_R12, UC_ARM_REG_SP)))
+            self.native_flags.append(u.reg_read(UC_ARM_REG_CPSR) & 0xf8000000)
             self.ret(0x12345678)
-        elif self.prefix and address == 0x1036b116:
+        elif self.prefix and address == 0x1036ae4e:
             self.continuation = tuple(u.reg_read(r) for r in (*ARGUMENTS, *SAVED, UC_ARM_REG_R12, UC_ARM_REG_SP))
-            self.saved_stack = bytes(u.mem_read(STACK - 24, 24))
+            self.saved_stack = bytes(u.mem_read(STACK - 8, 8))
             u.emu_stop()
         else:
             super().hook(u, address, size, context)
@@ -61,22 +61,22 @@ def audit(raw, report, stock, directory):
     failed.call(report['symbols']['z7_display_before_update'])
     check('failed-update-path-returns-without-released-code', not failed.words()[36])
     def prefix(f, flags):
-        f.prefix = True; f.native_calls = 0; f.continuation = None
+        f.prefix = True; f.native_calls = 0; f.continuation = None; f.native_input = []; f.native_flags = []
         for i, reg in enumerate((*ARGUMENTS, *SAVED, UC_ARM_REG_R12)): f.u.reg_write(reg, 0x43210000 + i)
         f.u.reg_write(UC_ARM_REG_SP, STACK); f.u.reg_write(UC_ARM_REG_LR, STOP | 1)
         f.u.reg_write(UC_ARM_REG_CPSR, (f.u.reg_read(UC_ARM_REG_CPSR) & ~0xf8000000) | flags)
-        f.u.emu_start(0x1036b10d, 0, timeout=10000000, count=100000)
+        f.u.emu_start(0x1036ae45, 0, timeout=10000000, count=100000)
         return f.native_input, f.native_flags, f.continuation, f.saved_stack
     for flags in (0, 0x28000000, 0x50000000, 0xf8000000):
         original = UpdateFixture(stock, report, b'')
         absent = UpdateFixture(raw, report, b'')
         expected = prefix(original, flags)
-        check(f'no-module-displaced-prefix-register-stack-flags-{flags:x}', prefix(absent, flags) == expected and absent.native_calls == 1)
+        check(f'no-module-displaced-prefix-register-stack-flags-{flags:x}', prefix(absent, flags) == expected and absent.native_calls == 2)
         before = word(good, 'z7_update_probe_calls')
-        check(f'owned-update-prefix-preserves-native-input-{flags:x}', prefix(good, flags) == expected and good.native_calls == 1)
+        check(f'owned-update-prefix-preserves-native-input-{flags:x}', prefix(good, flags) == expected and good.native_calls == 2)
         check(f'owned-update-bridge-invokes-callback-once-{flags:x}', word(good, 'z7_update_probe_calls') == before + 1)
     return dict(passed=True, checks=checks, main_sha256=report['main_payload_sha256'],
-        supplied_boundaries=['Loader kernel/filesystem/heap services', 'Native initial snapshot comparison return'],
+        supplied_boundaries=['Loader kernel/filesystem/heap services', 'Native first two control-preparation helper returns'],
         native_entry_prefix_executes=True, full_widget_pipeline=False, actual_pixels=False, camera_access=False)
 
 

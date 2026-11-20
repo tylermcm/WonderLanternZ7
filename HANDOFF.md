@@ -1,5 +1,62 @@
 # Laptop handoff — October 20, 2026
 
+## Admitted DISP prototype and active phase-matched run — November 19, 2026
+
+LIVE JOB: exec_command session89208, private evidence20261119-disp-presets-live-04.
+Poll the SAME handle with write_stdin; observation timeout is not termination.
+It boots host06 + display-disp02 and records an explicit disabled native cycle
+before the qualified baseline. Wait for its actual result; do not start another
+guest based on elapsed time. All earlier jobs are terminal. User asked whether
+we were frozen; answered that work/audits progress while native QEMU steps are slow.
+Continue meaningful work and give concise updates at least every60seconds.
+
+Current optional display-disp02 SHA f57a1b106b201468dda5178bc4d94f5c545dc79dafd12f892ab7350b50a1bbff,
+10892bytes/image10624/BSS3840, needs additive28-byte API. Host06 MAIN SHA
+28633855e1daa1ffcf1f2213dfa2b0a41395f65c6a60af7b44a8f02442631958,
+33057312bytes/host3301. Read latest DISPLAY_SETTINGS.md and source evidence
+20261119-native-disp-cycle.json. Ordinary combined/settings/readout packages
+rebuild byte-identically; no physical card/camera access, staging, flash or push.
+
+New host cycle bridge1037061C preserves original key callback slot and original
+outer/inner admission.67checks pass: native blocked/other keys, disabled-choice
+skip, native fallback, registration/failure/publication, owned-code bounds,
+stock delegated-prefix register/flags/stack differential and old24-byte host
+rejection before native stores. Update API24, base20, hooks32 and state256 retain
+layout; cycle uses two reserved words. Other host checks24+99+316 andreadout120
+pass. Root39 pass no skips. Native warning-order16cases pass with selector and
+selected predicates executing; ISO preparation executes, other6helper returns
+and named status/context boundaries supplied. Warning pixels remain open.
+
+Host05 (prior intermediate MAIN c5491649...) put update before1036B10C, which
+follows control-preparation1036AE44. Host06 instead hooks1036AE44 after current
+format selection, before preparation/layout; original prefix calls use literal
+thunks, native differential passes. This was an ordering improvement, NOT a
+proven fix for the ISO-label mismatch: host06 live03 still fails that comparison.
+
+Retain live01/02/03. Native DISP selects1/2/3 and hides readouts, then full RGB
+fails by2206pixels in(626,618)-(680,672), the ISO AUTO label. Instrumented02/03
+show baseline snapshot+4=1 and return+4=0, ISO250=2 throughout. Original native
+102F2586 selects+4 for250==2/default, +3C for1 and+24C for3; native102F2656
+sets ISO controls1/2 visibility from that value. New independent identity audit02
+passes8formatter +96visibility cases. This is native blinking/visibility phase,
+not a proven restoration defect; source/probe now wait for matching native phase
+AND all4ISO control visibilities, then capture paused with settle=0. No visibility/
+phase stores or pixel exceptions were added; exact full RGB remains required.
+Every phase sample is retained. Live04 is the pending repeat of this stricter test.
+
+Raw native-control records and screenshots remain private. Full precompute
+instruction experiment (private only) hit unmapped kernel data A208685C; no
+kernel data invented. The scoped warning audit supplies six preparation helpers
+and three context returns, executes original ISO preparation/computation and
+stops at native widget-loop continuation.
+
+After live04: inspect frames/phase records, update pending evidence/docs, refresh
+graph and source manifest before checkpoint if needed. Graph refreshed1991nodes/5019edges after the latest audit/probe edits;
+generated graph stays ignored. Source manifest covers326 source files. Next software requirements include native
+base-page/component binding, information app input/update ownership, remaining
+information groups, coherent active-preset changes and persistence. Hardware
+card/cache/wake and exact installation/recovery assessment remain. Keep goal active.
+
 ## Native readout computation hook — November 19, 2026
 
 Read the final DISPLAY_SETTINGS.md section and evidence/20261119-native-readout-update.json.
