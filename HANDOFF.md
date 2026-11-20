@@ -1,5 +1,47 @@
 # Laptop handoff — October 20, 2026
 
+## Immediate native menu paint/focus — November 19, 2026
+
+Latest optional display-settings entry06 SHA
+3ae795ed00a9ae165852ddc5d2a6d34f1ab830a9350047552aaa28d6f850298a,
+9804bytes/image9536/BSS3760.51 compiled menu and38 battery policy checks pass.
+Private settings-focus-paint-live03 passes28 native-entry checks/11frames:
+immediate OFF/ON/OFF glyph changes/restoration, correct native selected-row
+highlight in both subviews, identical pixels for all five normal information ON
+values, model edits and Back to d9. Entry/root/preset/info/global/back inspected;
+additional pixel checks show428 white pixels per normal ON and64 per preset `--`.
+
+Fixes: component paint must precede native display refresh.103FAC5A calls
+103FA770 synchronously as a predicate; the old queued-callback description was
+wrong. Deferred prepaint alone failed.10402BC2 changes only row indices; focus
+also needs native text palettes and compound selection flags. Original
+10405D48/10405A92 helpers and103FB30A setters now handle those. Palette-only
+entry05 failed the selected-background pixel check.51-case audit includes
+native selection setter execution/parent dirty propagation and paint ordering.
+
+Read DISPLAY_SETTINGS.md's latest section and new source-only evidence. Shooting
+validation remains open: integration06/07 compared an initial adapter112B to a
+final battery1120, so failed ROI comparisons do not prove retirement failure.
+Integration10 shows1120 immediately after native GUI requests, then112B after
+drawing, and rejects all three baselines. Same paused request/call checkpoint
+avoids an input gap but does not suppress native updates. Probe source+SHA are
+saved in new private runs. Baseline qualification checks visible native battery,
+font, geometry, parent and painter; final glyph must match before pixel compare.
+
+Integration11 uses an explicit disabled-only menu control BEFORE qualification,
+but stops on native unmodeled flash write at10000AAA before the first MENU
+returns. Startup reports132 RAW/1 ISP batches even with the base5000ms native
+StartLV wait. The earlier100ms shortcut was insufficient, but5000ms alone is
+also not a reliable readiness gate. Do not keep rerunning on elapsed delay or
+invent a flash response; inspect actual pipeline readiness/update sources.
+Entry02's earlier first-sequence failure lacks equivalent diagnostics and stays
+private/unresolved. No entry06 shooting restoration success is claimed.
+
+Root39 regressions pass, no skips; ignored graph1895nodes/4745edges refreshed.
+No owned guest remains live. Other preset/master renderer binding, persistence,
+warning/AF/output/lifecycle, real card/cache/wake and installation/recovery are
+unfinished. No camera/card access, staging, flash or push occurred.
+
 ## Native entry and actual battery switch — November 19, 2026
 
 Optional `--variant display-settings` adds a seventh Display settings row under

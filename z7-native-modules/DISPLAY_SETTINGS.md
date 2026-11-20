@@ -195,3 +195,65 @@ not complete custom DISP, every menu indicator, lifecycle or physical telemetry.
 .venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/display-settings-new --view settings-entry --output .private/evidence/display-settings-entry-new
 .venv\Scripts\python.exe tools/probe_z7_display_module.py --build .private/builds/20261119-display-host-02 --module .private/builds/display-settings-new --view settings-battery --battery-icon-fixture --output .private/evidence/display-settings-battery-new
 ```
+
+## Immediate native text and virtual-view focus
+
+Entry06 is9,804 bytes, image9,536, BSS3,760, SHA
+`3ae795ed00a9ae165852ddc5d2a6d34f1ab830a9350047552aaa28d6f850298a`.
+The builder reproduces it byte-identically.51 compiled menu checks and38
+automatic-battery policy checks pass for this exact module.
+
+The stale ON/OFF text came from refreshing the native display before painting
+the changed component. The helper now paints first and refreshes second. The
+original103FAC5A calls103FA770 synchronously as a refresh predicate; earlier
+descriptions of it as a queued callback were inaccurate. Deferring rebinding
+to pre-paint alone did not fix the stale pixels; that private experiment remains.
+The instruction audit checks component-paint/refresh ordering explicitly.
+
+Virtual-view focus also needs three distinct native changes.10402BC2 changes
+row indices but neither the text palettes nor the compound selected-background
+flag. The prototype now uses original unfocus/highlight routines around the
+position change and original103FB30A setters to clear/select the old/new row
+background. Palette-only entry05 still displayed the old highlighted row and
+failed the new rendered check. Original selection setters execute in the
+instruction audit, including propagation of dirty state to the parent.
+
+Entry06 native-menu live03 passes28 checks/11frames. Battery OFF/ON/OFF glyphs
+change and restore immediately; both subviews highlight their actual native
+selected row, and all five unselected ON fields in the information view render
+with identical pixels. Frames and native object/label records are retained.
+Selection backgrounds pulse between bright/dark gold, so the status regression
+compares black glyph cores and retains RGB hashes rather than demanding an
+unchanged selection background. Root/preset/information/Back navigation and
+the original grid setting remain covered. This is not every preset or extra
+information subview, every lifecycle or a custom-DISP renderer binding.
+
+Shooting validation is separate. The probe restores the base fixture's native
+5,000ms StartLV display wait; its earlier100ms shortcut could enter MENU before
+the initial live-view draw settled. Early unmodeled-flash stops remain private;
+no emulated flash response was invented. Entry05 integration06 reaches menu
+enable/disable with correct status glyphs, but its initial baseline is native
+adapter112B while its final icon is battery1120. Its failed ROI comparison
+therefore does not establish a battery-restoration defect. The original entry02
+failure lacks that diagnostic and remains unresolved. The current probe must
+qualify the visible native battery glyph/layout/painter before accepting a
+baseline, retain all bounded request attempts and require the restored glyph
+to match before comparing pixels. A disabled-only control remains opt-in via
+`--settings-battery-control`; it must not silently replace the original sequence.
+
+Integration10 records battery1120 immediately after each native call and
+adapter112B after the subsequent native drawing passes. All three attempts are
+correctly rejected as unqualified baselines. Dispatch now uses the same paused
+checkpoint as the supplied request, and each future run saves its exact probe
+source and SHA. This removes a scheduler gap but does not suppress later native
+updates or create persistent simulated battery telemetry.
+
+Integration11 explicitly requests the disabled-menu control before qualifying
+the baseline, but exits on an unmodeled flash write during the first MENU. Its
+startup reports132 RAW batches and only1 ISP batch despite the5,000ms wait.
+Therefore elapsed settling time alone is not a reliable readiness gate, and no
+new shooting-restoration success is claimed for entry06. Retain all failures;
+next shooting work must inspect actual pipeline readiness/native update sources,
+without inventing flash responses or treating an adapter frame as a battery
+baseline. The independent native-menu28 checks and compiled51+38 checks remain
+successful. No guest remains from these completed runs.

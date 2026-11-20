@@ -24,10 +24,20 @@ class MenuFixture(HostFixture):
         self.labels = []
         self.back_requests = []
         self.redraws = []
+        self.component_paints = []
+        self.drawing_calls = []
+        self.focus_calls = []
         self.opens, self.property_writes = [], []
 
     def hook(self, u, address, size, context):
-        if address == 0x103fbb5c:
+        if getattr(self, 'focus_fixture', False) and address in (0x103fcf0e, 0x103fcf5c):
+            self.ret(0xa2940000 + 512 * u.reg_read(UC_ARM_REG_R2) if address == 0x103fcf0e else 0)
+        elif address == 0x10405d48:
+            self.focus_calls.append(('unfocus', u.reg_read(UC_ARM_REG_R1))); self.ret(0)
+        elif address == 0x10405a92:
+            self.focus_calls.append(('highlight', u.reg_read(UC_ARM_REG_R2)))
+            self.highlight_metadata = u.reg_read(UC_ARM_REG_R1); self.ret(0)
+        elif address == 0x103fbb5c:
             text, slot = self.cstring(u.reg_read(UC_ARM_REG_R0)), u.reg_read(UC_ARM_REG_R1)
             if not 230 <= slot < 245 or len(text) > 50: raise AssertionError('Unexpected settings label')
             record = REGISTRY + slot * 12
@@ -40,13 +50,17 @@ class MenuFixture(HostFixture):
         elif address == 0x10402bc2:
             pointer, control = u.reg_read(UC_ARM_REG_R0), u.reg_read(UC_ARM_REG_R1)
             if pointer != OBJECT or not 0x7b10 <= control <= 0x7b16: raise AssertionError('Unexpected focus')
+            self.focus_calls.append(('position', control))
             u.mem_write(pointer + 22, struct.pack('<2H', 0, control - 0x7b10)); self.ret(0)
         elif address == 0x104025ec:
             self.back_requests.append(u.reg_read(UC_ARM_REG_R0)); self.ret(0)
         elif address == 0x103fac5a:
             self.redraws.append([u.reg_read(r) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2)])
+            self.drawing_calls.append(('refresh', u.reg_read(UC_ARM_REG_R1)))
             self.ret(1)
         elif address == 0x103faec6:
+            self.component_paints.append([u.reg_read(UC_ARM_REG_R0), u.reg_read(UC_ARM_REG_R1)])
+            self.drawing_calls.append(('paint', u.reg_read(UC_ARM_REG_R0)))
             self.ret(1)
         elif address == 0x10404c42:
             self.opens.append([u.reg_read(UC_ARM_REG_R0), u.reg_read(UC_ARM_REG_R1)]); self.ret(1)
@@ -91,7 +105,7 @@ def audit(raw, host, packet, module):
     action(6)
     f.u.mem_write(base + module['symbols']['z7_menu_settings'] + 4, struct.pack('<I', 16)); action(5)
     check('native-action-cannot-disable-last-page', model()[1] == 16)
-    check('native-actions-request-original-queued-redraw', f.redraws and all(row == [0x103fa771, 3, 7] for row in f.redraws))
+    check('native-actions-request-original-display-refresh', f.redraws and all(row == [0x103fa771, 3, 7] for row in f.redraws))
     call('sm_back_event', 0xdeadbeef)
     check('root-back-uses-original-history-transition', f.back_requests == [0x3a1])
     events = base + module['symbols']['sm_events']
@@ -120,6 +134,21 @@ def audit(raw, host, packet, module):
             call(name); check('entry-profile-retains-native-grid-choice-' + name, f.property_writes[-1] == [0x102d, value])
         f.u.mem_write(base + module['symbols']['z7_settings_view'], struct.pack('<I', 2)); call('sm_open')
         check('native-entry-opens-settings-root-with-original-page-api', f.opens == [[2, 0]] and word('z7_settings_view') == 0)
+    f.focus_fixture = True; f.u.mem_write(OBJECT + 36, struct.pack('<I', 0xa2920000))
+    for row in range(7): f.u.mem_write(0xa2940000 + row * 512 + 72, struct.pack('<I', 0xa2930000))
+    f.u.mem_write(0xa2940000 + 512 + 48, struct.pack('<I', 1))
+    f.u.mem_write(base + module['symbols']['z7_settings_view'], bytes(4)); action(1)
+    check('virtual-subview-focus-updates-native-palettes-around-position-change', f.focus_calls[-3:] ==
+        [('unfocus', 0x7b11), ('position', 0x7b10), ('highlight', 0)])
+    check('native-highlight-uses-owned-current-row-control-metadata', f.highlight_metadata == base + module['symbols']['sm_controls'])
+    check('native-selection-setters-move-background-and-dirty-parent', bytes(f.u.mem_read(0xa2940000 + 48, 4)) == struct.pack('<I', 1) and
+        bytes(f.u.mem_read(0xa2940000 + 512 + 48, 4)) == bytes(4) and bytes(f.u.mem_read(0xa2930000 + 68, 4)) == struct.pack('<I', 1))
+    f.focus_fixture = False; f.u.mem_write(OBJECT + 36, bytes(4))
+    component = 0xa2930000
+    f.u.mem_write(OBJECT + 12, struct.pack('<I', component)); action(6)
+    check('native-action-paints-changed-component-before-display-refresh', f.drawing_calls[-2:] == [('paint', component), ('refresh', 3)])
+    check('native-component-paint-keeps-original-zero-mode', f.component_paints[-1] == [component, 0])
+    f.u.mem_write(OBJECT + 12, bytes(4))
     prior = list(f.labels); record = REGISTRY + 230 * 12; f.u.mem_write(record, struct.pack('<I', 1))
     call('sm_render', OBJECT); check('foreign-label-is-never-overwritten', f.labels == prior and bytes(f.u.mem_read(record, 4)) == struct.pack('<I', 1))
     previous = model(); f.u.mem_write(OBJECT + 40, bytes(4)); action(0)
@@ -130,7 +159,7 @@ def audit(raw, host, packet, module):
         check(name + '-preserves-native-page-and-cleans-module', g.call(host['symbols']['z7_module_load_once'], STATE) == 7 and bytes(g.u.mem_read(OBJECT, 44)) == original and not g.live)
     return dict(passed=True, checks=checks, module_sha256=module['module_sha256'], main_sha256=host['main_payload_sha256'],
                 supplied_boundaries=['Label storage', 'Native focus/header services',
-                    'Native queued/component drawing, page opening and property storage', 'File/kernel/heap'],
+                    'Native display refresh/component drawing, page opening and property storage', 'File/kernel/heap'],
                 actual_menu_pixels=False, card_io=False, camera_access=False)
 
 

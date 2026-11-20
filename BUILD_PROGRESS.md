@@ -98,6 +98,17 @@ stale ON/OFF text even in the passing run. Resolve both timing gaps before
 calling the profile complete. Other preset/master renderer bindings and card
 persistence remain open. See DISPLAY_SETTINGS.md and the latest HANDOFF entry.
 
+Entry06 fixes immediate native status painting and virtual-view focus, with51
+compiled menu,38 battery policy and28 native-menu checks/11frames passing.
+Component painting now precedes refresh; native palettes, selected-background
+flags and row indices change together. Gold selection pulses are retained in
+glyph regression checks. Shooting validation is stricter: a native adapter
+frame cannot qualify as a battery baseline. Post-call diagnostics show the
+native update replacing the supplied battery glyph before the frame; another
+explicit control run exits on an unmodeled flash path with only1 ISP batch.
+A5000ms wait alone does not prove readiness. No new shooting-restoration success
+is claimed; inspect readiness and native update sources before further repeats.
+
 1. Complete histogram/horizon visual validation. Its mode/mask changes and native
    restrictions pass instruction checks, but the ordinary live fixture supplies
    shooting-context zero and native code hides the histogram. Another run reaches

@@ -162,7 +162,7 @@ def audit(raw, host, packet, module):
     check('foreign-font-change-retires-without-overwriting-label', int.from_bytes(font.u.mem_read(LABEL + 8, 4), 'little') == 0 and
           not any(p[0] == 0x10384968 and int.from_bytes(p[1][:4], 'little') == 0x7a40 for p in font.paint_calls))
     return dict(passed=True, checks=checks, module_sha256=module['module_sha256'], main_sha256=host['main_payload_sha256'],
-        activation='Compiled native settings callback with supplied GUI queue' if settings_activation else 'Enabled SD package configuration',
+        activation='Compiled native settings callback with supplied GUI refresh/paint' if settings_activation else 'Enabled SD package configuration',
         sampling_interval_gui_passes=16, supplied_boundaries=['GUI/control instance and transitions', 'Native incoming telemetry and mutex',
             'Font/label/list/pixel services', 'File/kernel/heap'], physical_camera=False, visual_validation=False)
 

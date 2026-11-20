@@ -10,6 +10,14 @@ staged or flashed.
 
 ## Automatic LCD photo module
 
+The later optional combined `display-settings` profile adds a native d9 entry
+and binds its battery switch to this actual renderer. See
+[the current settings record](z7-native-modules/DISPLAY_SETTINGS.md) for paint/
+focus checks and stricter baseline qualification. Its latest shooting fixture
+has not established restoration: native adapter/battery changes and an unstable
+startup pipeline are recorded separately. The standalone results below retain
+their original artifact and fixture scope.
+
 `plugins/battery_percent.c` follows eligible native battery glyphs, samples the
 validated getter once per 16 GUI paint passes, updates the owned label, and
 restores stock icon layers when disabled or excluded. Invalid samples remain

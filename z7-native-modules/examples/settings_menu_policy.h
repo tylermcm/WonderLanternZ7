@@ -61,14 +61,32 @@ static void sm_text_put(uint32_t slot, const char *text)
 }
 static void sm_focus(uint32_t object, uint32_t row)
 {
+    uint32_t old = *(volatile uint16_t *)(uintptr_t)(object + 22) + *(volatile uint16_t *)(uintptr_t)(object + 24);
+    uint32_t ready = W(object + 36) && old < 7 && row < 7;
+    /* 10402BC2 only changes row indices; native palette changes are separate.
+     * Use the original unfocus/highlight routines around that index change.
+     */
+    if (ready) {
+        uint32_t previous = F(0x103fcf0fu, uint32_t, uint32_t, uint32_t, uint32_t)(W(object + 36), 1, old);
+        if (previous) F(0x103fb30bu, uint32_t, uint32_t, uint32_t)(previous, 0);
+        F(0x10405d49u, uint32_t, uint32_t, uint32_t)(object, 0x7b10u + old);
+    }
     F(0x10402bc3u, uint32_t, uint32_t, uint32_t)(object, 0x7b10u + row);
+    if (ready) {
+        uint32_t current = F(0x103fcf0fu, uint32_t, uint32_t, uint32_t, uint32_t)(W(object + 36), 1, row);
+        if (current) F(0x103fb30bu, uint32_t, uint32_t, uint32_t)(current, 1);
+        F(0x10405a93u, uint32_t, uint32_t, uint32_t, uint32_t)(object, (uint32_t)(uintptr_t)sm_controls[row], row);
+    }
 }
 static void sm_redraw_request(void)
 {
-    /* Same native queued redraw request used by original page-open10404C42. */
-    F(0x103fac5bu, uint32_t, uint32_t, uint32_t, uint32_t)(0x103fa771, 3, 7);
+    /* Paint changed component commands before the native display refresh.
+     * Refreshing first presents the previous text until the next event.
+     * 103FA770 is the native refresh predicate, not a deferred callback.
+     */
     uint32_t component = W(0xa1833548u + 12);
     if (ram(component, 256)) F(0x103faec7u, uint32_t, uint32_t, uint32_t)(component, 0);
+    F(0x103fac5bu, uint32_t, uint32_t, uint32_t, uint32_t)(0x103fa771, 3, 7);
 }
 static uint32_t sm_back(uint32_t object)
 {
