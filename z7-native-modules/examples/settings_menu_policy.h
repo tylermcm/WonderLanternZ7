@@ -6,6 +6,23 @@
 struct z7_display_settings z7_menu_settings;
 #ifdef Z7_SETTINGS_PERSISTENCE
 static void persistence_commit(const struct z7_display_settings *);
+enum persistence_state { PS_STARTING, PS_DEFAULTS, PS_CLEAN, PS_SAVING, PS_RETRY, PS_BLOCKED };
+enum persistence_display { PD_DEFAULTS, PD_SAVED, PD_UNSAVED, PD_SAVING, PD_RETRY, PD_BLOCKED };
+static uint32_t persistence_display_status(void);
+static uint32_t sm_save_status = UINT32_MAX;
+static char sm_title[50];
+static const char *sm_persistent_title(const char *base, uint32_t status)
+{
+    static const char *const suffix[] = {"Defaults", "Saved", "Unsaved", "Saving", "Save retry", "Restart to save"};
+    uint32_t length = 0;
+    while (*base && length < sizeof(sm_title) - 1) sm_title[length++] = *base++;
+    const char *separator = " - ";
+    while (*separator && length < sizeof(sm_title) - 1) sm_title[length++] = *separator++;
+    const char *text = suffix[status <= PD_BLOCKED ? status : PD_BLOCKED];
+    while (*text && length < sizeof(sm_title) - 1) sm_title[length++] = *text++;
+    sm_title[length] = 0;
+    return sm_title;
+}
 #endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
 #include "display_readouts_policy.h"
@@ -156,7 +173,14 @@ static uint32_t sm_render(uint32_t object)
     static const char *const extra[7] = {"Other information", "Focal length", "", "", "", "", "Back"};
     const char *const *names = !z7_settings_view ? roots : z7_settings_view == 1 ? preset : z7_settings_view == 2 ? info : extra;
     const char *title = !z7_settings_view ? "Display settings" : z7_settings_view == 1 ? roots[z7_settings_preset + 1] : "Shooting information";
+#ifdef Z7_SETTINGS_PERSISTENCE
+    uint32_t save_status = persistence_display_status();
+    title = sm_persistent_title(title, save_status);
+#endif
     sm_text_put(230, title);
+#ifdef Z7_SETTINGS_PERSISTENCE
+    sm_save_status = save_status;
+#endif
     for (uint32_t row = 0; row < 7; ++row) {
         const char *value = "--";
         uint32_t bits = 0, mask = 0;
@@ -245,5 +269,12 @@ static void sm_before(void)
     for (uint32_t i = 0; i < count; ++i) if (W(data + i * stride) == 0xa1833548u) active = 1;
     if (!active) return;
     uint32_t header = F(0x103faebfu, uint32_t, uint32_t, uint32_t)(0x203, W(0xa1833548u + 12));
-    if (ram(header, 100) && (W(header + 8) != 230 || W(header + 12) != 2)) sm_render(0xa1833548u);
+    uint32_t changed = 0;
+#ifdef Z7_SETTINGS_PERSISTENCE
+    /* Only the existing active-menu GUI hook updates native text. The worker
+     * publishes scalar state; it never calls the UI or performs menu paint.
+     */
+    changed = persistence_display_status() != sm_save_status;
+#endif
+    if (ram(header, 100) && (changed || W(header + 8) != 230 || W(header + 12) != 2)) sm_render(0xa1833548u);
 }

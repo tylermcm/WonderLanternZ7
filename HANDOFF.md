@@ -1,5 +1,47 @@
 # Laptop handoff — October 20, 2026
 
+## Save-state presentation implementation, idle-refresh gap - November 20, 2026
+
+Previous01b6668 is PROGRESS: accepted two-boot persistence harness checkpoint.
+This follow-up adds atomic worker-state publication and native menu title states:
+Defaults, Saved, Unsaved, Saving, Save retry, Restart to save. Startup failures
+and retained-descriptor failures block saves; transient save errors remain dirty
+and show retry. Worker never updates native labels or performs menu paint.
+Menu-only rendering observes current/saved revision without falsely marking a
+new edit saved when an older worker snapshot completes.
+
+PRIVATE CANDIDATE ONLY, NOT live accepted:
+.private/builds/20261120-display-save-status-01, reproducible23408bytes,
+image23104/BSS5648/API44/SHA
+66411f9d8aed7c3491bc4cf9ee0cceb74d3969b1e2492f0699a486de2402f508.
+Host09/QEMU unchanged. Full persistence/status instruction audit02 TERMINAL
+PASS84; root69/no skips and routing01 PASS54. Instruction checks execute actual
+menu titles for defaults/loaded/dirty/saved/retry/startup-blocked/close-latch,
+including actual separate-stack menu edits during snapshot/write. Worker ticks
+are asserted never to modify native labels. First audit attempt failed because
+the parent fixture does not log menu labels; added explicit observation before
+its unchanged native label-service fixture. No production workaround for that.
+Old nonpersistent API40 full build compat01 remains byte-identicald4981187...15ffcd.
+
+Live status01 TERMINAL FAILED at first-master-saved-native-header-status-current:
+worker completed save, but the open menu title remained Unsaved. Root-initial
+Defaults screenshot was visually inspected and fits. This is a REAL idle-refresh
+gap in new presentation; do not relabel as pass or replace accepted persistent01.
+The existing sm_before is a BEFORE-PAINT hook, not a continuous menu heartbeat;
+its status check alone cannot schedule an idle repaint. No new worker-thread UI
+calls or speculative event callbacks have been added. Native event2F2 is a map
+sentinel, not an established timer. Do not reuse it as an invented heartbeat.
+Longer title suffixes also need width validation/shorter page titles.
+Final graph refreshed after code edits: 2685nodes/6922edges; ignored.
+
+NEXT: establish a native queued menu-refresh mechanism with task/ownership
+proof, or an appropriately guarded host/menu callback. Then show success/retry/
+blocked states in live UI and rerun restart acceptance on the updated candidate.
+Do not weaken the automatic-current-header check or settle for stale text that
+updates only after navigation. Native API44 persistent01 remains the last
+accepted live persistence profile. All jobs terminal; guests closed. No card,
+camera, staging, flash or push. Full original feature scope remains active.
+
 ## Two-boot native menu persistence acceptance - November 20, 2026
 
 Previous b6e91a1 remains the production module implementation. This milestone

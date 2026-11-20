@@ -120,6 +120,22 @@ hashes; existing display/worker profiles were not changed.
 .venv\Scripts\python.exe tools/audit_z7_settings_storage.py --build .private/builds/20261120-display-host-09 --module .private/builds/settings-storage-new --output .private/evidence/settings-storage-new.json
 ```
 
+## Save-status presentation in progress
+
+The optional persistent profile now publishes atomic save state to menu-only
+header rendering: Defaults, Saved, Unsaved, Saving, Save retry and Restart to
+save. The extended instruction audit passes84 checks, including menu edits on
+a separate stack while a save is in progress, startup failures and close-latch
+failures. Worker ticks never update native labels. Root69 and routing54 pass.
+
+This presentation is **not live accepted**. Private save-status-live01 verifies
+the initial Defaults title, then fails because the header remains Unsaved after
+the worker saves. The existing before-paint hook does not schedule an idle menu
+refresh. A native queued refresh/task mechanism and longest-title width checks
+remain necessary. Automatic current-header checks are retained. The prior
+persistent01 two-boot result below remains the accepted baseline; it does not
+establish completion of the new status presentation.
+
 ## Native files and persistent full display profile
 
 November20,2026: the optional `display-persistence-probe` now combines the FULL

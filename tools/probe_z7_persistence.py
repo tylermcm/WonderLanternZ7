@@ -190,7 +190,15 @@ def main():
             (directory / (label + '.png')).write_bytes(camera.png)
             if name == 'first' and label.endswith('-comparison'):
                 result.setdefault('reference_backgrounds', {})[label] = color
-            phase['steps'].append(dict(name=label, sha256=hashlib.sha256(camera.png).hexdigest(), pages=pages(), model=settings(), widget_rows=widget_rows,
+            title = None
+            if 'sm_title' in symbols:
+                record = camera.remote.memory(0xa2019e78 + 230 * 12, 12)
+                length, pointer, kind = struct.unpack('<3I', record)
+                if not 0 < length < 50 or kind: raise RuntimeError('Invalid native title record')
+                title = camera.remote.memory(pointer, length).decode('ascii')
+                expected_suffix = ' - Defaults' if name == 'first' and label == 'root-initial' else ' - Saved'
+                check(name + '-' + label + '-native-header-status-current', title.endswith(expected_suffix))
+            phase['steps'].append(dict(name=label, title=title, sha256=hashlib.sha256(camera.png).hexdigest(), pages=pages(), model=settings(), widget_rows=widget_rows,
                                        native_selection_rgb=color, revision=word('z7_settings_revision'), saved_revision=word('z7_persistence_saved_revision'),
                                        result=word('z7_persistence_result'), saves=word('z7_persistence_saves')))
             save()
