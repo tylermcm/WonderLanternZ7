@@ -27,7 +27,9 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--seed-directory', type=Path, help='Inspect one fresh guest using prior private slot files; not a two-boot acceptance run')
     p.add_argument('--save-error', action='store_true', help='Supply an owned create error, verify live retry status, then allow retry and restart')
+    p.add_argument('--startup-error', action='store_true', help='Supply owned read-open errors at startup, then inspect blocked-save menus using private seed files')
     a = p.parse_args()
+    if a.startup_error and (not a.seed_directory or a.save_error): p.error('--startup-error requires --seed-directory and excludes --save-error')
     output = a.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         p.error('Choose a new private evidence directory')
@@ -69,6 +71,7 @@ def main():
                         events=self.events, module_finished=self.module_finished, service_finished=self.finished,
                         live_handles=list(map(hex, self.handles)), file_lengths={str(k): len(v) for k, v in self.files.items()}), indent=2) + '\n', encoding='utf-8', newline='\n')
         fixture = RecordingFixture(packet, files)
+        fixture.fail_open = a.startup_error
         class BoundRemote(ModuleFileRemote):
             def __init__(self, port): super().__init__(port, fixture)
         ui.Remote = BoundRemote
@@ -169,6 +172,23 @@ def main():
                 rows.append(nodes)
             return rows, pending
 
+        def header_node():
+            def readword(address): return int.from_bytes(camera.remote.memory(address, 4), 'little')
+            component = readword(0xa1833548 + 12)
+            if not fixture.ram(component, 0xb0): raise RuntimeError('Invalid native menu component')
+            first, tail, count = struct.unpack('<3I', camera.remote.memory(component + 0x9c, 12))
+            if not 0 < count <= 256: raise RuntimeError('Unexpected native component child count')
+            cursor, seen = first, set()
+            for _ in range(count):
+                if cursor in seen or not fixture.ram(cursor, 12): raise RuntimeError('Invalid native child-list cursor')
+                seen.add(cursor)
+                previous, following, child = struct.unpack('<3I', camera.remote.memory(cursor, 12))
+                if not fixture.ram(child, 100): raise RuntimeError('Invalid native child object')
+                words = list(struct.unpack('<25I', camera.remote.memory(child, 100)))
+                if words[0] == 0x203: return dict(pointer=hex(child), words=words)
+                cursor = following
+            raise RuntimeError('Native header child not found')
+
         def header_observation():
             if 'sm_title' not in symbols: return None
             length, pointer, kind = struct.unpack('<3I', camera.remote.memory(0xa2019e78 + 230 * 12, 12))
@@ -177,6 +197,7 @@ def main():
                 menu_state=camera.remote.memory(0xa182ed2c, 1).hex(),
                 menu_dispatch=camera.remote.memory(0xa182ed34, 4).hex(),
                 event_flag=camera.remote.memory(0xa181f910, 4).hex(),
+                header_node=header_node(),
                 diagnostics={key: word(key) for key in ('sm_save_status', 'persistence_state', 'z7_menu_status_events', 'z7_menu_status_paints', 'z7_menu_status_notifications') if key in symbols})
 
         def capture(label, expected_suffix=None):
@@ -206,7 +227,7 @@ def main():
                 # Worker publication and queued menu paint are asynchronous.
                 # Preserve stale candidates and wait within the same bounded
                 # paint window; never navigate or rewrite the title to settle it.
-                if header and not header['title'].endswith(expected_suffix): continue
+                if header and (not header['title'].endswith(expected_suffix) or header['header_node']['words'][17]): continue
                 if target is not None and color != target: continue
                 break
             else:
@@ -231,12 +252,45 @@ def main():
                     return
             raise RuntimeError('Background settings save did not settle')
 
+        def open_owned_menu():
+            key('left', lambda: on_page(1)); row(1, 3)
+            key('right', lambda: on_page(0x125)); row(0x125, 4)
+            key('right', lambda: on_page(0x127)); row(0x127, 28)
+            key('right', lambda: on_page(0x153)); row(0x153, 6)
+            key('right', lambda: on_page(0))
+
         try:
             camera.boot(announce_ready=False)
             checkpoint()
             state = struct.unpack('<64I', camera.remote.memory(STATE, 256))
             base = state[12]
             check(name + '-full-module-loaded-with-persistent-file-service', state[10] == 8 and base and fixture.module_finished and camera.remote.fixture_enabled and not fixture.finished)
+            if a.startup_error:
+                phase['process_id'] = camera.proc.pid
+                phase['startup_model'] = settings()
+                check('startup-open-error-keeps-resident-module-with-volatile-defaults',
+                    word('z7_persistence_ready') == 0 and word('z7_persistence_result') == 2 and
+                    settings() == [0, 15, 1, 0, 5, 10, 127, 7, 0, 127] and fixture.files == files and not fixture.handles)
+                fixture.fail_open = False
+                open_owned_menu()
+                capture('blocked-root', ': Restart to save')
+                before_events = list(fixture.events)
+                row(0, 0); key('right', lambda: settings()[0] == 1)
+                for _ in range(8): wait_native(1000)
+                check('startup-error-remains-latched-after-error-clears-and-native-menu-edit',
+                    fixture.events == before_events and fixture.files == files and not fixture.handles and
+                    not word('z7_persistence_ready') and not word('z7_persistence_attempts') and
+                    word('z7_settings_revision') != word('z7_persistence_saved_revision'))
+                capture('blocked-root-edited', ': Restart to save')
+                row(0, 3); key('right', lambda: word('z7_settings_view') == 1 and word('z7_settings_preset') == 2)
+                capture('blocked-composition', ': Restart to save')
+                row(0, 1); key('right', lambda: word('z7_settings_view') == 2)
+                capture('blocked-information', ': Restart to save')
+                phase['final_model'] = settings()
+                phase['filesystem_events'] = fixture.events
+                phase['final_files'] = {str(k): hashlib.sha256(v).hexdigest() for k, v in fixture.files.items()}
+                check('blocked-phase-preserves-both-original-journals-without-retained-handle', fixture.files == files and not fixture.handles)
+                return dict(fixture.files)
             check(name + '-startup-settings-ready-without-retained-handle', word('z7_persistence_ready') == 1 and camera.remote.memory(base + symbols['z7_persistence_files'] + 4, 4) == b'\xff' * 4)
             phase['startup_model'] = settings()
             phase['process_id'] = camera.proc.pid
@@ -244,11 +298,7 @@ def main():
                 check('fresh-files-use-defaults-without-creating-journal', settings() == [0, 15, 1, 0, 5, 10, 127, 7, 0, 127] and fixture.files == {})
             else:
                 check('fresh-guest-restores-prior-menu-edits-before-navigation', settings() == result['expected_model'] and not word('z7_settings_revision') and not any(e.get('component') == 'settings' and e['operation'] in ('write', 'create') for e in fixture.events))
-            key('left', lambda: on_page(1)); row(1, 3)
-            key('right', lambda: on_page(0x125)); row(0x125, 4)
-            key('right', lambda: on_page(0x127)); row(0x127, 28)
-            key('right', lambda: on_page(0x153)); row(0x153, 6)
-            key('right', lambda: on_page(0))
+            open_owned_menu()
             capture('root-initial')
             if name == 'first':
                 row(0, 0); key('right', lambda: settings()[0] == 1); wait_saved()
@@ -321,7 +371,8 @@ def main():
             selected = int(bool(distance and distance < 0x80000000))
             result['expected_model'] = list(struct.unpack_from('<10I', files[selected], 32))
             result['single_inspection_only'] = True
-            boot_phase('restart', files)
+            restored = boot_phase('blocked' if a.startup_error else 'restart', files)
+            if a.startup_error: check('blocked-inspection-never-rewrites-seeded-journal', restored == files)
         else:
             saved = boot_phase('first', {})
             restored = boot_phase('restart', saved)

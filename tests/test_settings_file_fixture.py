@@ -45,6 +45,19 @@ class SettingsFileFixtureTests(unittest.TestCase):
         self.assertEqual(self.fixture.position, 800)
         self.assertEqual(self.fixture.packet, bytes(i % 251 for i in range(800)))
 
+    def test_explicit_open_error_is_not_absence_and_preserves_unread_slots(self):
+        self.loaded(); self.path_for(0)
+        self.fixture.files = {0: b'old0', 1: b'old1'}
+        self.fixture.fail_open = True
+        self.assertEqual(self.request(5, **{'4': self.path}), 0x80000002)
+        self.assertEqual(self.fixture.files, {0: b'old0', 1: b'old1'})
+        self.assertFalse(self.fixture.handles)
+        self.assertFalse(self.fixture.issued)
+        self.fixture.fail_open = False
+        fd = self.request(5, **{'4': self.path})
+        self.assertIn(fd, self.fixture.handles)
+        self.request(6, **{'7': fd})
+
     def test_explicit_create_failure_preserves_both_slots_and_allocates_no_handle(self):
         self.loaded(); self.path_for(0)
         self.fixture.files = {0: b'valid-old', 1: b'valid-peer'}

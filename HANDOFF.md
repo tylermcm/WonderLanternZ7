@@ -1,5 +1,48 @@
 # Laptop handoff — October 20, 2026
 
+## Startup-blocked menus and native header readiness - November 20, 2026
+
+Previous8d7cebd was PROGRESS: queued save/retry refresh accepted. Native module,
+host and QEMU are UNCHANGED this turn. Current native profile remains private
+save-status-05/SHA719c1db3...39af85c, API44. No flash/staging/card/camera/push.
+
+SettingsFileFixture now supports explicit owned read-open error80000002,
+distinct from missing80000010. Root71/no skips PASS, including unread-slot/
+handle preservation and recovery when the supplied open error is cleared.
+Probe --startup-error --seed-directory uses two prior valid journal files and
+runs ONE fresh guest inspection, not a new two-boot acceptance result.
+
+.private/evidence/20261120-save-blocked-live-01 TERMINALPASS9 /4PNG. Startup
+read-open errors keep module resident with volatile defaults and saves blocked.
+Clearing modeled error after init does NOT load late or permit save: a real
+native menu edit remains dirty/temporary, no subsequent file events or attempts,
+and both original journal hashes stay unchanged. Root, edited root, Composition
+and Information native screens all show Restart to save. All4 PNG hashes and
+both seed/final file hashes independently verified; frozen3 helper sources match.
+
+Capture now walks the native component child list (component+9C, first/count;
+list node payload+8, next+4) using the original102958BA lookup semantics to find
+header child203. In addition to all14 row nodes, header+44 must be clear before
+accepting a frame. Raw header words/readiness retained privately. This is native
+paint readiness, not a physical presentation fence. Actual raw root-edited,
+Composition and Information PNGs were visually inspected. Both longest28char
+Composition/Information titles are fully visible, with tight spacing before the
+back button. No font scaling, screenshot cropping/editing or injected model/
+revision/title/pixel stores used. All jobs terminal; guest closed.
+
+Source evidence:evidence/20261120-save-startup-blocked.json. Graph refreshed
+after code edits: 2709nodes/7001edges; generated graph ignored. No native build or broad instruction
+rerun needed: production bytes untouched; prior84/15/54 +live39 scopes remain
+separate. Current new result is startup-error inspection only.
+
+NEXT: continue photo highlights from pinned Z7II source, preserving original-Z7
+bindings and native movie/EVF warning preferences. First private literal scan
+finds6 original-Z7 occurrences of42060000 and1 of4206001F; no42062000/1E literals.
+This is a search lead only, NOT a binding or implementation. Results private at
+.private/research/z7-photo-zebra-command-literals.json. Uncertain-close status
+pixels, native Info mirror, portrait/rotation, EVF/AF/lens lifecycle, actual
+statistics producer and physical SD/cache/shutdown/recovery gaps remain open.
+
 ## Queued menu save-status refresh and live retry - November 20, 2026
 
 Previousad4f3d0 was PROGRESS (status publication, idle-refresh failure). This

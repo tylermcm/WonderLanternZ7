@@ -146,9 +146,15 @@ Final private source build05 is byte-identical to tested04:
 Root70 tests pass without skips. The previous live failures remain failures.
 Source evidence: `evidence/20261120-menu-status-refresh.json`.
 
-Startup-blocked/uncertain-close status pixels, longest-title fit and broader
-menu/lifecycle behavior remain open. In particular, Composition/Information
-with Restart to save need width checks. The native information mirror,
+Startup-blocked live inspection now passes9 checks/4 native frames: clearing a
+modeled startup read-open error does not reload late or overwrite the original
+journals, and native menu edits stay temporary with Restart to save displayed.
+Composition and Information longest titles are fully visible in inspected native
+720x480 frames, with tight spacing before the back button. Header child203 paint
+readiness is now checked alongside all14 row nodes. Root71 tests pass without
+skips; source evidence is `evidence/20261120-save-startup-blocked.json`.
+
+Uncertain-close status pixels and broader menu/lifecycle behavior remain open. The native information mirror,
 physical card/cache/shutdown and installation/recovery assessments remain open.
 
 ## Native files and persistent full display profile
