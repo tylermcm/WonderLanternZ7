@@ -173,3 +173,26 @@ control, returns exactly, and master-off restores the original native background
 in that window. Raw frames were inspected. No whole-RGB or physical telemetry
 claim is made. See `evidence/20261120-display-information.json`. Native information
 text remains mirrored; full visual acceptance and broader lifecycle remain open.
+
+## Native MENU lifecycle and graphics observation
+
+On the unchanged full five-choice module, assisted QEMU passes42 lifecycle checks
+across10 frames. Native and owned information stay on app13/page4 beneath MENU;
+master-off while MENU is open waits for close, then restores native user page3
+and all61 masks. Repeated inactive native MENU controls independently reproduce
+the remembered focus difference (first page1+19, then page1 alone). The owned MENU
+frame exactly matches the second inactive native frame in complete RGB. PNG hashes
+and frozen helpers were verified. This does not cover every output/lifecycle path.
+
+A new default-off GPU draw observer captures private registers, path data and
+bounded texture bytes only while an optional host gate is present (512 draws,
+1MiB per file).330 GPU checks,23 QEMU transport tests,55 root tests and a firmware-free
+QMP smoke pass on rebuilt QEMUf76609ae...9b45c98. No rasterization rule changed.
+The Info entry and settled-refresh controls pass22/4 and36/9 checks/frames. Traces
+are bounded partial histories. Upright A8 glyph samples and a settled RGBA copy
+B045F200→B090F200 followed by LCD conversion are observed; both copies submit
+negative-Y texture matrices. Their actual native orientation contract remains
+unproven. No application-specific flip or edited screenshot is accepted as a fix.
+See `evidence/20261120-information-menu-graphics.json`. Firmware, textures and
+camera/emulator images remain private. Native information mirroring still blocks
+visual acceptance; broader original software scope remains open.

@@ -51,6 +51,8 @@ def main():
     parser.add_argument('--focal-horizon-control', action='store_true', help='For focal view, isolate Other OFF/ON on horizon with focal never enabled')
     parser.add_argument('--information-native-control', action='store_true', help='For focal view, observe original information-page DISP entry/return with custom settings inactive')
     parser.add_argument('--information-routing', action='store_true', help='For focal view, exercise full five-choice native-information routing')
+    parser.add_argument('--information-lifecycle', action='store_true', help='For focal view, compare native MENU lifecycle with owned information routing')
+    parser.add_argument('--graphics-information', action='store_true', help='Capture settled native information refresh and repeated MENU controls; requires information-native-control')
     parser.add_argument('--other-information', action='store_true', help='For information-groups, toggle the independently identified Other status group')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
@@ -74,6 +76,11 @@ def main():
     if args.information_routing and (args.view != 'focal' or args.information_native_control or
                                     args.focal_horizon_control or args.focal_horizon):
         parser.error('Information routing requires focal view without other focal/control modes')
+    if args.information_lifecycle and (args.view != 'focal' or args.information_routing or args.information_native_control or
+                                      args.focal_horizon_control or args.focal_horizon):
+        parser.error('Information lifecycle requires focal view without other focal/control modes')
+    if args.graphics_information and (args.view != 'focal' or not args.information_native_control):
+        parser.error('Graphics information capture requires focal view with information-native-control')
     if args.other_information and args.view != 'information-groups':
         parser.error('Other information requires information-groups view')
     if args.histogram_context_fixture and args.view != 'live':
@@ -123,6 +130,10 @@ def main():
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
         orientation_fixture=0, keep_awake=True, photo_liveview=True)
     camera = DisplayCamera(0, profile='menu' if args.view == 'menu' else 'shooting', **options)
+    if args.information_lifecycle or args.graphics_information:
+        camera.gpu_draw_dump = output / 'graphics-draws'
+        camera.gpu_draw_dump.mkdir()
+        camera.gpu_draw_gate = output / 'graphics-capture.enabled'
     if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
         # Retain the base fixture's native StartLV settling delay before MENU.
         # Acknowledgement alone can precede the first completed native draw.
@@ -379,12 +390,15 @@ def main():
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
         if args.view == 'focal':
-            if args.information_routing:
+            if args.information_lifecycle:
+                from information_lifecycle_probe import run_information_lifecycle_probe
+                run_information_lifecycle_probe(camera, output, module, base, result, capture, native, key, query, check, pages)
+            elif args.information_routing:
                 from information_routing_probe import run_information_routing_probe
                 run_information_routing_probe(camera, output, module, base, result, capture, native, key, query, check)
             elif args.information_native_control:
                 from information_native_probe import run_information_native_probe
-                run_information_native_probe(camera, output, module, base, result, capture, native, key, query, check, host=host)
+                run_information_native_probe(camera, output, module, base, result, capture, native, key, query, check, host=host, pages=pages)
             elif args.focal_horizon_control:
                 from focal_horizon_control import run_horizon_control
                 run_horizon_control(camera, output, module, base, result, capture, native, check)

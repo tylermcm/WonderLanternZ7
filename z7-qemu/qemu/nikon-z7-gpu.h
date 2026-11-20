@@ -28,6 +28,7 @@ typedef struct Z7GPU {
     unsigned rendered, unsupported;
     unsigned stroke_samples;
     unsigned icon_samples;
+    unsigned draw_samples;
     bool lcd_scanout;
 } Z7GPU;
 
@@ -325,6 +326,30 @@ static void z7_gpu_pair_write(uint8_t *a, uint8_t *b, unsigned fmt,
     }
 }
 
+/* Explicit opt-in, read-only observation of the exact submitted draw. A host
+ * gate file lets a diagnostic arm after boot; no app identity affects capture
+ * or rendering. Paths are already copied by the native command interpreter.
+ * Keep potentially private firmware textures in a local ignored directory.
+ */
+static void z7_gpu_capture_draw(Z7GPU *g, const uint32_t *r, const Z7GPUPath *p,
+                                const uint8_t *tex, uint64_t texbytes,
+                                const uint8_t *second, uint64_t second_bytes)
+{
+    const char *dir = getenv("Z7_GPU_DRAW_DUMP_DIR");
+    const char *gate = getenv("Z7_GPU_DRAW_DUMP_GATE");
+    if (!dir || !*dir || g->draw_samples >= 512 ||
+        (gate && !g_file_test(gate, G_FILE_TEST_IS_REGULAR))) { return; }
+    unsigned sample = g->draw_samples++;
+    const char *names[] = {"regs", "path-regs", "segments", "coordinates", "texture", "second"};
+    const void *data[] = {r, p->regs, p->segments->data, p->coordinates->data, tex, second};
+    uint64_t lengths[] = {512*4, 512*4, p->segments->len, p->coordinates->len, texbytes, second_bytes};
+    for (unsigned i = 0; i < G_N_ELEMENTS(names); i++) {
+        if (!data[i] || !lengths[i] || lengths[i] > 0x100000) { continue; }
+        g_autofree char *path = g_strdup_printf("%s/%04u-%s.bin", dir, sample, names[i]);
+        g_file_set_contents(path, data[i], lengths[i], NULL);
+    }
+}
+
 static bool z7_gpu_draw(Z7GPU *g, const uint32_t *r, Z7GPUPath *p)
 {
     unsigned w = r[0x1a3] & 65535, h = r[0x1a3] >> 16, mode = r[0x184] & 255;
@@ -383,6 +408,7 @@ static bool z7_gpu_draw(Z7GPU *g, const uint32_t *r, Z7GPUPath *p)
         }
         for (int i = 0; i < 9; i++) { matrix[i] = z7_gpu_f24(r[0x10c+i]); }
     }
+    z7_gpu_capture_draw(g, r, p, tex, texbytes, tex2, (uint64_t)tw*th);
     dst = g_malloc(bytes); cpu_physical_memory_read(r[0x1a4], dst, bytes);
     if (second) { dst2 = g_malloc(second_bytes); cpu_physical_memory_read(r[0x1b5], dst2, second_bytes); }
     if (dfmt) { pair_rgba = g_malloc((size_t)w*h*4); pair_dirty = g_malloc0((size_t)w*h/2); }

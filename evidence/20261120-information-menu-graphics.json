@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "module_sha256": "d49811875af0304f5c18a2f6b182fb2bf79419fe43b7ad6d316ecefabd15ffcd",
+  "module_or_host_code_changed": false,
+  "emulator_binary_sha256": "f76609ae4cb96060ca1593a352a7ec3fc6af7e29473db756b4bbebf699b45c98",
+  "emulator_sources_verified": true,
+  "gpu_renderer_checks": 330,
+  "qemu_python_tests": 23,
+  "root_regression_tests": 55,
+  "firmware_free_qmp_smoke_passed": true,
+  "windows_runtime_path_from_manifest_required": true,
+  "private_draw_observer": {
+    "default_off": true,
+    "requires_explicit_directory": true,
+    "optional_host_gate_file": true,
+    "draw_limit": 512,
+    "per_file_byte_limit": 1048576,
+    "changes_guest_registers_memory_or_rendering": false,
+    "captures_partial_trace_not_all_commands": true
+  },
+  "menu_lifecycle": {
+    "passed": true,
+    "checks": 42,
+    "frames": 10,
+    "all_png_hashes_verified": true,
+    "frozen_helper_verified": true,
+    "native_and_owned_app13_remain_under_menu": true,
+    "master_off_defers_until_menu_closed": true,
+    "master_off_restores_user_page3_and_all61_masks": true
+  },
+  "inactive_native_controls": {
+    "entry_capture_checks": 22,
+    "entry_capture_frames": 4,
+    "settled_refresh_checks": 36,
+    "settled_refresh_frames": 9,
+    "all_png_hashes_verified": true,
+    "repeated_native_menu_paths": [
+      [
+        "page1-row0",
+        "page19-row0"
+      ],
+      [
+        "page1-row0"
+      ]
+    ],
+    "owned_menu_matches_second_native_menu_path": true,
+    "owned_menu_matches_second_native_menu_full_rgb_exact": true,
+    "custom_routing_active": false,
+    "full_information_module_loaded": true
+  },
+  "graphics_observations": {
+    "captured_draws_per_run": 512,
+    "capture_manifests_independently_verified": true,
+    "early_capture_horizon_draws": 487,
+    "early_capture_information_draws": 25,
+    "glyph_source_samples_upright": true,
+    "settled_rgba_copy": {
+      "source": "0xb045f200",
+      "destination": "0xb090f200",
+      "source_flags": "0x1",
+      "negative_y_texture_matrix": true
+    },
+    "lcd_copy": {
+      "source": "0xb090f200",
+      "destination_example": "0xda72b000",
+      "source_flags": "0x7",
+      "negative_y_texture_matrix": true
+    },
+    "orientation_cause_proven": false,
+    "application_specific_flip_added": false
+  },
+  "native_information_visual_acceptance": false,
+  "native_information_mirroring_remains": true,
+  "actual_hardware_timing_or_telemetry_established": false,
+  "camera_access": false,
+  "card_access": false,
+  "flash_performed": false,
+  "full_goal_complete": false
+}

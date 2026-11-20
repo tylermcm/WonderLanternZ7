@@ -2,6 +2,7 @@
 /* Tests actual production rasterizer: coordinate types, clearing, subsampled
  * chroma, separate alpha, descriptor bounds and aligned target height. */
 #include "../qemu/nikon-z7-gpu.h"
+#include <glib/gstdio.h>
 static unsigned checks;
 #define CHECK(c) do { checks++; if (!(c)) { fprintf(stderr,"FAIL line%d: %s\n",__LINE__,#c); return 1; } } while(0)
 static uint32_t fbits(float f) { uint32_t v; memcpy(&v,&f,4); return v; }
@@ -22,6 +23,34 @@ static Z7GPUPath *rectangle(unsigned type, bool indirect, unsigned state) {
 }
 int main(void) {
     Z7GPU g={0};
+    g_unsetenv("Z7_GPU_DRAW_DUMP_DIR"); g_unsetenv("Z7_GPU_DRAW_DUMP_GATE");
+    /* Gate after boot without changing submitted registers or path bytes. */
+    {
+        Z7GPUPath *observed=rectangle(2,false,0x100);
+        uint32_t regs[512]={0}, copy[512]={0}; regs[0x184]=8; memcpy(copy,regs,sizeof(regs));
+        z7_gpu_capture_draw(&g,regs,observed,NULL,0,NULL,0); CHECK(g.draw_samples==0);
+        char *dir=g_dir_make_tmp("z7-gpu-capture-XXXXXX",NULL); CHECK(dir!=NULL);
+        char *gate=g_build_filename(dir,"armed",NULL);
+        g_setenv("Z7_GPU_DRAW_DUMP_DIR",dir,true); g_setenv("Z7_GPU_DRAW_DUMP_GATE",gate,true);
+        z7_gpu_capture_draw(&g,regs,observed,NULL,0,NULL,0); CHECK(g.draw_samples==0);
+        CHECK(g_file_set_contents(gate,"1",1,NULL));
+        z7_gpu_capture_draw(&g,regs,observed,NULL,0,NULL,0); CHECK(g.draw_samples==1);
+        char *path=g_build_filename(dir,"0000-regs.bin",NULL), *data=NULL; gsize length=0;
+        CHECK(g_file_get_contents(path,&data,&length,NULL)); CHECK(length==sizeof(regs));
+        CHECK(!memcmp(data,regs,length) && !memcmp(copy,regs,sizeof(regs))); g_free(data);g_free(path);
+        uint8_t tiny=0;
+        z7_gpu_capture_draw(&g,regs,observed,&tiny,0x100001,NULL,0); CHECK(g.draw_samples==2);
+        path=g_build_filename(dir,"0001-texture.bin",NULL);CHECK(!g_file_test(path,G_FILE_TEST_EXISTS));g_free(path);
+        g_unlink(gate);z7_gpu_capture_draw(&g,regs,observed,NULL,0,NULL,0);CHECK(g.draw_samples==2);
+        CHECK(g_file_set_contents(gate,"1",1,NULL));g.draw_samples=512;
+        z7_gpu_capture_draw(&g,regs,observed,NULL,0,NULL,0);CHECK(g.draw_samples==512);
+        const char *names[]={"regs","path-regs","segments","coordinates"};
+        for(unsigned n=0;n<2;n++)for(unsigned j=0;j<G_N_ELEMENTS(names);j++) {
+            path=g_strdup_printf("%s/%04u-%s.bin",dir,n,names[j]);g_unlink(path);g_free(path);
+        }
+        g_unlink(gate);CHECK(g_rmdir(dir)==0);g_free(gate);g_free(dir);z7_gpu_path_free(observed);
+        g_unsetenv("Z7_GPU_DRAW_DUMP_DIR");g_unsetenv("Z7_GPU_DRAW_DUMP_GATE");g.draw_samples=0;
+    }
     /* Traced stock 720x480 register packet: three repeated lines per axis.
      * Test the production LCD-grid helper, including native Off and bounds. */
     uint32_t grid[0x1624/4] = {0};

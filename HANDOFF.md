@@ -1,5 +1,58 @@
 # Laptop handoff — October 20, 2026
 
+## Native Info MENU preserved; gated GPU capture — November20,2026
+
+Previousc688d4d turn was PROGRESS (full five-choice routing). This turn makes NO
+host/module C change: current information05 remains d4981187...15ffcd, API40,
+20748bytes/image20480/BSS5508. New generic GPU observer is explicit opt-in, host
+file gate,512draw cap/1MiB per-file cap; captures exact draw/path registers,
+segments/coordinates and bounded textures to PRIVATE files. No guest-state or
+rendering alteration. Default disabled and inherited env cleared in interactive.py.
+330production GPU checks PASS including gate/bounds/nonmutation; QEMU Python23
+and root55/no-skips PASS. QEMU rebuilt with root Windows setup; binarySHA
+f76609ae4cb96060ca1593a352a7ec3fc6af7e29473db756b4bbebf699b45c98,
+all5 source/binary hashes verified. Firmware-free QMP smoke PASS with manifest
+native_runtime_path in PATH. First bare-path smoke failed with no QMP (DLL path
+missing); corrected runtime, not a rendering change. Jobs71119/89478 terminal.
+
+MENU lifecycle live01 job82706 TERMINAL PASS42checks/10frames:
+`.private/evidence/20261120-information-lifecycle-live-01`.
+Original/custom information stay app13/page4 under MENU and on return. Master OFF
+while MENU open defers until close, then returns app0/user page3/all61 masks.
+All10 PNG hashes and frozen lifecycle helper verified; raw native/owned MENU viewed.
+First native MENU enters page1+19 row0, owned later MENU enters only page1 row0;
+this is NATIVE remembered focus, confirmed by repeated inactive control below.
+No app/snapshot/mask/pixel/lens input stores supplied.
+
+Graphics live01 job50290 TERMINAL PASS22/4frames, early native Info entry capture.
+Graphics live02 job84803 TERMINAL PASS36/9frames, settled refresh + TWO original
+inactive MENU roundtrips. Both use same full module with custom inactive.
+Both original MENU paths match lifecycle: first1+19 then1 alone. Owned MENU frame
+is EXACT COMPLETE RGB match to second inactive native MENU. All9+4PNG hashes
+verified. Helpers frozen per run; live02 frozen helper matched source before final
+metadata clarification. Old custom_information_implemented:false marker described
+inactive CONTROL, not module capability; source now separates implemented/active.
+No live jobs remain. Main-frame RGB identity is NOT asserted beyond matched MENU.
+
+Each capture has512draws; early lifecycle cap spent487onhorizon/25Info (not useful
+for Info glyphs). Info-only early capture includes upright A8 glyph source samples
+(raw source-glyphs.png viewed). Settled capture records repeated RGBA
+B045F200→B090F200 copy (source flags1, negative-Y texture matrix), then
+B090F200→LCD YUV copy (flags7, negative-Y matrix). Cause of mirror NOT PROVEN.
+Do not flip images or add app-specific scanout rules. Inspect original copy/image
+contracts and complete display controls; same primitive/register patterns alone do
+not prove orientation semantics. Large >1MiB textures are intentionally omitted.
+Private capture-manifest.json files verify all bounded dumps; source evidence
+20261120-information-menu-graphics.json. Original nativeInfo glyph mirroring remains,
+visual acceptance FALSE. No new GPU rasterization fix claimed.
+
+NEXT: use captured settled copy0031/0032 and native builders to establish why Info
+copy differs, without blindly rerunning MENU or earlier successful routing tests.
+Original10452B24 emits graphics command words;1048587C/10485Dxx are image/paint
+builder leads. Broader EVF/rotation/AF/lens lifecycle, highlights/portrait/persistence/
+real histogram statistics remain in full scope. Graph37256 refreshed2477nodes/6348edges; generated graph ignored.
+No camera/card/staging/flash/push. Full goal active.
+
 ## Full five-choice routing validated — November20,2026
 
 Previous5159f8b turn was PROGRESS. New API40 `display-information-probe` includes

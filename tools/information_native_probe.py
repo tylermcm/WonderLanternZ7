@@ -9,14 +9,15 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 
-def run_information_native_probe(camera, output, module, base, result, capture, native, key, query, check, host=None):
-    if module['kind'] != 'original-Z7-display-focal-diagnostic':
+def run_information_native_probe(camera, output, module, base, result, capture, native, key, query, check, host=None, pages=None):
+    if module['kind'] not in ('original-Z7-display-focal-diagnostic', 'original-Z7-display-information-diagnostic'):
         raise ValueError('Use the inactive focal profile to observe its counters')
     source = Path(__file__).read_bytes()
     (output / 'information-native-probe-source.py').write_bytes(source)
     result['information_native_probe_source_sha256'] = hashlib.sha256(source).hexdigest()
     scope = result['information_app_control'] = dict(
-        custom_information_implemented=False, focal_enabled=False,
+        custom_information_implemented=module['kind'] == 'original-Z7-display-information-diagnostic',
+        custom_information_active=False, focal_enabled=False,
         native_transition_via_disp_keys=True, baseline_pages_selected_by_native_setter_calls=True,
         incoming_lens_properties_supplied=False, snapshot_visibility_or_pixels_supplied=False)
     expected_update = (host['symbols'].get('z7_information_update_bridge', 0x102fda09)
@@ -64,6 +65,19 @@ def run_information_native_probe(camera, output, module, base, result, capture, 
     check('native-information-control-horizon-page3', horizon['information_native_page'] == 3)
     key('disp', lambda: app() == 13)
     information = observe('native-information-visible')
+    if getattr(camera, 'gpu_draw_gate', None):
+        # Initial app construction can consume the draw cap before the final
+        # present. Observe a settled native refresh, avoiding shooting cleanup
+        # and information-page construction. No native pixels/state are edited.
+        camera.gpu_draw_gate.write_text('native-information-refresh', encoding='utf-8')
+        scope['graphics_capture_armed_after_information_entry'] = True
+        native('Observe settled native information refresh', 0x1017081e, [1500])
+        observe('native-information-refresh')
+        camera.gpu_draw_gate.unlink()
+        draws = sorted(camera.gpu_draw_dump.glob('[0-9][0-9][0-9][0-9]-regs.bin'))
+        scope['captured_native_information_draws'] = len(draws)
+        scope['graphics_capture_limit_reached'] = len(draws) == 512
+        check('native-information-refresh-captures-private-draws', 0 < len(draws) <= 512)
     check('native-information-disp-enters-bound-app13',
           information['native_information_app']['current'] == 13 and
           information['native_information_app']['registry_descriptor'] == '0xa182d16c')
@@ -74,6 +88,21 @@ def run_information_native_probe(camera, output, module, base, result, capture, 
     check('native-information-panel-changes-real-pixels',
           all(ImageChops.difference(image(information), image(s)).getbbox() is not None
               for s in (standard, horizon)))
+    if getattr(camera, 'gpu_draw_gate', None):
+        if pages is None:
+            raise ValueError('Native graphics control needs the menu observer')
+        scope['repeated_inactive_native_menu_control'] = []
+        for iteration in (1, 2):
+            key('menu', lambda: bool(pages()))
+            menu = observe('native-information-menu-' + str(iteration))
+            opened = pages()
+            check('inactive-native-menu-' + str(iteration) + '-keeps-information-app-and-masks',
+                  app() == 13 and menu['information_masks'] == standard['information_masks'])
+            key('menu', lambda: not pages())
+            closed = observe('native-information-menu-closed-' + str(iteration))
+            check('inactive-native-menu-' + str(iteration) + '-closes-back-to-information',
+                  app() == 13 and not pages() and closed['native_information_app']['property2f15'] == 4)
+            scope['repeated_inactive_native_menu_control'].append(dict(iteration=iteration, opened=opened))
     key('disp', lambda: app() == 0)
     returned = observe('native-information-return')
     check('native-information-disp-returns-to-original-shooting-app0',

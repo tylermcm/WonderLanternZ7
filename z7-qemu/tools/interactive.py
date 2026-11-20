@@ -347,8 +347,14 @@ class Camera:
             self.audit({'kind': 'exmcu-test-device', 'diagnostic_only': True, 'capture_control_only': True})
         env.pop('Z7_GRAPHICS_DUMP_DIR', None)
         env.pop('Z7_GPU_ICON_DUMP_DIR', None)
+        env.pop('Z7_GPU_DRAW_DUMP_DIR', None)
+        env.pop('Z7_GPU_DRAW_DUMP_GATE', None)
         if getattr(self, 'gpu_icon_dump', None):
             env['Z7_GPU_ICON_DUMP_DIR'] = str(self.gpu_icon_dump)
+        if getattr(self, 'gpu_draw_dump', None):
+            env['Z7_GPU_DRAW_DUMP_DIR'] = str(self.gpu_draw_dump)
+            if getattr(self, 'gpu_draw_gate', None):
+                env['Z7_GPU_DRAW_DUMP_GATE'] = str(self.gpu_draw_gate)
         options = dict(creationflags=subprocess.CREATE_NO_WINDOW) if os.name == 'nt' else {}
         self.proc = subprocess.Popen(command, stdout=self.console, stderr=subprocess.STDOUT, env=env, **options)
         self.remote = Remote(port)
