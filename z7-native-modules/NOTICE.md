@@ -67,3 +67,11 @@ audits are independent local MIT interface/validation work. The need for a pass
 after the complete native update is informed by pinned upstream
 `plugins/histogram_horizon_ram.c`, copyright (c)2026 JKWTCN under MIT. No Z7II
 addresses or implementation bytes are embedded in the original-Z7 wrapper.
+
+`examples/display_histogram_policy.h` adapts the guarded extra-pass sequence,
+temporary mask placement, scale calculation and synchronous painter restoration
+from pinned upstream `plugins/histogram_horizon_ram.c` at
+50a22b24c50619cffa646dac386e8334659f475a, copyright (c)2026 JKWTCN, under the
+preserved MIT license. Original-Z7 addresses, mask banks, state ownership,
+sample clearing/overflow handling, explicit retirement and audits are independent
+local modifications. This experimental port is an independent modified work.

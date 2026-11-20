@@ -90,8 +90,11 @@ static void readouts_before(void)
     readout_sync_preset();
 #endif
     uint32_t changed = 0, conflict = 0;
+#ifdef Z7_HISTOGRAM_EXTRA_PROBE
+    changed = histogram_before();
+#endif
 #ifdef Z7_SETTINGS_BASE_PROBE
-    changed = base_before();
+    changed |= base_before();
 #endif
     if (readout_pending) changed |= readout_release(readout_pending);
     uint32_t master = !!(z7_menu_settings.flags & Z7_SETTINGS_CUSTOM);

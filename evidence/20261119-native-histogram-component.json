@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Experimental independent original-Z7 histogram component with guarded native extra pass",
+  "status": "Compiled native pipeline and live sample-failure behavior validated; successful histogram pixels remain open",
+  "module": {
+    "module_sha256": "9f26f9d690e21c9258e1f555813ae598d766c25fd062a396a07559e2b18ec790",
+    "file_bytes": 14220,
+    "image_bytes": 13952,
+    "bss_bytes": 5060,
+    "api_minimum_bytes": 32
+  },
+  "host_main_sha256": "9326b595fd4f47719aaa9bcdb157ce35aa9f3cbd812a62f990585a4e2e52db66",
+  "host_changed": false,
+  "native_interfaces": {
+    "getter": "0x104070AC",
+    "descriptor": "0xA1827404",
+    "control": "0xA18273D4",
+    "bins": "0xA201DF88",
+    "scale": "0xA201D33C",
+    "scale_getter": "0x103EA09E key3",
+    "layout": [
+      "0x10369248",
+      "0x10369214",
+      "0x102F27A8"
+    ],
+    "updater": [
+      "0x102F2ADA",
+      "0x102F5540"
+    ],
+    "default_painter": "0x10433913",
+    "histogram_painter": "0x102F1545",
+    "submit": "0x102F2042",
+    "present_request": "0x102F11B6"
+  },
+  "policy": {
+    "stock_masks_and_page2_gate_retained": true,
+    "temporary_photo_lcd_banks_only": true,
+    "sample_buffer_cleared_and_aligned": true,
+    "sample_failure_empty_overflow_reject_before_native_publication": true,
+    "native_bin_copy_bytes": 1024,
+    "min_peak_or_four_times_nonzero_mean": true,
+    "module_painter_restored_after_submit": true,
+    "explicit_native_hide_and_dirty_cleanup": true,
+    "component_and_master_off_retire_owned_widget": true,
+    "foreign_bindings_preserved": true,
+    "cadence_from_completion": true,
+    "interval_native_clock_units": 100,
+    "physical_timing_proven": false
+  },
+  "compiled_component": {
+    "passed": true,
+    "checks": 146,
+    "native_layout_updater_painter_and_scale_getter_execute": true,
+    "native_unavailable_getter_chain_executes": true,
+    "supplied_boundaries": [
+      "Loader/kernel/heap/property/GUI inputs",
+      "Successful/empty/failed sample data",
+      "Synchronous render submit",
+      "Painter result in failure-injection cases",
+      "Low-level rectangle/barrier services in native painter case",
+      "Present request"
+    ],
+    "real_statistics_success": false,
+    "actual_pixels": false
+  },
+  "native_painter": {
+    "passed": true,
+    "checks": 28,
+    "cases": 5,
+    "native_rectangle_adapter_executes": true,
+    "bar_height_clipping_and_hidden_behavior_verified": true,
+    "supplied_boundaries": [
+      "Bins and GUI object/rectangle",
+      "Low-level rectangle draw103FA470",
+      "Native display barrier103FCB46"
+    ],
+    "actual_pixels": false
+  },
+  "regression": {
+    "base_ownership": 68,
+    "grid": 282,
+    "native_geometry_calls": 109,
+    "root": 39,
+    "root_skipped": 0,
+    "accepted_base_grid_package_byte_identical": true
+  },
+  "live": {
+    "passed": true,
+    "checks": 9,
+    "frames": 8,
+    "real_native_getter_attempts": 5,
+    "failed_sample_outcomes": 4,
+    "empty_sample_outcomes": 0,
+    "paints": 0,
+    "present_requests": 0,
+    "native_samples_supplied": false,
+    "statistics_event_completion_invented": false,
+    "complete_native_rgb_reference_match": true,
+    "native_format_and_iso_visibility_match_required": true,
+    "native_disp_cycle_before_reference": true,
+    "screenshot_pixel_exclusions": false,
+    "successful_histogram_pixels_proven": false,
+    "final_failed_sample_outcomes": 5,
+    "exact_rgb_native_reference_names": [
+      "histogram-disabled-control-1",
+      "histogram-disabled-control-2"
+    ],
+    "attempts_after_component_off_and_master_off": [
+      5,
+      5
+    ],
+    "native_reference_hud_visually_inspected": true,
+    "active_and_retired_rgb_equal_inspected_reference": true
+  },
+  "retained_failures": {
+    "live01_02": "Misidentified message callback word as zero context flag",
+    "native_message_dispatcher": "0x103764B8 loads/calls object word0",
+    "live03_04": "Corrected getter rejection works but ISO AUTO phase differs from pre-cycle native reference",
+    "native_invalidation_alone_insufficient": true
+  },
+  "next": [
+    "Successful supplied-sample native submit/present pixel path and retirement validation",
+    "Validate active output bits at A1821370+0x24 using original103FBCCA; preserve transitions",
+    "Real statistics producer success, highlights, information app and remaining groups",
+    "Native menu-return coherence, persistence, broader lifecycle and exact installation/recovery"
+  ],
+  "camera_access": false,
+  "physical_card": false,
+  "staging": false,
+  "flash": false,
+  "push": false,
+  "private_evidence_sha256": {
+    "20261119-histogram-component-07.json": "69bfcbcdfc6c92023021ef7d700bc81653ecc442b9e39fed1f8b7b356e19ca14",
+    "20261119-histogram-painter-01.json": "5af6f236fa02e8617eaccd5f19d6a1f977b6649ca24e2e61dac54fa060d89db9",
+    "20261119-histogram-component-live-05/result.json": "49ac4d2396d6f1e717914e74bb7119a812d41d38884ac67323f64f9b0932d6e6"
+  },
+  "graph": {
+    "nodes": 2111,
+    "edges": 5331,
+    "generated_graph_ignored": true
+  }
+}

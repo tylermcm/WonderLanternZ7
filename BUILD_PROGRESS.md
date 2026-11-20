@@ -203,3 +203,19 @@ Host99/display316/update24/DISP137/base68 and39 root tests/no-skips pass.
 This completes the callback prerequisite, not the histogram feature. Native
 layout/submit/present and real statistics success remain next, alongside the
 other open display and hardware scope. Full software goal stays active.
+
+## Native histogram component and real failure path — November 19, 2026
+
+Optional histogram06 adds real sample retrieval, bounded normalization, native
+layout/updater/submit/present requests, temporary LCD masks, conditional painter
+restoration and native hide/dirty retirement.146 compiled component checks and28
+original-painter geometry checks pass. Successful samples/render submission are
+supplied in contract fixtures; one chain executes the original painter/scale
+getter. The native unavailable-event getter chain also executes independently.
+Assisted-QEMU live05 passes9 checks/eight frames: five real getter attempts,
+no optional paints/presents, exact complete native RGB reference membership,
+matching native ISO visibility, and sampling stopped after component-off.
+Failed context/ISO-phase runs remain private. Base68/grid282 and39 root/no-skips
+pass; accepted base-grid04 rebuilds byte-identically. Full statistics success,
+successful histogram pixels, active-output transition checks and broader display
+scope remain. No camera/card access, staging, flash or push; goal stays active.

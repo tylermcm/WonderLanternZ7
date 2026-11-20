@@ -68,7 +68,13 @@ static uint32_t scalar_value(uint32_t key, uint32_t value)
 #endif
     return key == 0x102d && value >= 2 && value <= 5 ? 1 : value;
 }
-static uint32_t histogram_gate(uint32_t state) { return state == 2 || state == 3; }
+static uint32_t histogram_gate(uint32_t state) {
+#ifdef Z7_HISTOGRAM_EXTRA_PROBE
+    return state == 2;
+#else
+    return state == 2 || state == 3;
+#endif
+}
 static void grid_geometry(void *pointer)
 {
     if (WORD(GRID_RAW) != 3 || (uintptr_t)pointer != 0xa2020c2cu) return;

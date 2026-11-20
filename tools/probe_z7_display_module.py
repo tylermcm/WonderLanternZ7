@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets', 'gui-update'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
     parser.add_argument('--grid-components', action='store_true', help='For the base-page DISP probe, set a native golden grid and verify component suppression and same-page edits')
@@ -82,7 +82,7 @@ def main():
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
         orientation_fixture=0, keep_awake=True, photo_liveview=True)
     camera = DisplayCamera(0, profile='menu' if args.view == 'menu' else 'shooting', **options)
-    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update'):
+    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram'):
         # Retain the base fixture's native StartLV settling delay before MENU.
         # Acknowledgement alone can precede the first completed native draw.
         camera.native_display_wait_ms = 5000
@@ -90,7 +90,7 @@ def main():
         main_sha256=host['main_payload_sha256'], modeled_module_file=True, camera_access=False, physical_card=False,
         supplied_histogram_context=args.histogram_context_fixture)
     result['probe_script_sha256'] = hashlib.sha256(probe_source).hexdigest()
-    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
+    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
     def save():
         (output / 'result.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     def check(name, passed):
@@ -148,6 +148,21 @@ def main():
         (output / (name + '.png')).write_bytes(camera.png)
         stored = int.from_bytes(camera.remote.memory(0xa24f182c, 4), 'little')
         step = dict(name=name, stored_grid=stored, frame_sha256=hashlib.sha256(camera.png).hexdigest(), pages=pages())
+        if args.view == 'histogram':
+            step['histogram'] = {name: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_histogram_' + name], 4), 'little')
+                for name in ('result', 'attempts', 'draws', 'paints', 'presents', 'last_end', 'context_bits')}
+            step['histogram']['outcomes'] = list(struct.unpack('<16I', camera.remote.memory(base + module['symbols']['z7_histogram_outcomes'], 64)))
+            step['histogram']['masks'] = camera.remote.memory(0xa1827408, 36).hex()
+            step['histogram']['control'] = camera.remote.memory(0xa18273d4, 48).hex()
+            obj = int.from_bytes(camera.remote.memory(0xa18273f8, 4), 'little')
+            step['histogram']['object'] = hex(obj)
+            step['histogram']['object_words'] = list(struct.unpack('<25I', camera.remote.memory(obj, 100))) if obj else []
+            step['histogram']['scale'] = int.from_bytes(camera.remote.memory(0xa201d33c, 4), 'little')
+            step['histogram']['native_formats'] = camera.remote.memory(0xa18237b8, 7).hex()
+            iso_descriptor = 0xa1824654
+            iso_control = int.from_bytes(camera.remote.memory(iso_descriptor + 44, 4), 'little')
+            step['histogram']['native_iso_visibility'] = [camera.remote.memory(iso_control + i * 48 + 1, 1).hex()
+                for i in range(camera.remote.memory(iso_descriptor + 40, 1)[0])]
         if args.view == 'gui-update':
             step['gui_probe'] = {name: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_gui_probe_' + name], 4), 'little')
                 for name in ('mask', 'calls', 'busy_samples', 'last_busy', 'recurse')}
@@ -254,7 +269,7 @@ def main():
     try:
         camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry') else camera.boot_shooting()
         checkpoint()
-        if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update'):
+        if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram'):
             # StartLV acknowledgement and a fixed delay are insufficient. This
             # diagnostic gate observes native pipeline progress without writing
             # readiness flags or inventing peripheral completion responses.
@@ -293,7 +308,48 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'gui-update':
+        if args.view == 'histogram':
+            if module['kind'] != 'original-Z7-display-histogram-diagnostic':
+                raise ValueError('Histogram component diagnostic required')
+            native('Original standard base for histogram diagnostic', 0x103673de, [0])
+            histogram_references = [capture('histogram-disabled-control-1')]
+            native('Native full layout invalidation while custom display is disabled', 0x10367c5a, [])
+            histogram_references.append(capture('histogram-disabled-control-2'))
+            for target in (1, 3, 0):
+                key('disp', lambda: camera.remote.memory(0xa201d4d0 + 0x18a, 1)[0] == target)
+                step = capture('histogram-disabled-native-cycle-' + str(target))
+                if target == 0: histogram_references.append(step)
+            native('Enable histogram component in preset0', base + module['symbols']['z7_settings_component'],
+                   [base + module['symbols']['z7_menu_settings'], 0, 1, 1])
+            native('Enable custom display model', base + module['symbols']['z7_settings_flag'],
+                   [base + module['symbols']['z7_menu_settings'], 0, 1])
+            for _ in range(5):
+                native('Wait for native histogram sampling', 0x1017081e, [500])
+                if int.from_bytes(camera.remote.memory(base + module['symbols']['z7_histogram_attempts'], 4), 'little'):
+                    break
+            active = capture('histogram-custom-active')
+            check('histogram-pass-reaches-real-native-getter', active['histogram']['attempts'] > 0)
+            check('histogram-temporary-masks-restored', active['histogram']['masks'] == struct.pack('<9I', *([0x444] * 6 + [0x440] * 3)).hex())
+            if not active['histogram']['draws']:
+                check('unavailable-or-empty-native-samples-fail-closed',
+                    sum(active['histogram']['outcomes'][8:10]) > 0 and not active['histogram']['paints'] and not active['histogram']['presents'])
+                references = [Image.open(output / (step['name'] + '.png')).convert('RGB').tobytes()
+                    for step in histogram_references if all(step['histogram'][field] == active['histogram'][field]
+                        for field in ('native_formats', 'native_iso_visibility'))]
+                check('sample-failure-keeps-complete-native-frame', Image.open(output / 'histogram-custom-active.png').convert('RGB').tobytes() in references)
+            else:
+                result['native_histogram_success_observed'] = True
+            native('Disable histogram component in preset0', base + module['symbols']['z7_settings_component'],
+                   [base + module['symbols']['z7_menu_settings'], 0, 1, 0])
+            retired = capture('histogram-component-off')
+            check('component-off-does-not-retain-module-painter', not retired['histogram']['object_words'] or
+                retired['histogram']['object_words'][19] in (0x10433913, 0x102f1545))
+            native('Disable custom display model', base + module['symbols']['z7_settings_flag'],
+                   [base + module['symbols']['z7_menu_settings'], 0, 0])
+            capture('histogram-master-off')
+            result['histogram_scope'] = dict(supplied_samples=False, statistics_event_completion_invented=False,
+                native_getter_executed=True, native_pixel_histogram_success_proven=False)
+        elif args.view == 'gui-update':
             if module['kind'] != 'original-Z7-gui-update-diagnostic':
                 raise ValueError('After-GUI diagnostic required')
             check('resident-wrapper-owns-update-slot', camera.remote.memory(0xa1829b14, 4) == struct.pack('<I', host['symbols']['z7_gui_update_bridge']))

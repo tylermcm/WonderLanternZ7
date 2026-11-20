@@ -244,3 +244,11 @@ revalidate context and render-busy state. Nested native updates are preserved
 while nested module callbacks are suppressed.122 instruction cases and11
 assisted-QEMU checks pass. See the [current record](z7-native-modules/DISPLAY_SETTINGS.md#after-native-gui-callback-for-the-histogram-pass)
 for exact hashes and limitations. This is no statistics producer or paint fence.
+
+The optional histogram component now uses that callback with original-Z7 sample,
+layout, updater, submit and present-request interfaces. It retains native page2
+sampling and original masks outside temporary placement.146 compiled checks
+include a positive original-painter/scale-getter chain and native unavailable-
+event rejection;28 original-painter geometry checks pass. Successful native
+statistics and actual histogram pixels remain open. See the [component record](z7-native-modules/DISPLAY_SETTINGS.md#native-histogram-component-prototype)
+for ownership, failure cleanup, exact candidates and retained failed live runs.

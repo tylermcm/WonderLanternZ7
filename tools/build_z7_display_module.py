@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'gui-update-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'gui-update-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -44,6 +44,7 @@ def main():
         'display-disp-probe': ('examples/display_disp_probe.c', 'original-Z7-display-disp-diagnostic', 28),
         'display-base-probe': ('examples/display_base_probe.c', 'original-Z7-display-base-diagnostic', 28),
         'gui-update-probe': ('examples/gui_update_probe.c', 'original-Z7-gui-update-diagnostic', 32),
+        'display-histogram-probe': ('examples/display_histogram_probe.c', 'original-Z7-display-histogram-diagnostic', 32),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
     packet, report = build(source, zig=args.zig.resolve())
@@ -67,27 +68,29 @@ def main():
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
               ROOT / 'z7-native-modules/sdk/module.ld']
-    if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe'):
+    if args.variant in ('battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe'):
         inputs.append(ROOT / 'z7-native-modules/plugins/battery_sample.h')
     if args.variant == 'battery-native':
         inputs.append(ROOT / 'z7-native-modules/examples/battery_display_probe.c')
-    if args.variant in ('combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe'):
+    if args.variant in ('combined', 'clean-probe', 'disp-key-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/grids_histogram.c', ROOT / 'z7-native-modules/plugins/battery_percent.c']
     if args.variant in ('clean-probe', 'disp-key-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/combined_display.c', ROOT / 'z7-native-modules/examples/clean_display_policy.h']
     if args.variant == 'settings-probe':
         inputs += [ROOT / 'z7-native-modules/plugins/display_settings.c', ROOT / 'z7-native-modules/plugins/display_settings.h']
-    if args.variant in ('settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe'):
+    if args.variant in ('settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe'):
         inputs += [ROOT / 'z7-native-modules/plugins/combined_display.c', ROOT / 'z7-native-modules/examples/settings_menu_policy.h',
                    ROOT / 'z7-native-modules/plugins/display_settings.c', ROOT / 'z7-native-modules/plugins/display_settings.h']
-    if args.variant in ('display-readouts-probe', 'display-disp-probe', 'display-base-probe'):
+    if args.variant in ('display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe'):
         inputs += [ROOT / 'z7-native-modules/examples/settings_menu_entry.c', ROOT / 'z7-native-modules/examples/display_readouts_policy.h', ROOT / 'z7-native-modules/sdk/update.h']
-    if args.variant in ('display-disp-probe', 'display-base-probe'):
+    if args.variant in ('display-disp-probe', 'display-base-probe', 'display-histogram-probe'):
         inputs += [ROOT / 'z7-native-modules/examples/display_readouts_probe.c', ROOT / 'z7-native-modules/examples/display_disp_policy.h', ROOT / 'z7-native-modules/sdk/disp.h']
-    if args.variant == 'display-base-probe':
+    if args.variant in ('display-base-probe', 'display-histogram-probe'):
         inputs += [ROOT / 'z7-native-modules/examples/display_disp_probe.c', ROOT / 'z7-native-modules/examples/display_base_policy.h']
-    if args.variant == 'gui-update-probe':
+    if args.variant in ('gui-update-probe', 'display-histogram-probe'):
         inputs += [ROOT / 'z7-native-modules/sdk/gui.h', ROOT / 'z7-native-modules/sdk/disp.h', ROOT / 'z7-native-modules/sdk/update.h']
+    if args.variant == 'display-histogram-probe':
+        inputs += [ROOT / 'z7-native-modules/examples/display_base_probe.c', ROOT / 'z7-native-modules/examples/display_histogram_policy.h']
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)

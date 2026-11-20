@@ -10,6 +10,10 @@
 #ifdef Z7_SETTINGS_DISP_PROBE
 #include "disp.h"
 #endif
+#ifdef Z7_HISTOGRAM_EXTRA_PROBE
+#include "gui.h"
+static uint32_t histogram_before(void);
+#endif
 
 /* Component initializers prepare owned data through a local staging API. Only
  * this entrypoint registers with the host and commits native scalar masks.
@@ -28,6 +32,9 @@
 #undef Z7_GRID_DEFER_MASKS
 #ifdef Z7_SETTINGS_MENU_PROBE
 #include "../examples/settings_menu_policy.h"
+#endif
+#ifdef Z7_HISTOGRAM_EXTRA_PROBE
+#include "../examples/display_histogram_policy.h"
 #endif
 
 #ifdef Z7_CLEAN_DISPLAY_PROBE
@@ -81,6 +88,10 @@ uint32_t z7_main(const struct z7_module_api *api)
 #ifdef Z7_DISP_KEY_PROBE
     if (W(0xa1829b0cu) != 0x1030da57u) return 1;
 #endif
+#ifdef Z7_HISTOGRAM_EXTRA_PROBE
+    const struct z7_module_gui_api *gui_api = (const struct z7_module_gui_api *)api;
+    if (api->size < sizeof(*gui_api) || !gui_api->register_after_gui_update) return 1;
+#endif
 #ifdef Z7_SETTINGS_MENU_PROBE
     if (!sm_prepare()) return 1;
 #endif
@@ -93,10 +104,15 @@ uint32_t z7_main(const struct z7_module_api *api)
 #ifdef Z7_SETTINGS_DISP_PROBE
     if (!disp_api->register_disp_cycle(preset_cycle)) return 1;
 #endif
+#ifdef Z7_HISTOGRAM_EXTRA_PROBE
+    if (!gui_api->register_after_gui_update(histogram_after_gui)) return 1;
+#endif
     /* No failing operation follows these native scalar stores. Host readiness
      * and native menu pointer publication still follow successful return.
      */
+#ifndef Z7_HISTOGRAM_EXTRA_PROBE
     Z7_GRID_COMMIT_MASKS();
+#endif
 #ifdef Z7_SETTINGS_MENU_PROBE
     sm_publish();
 #endif

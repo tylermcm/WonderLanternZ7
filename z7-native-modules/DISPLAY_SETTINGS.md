@@ -646,3 +646,80 @@ bind real sample availability with fail-closed cleanup. Successful statistics,
 histogram pixels, remaining components/information groups, information app,
 menu-return coherence, persistence, lifecycle and physical installation/recovery
 remain open. No camera/card access, staging, flash or push.
+
+## Native histogram component prototype
+
+`display-histogram-probe` extends the base/grid/readout prototype through the
+32-byte after-GUI API. It keeps the original histogram masks (six0x444 and
+three0x440 words) and native page2 sampling gate. Earlier standalone/combined
+grid modules remain compatible; the accepted base-grid04 rebuild is byte-identical.
+The new component defaults to custom display disabled and does not create a
+new camera installation candidate or bind persistence.
+
+For an owned photo-LCD custom page0/3 with the histogram component enabled,
+the optional after-GUI pass checks current/previous page agreement, saved base
+property ownership, native key/event bindings, menu/update/exclusion state,
+pending display work, descriptor/control identity, native canvas/painter identity,
+dirty/visible control flags, photo eligibility and native viewport readiness.
+An aligned owned256-word buffer is cleared before original104070AC is called.
+Failure, empty nominal success, overflowing totals or a changed context stop
+before publishing native bins/scale or submitting a draw. Native event completion
+is never invented. Retry cadence uses100 native clock units from completion,
+including slow or failed getters; physical timing is not established.
+
+Successful samples use the native min(peak, four times nonzero-bin mean) scale,
+with overflow handled before multiplication. The pass copies exactly1,024bytes
+into native bins A201DF88 and publishes scale A201D33C, which original getter
+103EA09E key3 reads. During layout only the two photo LCD banks temporarily add
+bits0/8 or3/11. Original10369248,10369214 and102F27A8 run; all masks restore before
+native updater102F2ADA/102F5540 and submit102F2042. The updater installs original
+painter102F1545. A temporary owned observer calls that painter synchronously,
+then conditionally restores the native default10433913. Only a successful visible
+paint in the same eligible context requests native present102F11B6. Present
+requests are not proof of physical presentation.
+
+Layout recomputation alone did not hide the native object in failure injection.
+The corrected cleanup explicitly uses native hide/dirty services after layout;
+component-off/master-off retirement does the same before native invalidation.
+Foreign object/painter replacements are preserved. The optional painter is
+conditionally removed even from an old object if its control slot changes
+during submission. No hot-unload or new object allocation is introduced.
+
+Current private histogram06 is reproducible SHA
+9f26f9d690e21c9258e1f555813ae598d766c25fd062a396a07559e2b18ec790,
+14,220bytes/image13,952/BSS5,060, using unchanged host07.146 compiled component
+checks pass, covering native layout/updater instructions, normalization bounds,
+failure cleanup, retirement, native unavailable-event getter rejection,
+foreign-write handling, completion-based cadence and old28-byte-host rejection.
+One positive chain executes the original histogram painter and scale getter
+with supplied bins/render-submit/rectangle/present services. Separate original
+painter audit passes28 checks/five cases for scale lookup, native bin geometry,
+clipping, empty samples and hidden-object behavior. These prove primitive
+geometry, not actual scanout or successful real statistics production.
+
+Retain failed live01/02: the first prototype misidentified shooting-object
+A1829AF8 word0 as a zero context flag. Original message dispatcher103764B8
+loads that word and calls it as a function. It is now guarded through known
+key/event bindings instead. Corrected live03 reaches the real getter and
+records failed samples with no paint/present calls, but whole-frame comparison
+fails on the native ISO AUTO redraw phase. Live04 confirms native invalidation
+alone does not establish that visibility phase. Live05 completes native DISP
+cycling before enabling custom display, then passes9 checks/eight frames.
+Five real getter attempts produce no optional paint/present requests. The active
+frame matches the complete disabled standard-page RGB reference with matching
+native formats/ISO visibility. The two disabled initial references, active,
+component-off and master-off frames are byte-identical after RGB decoding.
+Sampling remains at five attempts after component-off/master-off. The native
+reference HUD was inspected and exact pixel equality independently checked.
+No pixel exclusions, supplied sample data or invented event completions are used.
+This is captured native failure-path RGB membership, not successful histogram
+pixels, full submit/present integration or an update/paint fence.
+
+Base68/grid282 (including109 native geometry calls) and39 root regressions/no-skips
+pass on the new module. Source summary is
+`evidence/20261119-native-histogram-component.json`. Next validate active output
+bits at A1821370+0x24 (original103FBCCA reads them), then the successful native
+submit/present pixel path and visible-widget retirement with explicit supplied
+bins if the emulator has no real statistics producer. Keep that boundary labeled;
+real successful statistics production remains unverified. Other display scope,
+physical card/cache/wake and exact installation/recovery remain open.

@@ -1,5 +1,72 @@
 # Laptop handoff — October 20, 2026
 
+## Native histogram extra pass and real getter failure — November 19, 2026
+
+Previous goal turn made progress; this turn implements the histogram component.
+ALL CURRENT JOBS ARE TERMINAL after graph refresh. Keep full goal active.
+Current experimental module `.private/builds/20261119-display-histogram-06` is
+reproducible SHA9f26f9d690e21c9258e1f555813ae598d766c25fd062a396a07559e2b18ec790,
+14220bytes/image13952/BSS5060, additive32-byte API, unchanged host07. Accepted
+base-grid04 rebuild `.private/builds/20261119-histogram-base-regression-01` remains
+30399ca0... byte-identical. No camera/card access, staging, flash or push.
+
+Variant display-histogram-probe includes the base/grid/readout/GUI stack, defaults
+custom display off, keeps original masks six444/three440 and native page2 gate.
+Owned LCD page0/3 extra pass checks previous page, base/property/context, key/event
+bindings, pending work, widget/control/canvas/painter identity, dirty/visible
+flags, photo eligibility and readiness. Clear aligned256-word samples before
+real104070AC. Failed/empty/overflowed/changed data stops before native publication.
+Success copies1024bytes toA201DF88; native min(peak,4*nonzero mean) scale goes
+toA201D33C (actual getter103EA09E key3 verified). Temporary masks only LCD banks0/3
+add bits0/8 or3/11 during native layout10369248,10369214,102F27A8. Restore masks,
+dispatch102F2ADA/102F5540, submit102F2042, conditionally request present102F11B6.
+Native updater installs102F1545; original rectangle initializer1043396A proves
+default10433913. Temporary module observer restores default after synchronous
+submit, including old-object cleanup if the control pointer changes. Native hide/
+dirty services explicitly clean failures and retire owned widgets before native
+invalidation on component/master-off. Never overwrite foreign object/painters.
+
+Final audit `.private/evidence/20261119-histogram-component-07.json` passes146
+compiled checks. Native layout/updater execute, plus one whole positive chain
+through original painter/scale getter to supplied rectangle/barrier services.
+Sample producer, synchronous submit and present are supplied. Failure injection
+supplies painter returns. Another case executes real getter/driver/zeroing with
+unavailable event0; no invented successful event. Painter audit01 passes28 checks/
+five cases for native scale lookup, bar heights/clipping, empty and hidden states;
+primitive geometry only. Base68/grid282(native geometry109)/root39 no-skips pass.
+
+Live `.private/evidence/20261119-histogram-component-live-05` PASSES9checks/8frames.
+Native RAW/ISP readiness and a complete native DISP cycle precede comparison.
+Five actual getter attempts fail without optional paint/present. Active RGB
+matches both initial disabled standard frames with identical native format/ISO
+visibility. Active/component-off/master-off all match those full RGB frames;
+attempt count stays5 after disable. Native HUD reference inspected; RGB equality
+independently confirmed. This is native failure-path frame membership only,
+not successful histogram pixels, actual statistics success or a paint fence.
+Source evidence: `evidence/20261119-native-histogram-component.json`.
+
+Retain failed live01/02: A1829AF8 word0 is a message callback pointer, not a zero
+context byte (original103764B8 loads/calls it). Correct guards use known native
+key/event bindings; do not map foreign context globals by nearby struct offsets.
+Live03 reaches getter failures but ISO AUTO differs from its initial reference;
+live04 shows invalidation alone is insufficient. Live05 records native cycling
+and matches phase-qualified complete native RGB with no pixel exceptions.
+
+NEXT: validate actual active output bits W(A1821370+0x24), as original103FBCCA
+reads that word; current context checks requested output103FEF80 and LCD scene0
+but not yet this active-output word. Add ownership/transition protection before
+successful pixel validation. Then run native submit/present with explicitly
+supplied bins at the getter boundary if QEMU has no statistics backend, without
+inventing event completion or calling that hardware statistics success. Verify
+visible histogram, same-page toggle/master-off retirement and protected pixels.
+Native present102F11B6 routes outputs via103FBCCA,10435318,103FAC5A; original
+submit102F2042 uses LCD prep102F1E3C, dirty-list102F1DC0 and render103FAEC6.
+No supplied-sample pixel fixture is implemented yet. Real producer success,
+highlights, information app/groups, menu-return coherence, persistence/lifecycle,
+physical card/cache/wake and exact installation/recovery remain open. Graph and
+source manifest refreshed at this source-only checkpoint. Never flash until
+explicit authorization plus concrete exact-candidate installation/recovery review.
+
 ## After-native-GUI prerequisite — November 19, 2026
 
 Previous goal turn made progress; this turn adds the after-GUI host API.

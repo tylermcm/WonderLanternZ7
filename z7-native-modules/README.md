@@ -24,6 +24,10 @@ for ownership, publication, the additive API size and reproducible audit command
 The latest experimental host adds `sdk/gui.h`: one owned init-only callback
 after the original shooting GUI update returns. Earlier API prefixes remain
 compatible. Consumers must revalidate context; this is not a frame/ISP fence.
+The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
+with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
+distinguishes compiled native drawing primitives, real sample failures and
+the still-open successful pixel/statistics validation.
 No Z7II native addresses are exported. Native modules are
 trusted code, not sandboxed. CRC detects corruption; it does not authenticate a
 module or make arbitrary code safe.
