@@ -86,14 +86,58 @@ and native palette-getter calls. No graphics submission or producer executes.
 ```
 
 Original caller `1034FF1E` invokes this converter before the request builder
-`1034EFB0` and graphics submission/completion path. That caller has only been
-inspected, not accepted as an executed asynchronous interface.
+`1034EFB0` and graphics submission/completion path. Its blocking handoff is executed below; it is not an accepted asynchronous
+extension interface.
 Source-only evidence: `evidence/20261120-highlight-converter.json`.
+
+## Verified original submission/completion handoff
+
+Native builder `1034EFB0` case16 returns a caller-supplied request descriptor
+(or uses a native static fallback, not exercised by this audit). It writes
+callback/command/payload/context at offsets0C/10/14/18hex. Logical banks0/1/2
+produce `42060007`, `42061007`, `42062007`. The third builder argument is not
+used by this case. The audit passes six arguments using the original ARM caller
+stack layout and checks that the argument words remain intact.
+
+The original blocking caller `1034FF1E` maps output flags1/2/4 to banks0/1/2.
+It converts into a100-byte local stack payload, constructs an adjacent descriptor,
+clears its completion bit, queues the request through `10348494`, and waits.
+The DisplayService branch executes `1023AAB2`, `101F243C`, and `10112446` before
+entering the supplied kernel queue service. The separate bank1 `42061007` path
+selects `103490F4`; that submission path is not exercised here.
+
+For flags1/4, original callback functions `10354342`/`10354356` set bits20hex/
+80hex on the native event object at `A1F1353C`. The original consumer dispatch,
+100-byte copy, acknowledgement, completion `102396C0`, and those original
+callback instructions execute. A supplied kernel event service records the bits.
+The caller resumes through its original wait wrapper, returns1 and preserves
+its original stack/callee-saved registers. The consumer uses a separate emulated
+stack while the caller's CPU context and live stack payload remain preserved.
+Both enabled and disabled requests are covered for both logical output paths.
+
+**The original wait timeout is `FFFFFFFF`: it is unbounded.** Do not call this
+wrapper from extension paint callbacks. An owned asynchronous packet path needs
+separate task/lifetime/cancellation/backpressure proof. Successful modeled queue
+send and event delivery do not establish kernel failure or physical scheduling
+behavior. Native source acknowledgement overlaps the first word of the adjacent
+stack descriptor in this original caller; the extension should retain explicit
+104-byte payload storage rather than relying on that local stack adjacency.
+
+The focused audit passes38 checks: three logical bank builders and four complete
+caller/consumer handoffs with original completion callbacks. Kernel queue/event
+services, initialized palette/service state and explicit scheduling are supplied.
+No frame producer, graphics hardware or warning pixels execute.
+
+```powershell
+.venv\Scripts\python.exe tools/audit_z7_highlight_submission.py --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-submission-new.json
+```
+
+Source-only evidence: `evidence/20261120-highlight-submission.json`.
 
 ## Remaining implementation work
 
-Execute the original request builder/caller and bind its output selection and
-photo/movie context before using the verified converter in a module.
+Bind physical output and photo/movie context, then construct an owned
+asynchronous path before using the verified converter in the resident module.
 Trace the frame producer and its warning-enable metadata; do not reuse Z7II
 callback addresses or assume its context/image offsets. Then integrate owned
 packet interception, cancellation/restoration, preset visibility, and native

@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "native_checks": 38,
+  "native_builder": "0x1034efb0",
+  "native_blocking_caller": "0x1034ff1e",
+  "logical_bank_commands": [
+    "0x42060007",
+    "0x42061007",
+    "0x42062007"
+  ],
+  "full_native_handoff_output_flags": [
+    1,
+    4
+  ],
+  "native_completion_callbacks": [
+    "0x10354342",
+    "0x10354356"
+  ],
+  "completion_bits": [
+    32,
+    128
+  ],
+  "native_wait_timeout": "0xffffffff",
+  "separate_consumer_stack_and_caller_context_preserved": true,
+  "enabled_and_disabled_handoffs_verified": true,
+  "native_copy_ack_completion_and_wait_wrappers_execute": true,
+  "kernel_queue_event_services_supplied": true,
+  "queue_error_or_backpressure_verified": false,
+  "bank1_separate_submission_executed": false,
+  "physical_output_mapping_and_photo_movie_context_bound": false,
+  "frame_producer_bound": false,
+  "async_extension_interface_implemented": false,
+  "highlight_preference_connected": false,
+  "actual_warning_pixels": false,
+  "native_module_host_qemu_unchanged": true,
+  "hook_installed": false,
+  "camera_card_access_staging_flash_or_push": false,
+  "full_goal_complete": false
+}

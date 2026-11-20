@@ -1,5 +1,55 @@
 # Laptop handoff — October 20, 2026
 
+## Native highlight request submission/completion handoff - November 20, 2026
+
+Previous95a16b5 was PROGRESS (original converter). New isolated research audit
+executes original builder1034EFB0, blocking caller1034FF1E, submission wrappers,
+consumer dispatcher, native completion and native event callbacks. Native
+module/host/QEMU bytes UNCHANGED; no hook installed, camera/card, stage/flash/push.
+
+.private/evidence/20261120-highlight-submission-02.json TERMINALPASS38.
+Buildercase16 logicalbanks0/1/2 ->42060007/42061007/42062007 with exact native
+callback/data/context fields and ARM stack argument preservation. Original
+caller flags1/4 ->banks0/2 converter+queue+wait. Flags2/bank1 builder is checked,
+but its separate103490F4 submission path is NOT forced through DisplayService.
+Physical output mapping/photo-movie eligibility are not established here.
+
+Native wrappers10348494 ->1023AAB2 ->101F243C ->10112446 execute before supplied
+kernel queue send100363CC. Native event clear10170BEE enters supplied kernel
+10035E94. Caller stops at actual kernel wait10036504 with timeoutFFFFFFFF and
+bits20/80hex. Preserve callerCPUcontext, run native10239840 consumer on a
+SEPARATE emulated stack, including100-byte copy/ack and original102396C0
+completion; original callbacks10354342/10354356 ->10170BE8 ->kernel10036334
+set the matching flag. Restore caller context; original wait completes, result1,
+stack and all callee-saved registers intact. Both enabled anddisabled paths tested.
+
+Original payload stays on caller stack until completion. Its100-byte payload
+ends exactly where adjacent descriptor starts; source+100 acknowledgement writes
+descriptorword0. Use explicit104-byte payload storage in extension code instead
+of copying this adjacency assumption. Builderdescriptor size at least28bytes.
+
+CRITICAL: native caller wait is INFINITE (FFFFFFFF). Do not call from extension
+paint callbacks. We need owned asynchronous packet lifetime, context-cancellation
+and queue/backpressure assessment before integrating. Kernel queue/event delivery
+and initial palette/service state are supplied, explicit task handoff is not
+physical scheduling proof. No frame producer or actual warning pixels verified.
+Detailed source:z7-native-modules/PHOTO_HIGHLIGHTS.md. Newaudit:
+tools/audit_z7_highlight_submission.py. Source evidence:
+evidence/20261120-highlight-submission.json. This turn's38checks are separate
+from prior198converter/37transport/71root scopes; no broad regression rerun for
+an isolated read-only audit. All jobs terminal. Graph refreshed after code edits:
+2747nodes/7116edges; generated outputs ignored.
+
+NEXT: bind the original source/frame producer and photo/output context, then
+integrate owned async packets and existing Photo highlights preference. New
+private leads:1023B76E applies state+28 parameters via1023B578 ->10241A0E;
+1023B9D0 gates native service states3/4 and state+228. These are disassembly leads,
+NOT executed bindings. Raw+468 field scan has many unrelated false positives;
+do not copy Z7II image+468 offset based on occurrence alone. Private scans:
+.private/research/z7-highlight-state28-candidates.txt andframe468-candidates.json.
+Original highlights/portrait/rotation/nativeInfo/lifecycle/statistics and
+physical installation/recovery scope remain active, not complete.
+
 ## Original highlight request converter bound - November 20, 2026
 
 Previousbb689d1 was PROGRESS (native packet transport). New independent
