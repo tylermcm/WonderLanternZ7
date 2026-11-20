@@ -260,12 +260,72 @@ warning pixels are not implemented by these host hooks.
 
 Source evidence: `evidence/20261120-highlight-host.json`.
 
+## Original output routing and property-backed mode
+
+`tools/audit_z7_highlight_output.py` passes131 scoped native checks. Original
+source selector103484DC maps logical output0 to the rear-monitor tag selector
+1023CC7E and output2 to EVF selector1023CCF4. Original16-byte comparisons and
+all five downstream pointer setters execute. A matching secondary source takes
+priority over a matching primary source, including distinct addresses with
+identical tags. An altered final tag byte does not match. Source selection
+does not itself change active selector byteA180A568. A no-match clears the
+selected state+8/+C pointer but leaves downstream receiver pointers stale.
+The extension must use the primary selected pointer, not those mirrors.
+
+Original getter103FEF80 reads output-kind wordA181C764. With this actual getter
+executing, DISP selector103673AC chooses2F15/2F16 for mode0,2F17/2F18 for mode1;
+kind1 selects the first key of each pair. Supplied kinds0..5 are covered without
+equating every alternate kind to a physically attached EVF.
+
+Native property138D lookup10070204 resolves index467hex to ROM descriptor
+114D501C, type7/size4/backing wordA24E1E00. Original104065A4/101D53AE wrappers,
+generic getter10070234 and ROM group lookup execute against supplied RAM values
+0/1/2/FFFFFFFF. Getter returns are not faked, and this tested path uses direct
+ROM/RAM reads rather than property locks or task waits. The original bulk-key
+tableA1828E88 contains138D at index135decimal (offset21Chex). Real bulk wrapper
+10376414 and1016FEFC loop copy a ONE-KEY slice intoA201F47C, preserving adjacent
+bytes. This does not establish the whole270-key snapshot as atomic/current.
+
+`plugins/highlight_context.h` now reads the property backing word, output kind,
+active selector, native state/selected source, readiness and service state using
+RAM only. It checks the selected source against the original rear/EVF tag,
+collects and rereads the fields with at most three attempts, and commits its
+caller-owned output only after a matching sample. Source/state pointer bounds,
+nulls, alignment, selector and tag are checked before dependent reads. It never
+uses stale downstream mirrors or the GUI's cached138D word. The caller still
+must reject non-photo/ineligible mode/output/service and apply UI/preset policy;
+the reader intentionally returns raw stable values, not an ownership decision.
+
+`tools/audit_z7_highlight_context.py` passes28 compiled ARM/native-routing checks:
+both sources, four mode values, invalid pointers/tag/selector, native no-match
+with stale mirror, opposite live/cache modes, and explicit between-instruction
+mode/output/selector/state/source/readiness/service changes. Continuous mode
+changes stop after three attempts without partially publishing output. Late
+Unicorn read/code hooks require invalidating the probe's cached translation
+blocks; earlier diagnostic hooks had not run until this was corrected. The
+final interleavings change RAM after a completed load, not inside that load.
+
+Repeated values do not detect ABA, pin native source allocations or establish a
+native transaction/frame fence. A module-owned shared epoch/settings publisher,
+UI ownership policy, parameter baseline restoration and full profile connection
+are still required. Physical output, warning pixels and transition timing are
+not accepted by these supplied-RAM instruction checks. Existing host/full-module
+bytes are unchanged by these isolated helpers/audits.
+
+```powershell
+.venv\Scripts\python.exe tools/audit_z7_highlight_output.py --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-output-new.json
+.venv\Scripts\python.exe tools/audit_z7_highlight_context.py --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-context-new
+```
+
+Source evidence: `evidence/20261120-highlight-context.json`.
+
 ## Remaining implementation work
 
-Bind physical output and coherent photo/movie context, then integrate the
+Publish/revalidate a shared settings/context epoch, then integrate the
 validated optional host bridges and resident asynchronous owner with the full
 profile's worker and Photo highlights preference. Original source-submit
-boundary1034866E and frame+34 permission execute in the diagnostic; the foreign
+boundary1034866E, frame+34 permission, rear/EVF source routing and mode property's
+RAM backing execute in diagnostics. Physical output/timing acceptance and the foreign
 context/image chain remains unbound. Do not reuse Z7II callback
 addresses or assume its context/image offsets. Then integrate owned
 packet interception, cancellation/restoration, preset visibility, and native

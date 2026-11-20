@@ -1,5 +1,72 @@
 # Laptop handoff — October 20, 2026
 
+## Highlight native mode/output and bounded RAM context - November 20, 2026
+
+Previousae19d3e was PROGRESS (optional API48 host bridges). This turn binds
+original rear/EVF routing, property-backed mode and compiled RAM context reads.
+Full goal remains ACTIVE. No camera/card/stage/flash/push. Host/full persistent
+module/QEMU bytes unchanged; no highlight preference connection/pixels claimed.
+
+.private/evidence/20261120-highlight-output-03.json PASS131. Original103484DC
+logical source0 ->rear-monitor tag selector1023CC7E; source2 ->EVF1023CCF4.
+Real16-byte comparison and all five pointer setters execute. Matching secondary
+source wins; distinct identical tag pointers and trailing-byte mismatch tested.
+No match clears native state+8/+C but LEAVES DOWNSTREAM MIRRORS STALE. Source
+selection does not set active selectorA180A568. Use primary selected source.
+
+Original output-kind getter103FEF80 reads WORD A181C764 (not a supplied return).
+Original DISP selector103673AC executes for kinds0..5/modes0/1. Kind1 selects
+2F15/2F17; others2F16/2F18. Do not equate all alternate kinds to physical EVF.
+CRITICAL newly bound mode property138D: original lookup10070204 resolves467hex
+to ROM descriptor114D501C, type7/size4/backing WORD A24E1E00. Original getter
+104065A4/101D53AE/1016FEF2/101706EE/10070234 and group lookup execute directly
+against supplied RAM, no mode getter return faked and no property lock/wait on
+this path. Values0/1/2/FFFFFFFF tested. Original GUI bulk key tableA1828E88
+contains138D at index135decimal/+21Chex. Real10376414/1016FEFC loop copies a
+ONE-KEY slice into cachedA201F47C with adjacent bytes intact. The whole270-key
+cache is NOT proved atomic/current; production should use property backing word.
+
+NEW plugins/highlight_context.h and examples/highlight_context_probe.c use
+RAM-only seven-field stable reads:mode/output-kind/active-selector/native-state/
+primary-selected-source/ready/service. Validate state/source alignment/range,
+selector0/1 and source's original rear/EVF tag, then reread fields with bounded
+three attempts. Output is caller-owned and untouched on failure. Reader returns
+raw mode/ready/service, NOT a photo eligibility or UI/preset ownership decision.
+Repeated equal values do not detect ABA, pin allocations or make a native fence.
+
+.private/evidence/20261120-highlight-context-06/result.json PASS28. CompiledARM
+reader plus original source selection execute. Both selectors/four mode values,
+pointer/tag/range/selector failures, stale mirrors after native no-match, live vs
+stale GUI-cache values and between-instruction mode/output/selector/state/source/
+ready/service changes tested. Continuous changes stop after three attempts,
+output unchanged. Diagnostic gotcha: adding Unicorn read/code hooks after prior
+translated execution required ctl_remove_cache(CODE,CODE+len(image)); previously
+hooks did not run (mode read count0), not a C reader failure. Final mutations
+occur on NEXT instruction after first completed load, never in observed load.
+Native source allocations/frame timing and physical cross-task behavior unproved.
+
+Scopes131 native output +28 compiled reader are separate; isolated helpers/audits,
+no broad root/full-profile regression rerun. Details/commands:
+z7-native-modules/PHOTO_HIGHLIGHTS.md; source-only evidence:
+evidence/20261120-highlight-context.json. All audit jobs terminal at checkpoint.
+Final native audit/compiled reader source fingerprints and private probe hash
+verified current. Graph refreshed:2856nodes/7429edges; generated graph ignored.
+
+NEXT IMPLEMENTATION: integrate into full persistent profile (new opted-in
+display-highlights-probe/API48), register hooks before persistence_prepare I/O.
+Publish odd/even shared settings+preset/context epoch from existing GUI path;
+source/consumer callbacks re-read property WORD A24E1E00 and primary routing
+through helper, reject mode!=0 and ineligible service/output/UI/preset. Apply
+per-frame+34 only for owned eligible primary frames, restore caller token without
+assuming deferred copy cancellation. Worker owns asynchronous submission/reaping.
+Capture100-byte native baseline at owned consumer boundary; conditionally restore
+only if current parameters still match owned application, preserve foreign native
+changes. Cancel stale descriptors with original completion. Native mode transition
+timing/source allocation lifetime still need explicit interleavings/acceptance.
+No native wait in paint/producer. Actual warning pixels, EVF/movie preservation,
+portrait/rotation, Info mirror, real histogram data, full lifecycle and exact
+installation/recovery assessment remain incomplete. No flash authorization.
+
 ## Optional API48 highlight host bridges - November 20, 2026
 
 Previous100a830 was PROGRESS (resident request owner/frame gate). This turn
