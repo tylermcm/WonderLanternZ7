@@ -127,8 +127,9 @@ camera menu or installation clearance.
 ## Native preset base-page diagnostic
 
 `tools/build_z7_display_module.py --variant display-base-probe --output .private/builds/NEW`
-adds guarded original-Z7 standard/horizon selection to the native admitted-DISP
-prototype. It uses the existing28-byte host API and preserves the earlier
+adds guarded original-Z7 standard/horizon selection and native grid visibility
+to the admitted-DISP prototype. Grid edits preserve the saved native style and
+retire through native layout/plane controls, including same-page edits. It uses the existing28-byte host API and preserves the earlier
 `display-disp-probe` bytes. See [DISPLAY_SETTINGS.md](DISPLAY_SETTINGS.md) for
 conditional property ownership, failure rollback, compiled checks, actual native
 key/pixel observations and unfinished component/persistence work. This remains

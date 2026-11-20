@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "wrapper_chain": [
+    "0x104070AC",
+    "0x10203C5E",
+    "0x10148DA0",
+    "0x101F8F20",
+    "0x100A7382"
+  ],
+  "driver_state_required": 2,
+  "destination_alignment_required": 4,
+  "requested_bytes": 1024,
+  "unavailable_event_return": 0,
+  "native_wait_argument": 100,
+  "early_rejection_preserves_destination": true,
+  "timeout_zeroes_exact_destination": true,
+  "timeout_clears_busy_and_pending_destination": true,
+  "original_zeroing_instructions_execute": true,
+  "supplied_boundaries": [
+    "Incoming driver state/mode",
+    "Mutex/event services",
+    "Unavailable event result0"
+  ],
+  "successful_statistics_producer_verified": false,
+  "pixel_validation": false,
+  "camera_access": false,
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Original-Z7 histogram wrapper/driver early rejection and unavailable-event cleanup only",
+  "checks": 224,
+  "flashed": false,
+  "staged": false,
+  "physical_card_access": false
+}

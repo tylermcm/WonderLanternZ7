@@ -58,8 +58,14 @@ static const uint16_t *grid_source(const uint16_t *native)
     if (value == 5) return tables[3];
     return tables[0];
 }
+#ifdef Z7_SETTINGS_BASE_PROBE
+static uint32_t base_grid_suppressed(void);
+#endif
 static uint32_t scalar_value(uint32_t key, uint32_t value)
 {
+#ifdef Z7_SETTINGS_BASE_PROBE
+    if (key == 0x102du && base_grid_suppressed()) return 0;
+#endif
     return key == 0x102d && value >= 2 && value <= 5 ? 1 : value;
 }
 static uint32_t histogram_gate(uint32_t state) { return state == 2 || state == 3; }

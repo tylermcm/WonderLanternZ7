@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 LCD grid component binding within the custom DISP base-page prototype",
+  "status": "corrected native-visibility policy passes compiled contracts and assisted-QEMU pixel validation",
+  "module": {
+    "module_sha256": "30399ca0300985666221c962dce9ee77ee2952eae1dfda15b1a6d0ba4f66742c",
+    "file_bytes": 12044,
+    "image_bytes": 11776,
+    "bss_bytes": 3884,
+    "api_minimum_bytes": 28
+  },
+  "host_unchanged": true,
+  "grid_binding": {
+    "native_scalar_key": "0x102D",
+    "native_visibility": "0x1037723E",
+    "saved_grid_style_written": false,
+    "geometry_or_style_tables_modified_by_suppression": false,
+    "off_reports_native_visibility_off": true,
+    "on_preserves_native_eligibility_and_exclusions": true,
+    "scalar_callback_reenters_property_services": false,
+    "ownership_validated_on_gui_update": true,
+    "same_page_edit_and_retirement_invalidate_native_layout": true
+  },
+  "compiled_grid_contract": {
+    "passed": true,
+    "checks": 282,
+    "original_geometry_calls": 109,
+    "styles": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "viewports": 2,
+    "native_modes": 3,
+    "original_geometry_and_invalidator_execute": true,
+    "supplied_boundaries": [
+      "Incoming saved grid/crop and GUI state",
+      "Viewport/property service results",
+      "Loader/kernel/filesystem/heap"
+    ],
+    "native_visibility_combinations": 96,
+    "scalar_key_value_cases_without_property_reentry": 49
+  },
+  "native_base_ownership_regression": {
+    "passed": true,
+    "checks": 68,
+    "includes_older_host_rejection": true,
+    "status": "passed on corrected04 policy"
+  },
+  "root_tests": {
+    "passed": 39,
+    "skipped": 0
+  },
+  "accepted_disp_module_byte_identical": true,
+  "live_pixel_test": {
+    "status": "passed",
+    "native_golden_reference_positive_pixels_verified": true,
+    "native_grid_setup_explicit": true,
+    "reference_set_includes_native_grid_on_and_off": true,
+    "source_and_snapshots_private": true,
+    "first_count_only_run_failed": true,
+    "passed": true,
+    "checks": 30,
+    "frames": 16,
+    "native_grid_style_preserved_during_custom_mode": true,
+    "same_native_page_off_on_off_pixels_exact": true,
+    "master_off_from_hidden_grid_restores_exact_native_grid_on_frame": true,
+    "native_plane_enable_writes_verified": true,
+    "preset_key_cycle_and_native_fallback_verified": true,
+    "horizon_grid_composition_and_retirement_frames_visually_inspected": true,
+    "exact_reference_requires_correct_base_and_grid_state": true,
+    "no_pixel_exceptions": true,
+    "coherent_update_paint_fence_proven": false,
+    "warning_transition_pixels_proven": false
+  },
+  "histogram_next_source_lead": {
+    "native_getter_chain": [
+      "0x104070AC",
+      "0x10203C5E",
+      "0x10148DA0",
+      "0x101F8F20",
+      "0x100A7382"
+    ],
+    "driver_state": "0xA188D70C+1 must equal2",
+    "driver_mode": "0xA188D70C+2",
+    "four_byte_destination_alignment_required": true,
+    "event_wait_boundary": "0x10170C32",
+    "simple_memcpy_contract_proven": false,
+    "real_statistics_producer_verified": false,
+    "scope": "Static original instruction observations only; no service result invented",
+    "unavailable_getter_checks": 224
+  },
+  "camera_access": false,
+  "physical_card_access": false,
+  "staged": false,
+  "flashed": false,
+  "pushed": false,
+  "installation_cleared": false,
+  "graph": {
+    "nodes": 2050,
+    "edges": 5173,
+    "generated_ignored": true
+  },
+  "retained_count_suppression_failure": {
+    "module_sha256": "8df6214359840e20a0902781dd0be26afcff50ebb4cf66122220e68ca3b728a0",
+    "passed_checks": 6,
+    "zero_descriptor_counts_did_not_hide_pixels": true,
+    "pixel_difference_from_native_grid_off_reference": 3169,
+    "native_count_encoding_not_a_visibility_gate": true,
+    "private_run_retained": true,
+    "scope": "Observed QEMU failure; count-only instruction success was insufficient"
+  }
+}

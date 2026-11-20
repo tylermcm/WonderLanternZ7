@@ -174,3 +174,18 @@ master-off release and resumed original cycling. Key frames visually inspected.
 Root39/no-skips pass; accepted DISP package rebuilds byte-identically. Remaining
 components, information app, groups, persistence and broader lifecycle remain.
 No hardware/card access, staging, flash or push. All current jobs terminal.
+
+## Native grid visibility component milestone — November 19, 2026
+
+Base-grid04 binds grid OFF through native scalar key102D and original visibility,
+without changing saved style/geometry/tables or re-entering property services.
+Same-page edits and master-off invalidate native layout.282 contract checks,
+68 ownership checks and39 root regressions/no-skips pass. Assisted QEMU grid-live02
+passes30 checks/16frames, including native keys, exact native OFF/ON/OFF edits,
+horizon/grid composition and master-off restoration from a hidden grid. Saved
+style3 remains unchanged during custom mode. Key frames visually inspected.
+The failed zero-count approach is retained and removed from current policy.
+Original histogram getter rejection/timeout cleanup now passes224 cases; actual
+successful statistics production remains open. Other components, information,
+groups, persistence, lifecycle and hardware validation remain. All jobs terminal;
+no camera/card access, staging, flashing or push. Full goal remains active.

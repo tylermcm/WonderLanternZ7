@@ -23,6 +23,7 @@ class BaseFixture(CycleFixture):
         self.display = 1
         self.setter_results = []
         self.native_setter_entries = []
+        self.viewport = (0, 0, 720, 480)
 
     def hook(self, u, address, size, context):
         if address == 0x104065a4:
@@ -34,6 +35,10 @@ class BaseFixture(CycleFixture):
             if store: self.properties[key] = value
             self.ret(result)
         elif address == 0x103fef80: self.ret(self.display)
+        elif address == 0x10437190:
+            pointer = u.reg_read(UC_ARM_REG_R0)
+            for offset in (8, 0x14): u.mem_write(pointer + offset, struct.pack('<4h', *self.viewport))
+            u.mem_write(pointer + 0x28, b'\1'); self.ret(0)
         elif address == 0x103673de:
             self.native_setter_entries.append(u.reg_read(UC_ARM_REG_R0))
         else: super().hook(u, address, size, context)

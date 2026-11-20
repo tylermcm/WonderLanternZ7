@@ -35,6 +35,7 @@ def main():
     parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
+    parser.add_argument('--grid-components', action='store_true', help='For the base-page DISP probe, set a native golden grid and verify component suppression and same-page edits')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
     parser.add_argument('--histogram-context-fixture', action='store_true',
@@ -54,6 +55,8 @@ def main():
         parser.error('Settings-battery requires its explicit icon fixture')
     if args.settings_battery_control and args.view != 'settings-battery':
         parser.error('Settings battery control requires settings-battery view')
+    if args.grid_components and args.view != 'disp-presets':
+        parser.error('Grid component validation requires disp-presets view')
     if args.battery_lifecycle and not (args.view == 'battery-auto' and args.battery_icon_fixture):
         parser.error('Battery lifecycle requires battery-auto with its explicit icon fixture')
     if args.battery_playback and not args.battery_lifecycle:
@@ -178,6 +181,12 @@ def main():
                             step['settings_native_value_objects'].append(dict(row=row, child=child, pointer=hex(pointer), words=list(struct.unpack('<25I', record))))
         if args.view == 'disp-presets':
             step['readout_native_snapshot'] = camera.remote.memory(0xa201d4d0, 0x33c).hex()
+            step['native_grid_descriptor'] = camera.remote.memory(0xa2020c2c, 32).hex()
+            grid_enables = re.findall(r'Z7_GRID_ENABLE instance=1 value=(\d)', camera.live_log.read_text(errors='replace'))
+            step['native_grid_plane_gate'] = int(grid_enables[-1]) if grid_enables else None
+            if module['kind'] == 'original-Z7-display-base-diagnostic':
+                step['native_base_policy'] = {name: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_base_' + name], 4), 'little')
+                    for name in ('active', 'saved', 'applied', 'conflicts', 'errors', 'changes')}
             step['readout_native_source_states'] = camera.remote.memory(0xa201f260 + 0x44, 12).hex()
             step['readout_native_formats'] = camera.remote.memory(0xa18237b8, 7).hex()
             step['readout_controls'] = []
@@ -490,6 +499,7 @@ def main():
             base_bound = module['kind'] == 'original-Z7-display-base-diagnostic'
             if module['kind'] not in ('original-Z7-display-disp-diagnostic', 'original-Z7-display-base-diagnostic'):
                 raise ValueError('DISP preset diagnostic required')
+            if args.grid_components and not base_bound: raise ValueError('Grid component validation requires base-page module')
             def preset(): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_readout_preset'], 4), 'little')
             def cycles(): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_preset_cycles'], 4), 'little')
             def native_page(): return camera.remote.memory(0xa201d4d0 + 0x18a, 1)[0]
@@ -504,6 +514,22 @@ def main():
                     raise RuntimeError('Native reference must be an eligible base page with ordinary formats')
                 native_references.append(step)
             retain_reference(startup_step)
+            if args.grid_components:
+                native('Compiled native golden grid choice', base + module['symbols']['golden'], [])
+                native('Native grid enabled for component baseline', 0x10377236, [1])
+                step = capture('presets-grid-enabled-startup'); retain_reference(step)
+                descriptor = struct.unpack('<hhIHHhhIHHHHBBH', bytes.fromhex(step['native_grid_descriptor']))
+                registers = struct.unpack('<7I', camera.remote.memory(0x20145600, 28))
+                picture = Image.open(io.BytesIO(camera.png)).convert('RGB')
+                off_picture = Image.open(output / 'presets-disabled-startup.png').convert('RGB')
+                x, y = registers[1] & 65535, registers[0] >> 16 & 16383
+                dy, dx = registers[4] & 65535, registers[4] >> 16
+                color = (registers[6] >> 16 & 255, registers[6] >> 8 & 255, registers[6] & 255)
+                points = [(picture.width // 2 + 37, y + i * dy) for i in range(2)] + [(x + i * dx, 300) for i in range(2)]
+                result['native_grid_component_reference'] = dict(points=points, color=color, native_style=step['stored_grid'])
+                check('native-grid-reference-has-visible-golden-lines', step['stored_grid'] == 3 and
+                    descriptor[4] == descriptor[9] == 2 and all(0 <= a < picture.width and 0 <= b < picture.height and
+                        picture.getpixel((a, b)) == color and off_picture.getpixel((a, b)) != color for a, b in points))
             # Exercise one complete native cycle while the custom master is off.
             # Retain this separately from the qualified comparison baseline.
             for target in (1, 3, 0):
@@ -511,6 +537,11 @@ def main():
                 control_step = capture('presets-disabled-control-' + str(target))
                 if target == 0 or (base_bound and target == 3): retain_reference(control_step)
             result['disabled_native_cycle_control_before_baseline'] = True
+            if args.grid_components:
+                native('Native grid OFF control before custom mode', 0x104f5592, [])
+                retain_reference(capture('presets-grid-disabled-control'))
+                native('Compiled native golden grid restored before custom mode', base + module['symbols']['golden'], [])
+                native('Native grid enabled again before custom mode', 0x10377236, [1])
             baseline_step = capture('presets-native-baseline')
             retain_reference(baseline_step)
             baseline = Image.open(io.BytesIO(camera.png)).convert('RGB')
@@ -522,14 +553,17 @@ def main():
                 source = 0x3c if mode == 1 else 0x24c if mode == 3 else 4
                 return ([mode, source, struct.unpack_from('<I', snapshot, source)[0]],
                     [bytes.fromhex(row['control'])[1] for row in step['readout_controls'][-1]['rows']])
-            def reference_capture(name, expected_page=0):
+            def reference_capture(name, expected_page=0, expected_grid=None):
+                if args.grid_components and expected_grid is None: expected_grid = True
                 step = capture(name)
                 current = Image.open(io.BytesIO(camera.png)).convert('RGB')
                 matching = [reference for reference in native_references
                     if bytes.fromhex(reference['readout_native_snapshot'])[0x18a] == expected_page and
+                    (expected_grid is None or bool(reference['stored_grid']) == expected_grid) and
                     Image.open(output / (reference['name'] + '.png')).convert('RGB').tobytes() == current.tobytes()]
                 result.setdefault('native_iso_reference_matches', []).append(dict(name=name,
                     state=iso_state(step), expected_native_base_page=expected_page,
+                    expected_native_grid=expected_grid,
                     exact_rgb_references=[reference['name'] for reference in matching],
                     same_control_state_references=[reference['name'] for reference in native_references
                         if iso_state(reference) == iso_state(step)],
@@ -537,8 +571,15 @@ def main():
                 save()
                 # Accept only an entire previously captured native image. State
                 # records are diagnostics: they can precede native painting.
-                # With no exact reference the caller's equality check fails.
-                reference = matching[-1] if matching else baseline_step
+                if not matching:
+                    if args.grid_components:
+                        result['grid_failed_frame_diagnostics'] = dict(frame=name,
+                            observation_after_failed_frame_not_a_paint_fence=True,
+                            native_visibility=query('Original grid visibility after failed frame', 0x1037723e, []),
+                            host_scalar=query('Owned grid scalar after failed frame', host['symbols']['z7_display_scalar'], [0x102d, step['stored_grid']]))
+                        save()
+                    raise AssertionError('No exact captured native reference for ' + name)
+                reference = matching[-1]
                 return Image.open(output / (reference['name'] + '.png')).convert('RGB')
             check('preset-diagnostic-starts-at-zero', preset() == 0)
             native('Compiled custom master for native DISP presets', base + module['symbols']['z7_settings_flag'],
@@ -552,10 +593,16 @@ def main():
                     expected_page = 3 if components & 4 else 0
                 reference = None
                 if target == 2: capture('preset-' + str(target))
-                else: reference = reference_capture('preset-' + str(target), expected_page)
+                else: reference = reference_capture('preset-' + str(target), expected_page,
+                    bool(components & 1) if args.grid_components else None)
                 current = Image.open(io.BytesIO(camera.png)).convert('RGB')
                 check('admitted-disp-selects-preset-' + str(target), preset() == target and cycles() == previous + 1)
                 check('preset-selects-native-base-page-' + str(target), native_page() == expected_page)
+                if args.grid_components:
+                    descriptor = struct.unpack('<hhIHHhhIHHHHBBH', camera.remote.memory(0xa2020c2c, 32))
+                    check('grid-component-preserves-style-and-selects-native-plane-' + str(target),
+                        int.from_bytes(camera.remote.memory(0xa24f182c, 4), 'little') == 3 and descriptor[4] == descriptor[9] == 2 and
+                        result['steps'][-1]['native_grid_plane_gate'] == int(bool(components & 1)))
                 if target == 2:
                     native_baseline = Image.open(output / 'presets-disabled-control-3.png').convert('RGB') if expected_page == 3 else baseline
                     width, height = native_baseline.size
@@ -565,6 +612,14 @@ def main():
                     check('composition-preset-changes-readout-pixels', current.tobytes() != native_baseline.tobytes())
                 else:
                     check('preset-restores-all-three-readout-pixels-' + str(target), current.tobytes() == reference.tobytes())
+            if args.grid_components:
+                model = base + module['symbols']['z7_menu_settings']
+                for enabled in (0, 1, 0):
+                    native('Compiled current-preset grid component ' + str(enabled), base + module['symbols']['z7_settings_component'], [model, 0, 0, enabled])
+                    reference = reference_capture('grid-component-edit-' + str(enabled) + '-' + str(len(result['steps'])), 0, bool(enabled))
+                    check('same-page-grid-edit-retires-or-restores-native-pixels-' + str(enabled), native_page() == 0 and
+                        Image.open(io.BytesIO(camera.png)).convert('RGB').tobytes() == reference.tobytes() and
+                        int.from_bytes(camera.remote.memory(0xa24f182c, 4), 'little') == 3 and cycles() == 4)
             native('Compiled custom master off after preset cycle', base + module['symbols']['z7_settings_flag'],
                 [base + module['symbols']['z7_menu_settings'], 0, 0])
             reference = reference_capture('presets-native-restored')
@@ -578,7 +633,7 @@ def main():
             result['preset_cycle'] = dict(native_key_injection=True, original_key_binding_retained=True,
                 compiled_master_setter=True, preset_word_supplied=False, explicit_native_standard_page=True,
                 information_app_bound=False, base_component_selection_bound=base_bound,
-                remaining_grid_histogram_highlights_components_bound=False, readout_groups_bound=3)
+                grid_component_bound=args.grid_components, histogram_highlights_components_bound=False, readout_groups_bound=3)
         elif args.view == 'disp-key':
             if module['kind'] != 'original-Z7-disp-key-diagnostic': raise ValueError('Native-key diagnostic required')
             def key_word(name): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_disp_key_' + name], 4), 'little')

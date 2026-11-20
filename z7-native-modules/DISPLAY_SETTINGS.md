@@ -527,3 +527,78 @@ leads already exist, but the extra pass still needs independent derivation.
 Grid suppression must use original-Z7 LCD descriptor count offsets10/22; upstream
 uses different offsets. No foreign geometry offsets or histogram addresses may
 be copied by analogy. Fetched upstream source remains private under MIT.
+
+## Native LCD grid component binding
+
+The base-page diagnostic now binds the grid component through the existing
+scalar-value callback. Only native key102D reports Off during eligible owned
+custom grid-Off state. Original1037723E then follows its unchanged availability
+and exclusion gates and drives the native grid plane. Grid ON permits the saved
+native selection. The component does not write the saved grid setting, geometry
+or style tables. Menu, movie, other output, invalid model, unbound information
+and foreign native ownership retain native behavior. Foreign property ownership
+is validated on GUI updates; scalar callbacks use RAM-only context and never
+re-enter property services while inside a native property read.
+
+The base policy tracks the grid component separately from native page selection.
+Same-page edits and master-off invalidate native layout, so an already visible
+or hidden grid is recomputed by native code. No scratch geometry is restored over
+a changed native viewport. Current base-grid04 is12,044bytes/image11,776/BSS3,884,
+SHA30399ca0300985666221c962dce9ee77ee2952eae1dfda15b1a6d0ba4f66742c,
+using unchanged28-byte host06 API.
+
+282 contract checks pass:109 original geometry calls with identical component
+ON/OFF descriptors,96 original visibility combinations,49 scalar key/value cases
+trapping property-service reentry, and context/retirement cases. Native scalar
+input, availability/exclusion, viewport/GUI and loader services are supplied
+boundaries.68 base ownership checks (including older-host rejection) and39 root
+regressions/no-skips pass. Accepted disp03 rebuilds byte-identically.
+
+Assisted QEMU grid-live02 passes30 checks/16frames. Setup explicitly selects a
+native Golden ratio style and uses native grid enable/Off controls to collect
+complete native ON/OFF references. Four visible native line pixels qualify the
+positive reference. Actual DISP selects the four logical presets; grid-Off
+frames and native plane0 agree while the saved style remains3. Horizon+grid+
+composition preserves protected pixels relative to the native horizon reference.
+OFF/ON/OFF component edits on the same native page exactly match the appropriate
+native frames without changing style3 or counting extra DISP presses. Master-off
+from a hidden grid restores a complete native grid-ON frame and releases native
+base ownership; the next DISP resumes native cycling. Horizon/composition,
+hidden, re-enabled and retired frames were visually inspected, including the
+restored top-HUD crop. Reference membership requires both the correct native
+base page and grid state, with no fallback image or pixel exceptions.
+
+This is captured-frame equivalence in synthetic assisted QEMU, not a coherent
+native update/paint fence, warning-transition, real-card, EVF or durability proof.
+Actual native-menu edits/return and broader lifecycle remain open.
+
+### Retained count-only failure
+
+The earlier base-grid03/grid-live01 fails at preset1 after six passing checks:
+both geometry counts are0, but lines remain and differ from native Off by3,169
+pixels. The native drawing path has encoded repeat fields and a separate plane
+gate. Zeroing descriptor counts is not an Off contract. Its121 instruction cases
+proved the edits only; that policy was removed. The failed package, source and
+frames remain private. The corrected policy changes the native read response,
+not the emulator or verifier pixels.
+
+### Native histogram getter rejection contract
+
+For the next histogram binding, the original getter chain104070AC->10203C5E->
+10148DA0->101F8F20 gates on driver A188D70C+1==2 and passes driver+2 into100A7382.
+That path checks destination alignment and uses native event waiting; it is not
+a simple battery-style locked memcpy. The pinned upstream extra histogram pass
+must retain real data-service failure behavior.
+
+`tools/audit_z7_histogram_getter.py` executes the original wrapper/driver/zeroing
+instructions in224 cases. Only driver-state2 and a four-byte-aligned destination
+reach the native wait. Other states/alignment return0 without touching the
+buffer. A supplied unavailable event result0 returns0, clears native busy and
+pending-destination fields, and zeroes exactly1,024 destination bytes with
+canaries preserved. The native wait argument is100; no physical timing guarantee
+follows. Fast modes lock/unlock around the pending destination and clear it;
+ordinary mode2 retains its own native path. Driver input bytes remain unchanged.
+Mutex/event services are supplied; no successful statistics producer/conversion
+or histogram pixels are claimed. The port must check the return flag and must
+not interpret a zeroed failed sample as valid data. Histogram/highlights,
+information app, remaining groups, persistence and broader lifecycle remain.

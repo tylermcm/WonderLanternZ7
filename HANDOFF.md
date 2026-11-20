@@ -1,5 +1,56 @@
 # Laptop handoff — October 20, 2026
 
+## Native grid component and histogram failure contracts — November 19, 2026
+
+Previous goal turn made progress; this turn binds native grid visibility.
+ALL CURRENT JOBS ARE TERMINAL. Base-grid04 is reproducible SHA
+30399ca0300985666221c962dce9ee77ee2952eae1dfda15b1a6d0ba4f66742c,
+12044bytes/image11776/BSS3884, unchanged host06/28-byte API. Only scalar key102D
+reports Off during eligible owned custom grid-Off state. Original1037723E keeps
+its native availability/exclusion gates. Native geometry, saved style and style
+tables stay unchanged. Scalar callbacks are RAM-only; never re-enter property
+services inside a scalar read. Ownership/foreign-property validation is on GUI
+updates. Same-page component edits/master-off invalidate native layout.
+
+282 grid contracts pass (109 original geometry calls,96 native visibility
+combinations,49 scalar key/value/no-service-reentry cases and context checks).
+Native scalar inputs, eligibility/exclusion and viewport/GUI/kernel services are
+supplied. Corrected04 ownership audit05 passes68 cases including older-host
+rejection. Root39/no-skips pass. Accepted disp03 rebuilds byte-identically.
+
+Private grid-live02 PASSES30checks/16frames: native golden ON/OFF references,
+positive line-pixel qualification, native DISP cycling, correct native plane
+writes with saved style3 unchanged, horizon+grid+composition protected pixels,
+exact native OFF/ON/OFF same-page edits, master-off from hidden grid restoring
+exact native grid-ON RGB/base release, then resumed native cycling. Key frames
+visually inspected, including restored top-HUD crop. This is finite captured
+native RGB membership for the expected base/grid state, not a paint fence,
+warning-pixel, physical-output or durability proof. No pixel exceptions.
+
+Retain failed grid-live01/count-only03: six checks then preset1 has descriptor
+counts0 but visible lines (3169pixels from native Off). Native repeat encoding
+and plane enable are different contracts. Count-only policy is removed. Neither
+its121 instruction cases nor its zero-count records prove hidden pixels.
+
+Histogram getter audit01 passes224 original wrapper/driver/zeroing cases. Getter
+chain104070AC->10203C5E->10148DA0->101F8F20 requires driverA188D70C+1==2 and an
+aligned destination, then100A7382 uses driver+2 and native event waiting. Supplied
+unavailable event0 returns0, clears busy/pending and zeroes exactly1024bytes;
+early state/alignment rejection leaves the destination untouched. Original mutex
+ordering/zeroing execute; mutex/event returns are supplied. Successful statistics
+production/conversion and histogram pixels remain UNVERIFIED. Do not invent event
+completion or treat zeroed failure data as valid bins. Source evidence files:
+evidence/20261119-native-grid-component.json and20261119-native-histogram-getter.json.
+
+Next implement native histogram/highlights component bindings, information-app
+ownership, remaining groups, actual native-menu/update coherence and persistence.
+Pinned upstream histogram/portrait files remain private at50a22b24...; hashes in
+the prior base-page evidence. Upstream histogram uses a guarded extra statistics/
+layout/paint pass. Original Z7 data getter/event path must remain authoritative.
+Broader lifecycle, physical card/cache/wake and exact installation/recovery stay
+open. Graph refreshed2050nodes/5173edges. No camera/card access, staging, flash or
+push. Keep full software goal active.
+
 ## Native base-page ownership checkpoint — November 19, 2026
 
 Previous goal turn made progress; this turn adds native base-page ownership.
