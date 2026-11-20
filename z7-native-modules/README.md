@@ -32,6 +32,13 @@ performing file I/O from paint/menu callbacks. Registration, failed-init cleanup
 code bounds and recursive-dispatch protection are checked independently. This
 does not implement settings persistence or establish card/shutdown timing;
 see [the worker record](../Z7_MODULE_HOST_RESEARCH.md#resident-worker-callback).
+An explicit `--display-hooks --highlight-hooks` host build adds API48
+`sdk/highlight.h` for resident source/consumer callbacks and owned request
+cancellation. The [highlight record](PHOTO_HIGHLIGHTS.md#optional-api48-source-and-consumer-host-bridges)
+documents its77 scoped instruction checks and diagnostic-only context policy.
+Default API44 host and full persistent module binaries remain byte-identical.
+These hooks do not yet connect the Photo highlights preference or prove warning
+pixels, physical output mapping, camera acceptance or recovery.
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

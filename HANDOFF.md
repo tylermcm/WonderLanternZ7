@@ -1,5 +1,67 @@
 # Laptop handoff — October 20, 2026
 
+## Optional API48 highlight host bridges - November 20, 2026
+
+Previous100a830 was PROGRESS (resident request owner/frame gate). This turn
+implements exact-byte-validated native source1034866E and consumer10239840
+bridges in an explicitly opted-in API48 host. Full goal remains ACTIVE.
+No camera/card, stage/flash/push. User asked whether close to flashing: explained
+that full features/lifecycle and exact-candidate recovery assessment remain;
+no flash authorization, continue software work as previously requested.
+
+Private .private/builds/20261120-highlight-host-03 is reproducible/EGCRCzero,
+main SHA512f06c17c712b6a4503532098c4f521deef681b6839346a739d3151f361d02c.
+Use build_z7_module_host.py --display-hooks --highlight-hooks. Default remains
+API44 with no highlight patches. Fixed256-byte host state uses reserved words
+53..59 for descriptor/four callbacks/two atomic running flags; guards unchanged.
+sdk/highlight.h defines init-only registration, aligned loading descriptor28,
+four required Thumb image callbacks, fail-init cleanup before free and resident
+lifetime checks. No foreign Z7II callback/structure offsets assumed.
+
+.private/evidence/20261120-highlight-host-07/result.json PASS77. Actual compiled
+host/probe plus original converter/builder/queue wrappers/source/gate/consumer/
+copy/ack/completion execute. Kernel/filesystem, incoming state/diagnostic epoch,
+surface checks, hardware color/plane programming are supplied. Source callbacks
+use local token; caller frame restored while deferred native copy keeps flag.
+Native result/volatile registers/flags preserved across callbacks. Foreign native
+packets (matching/rejected logical families) delegate unchanged while owned
+request is pending. Owned stale request cancels via original completion without
+copy. Duplicate/reentrant owned consumption parks. Init/late/duplicate/bad ranges,
+all four required callbacks and damaged resident state guards tested.
+
+Audit first caught wrapper argument corruption: saving APSR had clobbered R0
+before helper calls. Both bridges now explicitly restore callback arguments.
+Native hardware config has unwritten padding; byte-exact UNREGISTERED fallback
+comparisons seed original reference scratch from captured native-entry scratch.
+Registered no-op tests prove result/volatile-register/flag ABI, not undefined
+padding equality. Actual screenshots/pixels are not normalized or claimed.
+
+Important retirement race fixed: release host consumer guard BEFORE module
+after_consumer publishes reusable state. Otherwise an immediate reap/submit/
+consume could be dropped as old-call reentry. Diagnostic explicitly nests a
+new request after retirement before old host leave returns. It FAILS on host02
+(.private/evidence/20261120-highlight-host-retirement-before-fix.log), PASSES on
+host03 with original native completion. Explicit interleaving is not hardware
+scheduling proof. After retirement module code must not access old packet data.
+
+Root tests71/no skips: .private/evidence/20261120-highlight-host-root-tests.log.
+Default API44 host and persistent display module rebuilt byte-identically to
+accepted7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057
+and719c1db3ca5cf1c78d82ebedcdbbb4cc7b67312b34b7982d11a718e4b39af85c.
+The new API48 diagnostic is NOT the accepted full resident feature profile.
+Details/commands:z7-native-modules/PHOTO_HIGHLIGHTS.md. Source evidence:
+evidence/20261120-highlight-host.json. All jobs must be terminal at checkpoint.
+Final77-check audit and both host reports match current source fingerprints.
+Graph refreshed after code edits:2823nodes/7335edges; generated files ignored.
+
+NEXT: bind coherent original photo/output context and epoch changes, integrate
+the optional host hooks/owner into full persistent profile before startup I/O,
+and submit from its worker. Capture/conditionally restore owned100-byte native
+baseline, cancel stale owned packets and account for deferred frame copies.
+Then prove actual warning pixels and native LCD/EVF/movie preservation. Photo
+highlights preference remains UNCONNECTED. Portrait/rotation, native Info mirror,
+real histogram data, broader lifecycle and installation/recovery remain active.
+
 ## Highlight frame gate and resident async owner - November 20, 2026
 
 Previous status-only goal turn was NO PROGRESS. This turn adds compiled ARM

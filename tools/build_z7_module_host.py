@@ -151,7 +151,58 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def compile_host(base, zig=ZIG):
+def add_highlight_hooks(plan, symbols):
+    """Whole-function bridges with exact native fallback and owned-only cancel."""
+    helpers = {name: plan.alloc(bytes(size)) for name, size in
+               dict(highlight_source_original=64, highlight_consumer_original=64,
+                    highlight_source=384, highlight_consumer=512).items()}
+    tail = lambda address: f'.balign 4; ldr.w pc,[pc,#0]; .word {address | 1};'
+    save = 'push.w {r0-r3,r12,lr}; mrs r0,apsr; push {r0,r1};'
+    restore = 'pop {r0,r1}; msr APSR_nzcvq,r0; pop.w {r0-r3,r12,lr};'
+    plan.put(helpers['highlight_source_original'], assemble(f'''
+        push {{r4-r6,lr}}; mov r5,r1; mov.w r4,#0;
+        cbz r0,zero_output; {tail(0x10348678)}
+        zero_output: {tail(0x10348686)}
+    ''', helpers['highlight_source_original'], 64))
+    plan.put(helpers['highlight_consumer_original'], assemble(f'''
+        push {{r1-r5,lr}}; movs r4,r0; mov.w r2,#5; {tail(0x10239848)}
+    ''', helpers['highlight_consumer_original'], 64))
+    plan.put(helpers['highlight_source'], assemble(f'''
+        push.w {{r4-r8,lr}}; mov r4,r0; mov r5,r1;
+        {save} mov r0,r4; mov r1,r5; {invoke(symbols['z7_highlight_source_enter'])}
+        mov r6,r0; cmp r1,#0; beq fallback;
+        {restore} bl native_source;
+        {save} mov r0,r4; mov r1,r5; mov r2,r6;
+        {invoke(symbols['z7_highlight_source_leave'])}
+        {restore} pop.w {{r4-r8,pc}};
+        fallback: {restore} pop.w {{r4-r8,lr}};
+        native_source: {tail(helpers['highlight_source_original'])}
+    ''', helpers['highlight_source'], 384))
+    plan.put(helpers['highlight_consumer'], assemble(f'''
+        push.w {{r4-r8,lr}}; mov r4,r0;
+        {save} mov r0,r4; {invoke(symbols['z7_highlight_consumer_enter'])}
+        mov r6,r0; cmp r6,#0; beq fallback;
+        cmp r6,#1; beq consume; cmp r6,#2; beq cancel;
+        {restore} mov.w r0,#0; pop.w {{r4-r8,pc}};
+        consume: {restore} bl native_consumer; b completed;
+        cancel: {restore} mov r0,r4; movs r1,#0;
+        {invoke(0x102396c0)} mov.w r0,#0;
+        completed: {save} mov r0,r4; mov r1,r6;
+        {invoke(symbols['z7_highlight_consumer_leave'])}
+        {restore} pop.w {{r4-r8,pc}};
+        fallback: {restore} pop.w {{r4-r8,lr}};
+        native_consumer: {tail(helpers['highlight_consumer_original'])}
+    ''', helpers['highlight_consumer'], 512))
+    for site, name, expected in (
+        (0x1034866e, 'highlight_source', '70b50d464ff0000430b1'),
+        (0x10239840, 'highlight_consumer', '3eb504004ff00502')):
+        window = bytes.fromhex(expected)
+        plan.edit(site, jump(site, helpers[name], len(window)),
+                  'Resident highlight bridge: ' + name, expected=window)
+    return helpers
+
+
+def compile_host(base, zig=ZIG, highlight_hooks=False):
     """Fixed-address, BSS-free host; all writable state is explicitly reserved."""
     temporary = ROOT / '.private/tmp'
     temporary.mkdir(parents=True, exist_ok=True)
@@ -167,6 +218,7 @@ def compile_host(base, zig=ZIG):
                 '-mfloat-abi=soft', '-Os', '-ffreestanding', '-fno-builtin', '-fno-unwind-tables',
                 '-fno-asynchronous-unwind-tables', '-fno-stack-protector', '-Wall', '-Wextra', '-Werror',
                 '-I', str(COMPONENT / 'sdk'), '-I', str(COMPONENT / 'host'),
+                *(['-DZ7_HOST_HIGHLIGHTS=1'] if highlight_hooks else []),
                 '-c', str(COMPONENT / 'host' / source), '-o', str(obj)], check=True, env=environment)
             objects.append(str(obj))
         linker = folder / 'host.ld'
@@ -211,7 +263,9 @@ ASSERT(SIZEOF(.bss) == 0, "Host must not contain unreserved BSS");
     return code, symbols
 
 
-def build_image(container, zig=ZIG, display_hooks=False):
+def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False):
+    if highlight_hooks and not display_hooks:
+        raise ValueError('Highlight host requires the display host profile')
     if sha(container) != Z7_CONTAINER_SHA256:
         raise ValueError('Requires exact original Z7 C 3.80 container')
     plan = Plan(extract_eg(container), platform)
@@ -223,7 +277,7 @@ def build_image(container, zig=ZIG, display_hooks=False):
         raise ValueError('Unexpected native task descriptor')
     if plan.image.words(0x101e3ee4, 1) != (CURSOR,) or plan.image.words(0x101e3e70, 1) != (STATE,):
         raise ValueError('Unexpected native workspace')
-    code, symbols = compile_host(plan.address, zig)
+    code, symbols = compile_host(plan.address, zig, highlight_hooks)
     host_address = plan.alloc(code)
     cold_address = plan.alloc(bytes(160))
     # Preserve original initializer's stack unwind and tail continuation. R0
@@ -246,6 +300,7 @@ def build_image(container, zig=ZIG, display_hooks=False):
               'Call original AUTOOP initializer before scheduling the isolated module loader',
               expected=struct.pack('<I', 0x102697f5))
     display_bridges = add_display_hooks(plan, symbols) if display_hooks else {}
+    highlight_bridges = add_highlight_hooks(plan, symbols) if highlight_hooks else {}
     output, report = plan.finish()
     report.update(preset=DISPLAY_PRESET if display_hooks else PRESET, emulator_only=True, candidate_cleared=False,
         container_sha256=Z7_CONTAINER_SHA256, main_payload_size=len(output) - 2,
@@ -258,6 +313,8 @@ def build_image(container, zig=ZIG, display_hooks=False):
                       for p in sorted([*(COMPONENT / 'host').glob('*'), *(COMPONENT / 'sdk').glob('*')]) if p.is_file()})
     report['limitations'] += ['Boot, filesystem, cache and task contracts need scoped validation; no hardware clearance.',
                              'Separate stock-based no-feature probe; does not include the installed grid trial.']
+    if highlight_hooks:
+        report.update(highlight_hooks=True, highlight_bridges=highlight_bridges, api_bytes=48)
     return output, report
 
 
@@ -265,7 +322,8 @@ def validate_candidate(path, report_path, stock_path, zig=ZIG):
     actual = json.loads(Path(report_path).read_text(encoding='utf-8'))
     if actual.get('preset') not in (PRESET, DISPLAY_PRESET):
         raise ValueError('Unknown module-host profile')
-    expected, report = build_image(Path(stock_path).read_bytes(), zig, actual['preset'] == DISPLAY_PRESET)
+    expected, report = build_image(Path(stock_path).read_bytes(), zig, actual['preset'] == DISPLAY_PRESET,
+                                   actual.get('highlight_hooks', False))
     if (Path(path).read_bytes() != expected[:-2] or actual != report or binascii.crc_hqx(expected, 0)):
         raise ValueError('Module host candidate or report differs from independent rebuild')
     return dict(modified=True, independently_rebuilt=True, sha256=sha(expected[:-2]),
@@ -278,12 +336,15 @@ def main():
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--display-hooks', action='store_true', help='Install guarded stock-fallback display bridges')
+    parser.add_argument('--highlight-hooks', action='store_true', help='Opt in to experimental API48 source/consumer bridges; requires --display-hooks')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
         parser.error('Choose a new output directory under .private')
-    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks)
-    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks)
+    if args.highlight_hooks and not args.display_hooks:
+        parser.error('--highlight-hooks requires --display-hooks')
+    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks)
+    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks)
     if eg != repeated or report != second or binascii.crc_hqx(eg, 0):
         raise RuntimeError('Host build is not deterministic or CRC failed')
     output.mkdir(parents=True)

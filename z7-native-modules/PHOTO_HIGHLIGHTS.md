@@ -199,12 +199,74 @@ The accepted API44 full display module and host remain unchanged.
 
 Source evidence: `evidence/20261120-highlight-request.json`.
 
+## Optional API48 source and consumer host bridges
+
+The explicit `--display-hooks --highlight-hooks` host build now installs
+exact-byte-validated bridges at original source1034866E and consumer10239840.
+Default builds retain API44 and no highlight patches. `sdk/highlight.h` adds
+one initialization-only registration function after the44-byte worker prefix.
+The descriptor must be an aligned28-byte range in loading module memory; all
+four required callbacks must be Thumb code inside the module image. The host
+copies the callback addresses, publishes them only after successful init, and
+clears them before freeing a failed initializer. The fixed256-byte host state
+uses the previously reserved seven words; guard offsets are unchanged.
+
+Source callbacks bracket native application with an invocation-local token.
+Native caller registers/flags are restored before the displaced instructions;
+native result/volatile registers/flags are preserved across the after callback.
+The original conditional branch in the10-byte source window is relocated
+explicitly. Unregistered/invalid state delegates to native. Source reentry
+delegates without another module callback, and temporary caller flag restoration
+does not erase a deferred native copy. Production eligibility is still unbound.
+
+Only the registered descriptor address reaches consumer callbacks. Every other
+packet executes original native dispatch, even while an owned request is pending.
+For owned requests,1 dispatches native,2 invokes original cancellation completion,
+and other decisions park. Reentry during before/native processing parks without
+calling completion a second time. After native returns, the host releases its
+consumer claim BEFORE the module publishes retirement. Otherwise an immediate
+worker reap/submit could dispatch while the old guard was still set and lose the
+new request. The old owner state rejects duplicate consumption before retirement;
+after retirement, old callback code must finish without further old-packet access.
+
+`tools/audit_z7_highlight_host.py` passes77 checks on the compiled host/probe:
+registration bounds/all required callback fields/duplicate/late/init-failure,
+resident guards, source native fallback for both selectors/permissions and three
+incoming flag patterns, no-op callback ABI, actual flag override/restoration and
+deferred copy, owned dispatch/cancel/reap, recursion and foreign matching/rejected
+native packets with exact results/registers/flags/publication. The immediate
+retire/reap/submit/consume overlap test fails on private host02 and passes on
+host03. This is explicit diagnostic interleaving, not physical scheduling proof.
+
+The native hardware-config transformation leaves padding unwritten. Exact
+unregistered hardware-config comparisons therefore supply the stock reference
+with the same incoming scratch bytes captured at the native trampoline entry.
+No screenshot/pixel normalization is involved. Registered no-op comparisons prove
+result/volatile-register/flag ABI; they do not claim identical uninitialized stack
+padding or physical warning-plane programming. Kernel/filesystem, initial native
+state, selected surface checks and hardware color/plane services are supplied.
+
+Private host03 SHA512f06c17c712b6a4503532098c4f521deef681b6839346a739d3151f361d02c
+is reproducible with zero EG CRC. API44 default host and full persistent module
+rebuild byte-identically to the accepted profiles; root71 tests pass/no skips.
+The API48 probe's epoch/eligibility inputs remain diagnostic. Full preset/worker
+integration, coherent photo/output policy, owned baseline restoration and actual
+warning pixels are not implemented by these host hooks.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_module_host.py --display-hooks --highlight-hooks --output .private/builds/highlight-host-new
+.venv\Scripts\python.exe tools/audit_z7_highlight_host.py --build .private/builds/highlight-host-new --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-host-new
+```
+
+Source evidence: `evidence/20261120-highlight-host.json`.
+
 ## Remaining implementation work
 
-Bind physical output and coherent photo/movie context, then install validated
-host source/consumer bridges for the resident asynchronous owner. The original
-source-submit boundary1034866E and frame+34 permission are candidates; the
-foreign context/image chain remains unbound. Do not reuse Z7II callback
+Bind physical output and coherent photo/movie context, then integrate the
+validated optional host bridges and resident asynchronous owner with the full
+profile's worker and Photo highlights preference. Original source-submit
+boundary1034866E and frame+34 permission execute in the diagnostic; the foreign
+context/image chain remains unbound. Do not reuse Z7II callback
 addresses or assume its context/image offsets. Then integrate owned
 packet interception, cancellation/restoration, preset visibility, and native
 LCD/EVF/movie preservation with the full resident profile. Pixels and output/

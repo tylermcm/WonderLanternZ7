@@ -8,6 +8,9 @@
 #include "gui.h"
 #include "information.h"
 #include "worker.h"
+#ifdef Z7_HOST_HIGHLIGHTS
+#include "highlight.h"
+#endif
 
 #define Z7_HOST_STATE 0xa9700000u
 #define Z7_HOST_STATE_BYTES 256u
@@ -37,7 +40,13 @@ struct z7_host_state {
     uint32_t before_information_update, information_update_registered;
     uint32_t information_cycle_running, information_update_running;
     uint32_t worker_callback, worker_registered, worker_running, resident_image_size;
+#ifdef Z7_HOST_HIGHLIGHTS
+    uint32_t highlight_descriptor, highlight_before_source, highlight_after_source;
+    uint32_t highlight_before_consumer, highlight_after_consumer;
+    uint32_t highlight_source_running, highlight_consumer_running;
+#else
     uint32_t reserved[7];
+#endif
     uint32_t guards[4];
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");

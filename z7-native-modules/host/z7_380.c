@@ -14,12 +14,24 @@ static uint32_t register_after_gui_update(void (*callback)(void));
 static uint32_t register_information_cycle(uint32_t (*callback)(void));
 static uint32_t register_before_information_update(void (*callback)(void));
 static uint32_t register_worker(void (*callback)(void));
+#ifdef Z7_HOST_HIGHLIGHTS
+static uint32_t register_highlight(const struct z7_highlight_hooks *hooks);
+static const struct z7_module_highlight_api api = { {
+#else
 static const struct z7_module_worker_api api = {
+#endif
     {{{{{Z7_MODULE_ABI, sizeof(api), Z7_MODULE_TARGET, register_display, register_grid_menu}, register_before_update},
       register_disp_cycle}, register_after_gui_update},
     register_information_cycle, register_before_information_update}, register_worker
+#ifdef Z7_HOST_HIGHLIGHTS
+}, register_highlight
+#endif
 };
+#ifdef Z7_HOST_HIGHLIGHTS
+_Static_assert(sizeof(api) == 48, "Highlight API prefix layout");
+#else
 _Static_assert(sizeof(api) == 44, "Worker API prefix layout");
+#endif
 static void *allocate(uint32_t n) { return FN(0x1016fe39u, void *, uint32_t, uint32_t)(n, 0); }
 static void release(void *p) { FN(0x1016fe4bu, void, void *)(p); }
 static void delay(uint32_t n) { FN(0x1017081fu, void, uint32_t)(n); }
@@ -48,6 +60,83 @@ static uint32_t loading_code(struct z7_host_state *s, uint32_t fn)
 {
     return (fn & 1) && within(fn & ~1u, s->loading_image, s->loading_image_size, 2);
 }
+#ifdef Z7_HOST_HIGHLIGHTS
+static void clear_highlight(struct z7_host_state *s)
+{
+    s->highlight_descriptor = s->highlight_before_source = s->highlight_after_source = 0;
+    s->highlight_before_consumer = s->highlight_after_consumer = 0;
+    s->highlight_source_running = s->highlight_consumer_running = 0;
+}
+static uint32_t register_highlight(const struct z7_highlight_hooks *h)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->image || s->display_ready ||
+        s->highlight_descriptor || !loading_data(s, (uintptr_t)h, sizeof(*h))) return 0;
+    if (h->abi != Z7_MODULE_ABI || h->size != sizeof(*h) ||
+        !loading_data(s, (uintptr_t)h->descriptor, 28)) return 0;
+    const uint32_t *callbacks = (const uint32_t *)&h->before_source;
+    for (uint32_t i = 0; i < 4; ++i)
+        if (!loading_code(s, callbacks[i])) return 0;
+    s->highlight_before_source = callbacks[0];
+    s->highlight_after_source = callbacks[1];
+    s->highlight_before_consumer = callbacks[2];
+    s->highlight_after_consumer = callbacks[3];
+    s->highlight_descriptor = (uint32_t)(uintptr_t)h->descriptor;
+    return 1;
+}
+static struct z7_host_state *highlight_state(void)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !__atomic_load_n(&s->display_ready, __ATOMIC_ACQUIRE) ||
+        !s->image || !s->allocation || s->loading_image ||
+        s->resident_image_size > s->memory_size ||
+        !within(s->highlight_descriptor, s->image, s->memory_size, 28)) return 0;
+    const uint32_t *callbacks = &s->highlight_before_source;
+    for (uint32_t i = 0; i < 4; ++i)
+        if (!(callbacks[i] & 1) || !within(callbacks[i] & ~1u, s->image,
+                                         s->resident_image_size, 2)) return 0;
+    return s;
+}
+uint64_t z7_highlight_source_enter(uint32_t output, void *frame)
+{
+    struct z7_host_state *s = highlight_state();
+    uint32_t expected = 0;
+    if (!s || !__atomic_compare_exchange_n(&s->highlight_source_running,
+            &expected, 1, 0, __ATOMIC_ACQUIRE, __ATOMIC_RELAXED)) return 0;
+    uint32_t token = FN(s->highlight_before_source, uint32_t, uint32_t, void *)(output, frame);
+    return ((uint64_t)1 << 32) | token;
+}
+void z7_highlight_source_leave(uint32_t output, void *frame, uint32_t token)
+{
+    struct z7_host_state *s = highlight_state();
+    if (!s) return;
+    FN(s->highlight_after_source, void, uint32_t, void *, uint32_t)(output, frame, token);
+    __atomic_store_n(&s->highlight_source_running, 0, __ATOMIC_RELEASE);
+}
+uint32_t z7_highlight_consumer_enter(void *packet)
+{
+    struct z7_host_state *s = highlight_state();
+    if (!s || (uintptr_t)packet != s->highlight_descriptor) return 0;
+    uint32_t expected = 0;
+    if (!__atomic_compare_exchange_n(&s->highlight_consumer_running,
+            &expected, 1, 0, __ATOMIC_ACQUIRE, __ATOMIC_RELAXED)) return 3;
+    uint32_t decision = FN(s->highlight_before_consumer, uint32_t, void *)(packet);
+    if (decision == 1 || decision == 2) return decision;
+    __atomic_store_n(&s->highlight_consumer_running, 0, __ATOMIC_RELEASE);
+    return 3;
+}
+void z7_highlight_consumer_leave(void *packet, uint32_t decision)
+{
+    struct z7_host_state *s = highlight_state();
+    if (!s) return;
+    /* Native dispatch/completion has returned. Release the host claim BEFORE
+     * the module publishes retirement: a worker may immediately reap/submit
+     * another packet, which must not be dropped as old-call reentry. The
+     * resident owner's state still rejects the old packet until retirement. */
+    __atomic_store_n(&s->highlight_consumer_running, 0, __ATOMIC_RELEASE);
+    FN(s->highlight_after_consumer, void, void *, uint32_t)(packet, decision);
+}
+#endif
 static uint32_t register_worker(void (*callback)(void))
 {
     struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
@@ -354,7 +443,12 @@ __attribute__((noinline)) void z7_module_publish(uint8_t *body, uint32_t n)
 __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
 {
     return ((uint32_t (*)(const struct z7_module_api *))
-             ((uintptr_t)body + entry + 1))(&api.information.gui.disp.update.base);
+             ((uintptr_t)body + entry + 1))(
+#ifdef Z7_HOST_HIGHLIGHTS
+                &api.worker.information.gui.disp.update.base);
+#else
+                &api.information.gui.disp.update.base);
+#endif
 }
 __attribute__((noinline)) void z7_module_result(struct z7_host_state *s)
 {
@@ -443,6 +537,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->before_information_update = s->information_update_registered = 0;
     s->information_cycle_running = s->information_update_running = 0;
     s->worker_callback = s->worker_registered = s->worker_running = s->resident_image_size = 0;
+#ifdef Z7_HOST_HIGHLIGHTS
+    clear_highlight(s);
+#endif
     s->grid_metadata = s->grid_callbacks = s->grid_menu_registered = s->grid_menu_committed = 0;
     for (uint32_t i = 0; i < sizeof(s->display) / 4; ++i)
         ((volatile uint32_t *)&s->display)[i] = 0;
@@ -457,6 +554,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
         s->before_information_update = s->information_update_registered = 0;
         s->information_cycle_running = s->information_update_running = 0;
         s->worker_callback = s->worker_registered = s->worker_running = s->resident_image_size = 0;
+#ifdef Z7_HOST_HIGHLIGHTS
+        clear_highlight(s);
+#endif
         s->grid_metadata = s->grid_callbacks = s->grid_menu_registered = s->grid_menu_committed = 0;
         for (uint32_t i = 0; i < sizeof(s->display) / 4; ++i)
             ((volatile uint32_t *)&s->display)[i] = 0;
@@ -470,7 +570,11 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->resident_image_size = info.image_size;
     __asm__ volatile("dmb sy" ::: "memory");
     if (s->display_registered || s->grid_menu_registered || s->update_registered || s->disp_registered || s->gui_registered ||
-        s->information_cycle_registered || s->information_update_registered)
+        s->information_cycle_registered || s->information_update_registered
+#ifdef Z7_HOST_HIGHLIGHTS
+        || s->highlight_descriptor
+#endif
+        )
         __atomic_store_n(&s->display_ready, 1, __ATOMIC_RELEASE);
     return Z7_HOST_LOADED;
 }
