@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'gui-update-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -43,6 +43,7 @@ def main():
         'display-readouts-probe': ('examples/display_readouts_probe.c', 'original-Z7-display-readouts-diagnostic', 24),
         'display-disp-probe': ('examples/display_disp_probe.c', 'original-Z7-display-disp-diagnostic', 28),
         'display-base-probe': ('examples/display_base_probe.c', 'original-Z7-display-base-diagnostic', 28),
+        'gui-update-probe': ('examples/gui_update_probe.c', 'original-Z7-gui-update-diagnostic', 32),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
     packet, report = build(source, zig=args.zig.resolve())
@@ -85,6 +86,8 @@ def main():
         inputs += [ROOT / 'z7-native-modules/examples/display_readouts_probe.c', ROOT / 'z7-native-modules/examples/display_disp_policy.h', ROOT / 'z7-native-modules/sdk/disp.h']
     if args.variant == 'display-base-probe':
         inputs += [ROOT / 'z7-native-modules/examples/display_disp_probe.c', ROOT / 'z7-native-modules/examples/display_base_policy.h']
+    if args.variant == 'gui-update-probe':
+        inputs += [ROOT / 'z7-native-modules/sdk/gui.h', ROOT / 'z7-native-modules/sdk/disp.h', ROOT / 'z7-native-modules/sdk/update.h']
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)
@@ -97,6 +100,8 @@ def main():
             ('probes', 'update-failure', 'examples/update_probe.c', 'Z7_UPDATE_PROBE_FAIL'),
             ('probes', 'cycle-success', 'examples/disp_cycle_probe.c', None),
             ('probes', 'cycle-failure', 'examples/disp_cycle_probe.c', 'Z7_CYCLE_PROBE_FAIL'),
+            ('probes', 'gui-success', 'examples/gui_update_probe.c', None),
+            ('probes', 'gui-failure', 'examples/gui_update_probe.c', 'Z7_GUI_PROBE_FAIL'),
             ('failures', 'failed-init', 'plugins/grids_histogram.c', 'Z7_DISPLAY_MODULE_FAIL'),
             ('failures', 'foreign-controls', 'plugins/grids_histogram.c', 'Z7_DISPLAY_MENU_FOREIGN_CONTROLS'),
             ('failures', 'foreign-callback', 'plugins/grids_histogram.c', 'Z7_DISPLAY_MENU_BAD_CALLBACK'),

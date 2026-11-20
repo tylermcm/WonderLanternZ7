@@ -114,6 +114,14 @@ def add_display_hooks(plan, symbols):
         window = bytes.fromhex(expected)
         plan.edit(site, jump(site, helpers[name], len(window)),
                   'Module-owned display bridge: ' + name, expected=window)
+    # Original shooting-app key, event and periodic GUI-update bindings. Only
+    # the update initializer word changes; the original update body stays native.
+    if plan.image.words(0xa1829b0c, 3) != (0x1030da57, 0x1030dd1f, 0x1030db43):
+        raise ValueError('Unexpected original shooting-app callback table')
+    plan.edit(0xa1829b14, struct.pack('<I', symbols['z7_gui_update_bridge']),
+              'Run an optional owned callback after the original shooting GUI update',
+              expected=struct.pack('<I', 0x1030db43))
+    helpers['gui_update'] = symbols['z7_gui_update_bridge'] & ~1
     return helpers
 
 

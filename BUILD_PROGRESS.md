@@ -189,3 +189,17 @@ Original histogram getter rejection/timeout cleanup now passes224 cases; actual
 successful statistics production remains open. Other components, information,
 groups, persistence, lifecycle and hardware validation remain. All jobs terminal;
 no camera/card access, staging, flashing or push. Full goal remains active.
+
+## After-native-GUI histogram prerequisite — November 19, 2026
+
+Host07 adds an init-only owned after-GUI callback through the additive32-byte
+API, retaining earlier API prefixes/state layout. Only the native update-table
+initializer changes; original update instructions and key/event bindings remain.
+122 instruction cases pass for ABI/order, nested updates, publication/failure
+cleanup and older-host rejection. Assisted QEMU passes11 checks/two inspected
+frames: actual native DISP still changes page0 to1, callbacks advance52 to70,
+and none observes native render-busy. No extra paint or supplied histogram bins.
+Host99/display316/update24/DISP137/base68 and39 root tests/no-skips pass.
+This completes the callback prerequisite, not the histogram feature. Native
+layout/submit/present and real statistics success remain next, alongside the
+other open display and hardware scope. Full software goal stays active.

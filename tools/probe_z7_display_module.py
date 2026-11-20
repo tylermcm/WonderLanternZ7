@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets', 'gui-update'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
     parser.add_argument('--grid-components', action='store_true', help='For the base-page DISP probe, set a native golden grid and verify component suppression and same-page edits')
@@ -82,7 +82,7 @@ def main():
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
         orientation_fixture=0, keep_awake=True, photo_liveview=True)
     camera = DisplayCamera(0, profile='menu' if args.view == 'menu' else 'shooting', **options)
-    if args.view in ('settings-battery', 'readouts', 'disp-presets'):
+    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update'):
         # Retain the base fixture's native StartLV settling delay before MENU.
         # Acknowledgement alone can precede the first completed native draw.
         camera.native_display_wait_ms = 5000
@@ -90,7 +90,7 @@ def main():
         main_sha256=host['main_payload_sha256'], modeled_module_file=True, camera_access=False, physical_card=False,
         supplied_histogram_context=args.histogram_context_fixture)
     result['probe_script_sha256'] = hashlib.sha256(probe_source).hexdigest()
-    if args.view in ('settings-battery', 'readouts', 'disp-presets'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
+    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
     def save():
         (output / 'result.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     def check(name, passed):
@@ -148,6 +148,10 @@ def main():
         (output / (name + '.png')).write_bytes(camera.png)
         stored = int.from_bytes(camera.remote.memory(0xa24f182c, 4), 'little')
         step = dict(name=name, stored_grid=stored, frame_sha256=hashlib.sha256(camera.png).hexdigest(), pages=pages())
+        if args.view == 'gui-update':
+            step['gui_probe'] = {name: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_gui_probe_' + name], 4), 'little')
+                for name in ('mask', 'calls', 'busy_samples', 'last_busy', 'recurse')}
+            step['native_page'] = camera.remote.memory(0xa201d4d0 + 0x18a, 1)[0]
         if args.view == 'settings-battery':
             step['battery_controls'] = []
             for i in range(10):
@@ -250,7 +254,7 @@ def main():
     try:
         camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry') else camera.boot_shooting()
         checkpoint()
-        if args.view in ('settings-battery', 'readouts', 'disp-presets'):
+        if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update'):
             # StartLV acknowledgement and a fixed delay are insufficient. This
             # diagnostic gate observes native pipeline progress without writing
             # readiness flags or inventing peripheral completion responses.
@@ -282,14 +286,30 @@ def main():
                 normalized_maximum=camera.remote.memory(0xa201d33c, 4).hex())
         check('module-loaded-and-callbacks-committed', state()[10] == 8 and state()[23] == 1 and fixture.finished)
         combined = module['kind'] == 'original-Z7-combined-display-module'
-        if args.view not in ('battery', 'battery-auto') or combined:
+        if args.view not in ('battery', 'battery-auto', 'gui-update') or combined:
             for _ in range(20):
                 if state()[35]:
                     break
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
-        if args.view == 'readouts':
+        if args.view == 'gui-update':
+            if module['kind'] != 'original-Z7-gui-update-diagnostic':
+                raise ValueError('After-GUI diagnostic required')
+            check('resident-wrapper-owns-update-slot', camera.remote.memory(0xa1829b14, 4) == struct.pack('<I', host['symbols']['z7_gui_update_bridge']))
+            check('native-key-event-slots-preserved', camera.remote.memory(0xa1829b0c, 8) == struct.pack('<2I', 0x1030da57, 0x1030dd1f))
+            check('gui-only-registration-ready', state()[41:43] == (1, 0) and not state()[24] and not state()[37])
+            before = capture('gui-native-before')
+            check('owned-registration-contracts-pass', before['gui_probe']['mask'] == 63)
+            check('native-gui-has-called-module', before['gui_probe']['calls'] > 0)
+            key('disp', lambda: camera.remote.memory(0xa201d4d0 + 0x18a, 1)[0] != before['native_page'])
+            after = capture('gui-native-disp')
+            check('native-disp-still-changes-page', after['native_page'] != before['native_page'])
+            check('native-update-callback-continues-after-disp', after['gui_probe']['calls'] > before['gui_probe']['calls'])
+            check('no-observed-render-busy-callback', after['gui_probe']['busy_samples'] == 0 and after['gui_probe']['last_busy'] == 0)
+            result['gui_scope'] = dict(after_native_shooting_update_return=True, extra_paint=False,
+                frame_or_isp_fence=False, statistics_producer=False)
+        elif args.view == 'readouts':
             if module['kind'] != 'original-Z7-display-readouts-diagnostic': raise ValueError('Readout diagnostic required')
             def readout_word(name): return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_readout_' + name], 4), 'little')
             descriptors = [int.from_bytes(camera.remote.memory(0x1064d610 + i * 4, 4), 'little') for i in (10, 11, 15)]

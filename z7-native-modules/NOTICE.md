@@ -61,3 +61,9 @@ design from pinned upstream `sdk/disp.h`, copyright (c) 2026 JKWTCN, under the
 preserved MIT license. Original-Z7 selector/setter interfaces, conditional
 snapshot handling, error rollback, foreign-write handling and audits are local
 work. This remains an independent modified prototype, not an upstream release.
+
+`sdk/gui.h`, the after-GUI host wrapper, `examples/gui_update_probe.c` and their
+audits are independent local MIT interface/validation work. The need for a pass
+after the complete native update is informed by pinned upstream
+`plugins/histogram_horizon_ram.c`, copyright (c)2026 JKWTCN under MIT. No Z7II
+addresses or implementation bytes are embedded in the original-Z7 wrapper.

@@ -602,3 +602,47 @@ Mutex/event services are supplied; no successful statistics producer/conversion
 or histogram pixels are claimed. The port must check the return flag and must
 not interpret a zeroed failed sample as valid data. Histogram/highlights,
 information app, remaining groups, persistence and broader lifecycle remain.
+
+## After-native-GUI callback for the histogram pass
+
+Host07 adds the32-byte additive `sdk/gui.h` API. Its init-only registration
+accepts one callback in the loading module's owned Thumb image. Null, ROM,
+non-Thumb, BSS, duplicate and late registrations are rejected. Failed init
+clears publication before releasing memory. The existing20/24/28-byte prefixes,
+32-byte display hooks and256-byte resident state retain their layouts. Three
+previously reserved state words hold the callback, registration and running flag.
+
+The native shooting-app update initializer at A1829B14 now points to the resident
+wrapper. Original key/event bindings remain1030DA57/1030DD1F; the entire original
+update body1030DB42..1030DD1D is byte-identical. The wrapper calls that original
+body first, then the optional module callback, preserving its result, caller
+registers and NZCVQ flags. Nested updates still execute the original body but
+suppress the nested module callback. This includes early native app-transition
+returns; consumers must recheck ownership and rendering state. It is not a frame
+or ISP fence. Existing after-paint callbacks remain inside native rendering and
+must not recursively submit another drawing pass.
+
+Reproducible host07 MAIN SHA9326b595fd4f47719aaa9bcdb157ce35aa9f3cbd812a62f990585a4e2e52db66,
+33,057,580bytes, resident C host3,569bytes. GUI diagnostic01 package SHA
+dc7443a8d2500171cf379ceaafe1c437cd6e78255e210bb2d24d0749aba32a99,
+384bytes/image320/BSS24. Combined package remains byte-identical atf7dbdf87... .
+
+`audit_z7_gui_host.py` passes122 cases, including20 differentials across five
+native paths and four incoming NZCVQ states, original-entry register equality,
+callback ordering, nested suppression, failure cleanup, foreign-slot rejection
+and older28-byte-host rejection. Original callback instructions execute, while
+its direct native service returns are supplied. This does not exercise complete
+widget layout or sampling. Existing host99/display316/update24/DISP137/base68
+audits and39 root tests/no-skips pass on host07.
+
+Assisted QEMU gui-update-live01 passes11 checks/two inspected frames. Native
+RAW/ISP/scanout readiness is observed before the test. Callback count advances
+52 to70 while native DISP changes page0 to1; no callback reports render-busy.
+No extra paint or histogram sample is injected. Private result/frames preserve
+the scope; source summary is `evidence/20261119-native-gui-update.json`.
+
+Next derive the original-Z7 extra histogram layout/submit/present contracts and
+bind real sample availability with fail-closed cleanup. Successful statistics,
+histogram pixels, remaining components/information groups, information app,
+menu-return coherence, persistence, lifecycle and physical installation/recovery
+remain open. No camera/card access, staging, flash or push.

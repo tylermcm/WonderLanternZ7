@@ -235,3 +235,12 @@ ISO label pixel mismatch instead tracks a native visibility phase and remains
 subject to the full phase-matched rendering repeat. See the final DISPLAY_SETTINGS.md section for the exact current
 candidate and the retained failed cycles; earlier scoped frame successes are
 not proof of a completed custom-DISP implementation.
+
+The histogram preparation now has a separate after-native-GUI32-byte additive
+API in `sdk/gui.h`. Host07 wraps only the original shooting-update initializer
+at A1829B14 and leaves its native body/key/event callbacks intact. The optional
+callback runs after the original returns, including early transitions; it must
+revalidate context and render-busy state. Nested native updates are preserved
+while nested module callbacks are suppressed.122 instruction cases and11
+assisted-QEMU checks pass. See the [current record](z7-native-modules/DISPLAY_SETTINGS.md#after-native-gui-callback-for-the-histogram-pass)
+for exact hashes and limitations. This is no statistics producer or paint fence.

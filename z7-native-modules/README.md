@@ -21,6 +21,9 @@ separates successful instruction-fixture loading from actual QEMU no-card boot.
 The SDK now exports ABI, API size, target identity and staged display/menu
 registration. See [the display module record](../Z7_DISPLAY_MODULE_RESEARCH.md)
 for ownership, publication, the additive API size and reproducible audit commands.
+The latest experimental host adds `sdk/gui.h`: one owned init-only callback
+after the original shooting GUI update returns. Earlier API prefixes remain
+compatible. Consumers must revalidate context; this is not a frame/ISP fence.
 No Z7II native addresses are exported. Native modules are
 trusted code, not sandboxed. CRC detects corruption; it does not authenticate a
 module or make arbitrary code safe.

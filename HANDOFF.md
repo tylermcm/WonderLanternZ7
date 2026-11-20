@@ -1,5 +1,56 @@
 # Laptop handoff — October 20, 2026
 
+## After-native-GUI prerequisite — November 19, 2026
+
+Previous goal turn made progress; this turn adds the after-GUI host API.
+ALL CURRENT JOBS ARE TERMINAL after graph refresh. Host07 is reproducible MAIN
+SHA9326b595fd4f47719aaa9bcdb157ce35aa9f3cbd812a62f990585a4e2e52db66,
+33057580bytes/host3569bytes, additive32-byte API/state256/hooks32. Private build
+`.private/builds/20261119-display-host-07`; GUI diagnostic01 package384bytes,
+image320/BSS24, SHAdc7443a8d2500171cf379ceaafe1c437cd6e78255e210bb2d24d0749aba32a99.
+Combined regression13 remainsf7dbdf87... byte-identical. No camera/card access,
+staging, flash or push. User explicitly wants software finished before flashing.
+
+Only native shooting-update initializer A1829B14 changes to resident bridge;
+original1030DB42..1030DD1D body and key/event slots1030DA57/1030DD1F remain native.
+The callback runs after original return, including early app transitions. It
+preserves original post-call registers/result/NZCVQ. Nested native updates still
+execute but nested module callbacks are suppressed. Init-only registration
+accepts owned Thumb image code; failure clears publication before image release.
+Three reserved state words40/41/42 hold callback/registered/running. Older API
+prefixes remain compatible. This is NOT a frame/ISP fence or statistics producer.
+Existing after-paint callbacks run inside native rendering: never submit a
+recursive extra pass there. Use sdk/gui.h and revalidate context/render busy.
+
+122 instruction checks pass, including20 differentials/five original paths/four
+NZCVQ states, callback ordering, nested suppression, guard/publication failures,
+foreign-slot rejection and old28-byte-host rejection. Original callback body
+executes; direct native service returns are supplied. Existing host99/display316/
+update24/DISP137/base68/grid282 +root39/no-skips pass on host07. Grid includes109
+native geometry calls. Source evidence `evidence/20261119-native-gui-update.json`.
+
+QEMU `.private/evidence/20261119-gui-update-live-01` passes11 checks/two frames.
+Native pipeline readiness is observed, callback counts52->70 with actual DISP
+page0->1, zero observed render-busy callbacks. Both native frames inspected.
+No extra paint/statistics fixture. Original full widget/statistics success is
+not covered by the instruction audit. All test/build/QEMU jobs terminal.
+
+Next bind native histogram extra layout/submit/present with real getter failures
+and cleanup preserved. Pinned upstream histogram_horizon_ram.c remains private
+at50a22b24... . Original sampler/service chain in prior section remains valid.
+Further research this turn: regular GUI103240AA invokes10324502(control prep),
+102F2AC8(each102F27A8),102F2042(render submit), then102F2AE8(dispatch updater only
+for dirty descriptor),102F2EE8(output/gate postprocessing),1036DD72. Candidate
+single-widget layout chain is10369248/10369214/102F27A8; derive and audit before
+using it. Native updater102F5540 sets painter102F1545 via104BCB3C and visibility
+via103FB32E. Do not mistake102F2F1E(visibility aggregate) for layout. Native
+present102F11B6 has output-routing/service dependencies and needs full audit.
+Clear owned sample buffer before getter; nominal lower-level success may still
+leave empty samples if statistics backend fails. Do not invent event completion.
+Histogram/highlights, information app/groups, native menu-return coherence,
+persistence/lifecycle and physical installation/recovery remain open. Keep the
+full software goal active. Graph/manifest refreshed at this source checkpoint.
+
 ## Native grid component and histogram failure contracts — November 19, 2026
 
 Previous goal turn made progress; this turn binds native grid visibility.

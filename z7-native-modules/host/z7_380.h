@@ -5,6 +5,7 @@
 #include "display.h"
 #include "update.h"
 #include "disp.h"
+#include "gui.h"
 
 #define Z7_HOST_STATE 0xa9700000u
 #define Z7_HOST_STATE_BYTES 256u
@@ -29,7 +30,8 @@ struct z7_host_state {
     uint32_t grid_metadata, grid_callbacks, grid_menu_registered, grid_menu_committed;
     uint32_t before_update, update_registered;
     uint32_t disp_cycle, disp_registered;
-    uint32_t reserved[20];
+    uint32_t after_gui_update, gui_registered, gui_running;
+    uint32_t reserved[17];
     uint32_t guards[4];
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");
@@ -45,4 +47,6 @@ void z7_display_before_paint(void);
 void z7_display_after_paint(void);
 void z7_display_before_update(void);
 uint32_t z7_display_disp_cycle(void);
+void z7_display_after_gui_update(void);
+void z7_gui_update_bridge(void);
 #endif

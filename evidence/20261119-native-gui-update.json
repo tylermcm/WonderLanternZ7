@@ -1,0 +1,585 @@
+{
+  "schema": 1,
+  "date": "2026-11-19",
+  "scope": "Independent original-Z7 after-native-GUI callback prerequisite for histogram extra pass",
+  "host": {
+    "main_sha256": "9326b595fd4f47719aaa9bcdb157ce35aa9f3cbd812a62f990585a4e2e52db66",
+    "main_bytes": 33057580,
+    "host_bytes": 3569,
+    "api_bytes": 32,
+    "state_bytes": 256
+  },
+  "module": {
+    "module_sha256": "dc7443a8d2500171cf379ceaafe1c437cd6e78255e210bb2d24d0749aba32a99",
+    "file_bytes": 384,
+    "image_bytes": 320,
+    "bss_bytes": 24,
+    "api_minimum_bytes": 32
+  },
+  "binding": {
+    "slot": "0xA1829B14",
+    "original": "0x1030DB43",
+    "native_body_byte_identical": true,
+    "key_event_slots_unchanged": true,
+    "after_original_return": true,
+    "early_transition_returns_included": true,
+    "nested_native_updates_preserved": true,
+    "nested_module_callback_suppressed": true,
+    "owned_init_only_registration": true,
+    "frame_or_isp_fence": false
+  },
+  "instruction_audit": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "native-update-body-byte-identical",
+        "passed": true
+      },
+      {
+        "name": "native-key-event-slots-unchanged",
+        "passed": true
+      },
+      {
+        "name": "only-update-slot-uses-resident-wrapper",
+        "passed": true
+      },
+      {
+        "name": "gui-only-success-publishes",
+        "passed": true
+      },
+      {
+        "name": "six-owned-registration-contracts",
+        "passed": true
+      },
+      {
+        "name": "init-does-not-call-gui",
+        "passed": true
+      },
+      {
+        "name": "dispatcher-invokes-owned-code",
+        "passed": true
+      },
+      {
+        "name": "late-registration-rejected",
+        "passed": true
+      },
+      {
+        "name": "not-ready-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "no-image-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "unregistered-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "running-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "bad-guard-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "bad-magic-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "foreign-slot-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "ordinary-0-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "ordinary-0-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "ordinary-0-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "ordinary-0-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "ordinary-0-callback-once",
+        "passed": true
+      },
+      {
+        "name": "ordinary-28000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "ordinary-28000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "ordinary-28000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "ordinary-28000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "ordinary-28000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "ordinary-50000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "ordinary-50000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "ordinary-50000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "ordinary-50000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "ordinary-50000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "ordinary-f8000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "ordinary-f8000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "ordinary-f8000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "ordinary-f8000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "ordinary-f8000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "app-transition-0-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "app-transition-0-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "app-transition-0-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "app-transition-0-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "app-transition-0-callback-once",
+        "passed": true
+      },
+      {
+        "name": "app-transition-28000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "app-transition-28000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "app-transition-28000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "app-transition-28000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "app-transition-28000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "app-transition-50000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "app-transition-50000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "app-transition-50000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "app-transition-50000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "app-transition-50000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "app-transition-f8000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "app-transition-f8000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "app-transition-f8000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "app-transition-f8000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "app-transition-f8000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-0-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-0-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-0-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-0-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-0-callback-once",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-28000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-28000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-28000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-28000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-28000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-50000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-50000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-50000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-50000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-50000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-f8000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-f8000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-f8000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-f8000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "mode-transition-f8000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-0-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-0-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-0-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-0-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-0-callback-once",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-28000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-28000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-28000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-28000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-28000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-50000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-50000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-50000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-50000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-50000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-f8000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-f8000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-f8000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-f8000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "snapshot-transition-f8000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-0-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-0-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-0-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-0-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-0-callback-once",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-28000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-28000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-28000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-28000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-28000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-50000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-50000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-50000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-50000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-50000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-f8000000-absent-abi",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-f8000000-owned-abi",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-f8000000-original-entry-registers",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-f8000000-callback-after-return",
+        "passed": true
+      },
+      {
+        "name": "pending-byte-f8000000-callback-once",
+        "passed": true
+      },
+      {
+        "name": "nested-native-update-still-executes",
+        "passed": true
+      },
+      {
+        "name": "nested-module-callback-suppressed",
+        "passed": true
+      },
+      {
+        "name": "gui-failure-clears-failed-publication",
+        "passed": true
+      },
+      {
+        "name": "gui-failure-released-code-not-called",
+        "passed": true
+      },
+      {
+        "name": "gui-success-foreign-clears-failed-publication",
+        "passed": true
+      },
+      {
+        "name": "gui-success-foreign-released-code-not-called",
+        "passed": true
+      },
+      {
+        "name": "legacy-api28-rejects-api32-module",
+        "passed": true
+      }
+    ],
+    "main_sha256": "9326b595fd4f47719aaa9bcdb157ce35aa9f3cbd812a62f990585a4e2e52db66",
+    "api_bytes": 32,
+    "state_bytes": 256,
+    "supplied_boundaries": [
+      "Loader kernel/filesystem/heap",
+      "Original shooting-update direct native service returns"
+    ],
+    "original_callback_instructions_execute": true,
+    "full_widget_pipeline": false,
+    "statistics_production": false,
+    "actual_pixels": false,
+    "camera_access": false
+  },
+  "regressions": {
+    "host": 99,
+    "display": 316,
+    "update": 24,
+    "disp": 137,
+    "base": 68,
+    "root": 39,
+    "root_skipped": 0,
+    "grid": 282,
+    "native_grid_geometry_calls": 109
+  },
+  "live": {
+    "passed": true,
+    "checks": 11,
+    "frames": 2,
+    "callback_counts": [
+      52,
+      70
+    ],
+    "native_pages": [
+      0,
+      1
+    ],
+    "busy_samples": [
+      0,
+      0
+    ],
+    "frames_visually_inspected": true,
+    "native_pipeline_readiness_observed": true,
+    "extra_paint": false,
+    "statistics_production": false
+  },
+  "combined_module_byte_identical": true,
+  "camera_access": false,
+  "card_access": false,
+  "staging": false,
+  "flash": false,
+  "push": false,
+  "remaining": [
+    "Native histogram layout/submit/present bindings and successful real statistics production",
+    "Histogram/highlights components, information app and remaining information groups",
+    "Native menu-return coherence, persistence and broader lifecycle",
+    "Physical card/cache/wake and exact installation/recovery assessment"
+  ],
+  "graph": {
+    "nodes": 2073,
+    "edges": 5229,
+    "generated_graph_ignored": true
+  }
+}
