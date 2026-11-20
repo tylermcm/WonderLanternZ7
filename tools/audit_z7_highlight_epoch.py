@@ -144,7 +144,7 @@ def profile_audit(raw, host, packet, module, check):
         f.u.mem_write(0xa201d80c, bytes(f.u.mem_read(0xa201d4d0, 0x33c)))
         f.call(host['symbols']['z7_display_after_gui_update'])
     check('full-api48-profile-registers-context-hooks-and-worker-before-startup-io', status == 8 and
-          f.epoch_startup == [(0, True, 1), (0, True, 1)] and module['api_minimum_bytes'] == 48)
+          f.epoch_startup == [(0, True, 1), (0, True, 1)] and module['api_minimum_bytes'] >= 48)
     check('startup-context-stays-unpublished-until-gui-tick', epoch() == 0 and source() == 1 and value('z7_highlight_source_epoch') == 0)
     f.call(host['symbols']['z7_display_before_update'])
     before = list(f.file_events)

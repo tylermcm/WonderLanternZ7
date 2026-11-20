@@ -16,7 +16,12 @@ static uint32_t register_before_information_update(void (*callback)(void));
 static uint32_t register_worker(void (*callback)(void));
 #ifdef Z7_HOST_HIGHLIGHTS
 static uint32_t register_highlight(const struct z7_highlight_hooks *hooks);
+#ifdef Z7_HOST_PARAMETERS
+static uint32_t register_parameters(void (*callback)(uint32_t, void *));
+static const struct z7_module_parameters_api api = { { {
+#else
 static const struct z7_module_highlight_api api = { {
+#endif
 #else
 static const struct z7_module_worker_api api = {
 #endif
@@ -26,8 +31,13 @@ static const struct z7_module_worker_api api = {
 #ifdef Z7_HOST_HIGHLIGHTS
 }, register_highlight
 #endif
+#ifdef Z7_HOST_PARAMETERS
+}, register_parameters
+#endif
 };
-#ifdef Z7_HOST_HIGHLIGHTS
+#ifdef Z7_HOST_PARAMETERS
+_Static_assert(sizeof(api) == 52, "Parameter API prefix layout");
+#elif defined(Z7_HOST_HIGHLIGHTS)
 _Static_assert(sizeof(api) == 48, "Highlight API prefix layout");
 #else
 _Static_assert(sizeof(api) == 44, "Worker API prefix layout");
@@ -45,6 +55,9 @@ static uint32_t valid_state(const struct z7_host_state *s)
 {
     if ((uintptr_t)s != Z7_HOST_STATE || s->magic != Z7_HOST_MAGIC) return 0;
     for (uint32_t i = 0; i < 4; ++i) if (s->guards[i] != 0xa5a5a5a5u) return 0;
+#ifdef Z7_HOST_PARAMETERS
+    for (uint32_t i = 0; i < 2; ++i) if (s->parameter_guards[i] != 0xa5a5a5a5u) return 0;
+#endif
     return 1;
 }
 
@@ -66,6 +79,9 @@ static void clear_highlight(struct z7_host_state *s)
     s->highlight_descriptor = s->highlight_before_source = s->highlight_after_source = 0;
     s->highlight_before_consumer = s->highlight_after_consumer = 0;
     s->highlight_source_running = s->highlight_consumer_running = 0;
+#ifdef Z7_HOST_PARAMETERS
+    s->parameter_callback = s->parameter_running = 0;
+#endif
 }
 static uint32_t register_highlight(const struct z7_highlight_hooks *h)
 {
@@ -116,7 +132,29 @@ void z7_highlight_source_leave(uint32_t output, void *frame, uint32_t token)
 uint32_t z7_highlight_consumer_enter(void *packet)
 {
     struct z7_host_state *s = highlight_state();
-    if (!s || (uintptr_t)packet != s->highlight_descriptor) return 0;
+    if (!s) return 0;
+    if ((uintptr_t)packet != s->highlight_descriptor) {
+#ifdef Z7_HOST_PARAMETERS
+        uint32_t address = (uint32_t)(uintptr_t)packet;
+        if (!s->parameter_callback || !(s->parameter_callback & 1) ||
+            !within(s->parameter_callback & ~1u, s->image, s->resident_image_size, 2) ||
+            (address & 3) || address < 0xa1800000u || address > 0xc0000000u - 28) return 0;
+        const uint32_t *words = packet;
+        uint32_t command = words[4], payload = words[5];
+        if ((command != 0x42060007u && command != 0x42062007u) ||
+            *(const volatile uint8_t *)(uintptr_t)0xa180a568u != (command == 0x42062007u) ||
+            (payload & 3) || payload < 0xa1800000u || payload > 0xc0000000u - 104) return 0;
+        uint32_t phase = *(const volatile uint8_t *)(uintptr_t)0xa1d68e54u;
+        if (phase < 1 || phase > 4 || *(const volatile uint32_t *)(uintptr_t)payload > 1) return 0;
+        uint32_t expected = 0;
+        if (!__atomic_compare_exchange_n(&s->parameter_running, &expected, 1, 0,
+                                        __ATOMIC_ACQUIRE, __ATOMIC_RELAXED)) return 0;
+        uint32_t writable = *(const volatile uint32_t *)(uintptr_t)0xa24e1e00u == 0 && (phase == 3 || phase == 4);
+        FN(s->parameter_callback, void, uint32_t, void *)(command, writable ? (void *)(uintptr_t)payload : 0);
+        __atomic_store_n(&s->parameter_running, 0, __ATOMIC_RELEASE);
+#endif
+        return 0;
+    }
     uint32_t expected = 0;
     if (!__atomic_compare_exchange_n(&s->highlight_consumer_running,
             &expected, 1, 0, __ATOMIC_ACQUIRE, __ATOMIC_RELAXED)) return 3;
@@ -125,6 +163,17 @@ uint32_t z7_highlight_consumer_enter(void *packet)
     __atomic_store_n(&s->highlight_consumer_running, 0, __ATOMIC_RELEASE);
     return 3;
 }
+#ifdef Z7_HOST_PARAMETERS
+static uint32_t register_parameters(void (*callback)(uint32_t, void *))
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->image || s->display_ready ||
+        !s->highlight_descriptor || s->parameter_callback ||
+        !loading_code(s, (uint32_t)(uintptr_t)callback)) return 0;
+    s->parameter_callback = (uint32_t)(uintptr_t)callback;
+    return 1;
+}
+#endif
 void z7_highlight_consumer_leave(void *packet, uint32_t decision)
 {
     struct z7_host_state *s = highlight_state();
@@ -444,7 +493,9 @@ __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
 {
     return ((uint32_t (*)(const struct z7_module_api *))
              ((uintptr_t)body + entry + 1))(
-#ifdef Z7_HOST_HIGHLIGHTS
+#ifdef Z7_HOST_PARAMETERS
+                &api.highlight.worker.information.gui.disp.update.base);
+#elif defined(Z7_HOST_HIGHLIGHTS)
                 &api.worker.information.gui.disp.update.base);
 #else
                 &api.information.gui.disp.update.base);

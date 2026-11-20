@@ -6,6 +6,9 @@
 #include "display.h"
 #ifdef Z7_HIGHLIGHT_CONTEXT_PROBE
 #include "highlight.h"
+#ifdef Z7_HIGHLIGHT_PARAMETERS_PROBE
+#include "parameters.h"
+#endif
 static void highlight_gui_publish(void);
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
@@ -140,6 +143,10 @@ uint32_t z7_main(const struct z7_module_api *api)
     const struct z7_module_highlight_api *highlight_api = (const struct z7_module_highlight_api *)api;
     if (api->size < sizeof(*highlight_api) || !highlight_api->register_highlight) return 1;
 #endif
+#ifdef Z7_HIGHLIGHT_PARAMETERS_PROBE
+    const struct z7_module_parameters_api *parameter_api = (const struct z7_module_parameters_api *)api;
+    if (api->size < sizeof(*parameter_api) || !parameter_api->register_parameters) return 1;
+#endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
     const struct z7_module_update_api *update_api = (const struct z7_module_update_api *)api;
     if (api->size < sizeof(*update_api) || !update_api->register_before_update) return 1;
@@ -187,6 +194,9 @@ uint32_t z7_main(const struct z7_module_api *api)
 #ifdef Z7_HIGHLIGHT_CONTEXT_PROBE
     if (!highlight_api->register_highlight(&highlight_hooks) ||
         !worker_api->register_worker(highlight_combined_worker)) return 1;
+#ifdef Z7_HIGHLIGHT_PARAMETERS_PROBE
+    if (!parameter_api->register_parameters(highlight_native_parameters)) return 1;
+#endif
 #else
     if (!worker_api->register_worker(persistence_worker)) return 1;
 #endif

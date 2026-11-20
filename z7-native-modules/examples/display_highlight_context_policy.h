@@ -86,3 +86,57 @@ static void highlight_combined_worker(void)
     z7_highlight_worker_eligible = eligible;
     persistence_worker();
 }
+#ifdef Z7_HIGHLIGHT_PARAMETERS_PROBE
+#include <stddef.h>
+/* Initial pattern1/threshold248 match the independently audited native request.
+ * Style/threshold menu configuration and owned state restoration are not added
+ * by this parameter-path milestone. Native input request/descriptor/ack stay
+ * with their original caller; conversion finishes BEFORE original dispatch. */
+volatile uint32_t z7_highlight_parameter_epoch, z7_highlight_parameter_count;
+volatile uint32_t z7_highlight_parameter_input_enabled;
+volatile uint32_t z7_highlight_native_parameter_generation;
+struct highlight_native_request {
+    uint32_t enabled;
+    uint8_t reserved[2];
+    uint16_t groups[8], padding;
+    uint32_t horizontal, vertical;
+    uint8_t patterns[2], tail[2];
+};
+_Static_assert(sizeof(struct highlight_native_request) == 36 &&
+    offsetof(struct highlight_native_request, groups) == 6 &&
+    offsetof(struct highlight_native_request, horizontal) == 24 &&
+    offsetof(struct highlight_native_request, patterns) == 32, "Native request layout");
+static void highlight_native_parameters(uint32_t command, void *payload100)
+{
+    struct z7_highlight_snapshot snapshot, final;
+    uint32_t generation = __atomic_load_n(&z7_highlight_native_parameter_generation, __ATOMIC_RELAXED);
+    z7_highlight_parameter_epoch = 0;
+    if (generation == UINT32_MAX) return; /* Never recycle native-update identity. */
+    __atomic_store_n(&z7_highlight_native_parameter_generation, generation + 1, __ATOMIC_RELEASE);
+    if (!payload100) return; /* Ineligible native update, no writable data exposed. */
+    if (command != 0x42060007u || !highlight_current(&snapshot)) return;
+    uint32_t palette = W(0xa1f18facu);
+    if (!ram(palette, 256 * 4)) return;
+    struct highlight_native_request request;
+    uint32_t converted[25];
+    for (uint32_t i = 0; i < sizeof(request); ++i) ((volatile uint8_t *)&request)[i] = 0;
+    for (uint32_t i = 0; i < 25; ++i) ((volatile uint32_t *)converted)[i] = 0;
+    request.enabled = 1;
+    for (uint32_t i = 0; i < 2; ++i) {
+        request.groups[i * 4] = 255;
+        request.groups[i * 4 + 1] = 248;
+        request.groups[i * 4 + 2] = 15;
+        request.groups[i * 4 + 3] = 5;
+    }
+    request.horizontal = request.vertical = 4;
+    F(0x1034fe23u, void, void *, const void *, uint32_t)(converted, &request, 1);
+    if (!highlight_current(&final) || final.epoch != snapshot.epoch || W(0xa1f18facu) != palette) return;
+    volatile uint32_t *data = payload100;
+    z7_highlight_parameter_input_enabled = data[0];
+    for (uint32_t i = 1; i < 25; ++i) data[i] = converted[i];
+    __atomic_thread_fence(__ATOMIC_RELEASE);
+    data[0] = converted[0];
+    z7_highlight_parameter_epoch = snapshot.epoch; /* Prepared, not yet copied/acknowledged. */
+    ++z7_highlight_parameter_count;
+}
+#endif

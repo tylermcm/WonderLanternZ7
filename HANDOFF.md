@@ -1,5 +1,89 @@
 # Laptop handoff — October 20, 2026
 
+## Native photo-parameter payload conversion API52 - November 20, 2026
+
+Previous60c5041 was PROGRESS (full-profile epoch). This turn implements incoming
+native parameter conversion. Full goal ACTIVE. No camera/card/stage/flash/push.
+No frame flag override, owned submits, restoration, pending cleanup or warning
+pixels yet; this remains a development profile, not a completed feature build.
+
+Host flags --display-hooks --highlight-hooks --parameter-hooks add API52
+sdk/parameters.h. Init-only resident Thumb callback registration follows API48
+hooks and precedes settings I/O. Foreign42060007/42062007 only, matching selector,
+service1..4, aligned RAM descriptor28/source104, enable0/1. Writable100 source
+ONLY mode property138D==0/service3..4. Other modes or phases1/2 notify via NULL,
+never expose writable caller memory. Invalid/unrelated packets and registered
+owned descriptor excluded; reentry delegates; ORIGINAL dispatcher/completion
+always continue. Callback code/pointer bounds, failed-init clearing tested.
+
+--variant display-highlight-parameters-probe composes full persistent profile
+and epoch with current eligible LCD photo conversion. Original1034FE22 executes
+with a cleared100-byte temporary and asserted typed36-byte request. Initial
+pattern1/threshold248; style/threshold menu configuration and EVF feature remain
+open. Recheck epoch/context/palette pointer before copy, enableword last. Preserve
+descriptor/source/callback/context/ack and GUI36. No retained caller pointer or
+post-wake scratch restoration. Native generation advances on ALL valid updates,
+including ineligible and same-byte notices; exhaustion parks, no wrap. Prepared
+parameter_epoch is NOT confirmed application. Need actual copy/ack/currentdata.
+
+Final host .private/builds/20261120-parameter-host-03,
+MAIN da7cfc45631e9545f7d8da6def184d2007496ef9ae2f26757b7b25df52c7e6f9.
+Profile .private/builds/20261120-display-highlight-parameters-03,
+SHA33a159a188e2a51dbbfadde2a5614073ba04ba25e9e0676dbdb851e8b5555f9e,
+25732file/25408image/5804BSS, minAPI52, reproducible/hostEGCRCzero.
+State272 preserves256prefix; callback256/running260/guards264,268. RESERVE320!
+Actual101E3DAC rounds sizes64 but DOES NOT realign cursor; initial272 reservation
+was wrong. Cold now clears272, advances toSTATE+320. Original allocator1/63/64/65
+returnsSTATE+320/384/448/512, cursor+640, all64aligned. Workspace lock wrappers
+supplied; original arithmetic/cold continuationregs/NZCVQ/guards/bounds execute.
+Generic HostFixture now initializes report.state_bytes and API52tailguards;
+words() intentionally still inspects the64-word prefix for old APIs.
+
+.private/evidence/20261120-parameters-07/result.json PASS59 on FINALhost/profile.
+Both selectors/service3/4, filter/notice/reentry/registration/lifetime cleanup,
+native cold/allocator and original1034FF1E callers initiallydisabled ANDenabled.
+Pause original at actual10036504 wait timeoutFFFFFFFF, savecontext, consumer on
+SEPARATEstack. Original converter/dispatcher100copy/ack/completion/native event
+callback execute. Caller resumes with original SP/callee regs/GUI36. Descriptor
++4..27 preserved; original source+100 ack overlapsdescriptorword0. Actual checkbox
+Off/menu/movie/palette/oddrevision delegate unchanged. Same-byte native update
+clears prepared identity and increments generation. Highlight event object
+A1F1353C must bypass unrelated HISTOGRAM event model at10170BEE/10170BE8/10170C72,
+executing ORIGINAL wrappers down to supplied kernels. No production workaround.
+
+Root71/no skips:.private/evidence/20261120-parameters-root-tests.log.
+Persistence84:.private/evidence/20261120-parameters-persistence-01.json;
+epoch61:.private/evidence/20261120-parameters-epoch-01/result.json. Those ran exact
+profile03 on host02 MAIN6cba9195b520755caeefadadfe3ef6d5eef6d942d18b641ecace9b5d7c5e0fe3.
+Finalhost03 has IDENTICAL C image/symbols/all noncold bytes; only byte11FA6C9A
+changes cold cursor272->320. Final59 --runtime-reference host02 verifies this
+and separately tests correctedcold. Do not claim84/61 report finalhost03 hash or
+physical boot. Kernel/FS/UI/palette/task scheduling supplied. Source evidence:
+evidence/20261120-native-highlight-parameters.json. All jobs terminal atcheckpoint.
+Final59 audit/host/module source fingerprints verified current. Graph refreshed
+after code edits:2924nodes/7636edges; generated graph ignored. Source manifest
+refreshed; no private firmware, binaries, dumps or graphs indexed.
+Old API44/48 hosts/modules rebuilt BYTE-IDENTICAL:7d7356e.../512f06c... hosts and
+719c1db.../d429674... profiles; parameter-compat-host44/48-02 and
+parameter-compat-module44/48-01 private bundles. Default profile unchanged.
+
+NEXT: parameter lease with native generation ANDepoch (not byte equality alone),
+baseline capture before eligible native overwrite and conditional restoration.
+Disabled native input defines only enableword: do not interpret stale96 bytes.
+Adapt highlight_request.h (old59check scope) to convert OWNED requests at consumer
+with current epoch/context/palette, not earlier worker conversion. Retain104-byte
+source/28-byte descriptor until submit+consume return; after_consumer must finish
+old-packet access BEFORE end publishes reuse. Existing consumer callback PARKS;
+current profile submits NO owned request. Keep caller GUI36/descriptor/callback/
+ack contract, never restore caller memory after original completion wake.
+Only enable frame+34 after matching actual applied params/ack/generation/epoch.
+OFF/mode/output/menu must handle deferred4B8 copy state+50C/ready+508: restoring
+caller flag does not cancel pending1. Do NOT enable flag before immediate cleanup
+policy; worker-only cleanup can leave pending replay active between ticks. Gate
+1023B76E/state+20 permission/state+28 enable proved66; hardware pixels stillopen.
+Then style/threshold prefs, EVF feature/preservation, portrait/rotation, Info mirror,
+real histogram data, full lifecycle and installation/recovery. No flash clearance.
+
 ## Full persistent profile settings/context epoch - November 20, 2026
 
 Previousf2d4767 was PROGRESS (mode/output/context reader). This turn connects a

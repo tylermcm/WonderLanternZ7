@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe', 'settings-files-probe', 'display-persistence-probe', 'display-highlight-context-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe', 'settings-files-probe', 'display-persistence-probe', 'display-highlight-context-probe', 'display-highlight-parameters-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -56,6 +56,7 @@ def main():
         'display-information-probe': ('examples/display_information_probe.c', 'original-Z7-display-information-diagnostic', 40),
         'display-persistence-probe': ('examples/display_persistence_probe.c', 'original-Z7-display-persistence-diagnostic', 44),
         'display-highlight-context-probe': ('examples/display_highlight_context_probe.c', 'original-Z7-display-highlight-context-diagnostic', 48),
+        'display-highlight-parameters-probe': ('examples/display_highlight_parameters_probe.c', 'original-Z7-display-highlight-parameters-diagnostic', 52),
         'display-focal-probe': ('examples/display_focal_probe.c', 'original-Z7-display-focal-diagnostic', 32),
     }[args.variant]
     source = ROOT / 'z7-native-modules' / relative
@@ -79,7 +80,7 @@ def main():
         source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
     requested_variant = args.variant
-    dependency_variant = 'display-persistence-probe' if requested_variant == 'display-highlight-context-probe' else requested_variant
+    dependency_variant = 'display-persistence-probe' if requested_variant in ('display-highlight-context-probe', 'display-highlight-parameters-probe') else requested_variant
     if dependency_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         # The six-group adapter includes the complete histogram/base stack.
         args.variant = 'display-histogram-probe'
@@ -140,11 +141,15 @@ def main():
         inputs += [ROOT / 'z7-native-modules/examples/display_information_probe.c', ROOT / 'z7-native-modules/examples/display_persistence_policy.h', ROOT / 'z7-native-modules/sdk/worker.h']
         inputs.extend(ROOT / 'z7-native-modules/plugins' / name for name in ('settings_storage.c', 'settings_storage.h', 'settings_files.c', 'settings_files.h'))
         report['configuration_storage'] = dict(record_bytes=80, slots=2, worker_api=44, physical_card_verified=False)
-    if requested_variant == 'display-highlight-context-probe':
+    if requested_variant in ('display-highlight-context-probe', 'display-highlight-parameters-probe'):
         inputs.extend(ROOT / 'z7-native-modules' / name for name in (
             'examples/display_persistence_probe.c', 'examples/display_highlight_context_policy.h',
             'plugins/highlight_context.h', 'plugins/highlight_epoch.h', 'sdk/highlight.h'))
         report['highlight_scope'] = 'GUI epoch publication and source/worker observation only; no parameter submission or warning writes'
+    if requested_variant == 'display-highlight-parameters-probe':
+        inputs.extend(ROOT / 'z7-native-modules' / name for name in (
+            'examples/display_highlight_context_probe.c', 'sdk/parameters.h'))
+        report['highlight_scope'] = 'Eligible native photo payload conversion; no owned requests, source flag writes, restoration or warning pixels accepted'
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)

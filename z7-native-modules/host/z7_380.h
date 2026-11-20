@@ -11,9 +11,16 @@
 #ifdef Z7_HOST_HIGHLIGHTS
 #include "highlight.h"
 #endif
+#ifdef Z7_HOST_PARAMETERS
+#include "parameters.h"
+#endif
 
 #define Z7_HOST_STATE 0xa9700000u
+#ifdef Z7_HOST_PARAMETERS
+#define Z7_HOST_STATE_BYTES 272u
+#else
 #define Z7_HOST_STATE_BYTES 256u
+#endif
 #define Z7_HOST_MAGIC 0x5a37484du
 #define Z7_HOST_FS_OK 0x04390080u
 #define Z7_HOST_RETRIES 100u
@@ -48,6 +55,9 @@ struct z7_host_state {
     uint32_t reserved[7];
 #endif
     uint32_t guards[4];
+#ifdef Z7_HOST_PARAMETERS
+    uint32_t parameter_callback, parameter_running, parameter_guards[2];
+#endif
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");
 uint32_t z7_module_load_once(struct z7_host_state *state);

@@ -32,11 +32,14 @@ class HostFixture(NativePNG):
         self.u.mem_map(0xa2900000, 0x100000)
         # Explicit cached-memory table fixture, not a claim about runtime MMU.
         self.u.mem_write(0xa29dbf18, struct.pack('<4I', 0, 0, 0, 0xffffffff))
-        self.u.mem_write(STATE, bytes(STATE_BYTES))
+        self.u.mem_write(STATE, bytes(report.get('state_bytes', STATE_BYTES)))
         self.setword(32, MAGIC)
         self.setword(72, 0xffffffff)
         for off in range(240, 256, 4):
             self.setword(off, 0xa5a5a5a5)
+        if report.get('state_bytes') == 272:
+            for off in (264, 268):
+                self.setword(off, 0xa5a5a5a5)
         self.position = 0
         self.events, self.cache = [], []
         self.open_count = self.close_count = self.read_count = self.create_count = self.start_count = 0

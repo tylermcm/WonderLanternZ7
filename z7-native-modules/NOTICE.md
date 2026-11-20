@@ -140,3 +140,10 @@ decoded resources; firmware, generated binaries and screenshots remain private.
 The original information-app registry/entry/admission audit is independent local
 MIT work. Its original-Z7 bindings and failure cases are derived independently;
 no Z7II application index, callback address or firmware bytes are substituted.
+
+Photo-highlight parameter conversion and owned-request concepts are informed by
+the pinned JKWTCN `sdk/photo_zebra.h` under the preserved MIT copyright/license.
+Original-Z7 routing, property/packet/request bindings, API52 filtering and native
+update notices, epoch identities, workspace reservation and validation are local
+independent modifications. Development profiles are not Nikon or upstream releases.
+Firmware, generated images, native dumps and camera screenshots remain private.

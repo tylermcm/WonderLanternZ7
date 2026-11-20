@@ -382,10 +382,92 @@ emulation; passing a module-only directory is rejected immediately.
 
 Source evidence: `evidence/20261120-highlight-epoch.json`.
 
+## Native parameter payload path (API52)
+
+The explicit host flags `--display-hooks --highlight-hooks --parameter-hooks`
+add `sdk/parameters.h` after the API48 prefix. Init-only registration requires
+the highlight hooks first and validates a resident Thumb callback. Failed init
+clears the callback before freeing module memory. API44/API48 host and module
+binaries remain byte-identical with the new extension disabled.
+
+Before original consumer10239840 dispatch, the host recognizes only foreign
+42060007/42062007 descriptors, matching active selector, service1..4, aligned
+native RAM descriptor and104-byte source range, and enabled word0/1. Only photo
+mode0/service3..4 exposes the writable100-byte payload. Other modes or phases1/2
+produce a callback with NULL payload: an update notice, with no writable caller
+memory exposed. Invalid/unrelated packets delegate without callback; the owned
+registered descriptor stays on its existing separate consumer path. Reentry
+delegates without another parameter callback. Every path still runs the original
+native dispatcher; this interface cannot cancel or replace native completion.
+
+The optional `display-highlight-parameters-probe` composes the full persistent
+profile and its epoch with this callback. Eligible current LCD photo packets
+are converted with original1034FE22 into a cleared100-byte temporary, then
+copied into the caller's live converted payload before original dispatch. The
+typed36-byte request has asserted field offsets and preserves the original
+caller's36-byte GUI request. Current development defaults are pattern1 and
+threshold248; style/threshold menu configuration remains open. Context/epoch and
+palette pointer are checked again before writing. Descriptor/source/callback/
+context and source acknowledgement are untouched by the callback. No caller
+pointer is retained or restored after completion wakes its owner.
+
+Every valid native update advances a separate monotonic generation and clears
+the prepared epoch, including notices and ineligible packets left unchanged.
+This detects native ownership changes even when native bytes equal the last
+converted payload. Exhaustion parks conversion instead of recycling identity.
+Owned requests will not advance this native generation. The recorded conversion
+epoch is PREPARED, not proof of native application; ownership/restoration and
+source flag enablement must still require actual copy/ack/current parameters.
+
+API52 host state is272 bytes, retaining the256-byte prefix/guards and adding
+callback/running/two guards. The workspace reservation is320 bytes. The original
+allocator101E3DAC rounds sizes to64 but does not realign its cursor, so reserving
+only272 would misalign every subsequent allocation. The corrected cold path
+preserves native continuation registers/flags and tested guards/neighbors;
+original allocator arithmetic returns64-aligned starts for sizes1/63/64/65.
+Workspace lock operations are supplied in this allocator fixture.
+
+`tools/audit_z7_parameters.py` passes59 checks on final host03/profile03:
+registration/code bounds/prerequisite/duplicate/late/failed-init cleanup, cold
+reservation/native allocator, both selectors/service3/4, descriptor/source guards,
+read-only notices, ordinary packet filtering and reentry. The full-profile test
+executes original blocking caller1034FF1E for BOTH originally disabled and enabled
+requests, pausing at its actual infinite kernel wait. A separate consumer stack
+runs the real hook/converter/dispatch/copy/ack/completion/native event callback.
+The caller resumes with its original stack/callee registers and GUI request.
+Descriptor changes are limited to the original source+100 acknowledgement that
+overlaps descriptor word0; its callback/source/context remain unchanged. Mode,
+menu, palette, odd settings and actual checkbox-Off preserve original payloads
+and native completion. Same-byte native updates invalidate prior ownership.
+
+Private final host03 MAIN SHA
+`da7cfc45631e9545f7d8da6def184d2007496ef9ae2f26757b7b25df52c7e6f9`;
+profile03 SHA`33a159a188e2a51dbbfadde2a5614073ba04ba25e9e0676dbdb851e8b5555f9e`,
+25732file/25408image/5804BSS, minimum API52. Builds are reproducible/host EGCRCzero.
+Root71 tests pass/no skips. Persistence84 and epoch61 regressions pass with this
+exact module on host02. Final host03 has identical C runtime/symbols/all non-cold
+bytes to host02; the ONLY changed MAIN byte is the separately tested cold cursor
+reservation at11FA6C9A. The59-check audit verifies that equivalence explicitly.
+This composes scoped evidence; it is not a claim of a new full camera boot.
+
+Kernel queue/events, filesystem/UI, palette contents and task handoff are supplied.
+Native event wrappers execute; the full-profile fixture's unrelated histogram
+event model is bypassed only for this original highlight event object. Frame
+permissions remain native. Owned submission/restoration, pending-frame cleanup,
+EVF feature integration, warning pixels and physical lifecycle remain incomplete.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_module_host.py --display-hooks --highlight-hooks --parameter-hooks --output .private/builds/parameter-host-new
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-highlight-parameters-probe --output .private/builds/parameter-profile-new
+.venv\Scripts\python.exe tools/audit_z7_parameters.py --build .private/builds/parameter-host-new --module .private/builds/parameter-profile-new --legacy-build .private/builds/20261120-highlight-host-03 --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/parameters-new
+```
+
+Source evidence: `evidence/20261120-native-highlight-parameters.json`.
+
 ## Remaining implementation work
 
-Connect the published/revalidated settings/context epoch to parameter ownership,
-native packet conversion and owned asynchronous requests in the full profile.
+Complete parameter ownership, owned asynchronous requests and conditional
+restoration in the full profile. Eligible native packet conversion is now bound.
 The pinned photo_zebra implementation changes eligible native100-byte parameter
 payloads before dispatch, preserving the descriptor/callback, and also submits
 owned requests for output switches that generate no native packet. Both paths
@@ -402,5 +484,6 @@ packet interception, cancellation/restoration, preset visibility, and native
 LCD/EVF/movie preservation with the full resident profile. Pixels and output/
 capture/menu/lens transitions require separate acceptance evidence.
 
-The existing Photo highlights preference is still not connected to a producer.
+The Photo highlights preference drives native parameter conversion; its frame
+permission override and cleanup are still not connected to the producer.
 No visible highlight feature or installation/recovery clearance is claimed.

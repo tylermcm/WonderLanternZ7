@@ -45,6 +45,13 @@ the full persistent profile's shared GUI/source/worker epoch. Its
 distinguishes61 compiled checks from the still-unconnected parameter submission,
 restoration and warning pixels. It requires API48; the default profile remains
 API44 and byte-identical.
+The further opt-in `display-highlight-parameters-probe` requires API52 and
+converts eligible native photo-parameter payloads before their original handler.
+Its [parameter record](PHOTO_HIGHLIGHTS.md#native-parameter-payload-path-api52)
+separates real caller/copy/ack/completion instructions from supplied kernel/UI
+boundaries. It does not yet enable frame permissions, submit owned requests,
+restore parameters or establish warning pixels. API44/API48 profiles remain
+byte-identical when this extension is disabled.
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

@@ -1,5 +1,17 @@
 # Original-Z7 module host probe
 
+## Optional native parameter extension - November 20, 2026
+
+The explicit API52 `--parameter-hooks` build extends the opt-in API48 highlight
+host with narrowly filtered native parameter payload callbacks and read-only
+update notices. Its [scoped validation](z7-native-modules/PHOTO_HIGHLIGHTS.md#native-parameter-payload-path-api52)
+covers native caller/completion lifetime and registration. Default API44/API48
+host bytes remain unchanged. API52 state is272 bytes, with the original256-byte
+prefix preserved, and reserves320 workspace bytes. Original allocator101E3DAC
+rounds allocation sizes to64 without aligning the cursor; reservation must
+therefore remain a64-byte multiple. This is independently modified emulator
+work, with no camera installation or recovery clearance.
+
 November 19, 2026. Independent, emulator-only original Nikon Z7 C 3.80 work,
 following the owner's choice of SD modules before display features. This extends
 the [first module-format stage](SD_MODULE_PORT.md). No physical camera or card
