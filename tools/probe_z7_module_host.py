@@ -29,7 +29,7 @@ class HostCamera(ui.Camera):
             if state[10] in (0, 1) and state[17] < 100:
                 self.run_to(self.module_result_address & ~1)
             self.module_waited = True
-            if self.remote.fixture_enabled:
+            if self.remote.fixture_enabled and not getattr(self.module_fixture, 'module_finished', False):
                 state = struct.unpack('<64I', self.remote.memory(STATE, 256))
                 raise RuntimeError('Module filesystem fixture did not retire: ' + repr(dict(
                     state=state[:19], events=self.module_fixture.events,

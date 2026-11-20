@@ -7,6 +7,7 @@ outside the intercepted dispatch remain guest code. Unrelated requests execute
 their original dispatch instructions. No guest code bytes are modified.
 """
 import struct
+import threading
 import sys
 from pathlib import Path
 
@@ -78,6 +79,8 @@ class ModuleFileRemote(Remote):
         self.fixture_enabled = True
         self.dispatch_stops = 0
         self.breakpoint_refreshes = []
+        self.fixture_stop_requested = False
+        self.fixture_transaction = threading.Lock()
         super().__init__(port)
 
     def plain(self, command):
@@ -98,46 +101,63 @@ class ModuleFileRemote(Remote):
             if self.plain(f'M{pointer + offset:x},{len(part):x}:' + part.hex()) != 'OK':
                 raise RuntimeError('Diagnostic module memory write failed')
 
+    def request_fixture_stop(self):
+        # Never interleave an interrupt byte with the multi-RPC filesystem
+        # transaction. A stop already queued at DISPATCH is serviced once and
+        # returned paused instead of being silently resumed.
+        with self.fixture_transaction:
+            self.fixture_stop_requested = True
+            self.sock.sendall(b'\x03')
+
     def receive(self):
         while True:
             packet = super().receive()
             if not self.fixture_enabled or not packet.startswith('T') or 'thread:' not in packet:
                 return packet
-            thread = packet.split('thread:')[1].split(';')[0]
-            if self.plain('Hg' + thread) != 'OK':
-                raise RuntimeError('Cannot select stopped diagnostic CPU')
-            registers = bytearray.fromhex(self.plain('g'))
-            if len(registers) < 68:
-                raise RuntimeError('Unexpected diagnostic ARM register packet')
-            pc = struct.unpack_from('<I', registers, 60)[0]
-            if pc != DISPATCH:
-                return packet
-            self.dispatch_stops += 1
-            if self.dispatch_stops > 4096:
-                raise RuntimeError('Filesystem diagnostic exceeded its stop budget')
-            pointer = struct.unpack_from('<I', registers)[0]
-            result = self.fixture.request(self, pointer)
-            if result is None:
-                # Execute the first original dispatch instruction on this CPU,
-                # then restore the observation point for subsequent calls.
-                if self.plain(f'z1,{DISPATCH:x},2') != 'OK' or self.plain('Hc' + thread) != 'OK':
-                    raise RuntimeError('Cannot step unrelated filesystem dispatch')
-                step = self.plain('s')
-                if not step.startswith('T05') or self.plain('Hc-1') != 'OK':
-                    raise RuntimeError('Unexpected unrelated-dispatch step result')
-                if self.plain(f'Z1,{DISPATCH:x},2') != 'OK':
-                    raise RuntimeError('Cannot restore filesystem observation point')
-            else:
-                lr = struct.unpack_from('<I', registers, 56)[0]
-                cpsr_offset = 64 if len(registers) == 68 else 164
-                cpsr = struct.unpack_from('<I', registers, cpsr_offset)[0]
-                struct.pack_into('<I', registers, 0, result)
-                struct.pack_into('<I', registers, 60, lr & ~1)
-                struct.pack_into('<I', registers, cpsr_offset, (cpsr & ~0x20) | (0x20 if lr & 1 else 0))
-                if self.plain('G' + registers.hex()) != 'OK':
-                    raise RuntimeError('Cannot return diagnostic filesystem result')
-                if self.fixture.finished:
-                    if self.plain(f'z1,{DISPATCH:x},2') != 'OK':
-                        raise RuntimeError('Cannot retire diagnostic filesystem breakpoint')
-                    self.fixture_enabled = False
-            self.send('c')
+            with self.fixture_transaction:
+                stopped = self.service_fixture_packet(packet)
+            if stopped is not None:
+                return stopped
+
+    def service_fixture_packet(self, packet):
+        thread = packet.split('thread:')[1].split(';')[0]
+        if self.plain('Hg' + thread) != 'OK':
+            raise RuntimeError('Cannot select stopped diagnostic CPU')
+        registers = bytearray.fromhex(self.plain('g'))
+        if len(registers) < 68:
+            raise RuntimeError('Unexpected diagnostic ARM register packet')
+        pc = struct.unpack_from('<I', registers, 60)[0]
+        if pc != DISPATCH:
+            return packet
+        self.dispatch_stops += 1
+        if self.dispatch_stops > 4096:
+            raise RuntimeError('Filesystem diagnostic exceeded its stop budget')
+        pointer = struct.unpack_from('<I', registers)[0]
+        result = self.fixture.request(self, pointer)
+        if result is None:
+            # Execute the first original dispatch instruction on this CPU,
+            # then restore the observation point for subsequent calls.
+            if self.plain(f'z1,{DISPATCH:x},2') != 'OK' or self.plain('Hc' + thread) != 'OK':
+                raise RuntimeError('Cannot step unrelated filesystem dispatch')
+            step = self.plain('s')
+            if not step.startswith('T05') or self.plain('Hc-1') != 'OK':
+                raise RuntimeError('Unexpected unrelated-dispatch step result')
+            if self.plain(f'Z1,{DISPATCH:x},2') != 'OK':
+                raise RuntimeError('Cannot restore filesystem observation point')
+        else:
+            lr = struct.unpack_from('<I', registers, 56)[0]
+            cpsr_offset = 64 if len(registers) == 68 else 164
+            cpsr = struct.unpack_from('<I', registers, cpsr_offset)[0]
+            struct.pack_into('<I', registers, 0, result)
+            struct.pack_into('<I', registers, 60, lr & ~1)
+            struct.pack_into('<I', registers, cpsr_offset, (cpsr & ~0x20) | (0x20 if lr & 1 else 0))
+            if self.plain('G' + registers.hex()) != 'OK':
+                raise RuntimeError('Cannot return diagnostic filesystem result')
+            if self.fixture.finished:
+                if self.plain(f'z1,{DISPATCH:x},2') != 'OK':
+                    raise RuntimeError('Cannot retire diagnostic filesystem breakpoint')
+                self.fixture_enabled = False
+        if self.fixture_stop_requested:
+            return packet
+        self.send('c')
+        return None

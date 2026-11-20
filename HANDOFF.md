@@ -1,5 +1,48 @@
 # Laptop handoff — October 20, 2026
 
+## Two-boot native menu persistence acceptance - November 20, 2026
+
+Previous b6e91a1 remains the production module implementation. This milestone
+changes the assisted-QEMU filesystem/stop harness only; native module/host/QEMU
+bytes remain unchanged. No card/camera access, staging, flash or push.
+
+Private evidence 20261120-persistence-live-04 is TERMINAL PASS: 22 checks,
+two fresh guest processes, 15 PNGs. Native MENU edits enable master/battery and
+disable Standard grid/shutter information. The resident worker saves through
+original native wrappers into two explicitly modeled Z7J1 files. Their bytes,
+not RAM, seed the second process. Startup restores exact settings without
+rewriting either file. Three final menu comparisons (root, Standard, information)
+are pixel-identical across restart, including complete 720x480 RGB frames.
+Independent verification checks all15 PNG hashes, four closed journal hashes,
+frozen helper source identity and all captured row paint flags clear.
+
+SettingsFileFixture owns only A:\Z7CFG0.DAT/A:\Z7CFG1.DAT, with bounded reads,
+80byte writes and nonreused owned handles. The immutable module fixture stays
+separate. ModuleFileRemote serializes Ctrl-C with complete filesystem RPCs and
+retains requested stops instead of silently resuming. The harness now lets the
+native menu task run freely while servicing filesystem calls: calling native
+delay on that task had starved its own queued repaint work. Captures require
+all14 label/value dirty flags clear and matching native highlight pulse phase;
+every ready candidate is preserved. No pixel edits, masks or tolerance.
+
+Failed live01/02/03 remain private failures. An experimental unconditional text
+rebind firmware change did not fix starvation and was REJECTED and reverted;
+archive .private/research/menu-repaint-experiment is not production. Widget
+inspection established native pool+4 is label-array offset1200, not row count.
+Free-run-control01 passes as single seeded inspection only; live04 is the
+accepted two-boot result. All associated jobs terminal, no guest left running.
+
+Root regression: 69 tests, no skips; new8 filesystem and6 remote protocol tests.
+Graph refreshed after code edits:2664nodes/6892edges (ignored). Source evidence:
+evidence/20261120-persistence-menu-restart.json. This proves scoped modeled-file
+startup/menu/worker/restart behavior, not physical SD/controller/cache durability,
+shutdown flush, actual parallel scheduling or complete display/lifecycle parity.
+
+NEXT: show unsaved/save-failure state in the menu, validate retries visibly,
+then continue highlights, portrait/rotation, EVF/AF/lens lifecycle and real
+histogram statistics. Native information mirror remains unresolved. No new
+installation/recovery clearance; the full goal stays active.
+
 ## Native settings files + full background-save profile - November20,2026
 
 Previous39a6dca turn was PROGRESS (journal policy). This turn implements native

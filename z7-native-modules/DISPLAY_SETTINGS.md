@@ -189,8 +189,20 @@ five-choice routing checks pass on the persistent profile with separate settings
 files supplied. Root55/no-skips pass. Current10/39 source-input hashes verified
 for the files diagnostic/full profile, respectively.
 
-Assisted-QEMU UI, boot/save/restart observation, current-profile pixel/lifecycle
-validation and clear unsaved-state presentation remain open. No physical card,
+Assisted-QEMU persistence live04 now passes22 checks across two fresh guests.
+Native MENU edits are saved by the resident worker to two explicitly modeled
+journal files, whose bytes seed the restart. Startup restores settings without
+rewriting the files. Root, Standard and information menu comparisons match
+complete720x480 RGB frames after all14 row paint flags clear and the native
+highlight pulse phase matches. All15 PNGs and four closed-file hashes were
+independently checked. Firmware/module/host/QEMU bytes stayed unchanged; the
+harness now services file calls while the menu task runs freely. Earlier
+native-delay waits starved queued repaint work; an experimental firmware rebind
+change was rejected and reverted. See source evidence
+`evidence/20261120-persistence-menu-restart.json` and root HANDOFF.md.
+
+Broader current-profile pixel/lifecycle validation and clear unsaved-state
+presentation remain open. No physical card,
 shutdown flush or installation/recovery acceptance is established. The separate
 native information mirroring gap, highlights/portrait and broader lifecycle/real
 statistics work remain open. Firmware, modules and configuration bytes stay private.

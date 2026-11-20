@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "independent_original_z7_work": true,
+  "module_sha256": "6ba9f4cfa6c247d3b6d8ce5023084dc16b83e516712bec97ea81769823a85bb6",
+  "host_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "qemu_sha256": "f76609ae4cb96060ca1593a352a7ec3fc6af7e29473db756b4bbebf699b45c98",
+  "production_native_sources_unchanged": true,
+  "live_checks": 22,
+  "fresh_guest_processes": 2,
+  "png_hashes_independently_verified": 15,
+  "closed_journal_hashes_verified": 4,
+  "restart_receives_journal_bytes_not_guest_ram": true,
+  "startup_restores_exact_model_without_file_rewrite": true,
+  "actual_menu_edits_and_resident_worker_saves": true,
+  "complete_rgb_identical_comparisons": [
+    "root-comparison",
+    "standard-comparison",
+    "information-comparison"
+  ],
+  "capture_requirements": [
+    "All14 row nodes report no pending paint",
+    "Matching native selected-row pulse RGB",
+    "Unmodified native720x480 RGB output"
+  ],
+  "frozen_helpers_match_source": true,
+  "root_regression_tests": 69,
+  "root_skips": 0,
+  "failed_live_runs_retained": [
+    "live01",
+    "live02",
+    "live03"
+  ],
+  "unconditional_rebind_firmware_experiment": "rejected and reverted",
+  "supplied_boundaries": [
+    "Explicit module and two journal-file HLE service",
+    "Native key call fixture",
+    "Existing assisted-QEMU device model"
+  ],
+  "physical_card_or_controller_verified": false,
+  "physical_cache_or_durability_verified": false,
+  "actual_parallel_scheduler_verified": false,
+  "shutdown_flush_implemented": false,
+  "unsaved_status_menu_implemented": false,
+  "native_information_mirror_resolved": false,
+  "camera_access": false,
+  "card_staged": false,
+  "flashed": false,
+  "pushed": false,
+  "full_goal_complete": false
+}
