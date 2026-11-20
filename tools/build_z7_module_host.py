@@ -34,7 +34,8 @@ def add_display_hooks(plan, symbols):
     """Thin stock-fallback bridges; module callbacks are staged by the C host."""
     helpers = {name: plan.alloc(bytes(size)) for name, size in
                dict(grid_source=128, grid_geometry=192, scalar_original=64,
-                    scalar=224, histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192, disp_cycle=224).items()}
+                    scalar=224, histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192,
+                    disp_cycle=224, information_cycle=256).items()}
     c, call = constant, invoke
     tail = lambda address: f'.balign 4; ldr.w pc,[pc,#0]; .word {address | 1};'
     code = {}
@@ -97,8 +98,22 @@ def add_display_hooks(plan, symbols):
         {c('r0', 0xa201d4d0)} movw r1,#0x138d; push {{r4-r6,lr}};
         {c('r5', 0x1064db04)} {tail(0x10370626)}
     '''
+    code['information_cycle'] = f'''
+        push.w {{r0-r12,lr}}; mrs r0,apsr; push {{r0,r1}};
+        {call(symbols['z7_display_information_cycle'])} cmp r0,#0; beq information_native;
+        pop {{r0,r1}}; msr APSR_nzcvq,r0; pop.w {{r0-r12,lr}};
+        {tail(0x102fd9b4)}
+        information_native: pop {{r0,r1}}; msr APSR_nzcvq,r0; pop.w {{r0-r12,lr}};
+        bl information_first; cbnz r0,information_busy;
+        bl information_monitor; cmp r0,#3;
+        {c('lr', 0x102fd7e5)} {tail(0x102fd7e6)}
+        information_busy: {c('lr', 0x102fd7df)} {tail(0x102fd7e8)}
+        information_first: {tail(0x1040a4ae)}
+        information_monitor: {tail(0x103fec18)}
+    '''
     sizes = dict(grid_source=128, grid_geometry=192, scalar_original=64, scalar=224,
-                 histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192, disp_cycle=224)
+                 histogram=192, widget=160, before_paint=192, after_paint=192, before_update=192,
+                 disp_cycle=224, information_cycle=256)
     for name, text in code.items():
         plan.put(helpers[name], assemble(text, helpers[name], sizes[name]))
     for site, name, expected in (
@@ -110,7 +125,8 @@ def add_display_hooks(plan, symbols):
         (0x103fcc44, 'before_paint', '70b50c46054642f21070fdf795fe2146'),
         (0x103fcc54, 'after_paint', '284698f6e4fd114a00215163'),
         (0x1036ae44, 'before_update', '10b5fff768fffff7f6fc'),
-        (0x1037061c, 'disp_cycle', '674841f28d3170b5644d')):
+        (0x1037061c, 'disp_cycle', '674841f28d3170b5644d'),
+        (0x102fd7da, 'information_cycle', '0cf168fe18b901f11afa0328')):
         window = bytes.fromhex(expected)
         plan.edit(site, jump(site, helpers[name], len(window)),
                   'Module-owned display bridge: ' + name, expected=window)
@@ -122,6 +138,12 @@ def add_display_hooks(plan, symbols):
               'Run an optional owned callback after the original shooting GUI update',
               expected=struct.pack('<I', 0x1030db43))
     helpers['gui_update'] = symbols['z7_gui_update_bridge'] & ~1
+    if plan.image.words(0xa182d180, 3) != (0x102fd647, 0x102fdaef, 0x102fda09):
+        raise ValueError('Unexpected original information-app callback table')
+    plan.edit(0xa182d188, struct.pack('<I', symbols['z7_information_update_bridge']),
+              'Run an optional owned callback before the original information update',
+              expected=struct.pack('<I', 0x102fda09))
+    helpers['information_update'] = symbols['z7_information_update_bridge'] & ~1
     return helpers
 
 

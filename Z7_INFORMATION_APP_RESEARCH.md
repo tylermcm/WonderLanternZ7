@@ -96,3 +96,24 @@ original delegation, failure cleanup, reentry and native return need verificatio
 
 Source evidence: `evidence/20261120-information-native.json`. These scoped native
 contracts do not grant installation or physical-camera recovery clearance.
+
+## Implemented additive host interface
+
+`sdk/information.h` now exposes API40, preserving the complete API32 GUI prefix.
+An init-only owned callback runs after original information DISP admission;
+return0 delegates native exit, 0x100 consumes the key, and2 is reserved for a
+transition already performed. A second owned callback runs before native Info
+update. The wrapper skips the stale original updater when application13 changed.
+This is not a completed-paint fence. Native key/event pointers remain unchanged.
+
+The host instruction audit passes116 checks, including rejected registration,
+failed initialization cleanup, nested calls, context conflicts and exact delegated
+register/stack/LR/NZCVQ continuity. Native update is a supplied sink in that audit.
+Separately, live compatibility passes21 checks/four frames with unchanged API32
+focal module and no information callbacks. Actual native DISP entry and return
+execute through the resident updater. All PNG hashes were independently checked;
+information RGB exactly matches the previous API32-host control. Vertical mirrored
+text remains unresolved and visual acceptance is false. Captured LCD format and
+geometry flags remain identical across these states except buffer addresses.
+See `evidence/20261120-information-host.json` for scoped regressions. The full
+five-choice module and physical installation remain unimplemented/unverified.

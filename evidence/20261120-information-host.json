@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "api_bytes": 40,
+  "state_bytes": 256,
+  "main_sha256": "6ea33985de7c0d35c2f6b026157595b56fdd9167aa79df53cded25e2f25c87ac",
+  "module_sha256": "bd3c4ccad9a5ec7dbebd4e3075c3119c9bdbde385c688a26a7a089c8e65c3b36",
+  "instruction_checks": 116,
+  "regression_checks": {
+    "loader": 99,
+    "display": 316,
+    "shooting_gui": 122,
+    "native_information": 47,
+    "focal_overlay": 45,
+    "root": 55
+  },
+  "live_native_compatibility": {
+    "passed": true,
+    "checks": 21,
+    "frames": 4,
+    "all_png_fingerprints_independently_verified": true,
+    "application_sequence": [
+      0,
+      0,
+      13,
+      0
+    ],
+    "original_key_event_unchanged": true,
+    "resident_update_wrapper": "0x11fa59e1",
+    "legacy_api32_module_unchanged": true,
+    "custom_callbacks_absent": true,
+    "old_and_new_information_rgb_identical": true,
+    "visual_acceptance": false,
+    "vertical_mirroring_remains": true
+  },
+  "scope": [
+    "Owned init-only information callbacks and additive ABI prefix",
+    "Actual native key admission; delegated register/LR/flags continuity",
+    "Instruction update-body sink separately from live original native updater",
+    "QEMU supplied read-only filesystem and sensor boundaries"
+  ],
+  "custom_five_choice_routing_implemented": false,
+  "orientation_cause_proven": false,
+  "camera_access": false,
+  "card_access": false,
+  "full_goal_complete": false
+}

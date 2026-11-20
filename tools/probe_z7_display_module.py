@@ -377,7 +377,7 @@ def main():
         if args.view == 'focal':
             if args.information_native_control:
                 from information_native_probe import run_information_native_probe
-                run_information_native_probe(camera, output, module, base, result, capture, native, key, query, check)
+                run_information_native_probe(camera, output, module, base, result, capture, native, key, query, check, host=host)
             elif args.focal_horizon_control:
                 from focal_horizon_control import run_horizon_control
                 run_horizon_control(camera, output, module, base, result, capture, native, check)

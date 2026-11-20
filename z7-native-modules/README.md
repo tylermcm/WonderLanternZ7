@@ -21,9 +21,11 @@ separates successful instruction-fixture loading from actual QEMU no-card boot.
 The SDK now exports ABI, API size, target identity and staged display/menu
 registration. See [the display module record](../Z7_DISPLAY_MODULE_RESEARCH.md)
 for ownership, publication, the additive API size and reproducible audit commands.
-The latest experimental host adds `sdk/gui.h`: one owned init-only callback
+The experimental host includes `sdk/gui.h`: one owned init-only callback
 after the original shooting GUI update returns. Earlier API prefixes remain
 compatible. Consumers must revalidate context; this is not a frame/ISP fence.
+The additive API40 `sdk/information.h` provides owned init-only admitted Info-DISP
+and before-Info-update callbacks. Its [validation record](../Z7_INFORMATION_APP_RESEARCH.md#implemented-additive-host-interface) separates instruction sinks from native live compatibility.
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

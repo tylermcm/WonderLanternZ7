@@ -11,10 +11,14 @@ static uint32_t register_grid_menu(const struct z7_grid_menu *menu);
 static uint32_t register_before_update(void (*callback)(void));
 static uint32_t register_disp_cycle(uint32_t (*callback)(void));
 static uint32_t register_after_gui_update(void (*callback)(void));
-static const struct z7_module_gui_api api = {
-    {{{Z7_MODULE_ABI, sizeof(api), Z7_MODULE_TARGET, register_display, register_grid_menu}, register_before_update},
-     register_disp_cycle}, register_after_gui_update
+static uint32_t register_information_cycle(uint32_t (*callback)(void));
+static uint32_t register_before_information_update(void (*callback)(void));
+static const struct z7_module_information_api api = {
+    {{{{Z7_MODULE_ABI, sizeof(api), Z7_MODULE_TARGET, register_display, register_grid_menu}, register_before_update},
+      register_disp_cycle}, register_after_gui_update},
+    register_information_cycle, register_before_information_update
 };
+_Static_assert(sizeof(api) == 40, "Information API prefix layout");
 static void *allocate(uint32_t n) { return FN(0x1016fe39u, void *, uint32_t, uint32_t)(n, 0); }
 static void release(void *p) { FN(0x1016fe4bu, void, void *)(p); }
 static void delay(uint32_t n) { FN(0x1017081fu, void, uint32_t)(n); }
@@ -171,6 +175,78 @@ __attribute__((naked)) void z7_gui_update_bridge(void)
         "1: ldr.w pc, [pc, #0]\n"
         ".word 0x1030db43\n");
 }
+static uint32_t information_bindings(void)
+{
+    return *(const volatile uint32_t *)(uintptr_t)0xa182d180u == 0x102fd647u &&
+        *(const volatile uint32_t *)(uintptr_t)0xa182d184u == 0x102fdaefu &&
+        *(const volatile uint32_t *)(uintptr_t)0xa182d188u == (uint32_t)(uintptr_t)z7_information_update_bridge;
+}
+static uint32_t information_context(void)
+{
+    return *(const volatile uint8_t *)(uintptr_t)0xa1829af4u == 13 &&
+        *(const volatile uint32_t *)(uintptr_t)(0xa20207bcu + 13u * 4) == 0xa182d16cu;
+}
+static uint32_t register_information_cycle(uint32_t (*callback)(void))
+{
+    struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->display_ready || s->information_cycle_registered ||
+        !information_bindings() || !loading_code(s, (uint32_t)(uintptr_t)callback)) return 0;
+    s->information_cycle = (uint32_t)(uintptr_t)callback;
+    s->information_cycle_registered = 1;
+    return 1;
+}
+static uint32_t register_before_information_update(void (*callback)(void))
+{
+    struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->display_ready || s->information_update_registered ||
+        !information_bindings() || !loading_code(s, (uint32_t)(uintptr_t)callback)) return 0;
+    s->before_information_update = (uint32_t)(uintptr_t)callback;
+    s->information_update_registered = 1;
+    return 1;
+}
+uint32_t z7_display_information_cycle(void)
+{
+    struct z7_host_state *s = display_state();
+    if (!s || !s->information_cycle_registered || !s->information_cycle ||
+        s->information_cycle_running || s->information_update_running ||
+        !information_bindings() || !information_context()) return 0;
+    s->information_cycle_running = 1;
+    uint32_t result = ((uint32_t (*)(void))(uintptr_t)s->information_cycle)();
+    s->information_cycle_running = 0;
+    return result == 0x100u || result == 2 ? result : 0;
+}
+uint32_t z7_display_before_information_update(void)
+{
+    struct z7_host_state *s = display_state();
+    /* Absent/invalid hooks always delegate to the unchanged native body. */
+    if (!s || !s->information_update_registered || !s->before_information_update ||
+        s->information_cycle_running || s->information_update_running ||
+        !information_bindings() || !information_context()) return 1;
+    s->information_update_running = 1;
+    ((void (*)(void))(uintptr_t)s->before_information_update)();
+    s->information_update_running = 0;
+    return information_context();
+}
+__attribute__((naked)) void z7_information_update_bridge(void)
+{
+    __asm__ volatile(
+        "push.w {r0-r12, lr}\n"
+        "mrs r0, apsr\n"
+        "push {r0, r1}\n"
+        "bl z7_display_before_information_update\n"
+        "cmp r0, #0\n"
+        "beq 2f\n"
+        "pop {r0, r1}\n"
+        "msr APSR_nzcvq, r0\n"
+        "pop.w {r0-r12, lr}\n"
+        ".balign 4\n"
+        "ldr.w pc, [pc, #0]\n"
+        ".word 0x102fda09\n"
+        "2: pop {r0, r1}\n"
+        "msr APSR_nzcvq, r0\n"
+        "pop.w {r0-r12, lr}\n"
+        "bx lr\n");
+}
 const uint16_t *z7_display_grid_source(void)
 {
     const uint16_t *native = (const uint16_t *)(uintptr_t)0x1064fd90u;
@@ -255,7 +331,7 @@ __attribute__((noinline)) void z7_module_publish(uint8_t *body, uint32_t n)
 __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
 {
     return ((uint32_t (*)(const struct z7_module_api *))
-             ((uintptr_t)body + entry + 1))(&api.disp.update.base);
+             ((uintptr_t)body + entry + 1))(&api.gui.disp.update.base);
 }
 __attribute__((noinline)) void z7_module_result(struct z7_host_state *s)
 {
@@ -340,6 +416,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->before_update = s->update_registered = 0;
     s->disp_cycle = s->disp_registered = 0;
     s->after_gui_update = s->gui_registered = s->gui_running = 0;
+    s->information_cycle = s->information_cycle_registered = 0;
+    s->before_information_update = s->information_update_registered = 0;
+    s->information_cycle_running = s->information_update_running = 0;
     s->grid_metadata = s->grid_callbacks = s->grid_menu_registered = s->grid_menu_committed = 0;
     for (uint32_t i = 0; i < sizeof(s->display) / 4; ++i)
         ((volatile uint32_t *)&s->display)[i] = 0;
@@ -350,6 +429,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
         s->before_update = s->update_registered = 0;
         s->disp_cycle = s->disp_registered = 0;
         s->after_gui_update = s->gui_registered = s->gui_running = 0;
+        s->information_cycle = s->information_cycle_registered = 0;
+        s->before_information_update = s->information_update_registered = 0;
+        s->information_cycle_running = s->information_update_running = 0;
         s->grid_metadata = s->grid_callbacks = s->grid_menu_registered = s->grid_menu_committed = 0;
         for (uint32_t i = 0; i < sizeof(s->display) / 4; ++i)
             ((volatile uint32_t *)&s->display)[i] = 0;
@@ -361,7 +443,8 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->memory_size = memory;
     s->entry_offset = info.entry_offset;
     __asm__ volatile("dmb sy" ::: "memory");
-    if (s->display_registered || s->grid_menu_registered || s->update_registered || s->disp_registered || s->gui_registered)
+    if (s->display_registered || s->grid_menu_registered || s->update_registered || s->disp_registered || s->gui_registered ||
+        s->information_cycle_registered || s->information_update_registered)
         __atomic_store_n(&s->display_ready, 1, __ATOMIC_RELEASE);
     return Z7_HOST_LOADED;
 }

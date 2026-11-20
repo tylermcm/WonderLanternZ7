@@ -20,8 +20,8 @@ CALLBACK = MEM + 0x60000
 
 
 class InformationFixture(NativePNG):
-    def __init__(self, raw):
-        super().__init__(raw)
+    def __init__(self, raw, fail_allocation=0):
+        super().__init__(raw, fail_allocation=fail_allocation)
         self.u.mem_map(0xa2010000, 0x20000)
         self.properties = {0x138d: 0, 0x2f15: 4, 0x2f16: 4,
                            0x2f17: 4, 0x2f18: 4}
@@ -34,7 +34,7 @@ class InformationFixture(NativePNG):
             0x10297a2e, 0x10297a16, 0x1040a4ae, 0x10371100,
             0x10333e1a, 0x10301214, 0x10406282, 0x104063ea,
             0x10406248, 0x1037105e, 0x103244f6, 0x103fa7ba,
-            0x103fad9c)}
+            0x103fad9c, 0x1030236a)}
         self.results[0x102c7426] = 1
 
     def hook(self, u, address, size, context):

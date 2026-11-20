@@ -1,5 +1,33 @@
 # Laptop handoff — October 20, 2026
 
+## API40 information host completed — November20,2026
+
+Restart recovery: job67221 TERMINAL PASSED21checks/4frames at
+`.private/evidence/20261120-information-host-native-live-01`. Host08/API40 with
+UNCHANGED focal03/API32. Native apps0,0,13,0/pages0,3,4,0; original key/event
+unchanged, resident information-update wrapper11FA59E1 executes original updater.
+All4 PNG hashes independently verified. Information RGB is EXACTLY identical to
+previous host07 control; mirrored text remains an emulator issue, NOT accepted
+visuals. Read-only LCD geometry/format flags are identical across four states
+except buffer addresses; these registers do not yet explain orientation.
+
+API40 now IMPLEMENTED: sdk/information.h retains complete32-byte GUI prefix.
+Owned init-only admitted Info-DISP and before-Info-update callbacks; native key/
+event slots untouched, wrapper skips stale updater if callback changes app.
+Full register/LR/NZCVQ delegated-prefix continuity, guarded context, reentry,
+failure cleanup and old API32 compatibility. Host08 MAIN SHA
+6ea33985de7c0d35c2f6b026157595b56fdd9167aa79df53cded25e2f25c87ac,
+33058548bytes/resident4281/state256. Reproducible build passed.
+New host audit02 PASSES116checks. Existing loader99/display316/GUI122/native47/
+focal45/root55 PASS. Original updater is an explicit instruction-fixture sink;
+live compatibility separately executes native updater with custom callbacks absent.
+Source evidence20261120-information-host.json records limits. No active live jobs.
+
+NEXT: actual five-choice module ownership/routing, preserve saved native page
+across Info entry/return, failure rollback, menu reselection and master-off. Current
+profiles still reject bit16. Orientation investigation remains open; no hardcoded
+app flip or edited evidence. No camera/card/staging/flash/push. Full goal active.
+
 ## Focal horizon accepted; information app bound — November20,2026
 
 Previous goal turn progressed0a78afd (native control/GPU correction). Current

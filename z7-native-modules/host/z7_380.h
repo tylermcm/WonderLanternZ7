@@ -6,6 +6,7 @@
 #include "update.h"
 #include "disp.h"
 #include "gui.h"
+#include "information.h"
 
 #define Z7_HOST_STATE 0xa9700000u
 #define Z7_HOST_STATE_BYTES 256u
@@ -31,7 +32,10 @@ struct z7_host_state {
     uint32_t before_update, update_registered;
     uint32_t disp_cycle, disp_registered;
     uint32_t after_gui_update, gui_registered, gui_running;
-    uint32_t reserved[17];
+    uint32_t information_cycle, information_cycle_registered;
+    uint32_t before_information_update, information_update_registered;
+    uint32_t information_cycle_running, information_update_running;
+    uint32_t reserved[11];
     uint32_t guards[4];
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");
@@ -49,4 +53,7 @@ void z7_display_before_update(void);
 uint32_t z7_display_disp_cycle(void);
 void z7_display_after_gui_update(void);
 void z7_gui_update_bridge(void);
+uint32_t z7_display_information_cycle(void);
+uint32_t z7_display_before_information_update(void);
+void z7_information_update_bridge(void);
 #endif
