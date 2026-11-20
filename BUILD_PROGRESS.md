@@ -8,6 +8,14 @@ authorization and a concrete exact-candidate installation/recovery assessment.
 
 ## Completed
 
+- November20 native Other/horizon control passes156checks/50frames with focal
+  NEVER enabled. The ADL edge drift is reproduced without its object or painter;
+  settled complete native RGB returns in both ISO phases after Other OFF/ON.
+  All61 masks/page0 restore;50 PNGs/100 native object dumps independently checked.
+  Separate emulator transparent SRC_OVER bug is fixed after a failing production
+  regression:316GPU+398ISP contracts,55root and23QEMU Python tests pass. Rebuilt
+  emulator passes firmware-free QMP smoke. Actual module C remains unchanged;
+  combined horizon lifecycle is still under validation. See latest HANDOFF.md.
 - Original-Z7 package identity, bounded ELF packer and native C relocation core.
 - Private pinned ARM/Thumb compiler, actual compiled C probe module.
 - Original-Z7 boot/task/filesystem/cache host with guarded stock hooks.

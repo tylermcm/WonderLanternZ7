@@ -1,5 +1,47 @@
 # Laptop handoff — October 20, 2026
 
+## Native Other control and GPU no-op correction — November20, 2026
+
+Previous goal turn progressed: local checkpoint30ec5d0. This turn's focused
+control01 `.private/evidence/20261120-horizon-other-control-01` PASSES156checks/
+50frames on UNCHANGED pre-fix QEMU1a651c1b...d4def and focal03/host07. Focal was
+NEVER enabled: object/samples/paints/presents all0 in every frame; no incoming
+lens property writes. Native ADL pixels drift65pixels with IDENTICAL284byte
+ADL objects. Complete RGB qualifies after22before/24after references; settled
+Other OFF/ON returns EXACT native RGB in BOTH ISO phases. All61masks and saved
+native page0 restore. All50PNG/100object fingerprints and2whole-RGB comparisons
+independently verified. This excludes focal as the cause of that baseline drift;
+it does not reclassify old combined failed runs as passes or certify hardware.
+
+Separate REAL emulator bug: alpha0 SRC_OVER round-tripped untouched YUV through
+lossy RGB conversion and changed storage. New production test first FAILED on
+unchanged rasterizer. Skip this no-op BEFORE destination conversion; SRC alpha0
+still clears.316GPU checks now pass, covering solid/texture/modulated texture,
+105/106/107 alpha8/alpha4;398ISP checks pass(total714). Root55/no-skips and QEMU
+Python23 pass; original restricted Python run failed WinError10013 sockets and
+is retained, allowed-localhost rerun passed. QEMU rebuilt through root Windows
+instructions: SHA91652e21c8a75ff923e26feb8111e456003a5baeeb58efbdbf5241160cbe84c6;
+firmware-free localhost QMP smoke passes. No native firmware/module C changed.
+ADL PNGs2968/2969 are opaque; this fix is NOT a proven ADL cause or hardware GPU
+accuracy claim. Source-only GPU/control evidence files dated20261120 record scope.
+
+LIVE JOB14000: `.private/evidence/20261120-focal-horizon-live-03`, unchanged
+focal03/host07 on rebuilt QEMU. Poll SAME14000; do not restart on observation
+timeout. Combined helper now keeps Focal OFF after Other ON until complete RGB
+matches the ORIGINAL settled native frames twice per ISO phase. SAME24reference
+cap, no edge exclusions/tolerance/composites; based on successful no-focal control.
+It then tests reenable, absent/return and master-OFF. Not yet a passing run.
+Control28754, build58217, Python32617/14593, renderer5924 and graph70371/84365
+TERMINAL. Graph refreshed2344nodes/5977edges after latest helper edit, ignored.
+
+Reconnect lead: native1015E508 compares current lens-context6 with published
+type-cache18 atA18D3E90, publishes1C14 only on change, leaves1C01 untouched.
+Seven private native-call cases pass with supplied context/publication; this is
+NOT actual same-type reconnect proof. Trace native attach/cache reset/order
+before claiming freshness. No sampler change. Broader EVF/rotation/AF/menu/output,
+information app/highlights/portrait/persistence/real-stats/software scope remains.
+Full goal active. No camera/card, staging, flashing or push.
+
 ## Restart recovery and native layout — November 20, 2026
 
 Resumed after Windows update from93a20a2; source and current private module

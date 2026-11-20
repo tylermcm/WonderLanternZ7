@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "scope": "Original-Z7 Other OFF/ON horizon control with focal never enabled",
+  "passed": true,
+  "checks": 156,
+  "frames": 50,
+  "no_focal_object_sampler_paints_or_presents_in_all50_captures": true,
+  "incoming_lens_properties_supplied": false,
+  "source_snapshot_visibility_or_pixels_supplied": false,
+  "private_adl_object_dumps_verified": 100,
+  "native_reference_history_counts": [
+    22,
+    24
+  ],
+  "settled_native_whole_rgb_comparisons": [
+    {
+      "iso_phase_sha256": "aaeb58490fe274a18c30f70e77b55a0450a18e8e644d13df5758a081c6b8c4c8",
+      "original": "control-before-other-cycle-21",
+      "restored": "control-after-other-cycle-23",
+      "full_rgb_equal": true,
+      "difference_bounds": null,
+      "differing_rgb_pixels": 0,
+      "native_masks_equal": true,
+      "native_adl_controls_equal": true
+    },
+    {
+      "iso_phase_sha256": "cb10b2f06f2f77dd344b92621cec98b37c686d4d45bcdc0cd9b172130ade84ac",
+      "original": "control-before-other-cycle-22",
+      "restored": "control-after-other-cycle-24",
+      "full_rgb_equal": true,
+      "difference_bounds": null,
+      "differing_rgb_pixels": 0,
+      "native_masks_equal": true,
+      "native_adl_controls_equal": true
+    }
+  ],
+  "master_off_all61_masks_and_saved_page0_restore": true,
+  "initial_same_phase_native_adl_drift": {
+    "differing_pixels": 65,
+    "bounds": [
+      626,
+      3,
+      660,
+      51
+    ],
+    "both_adl_object_records_identical": true,
+    "focal_contribution_excluded": true
+  },
+  "emulator_gpu_fix_in_this_control": false,
+  "control_emulator_binary_sha256": "1a651c1bf06f5c8dc85754ba65f20ad5a73ce390eb06202a51ee75826cdd4def",
+  "all_frame_and_object_fingerprints_independently_verified": true,
+  "old_combined_failed_runs_reclassified_as_passes": false,
+  "camera_access": false,
+  "physical_card": false,
+  "flashed": false,
+  "pushed": false
+}

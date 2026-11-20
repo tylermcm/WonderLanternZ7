@@ -122,6 +122,27 @@ int main(void) {
     CHECK(z7_gpu_draw(&g,r,p)); CHECK(!memcmp(saved,memory+0x1000,256));
     r[0x1a0]=0; CHECK(z7_gpu_draw(&g,r,p));
     CHECK(!memcmp(memory+0x1000,(uint8_t[192]){0},192));
+    /* Zero-alpha SRC_OVER is a storage no-op on YUV too. A lossy RGB
+     * round trip must not modify either luma, shared chroma or alpha. */
+    for(unsigned format=0x105;format<=0x107;format++) {
+        for(unsigned a4=0;a4<=(format==0x107);a4++) {
+            r[0x1a2]=format|(a4<<24); r[0x1a0]=0x00010000;
+            r[0x1b5]=r[0x1a4]+64*(format==0x105?1:2);
+            r[0x185]=0x00112233;
+            uint8_t original[512];
+            for(unsigned j=0;j<sizeof(original);j++) { original[j]=(j*37+29)&255; }
+            unsigned modes[]={8,2,14};
+            for(unsigned m=0;m<G_N_ELEMENTS(modes);m++) {
+                r[0x184]=modes[m];
+                r[0x152]=(1<<16)|1; r[0x155]=0xa1003000; r[0x156]=0;
+                r[0x10c]=r[0x110]=r[0x114]=0x3f0000;
+                memcpy(memory+0x3000,(uint8_t[]){27,29,31,modes[m]==14?255:0},4);
+                memcpy(memory+0x1000,original,sizeof(original));
+                CHECK(z7_gpu_draw(&g,r,p));
+                CHECK(!memcmp(memory+0x1000,original,sizeof(original)));
+            }
+        }
+    }
     z7_gpu_path_free(p);
     /* A black stroke remains outside a subsequent white fill. Closed paths
      * have an empty center; miter corners must cover the outside corner. */

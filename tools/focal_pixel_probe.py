@@ -115,7 +115,33 @@ def run_focal_probe(camera, output, module, base, result, capture, native, key, 
     check('other-off-keeps-independent-focal-text-and-pixels', other_off['focal']['text'] == '24mm' and image(other_off).crop(box).tobytes() == image(whole).crop(box).tobytes())
     native('Restore Other information', base + module['symbols']['z7_settings_information'], [model, 0, 6, 1])
     native('Disable independent focal information', base + module['symbols']['z7_settings_information'], [model, 0, 7, 0])
-    membership(wait_capture('focal-component-off'))
+    component_off = wait_capture('focal-component-off')
+    membership(component_off)
+    if horizon:
+        # The no-focal Other control reproduces the ADL transient and returns
+        # to the SAME complete native frames after settling. Before testing
+        # focal reenable, require that exact restoration against the original
+        # fixed references, rather than treating a500ms delay as a paint fence.
+        restored_repeats = {phase: 0 for phase in phase_frames}
+        restored_phases = set()
+        for index in range(1, 25):
+            native('Observe native background restoration with focal still off', 0x1017081e, [500])
+            step = capture('focal-horizon-after-other-reference-' + str(index))
+            phase = iso_signature(step)
+            full_rgb = hashlib.sha256(image(step).tobytes()).hexdigest()
+            restored_phases.add(phase)
+            matches_fixed_native_frame = phase_frames.get(phase) == full_rgb
+            restored_repeats[phase] = restored_repeats.get(phase, 0) + 1 if matches_fixed_native_frame else 0
+            result.setdefault('focal_horizon_after_other_stability', []).append(dict(
+                frame=step['name'], iso_phase_sha256=phase, full_rgb_sha256=full_rgb,
+                matches_original_settled_native_frame=matches_fixed_native_frame,
+                same_phase_restored_repeats=restored_repeats[phase]))
+            check(step['name'] + '-focal-stays-disabled-with-sampling-stopped',
+                  not (int.from_bytes(camera.remote.memory(model + 40, 4), 'little') & 128) and
+                  step['focal']['samples'] == component_off['focal']['samples'])
+            if restored_phases == set(phase_frames) and all(n >= 2 for n in restored_repeats.values()): break
+        check('focal-horizon-other-return-matches-original-complete-native-phases-before-reenable',
+              restored_phases == set(phase_frames) and all(n >= 2 for n in restored_repeats.values()))
     native('Restore independent focal information', base + module['symbols']['z7_settings_information'], [model, 0, 7, 1])
     incoming(1, 245)
     membership(wait_capture('focal-reenabled'), box)

@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "scope": "Independent software rasterizer transparent source-over preservation",
+  "production_change": "Skip zero-source-alpha SRC_OVER before reading/converting/writing the destination; retain transparent SRC clearing",
+  "before_fix": {
+    "test_failed": true,
+    "assertion": "YUV target bytes changed under transparent SRC_OVER"
+  },
+  "after_fix": {
+    "renderer_checks_passed": 316,
+    "isp_checks_passed": 398,
+    "root_tests_passed": 55,
+    "qemu_python_tests_passed": 23,
+    "combined_native_contracts": 714
+  },
+  "formats": [
+    "Y+interleaved UV 0x105",
+    "Packed YYUV 0x106",
+    "Packed YYUV plus alpha8/alpha4 0x107"
+  ],
+  "sources": [
+    "Solid transparent paint",
+    "Transparent RGBA texture",
+    "Opaque RGBA texture modulated by zero-alpha paint"
+  ],
+  "qemu_python_initial_restricted_attempt": {
+    "passed": false,
+    "reason": "WinError10013 localhost TCP access forbidden",
+    "allowed_localhost_rerun_passed": true
+  },
+  "adl_failure_resolved": false,
+  "adl_resources_2968_2969_png_alpha": "Fully opaque; no causal attribution to this fix",
+  "hardware_gpu_bit_accuracy": false,
+  "camera_access": false,
+  "physical_card": false,
+  "flashed": false,
+  "independent_modified_release": true,
+  "rebuilt_emulator": {
+    "binary_sha256": "91652e21c8a75ff923e26feb8111e456003a5baeeb58efbdbf5241160cbe84c6",
+    "gpu_source_sha256": "8f6da9bc6f7eea936a96b302e0c68f9282e5f1266ad9b34697f6e6da6f341932",
+    "firmware_free_qmp_smoke_passed": true,
+    "guest_firmware_changed": false
+  }
+}

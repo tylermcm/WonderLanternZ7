@@ -39,3 +39,9 @@ archive retains its full notices. QEMU is a trademark of Fabrice Bellard.
 No Magic Lantern source is bundled. Magic Lantern was an architectural
 reference for emulator-assisted camera research. NumPy, Pillow, GLib and other
 build/runtime dependencies are installed separately and retain their licenses.
+
+Independent November20 renderer changes preserve zero-opacity source-over as
+an exact storage no-op, including YUV luma/chroma/alpha planes. This modified
+software model still uses approximate color conversion and does not establish
+the camera GPU's bit-level behavior. Synthetic renderer tests and private native
+repaint controls have separate scopes; no Nikon graphics resources are bundled.

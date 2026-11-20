@@ -439,6 +439,13 @@ static bool z7_gpu_draw(Z7GPU *g, const uint32_t *r, Z7GPUPath *p)
                     if (mode == 14) { src[c] *= color[c]/255; }
                 }
             }
+            double coverage = mask[ix]/16.0;
+            double sa = src[3]/255*coverage;
+            /* Transparent SRC_OVER is an exact storage no-op. In particular,
+             * do not round-trip an untouched YUV pair through RGB: conversion
+             * can drift luma/chroma even though the blend changes no pixel.
+             * SRC with alpha0 still clears and must continue below. */
+            if (blend_mode == 1 && sa == 0) { continue; }
             uint8_t pixel[4];
             size_t index = (size_t)(iy-y_bias)*w+ix;
             if (dfmt) {
@@ -449,8 +456,7 @@ static bool z7_gpu_draw(Z7GPU *g, const uint32_t *r, Z7GPUPath *p)
                 }
                 memcpy(pixel, pair_rgba+index*4, 4);
             } else { z7_gpu_pixel_read(dst, dst2, dfmt, alpha4, index, pixel); }
-            double coverage = mask[ix]/16.0;
-            double sa = src[3]/255*coverage, da = pixel[3]/255.0;
+            double da = pixel[3]/255.0;
             double keep = 1 - (blend_mode == 0 ? coverage : sa);
             double alpha = sa+da*keep;
             for (int c = 0; c < 3; c++) {

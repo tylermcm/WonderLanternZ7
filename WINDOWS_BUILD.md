@@ -71,7 +71,7 @@ recorded in its local build manifest. The Python controller supplies that path
 to the QEMU child process. Standalone QEMU diagnostics need the same directory
 on their process PATH. Launcher stdout/stderr logs stay in `.private/`;
 guest evidence and screenshots stay in `z7-qemu/.local/` or `.private/`.
-`check_windows.ps1` runs Python input/launcher tests, the 668 synthetic renderer
+`check_windows.ps1` runs Python input/launcher tests, the 714 synthetic renderer
 and ISP contracts, and firmware-free QMP realization. The native host contract
 runs do not use ASan/UBSan; the earlier Linux sanitizer results remain a separate
 validation scope.

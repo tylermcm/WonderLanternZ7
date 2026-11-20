@@ -48,6 +48,7 @@ def main():
     parser.add_argument('--grid-components', action='store_true', help='For the base-page DISP probe, set a native golden grid and verify component suppression and same-page edits')
     parser.add_argument('--information-horizon', action='store_true', help='For information-groups, verify selected native information on the horizon base')
     parser.add_argument('--focal-horizon', action='store_true', help='For focal view, validate focal text with the native horizon base')
+    parser.add_argument('--focal-horizon-control', action='store_true', help='For focal view, isolate Other OFF/ON on horizon with focal never enabled')
     parser.add_argument('--other-information', action='store_true', help='For information-groups, toggle the independently identified Other status group')
     parser.add_argument('--battery-lifecycle', action='store_true', help='Also exercise native MENU entry/return with the automatic overlay')
     parser.add_argument('--battery-playback', action='store_true', help='Also inspect native no-card PLAY entry/return; requires battery lifecycle')
@@ -62,6 +63,8 @@ def main():
     args = parser.parse_args()
     if args.focal_horizon and args.view != 'focal':
         parser.error('Focal horizon requires focal view')
+    if args.focal_horizon_control and (args.view != 'focal' or args.focal_horizon):
+        parser.error('Focal horizon control requires focal view without focal-horizon')
     if args.information_horizon and args.view != 'information-groups':
         parser.error('Information horizon requires information-groups view')
     if args.other_information and args.view != 'information-groups':
@@ -323,7 +326,7 @@ def main():
     def stop():
         if camera.proc and camera.proc.poll() is None:
             camera.proc.terminate()
-    watchdog = threading.Timer(1800 if args.information_horizon or args.focal_horizon else 1200, stop)
+    watchdog = threading.Timer(1800 if args.information_horizon or args.focal_horizon or args.focal_horizon_control else 1200, stop)
     watchdog.daemon = True
     watchdog.start()
     try:
@@ -369,8 +372,12 @@ def main():
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
         if args.view == 'focal':
-            from focal_pixel_probe import run_focal_probe
-            run_focal_probe(camera, output, module, base, result, capture, native, key, check, horizon=args.focal_horizon)
+            if args.focal_horizon_control:
+                from focal_horizon_control import run_horizon_control
+                run_horizon_control(camera, output, module, base, result, capture, native, check)
+            else:
+                from focal_pixel_probe import run_focal_probe
+                run_focal_probe(camera, output, module, base, result, capture, native, key, check, horizon=args.focal_horizon)
         elif args.view == 'information-groups':
             if module['kind'] not in ('original-Z7-display-groups-diagnostic','original-Z7-display-other-diagnostic'): raise ValueError('Information diagnostic required')
             other_widgets = module.get('other_information_widgets', [])

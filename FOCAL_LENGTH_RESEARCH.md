@@ -108,6 +108,29 @@ The existing GPU model's approximate YUV/alpha handling is only a possible lead.
 Another long combined run needs evidence from that control or the actual repaint
 path first; increasing sample caps or excluding edge pixels does not resolve it.
 
+Focused no-focal horizon control01 now PASSES156 checks/50 frames on the original
+emulator. Focal object/samples/paints/presents remain0 throughout; no lens inputs
+are supplied. The65pixel ADL drift occurs with identical native ADL object bytes.
+After22before/24after references, Other OFF/ON returns exactly the same complete
+native RGB in both ISO phases. All61 masks and native page0 restore. All50 PNGs,
+100 object dumps and two RGB comparisons were independently verified. Evidence:
+`evidence/20261120-horizon-other-control.json`. This identifies native background
+settling without the focal object; prior failed runs remain failed.
+
+The combined fixture therefore keeps focal OFF after Other ON until complete
+RGB repeatedly matches the ORIGINAL settled baseline in each ISO phase, within
+the SAME24reference cap. It introduces no replacement pixels or tolerance. Live03
+on rebuilt QEMU is in progress; reenable/absence/return/master-off are not yet
+established on horizon. The independently tested zero-alpha source-over emulator
+fix is recorded separately; the opaque ADL PNGs do not prove it caused this drift.
+
+Reconnect lead1015E508 is independently executed in seven private supplied-context
+cases. It compares current lens-context byte6 and published-type cache byte18 at
+A18D3E90, publishes1C14 only on change, and does not reset1C01. Same-type context
+alone produces no new publication. Native attach/cache initialization and update
+ordering must be traced before a same-type reconnect freshness claim. The sampler
+is unchanged; these are native contract cases, not physical reconnect evidence.
+
 ## Live source independently bound
 
 The original native PTP property5008 description10341856 and current-value
