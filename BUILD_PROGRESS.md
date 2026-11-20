@@ -263,3 +263,29 @@ length, native information app, highlights, portrait, persistence and broader
 lifecycle remain. Real histogram statistics and hardware behavior stay unverified.
 All jobs terminal; graph/manifest refreshed. No camera/card access, staging,
 flashing or push. Full goal stays active.
+
+## Information on native horizon and alternate operation states — November 20, 2026
+
+Groups03 extends selected information to horizon while preserving independent
+native eligibility in each LCD bank and operation state. Original bit0 seeds0/3;
+bit8 independently seeds8/11. This preserves the original shooting bank's
+alternate-only0x110 permission and avoids adding unsupported alternate-state
+eligibility to focus/release. Nonzero exposure formats retain native masks.
+2753 compiled group/native-interpreter cases and22 native ISO phase-preparation
+checks pass. Base68/histogram170/grid282 and55 root/no-skips also pass. Earlier
+histogram08 still rebuilds byte-identically; the host is unchanged.
+
+Current-package QEMU live04 passes60checks/16frames: native standard/horizon
+references, selected native glyphs on horizon, exact protection of all pixels
+outside information controls, isolated toggles, complete captured-native horizon
+restoration and saved standard-page/mask/full-RGB restoration on master-off.
+Four unchanged-settings samples qualify both complete native ISO pixel states.
+Failed reference-phase runs are retained; original ISO instructions confirm
+fixed-phase independence from the compiled Shooting switch. Raw snapshots and
+control flags are not completed-paint fences. No ISO pixel exclusions or phase
+overrides are used. Alternate-operation visibility is instruction coverage with
+supplied snapshots, not physical AF validation. Source evidence and key-frame
+inspection recorded; ignored graph and source manifest refreshed. All jobs
+terminal. Other information, focal length, information app, highlights, portrait,
+persistence, menu-return and broader lifecycle remain; full goal stays active.
+No camera/card access, staging, flashing or push.

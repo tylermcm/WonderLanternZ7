@@ -84,3 +84,9 @@ private native-icon inspection: shooting5, release51 and focus2. Z7II release3
 and focus6 identify different original-Z7 content and are not reused. The native
 identity/mask audits and private pixel-check adapter are independent local MIT
 validation tools. Firmware resources and decoded native icons remain private.
+
+The six-group custom-page eligibility rule also adapts pinned `sdk/disp.h`'s
+per-LCD-bank standard-photo permission seed under the preserved MIT license.
+The original-Z7 independently seeded normal/alternate operation bits, nonzero exposure-format preservation, conditional
+ownership/restoration and native instruction/pixel validation are independent
+local modifications, not an upstream or Nikon release.

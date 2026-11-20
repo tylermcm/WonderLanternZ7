@@ -1,0 +1,1040 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "scope": "Independent original-Z7 custom information eligibility across standard and horizon base pages",
+  "module": {
+    "module_sha256": "a951a2574b80a41114f4dde62d012506b35388a7d2c9fa45eceb5ead9f487b83",
+    "file_bytes": 14604,
+    "image_bytes": 14336,
+    "bss_bytes": 5060,
+    "api_minimum_bytes": 32
+  },
+  "source_inputs_verified": true,
+  "host_main_sha256": "9326b595fd4f47719aaa9bcdb157ce35aa9f3cbd812a62f990585a4e2e52db66",
+  "host_changed": false,
+  "identified_widgets": {
+    "shutter": 10,
+    "aperture": 11,
+    "iso": 15,
+    "shooting": 5,
+    "release": 51,
+    "focus": 2
+  },
+  "pinned_reference": {
+    "commit": "50a22b24c50619cffa646dac386e8334659f475a",
+    "source": "sdk/disp.h",
+    "license": "MIT",
+    "adaptation": "Use original-Z7 standard-photo permission independently for each LCD bank and native operation state"
+  },
+  "policy": {
+    "owned_lcd_bank_words": 12,
+    "photo_mask": "0x909",
+    "original_bank_seed_bits": {
+      "normal": "0x1",
+      "operation193": "0x100"
+    },
+    "pages": [
+      0,
+      3
+    ],
+    "native_operation193_bits": [
+      0,
+      3,
+      8,
+      11
+    ],
+    "lcd_banks_and_operation_states_independent": true,
+    "missing_state_specific_standard_seed_remains_excluded": true,
+    "normal_seed_extends_bits": [
+      0,
+      3
+    ],
+    "operation193_seed_extends_bits": [
+      8,
+      11
+    ],
+    "original_operation_only_shooting_bank_mask": "0x110",
+    "native_control_eligibility_not_overridden": true,
+    "nonzero_exposure_formats_keep_complete_saved_mask": true,
+    "movie_other_output_and_third_bank_masks_preserved": true,
+    "original_page_specific_masks_restored_on_disable": true,
+    "no_snapshot_or_control_visibility_stores": true
+  },
+  "audits": {
+    "information_pages": {
+      "passed": true,
+      "checks": 2753,
+      "private_evidence": ".private/evidence/20261120-information-pages-02.json"
+    },
+    "native_iso_phase": {
+      "passed": true,
+      "checks": 22,
+      "private_evidence": ".private/evidence/20261120-information-phase-02.json"
+    },
+    "histogram": {
+      "passed": true,
+      "checks": 170,
+      "private_evidence": ".private/evidence/20261120-pages-histogram-02.json"
+    },
+    "base_ownership": {
+      "passed": true,
+      "checks": 68,
+      "private_evidence": ".private/evidence/20261120-pages-base-02.json"
+    },
+    "grid": {
+      "passed": true,
+      "checks": 282,
+      "private_evidence": ".private/evidence/20261120-pages-grid-02.json"
+    }
+  },
+  "root_tests": {
+    "passed": true,
+    "tests": 55,
+    "skipped": 0
+  },
+  "previous_histogram_module": {
+    "rebuild_byte_identical": true,
+    "module_sha256": "29155d3343a98ffa9f9edc126fa68b027d9b715699eba4093a3ec3ce39dc91b2"
+  },
+  "live": {
+    "private_evidence": ".private/evidence/20261120-information-horizon-live-04",
+    "passed": true,
+    "checks": 60,
+    "frames": 16,
+    "scope": {
+      "groups_bound": 6,
+      "settings_setters_supplied": true,
+      "snapshot_or_visibility_stores_supplied": false,
+      "actual_native_disp_baseline_cycle": true,
+      "control_snapshots_are_not_paint_fences": true,
+      "other_and_focal_unbound": true,
+      "custom_horizon_information": true,
+      "native_phase_reference_sampling": true,
+      "temporal_paint_coherence_proven": false,
+      "custom_page_eligibility_from_each_bank_and_operation_standard_bit": true
+    },
+    "native_horizon_reference_comparisons": [
+      {
+        "frame": "information-horizon-all-on-1",
+        "native_reference": "information-disabled-native-cycle-3",
+        "native_control_boxes": [
+          [
+            182,
+            610,
+            359,
+            680
+          ],
+          [
+            193,
+            616,
+            353,
+            674
+          ],
+          [
+            187,
+            639,
+            220,
+            671
+          ],
+          [
+            187,
+            639,
+            220,
+            671
+          ],
+          [
+            193,
+            616,
+            231,
+            657
+          ],
+          [
+            230,
+            616,
+            353,
+            674
+          ],
+          [
+            219,
+            616,
+            256,
+            657
+          ],
+          [
+            256,
+            616,
+            349,
+            674
+          ],
+          [
+            193,
+            616,
+            349,
+            674
+          ],
+          [
+            378,
+            610,
+            527,
+            680
+          ],
+          [
+            412,
+            616,
+            521,
+            674
+          ],
+          [
+            389,
+            639,
+            413,
+            671
+          ],
+          [
+            389,
+            639,
+            413,
+            671
+          ],
+          [
+            620,
+            610,
+            838,
+            680
+          ],
+          [
+            625,
+            616,
+            680,
+            646
+          ],
+          [
+            625,
+            645,
+            680,
+            674
+          ],
+          [
+            679,
+            616,
+            835,
+            674
+          ],
+          [
+            0,
+            0,
+            57,
+            57
+          ],
+          [
+            2,
+            2,
+            55,
+            54
+          ],
+          [
+            56,
+            5,
+            103,
+            52
+          ],
+          [
+            59,
+            8,
+            100,
+            49
+          ],
+          [
+            281,
+            2,
+            379,
+            54
+          ],
+          [
+            284,
+            5,
+            376,
+            52
+          ],
+          [
+            402,
+            2,
+            474,
+            54
+          ],
+          [
+            405,
+            5,
+            471,
+            52
+          ]
+        ],
+        "total_difference_bounds": [
+          3,
+          3,
+          680,
+          672
+        ],
+        "protected_pixels_exact": true,
+        "iso_region_sha256": "cb10b2f06f2f77dd344b92621cec98b37c686d4d45bcdc0cd9b172130ade84ac",
+        "native_sampling_delay": null
+      },
+      {
+        "frame": "information-horizon-all-on-2",
+        "native_reference": "information-disabled-native-cycle-3",
+        "native_control_boxes": [
+          [
+            182,
+            610,
+            359,
+            680
+          ],
+          [
+            193,
+            616,
+            353,
+            674
+          ],
+          [
+            187,
+            639,
+            220,
+            671
+          ],
+          [
+            187,
+            639,
+            220,
+            671
+          ],
+          [
+            193,
+            616,
+            231,
+            657
+          ],
+          [
+            230,
+            616,
+            353,
+            674
+          ],
+          [
+            219,
+            616,
+            256,
+            657
+          ],
+          [
+            256,
+            616,
+            349,
+            674
+          ],
+          [
+            193,
+            616,
+            349,
+            674
+          ],
+          [
+            378,
+            610,
+            527,
+            680
+          ],
+          [
+            412,
+            616,
+            521,
+            674
+          ],
+          [
+            389,
+            639,
+            413,
+            671
+          ],
+          [
+            389,
+            639,
+            413,
+            671
+          ],
+          [
+            620,
+            610,
+            838,
+            680
+          ],
+          [
+            625,
+            616,
+            680,
+            646
+          ],
+          [
+            625,
+            645,
+            680,
+            674
+          ],
+          [
+            679,
+            616,
+            835,
+            674
+          ],
+          [
+            0,
+            0,
+            57,
+            57
+          ],
+          [
+            2,
+            2,
+            55,
+            54
+          ],
+          [
+            56,
+            5,
+            103,
+            52
+          ],
+          [
+            59,
+            8,
+            100,
+            49
+          ],
+          [
+            281,
+            2,
+            379,
+            54
+          ],
+          [
+            284,
+            5,
+            376,
+            52
+          ],
+          [
+            402,
+            2,
+            474,
+            54
+          ],
+          [
+            405,
+            5,
+            471,
+            52
+          ]
+        ],
+        "total_difference_bounds": [
+          3,
+          3,
+          680,
+          672
+        ],
+        "protected_pixels_exact": true,
+        "iso_region_sha256": "cb10b2f06f2f77dd344b92621cec98b37c686d4d45bcdc0cd9b172130ade84ac",
+        "native_sampling_delay": null
+      },
+      {
+        "frame": "information-horizon-all-on-3",
+        "native_reference": "information-disabled-native-cycle-3",
+        "native_control_boxes": [
+          [
+            182,
+            610,
+            359,
+            680
+          ],
+          [
+            193,
+            616,
+            353,
+            674
+          ],
+          [
+            187,
+            639,
+            220,
+            671
+          ],
+          [
+            187,
+            639,
+            220,
+            671
+          ],
+          [
+            193,
+            616,
+            231,
+            657
+          ],
+          [
+            230,
+            616,
+            353,
+            674
+          ],
+          [
+            219,
+            616,
+            256,
+            657
+          ],
+          [
+            256,
+            616,
+            349,
+            674
+          ],
+          [
+            193,
+            616,
+            349,
+            674
+          ],
+          [
+            378,
+            610,
+            527,
+            680
+          ],
+          [
+            412,
+            616,
+            521,
+            674
+          ],
+          [
+            389,
+            639,
+            413,
+            671
+          ],
+          [
+            389,
+            639,
+            413,
+            671
+          ],
+          [
+            620,
+            610,
+            838,
+            680
+          ],
+          [
+            625,
+            616,
+            680,
+            646
+          ],
+          [
+            625,
+            645,
+            680,
+            674
+          ],
+          [
+            679,
+            616,
+            835,
+            674
+          ],
+          [
+            0,
+            0,
+            57,
+            57
+          ],
+          [
+            2,
+            2,
+            55,
+            54
+          ],
+          [
+            56,
+            5,
+            103,
+            52
+          ],
+          [
+            59,
+            8,
+            100,
+            49
+          ],
+          [
+            281,
+            2,
+            379,
+            54
+          ],
+          [
+            284,
+            5,
+            376,
+            52
+          ],
+          [
+            402,
+            2,
+            474,
+            54
+          ],
+          [
+            405,
+            5,
+            471,
+            52
+          ]
+        ],
+        "total_difference_bounds": [
+          3,
+          3,
+          680,
+          672
+        ],
+        "protected_pixels_exact": true,
+        "iso_region_sha256": "cb10b2f06f2f77dd344b92621cec98b37c686d4d45bcdc0cd9b172130ade84ac",
+        "native_sampling_delay": 125
+      },
+      {
+        "frame": "information-horizon-all-on-4",
+        "native_reference": "information-disabled-native-cycle-3",
+        "native_control_boxes": [
+          [
+            182,
+            610,
+            359,
+            680
+          ],
+          [
+            193,
+            616,
+            353,
+            674
+          ],
+          [
+            187,
+            639,
+            220,
+            671
+          ],
+          [
+            187,
+            639,
+            220,
+            671
+          ],
+          [
+            193,
+            616,
+            231,
+            657
+          ],
+          [
+            230,
+            616,
+            353,
+            674
+          ],
+          [
+            219,
+            616,
+            256,
+            657
+          ],
+          [
+            256,
+            616,
+            349,
+            674
+          ],
+          [
+            193,
+            616,
+            349,
+            674
+          ],
+          [
+            378,
+            610,
+            527,
+            680
+          ],
+          [
+            412,
+            616,
+            521,
+            674
+          ],
+          [
+            389,
+            639,
+            413,
+            671
+          ],
+          [
+            389,
+            639,
+            413,
+            671
+          ],
+          [
+            620,
+            610,
+            838,
+            680
+          ],
+          [
+            625,
+            616,
+            680,
+            646
+          ],
+          [
+            625,
+            645,
+            680,
+            674
+          ],
+          [
+            679,
+            616,
+            835,
+            674
+          ],
+          [
+            0,
+            0,
+            57,
+            57
+          ],
+          [
+            2,
+            2,
+            55,
+            54
+          ],
+          [
+            56,
+            5,
+            103,
+            52
+          ],
+          [
+            59,
+            8,
+            100,
+            49
+          ],
+          [
+            281,
+            2,
+            379,
+            54
+          ],
+          [
+            284,
+            5,
+            376,
+            52
+          ],
+          [
+            402,
+            2,
+            474,
+            54
+          ],
+          [
+            405,
+            5,
+            471,
+            52
+          ]
+        ],
+        "total_difference_bounds": [
+          3,
+          3,
+          467,
+          54
+        ],
+        "protected_pixels_exact": true,
+        "iso_region_sha256": "aaeb58490fe274a18c30f70e77b55a0450a18e8e644d13df5758a081c6b8c4c8",
+        "native_sampling_delay": 250
+      }
+    ],
+    "pixel_membership": [
+      {
+        "frame": "information-shooting-off",
+        "widget": 5,
+        "native_control_boxes": [
+          [
+            0,
+            0,
+            57,
+            57
+          ],
+          [
+            2,
+            2,
+            55,
+            54
+          ],
+          [
+            56,
+            5,
+            103,
+            52
+          ],
+          [
+            59,
+            8,
+            100,
+            49
+          ]
+        ],
+        "matches": [
+          {
+            "reference": "information-horizon-all-on-1",
+            "difference_bounds": [
+              3,
+              3,
+              54,
+              54
+            ]
+          },
+          {
+            "reference": "information-horizon-all-on-2",
+            "difference_bounds": [
+              3,
+              3,
+              54,
+              54
+            ]
+          },
+          {
+            "reference": "information-horizon-all-on-3",
+            "difference_bounds": [
+              3,
+              3,
+              54,
+              54
+            ]
+          }
+        ]
+      },
+      {
+        "frame": "information-shooting-on",
+        "widget": null,
+        "native_control_boxes": [],
+        "matches": [
+          {
+            "reference": "information-horizon-all-on-4"
+          }
+        ]
+      },
+      {
+        "frame": "information-release-off",
+        "widget": 51,
+        "native_control_boxes": [
+          [
+            281,
+            2,
+            379,
+            54
+          ],
+          [
+            284,
+            5,
+            376,
+            52
+          ]
+        ],
+        "matches": [
+          {
+            "reference": "information-horizon-all-on-1",
+            "difference_bounds": [
+              304,
+              6,
+              356,
+              51
+            ]
+          },
+          {
+            "reference": "information-horizon-all-on-2",
+            "difference_bounds": [
+              304,
+              6,
+              356,
+              51
+            ]
+          },
+          {
+            "reference": "information-horizon-all-on-3",
+            "difference_bounds": [
+              304,
+              6,
+              356,
+              51
+            ]
+          }
+        ]
+      },
+      {
+        "frame": "information-release-on",
+        "widget": null,
+        "native_control_boxes": [],
+        "matches": [
+          {
+            "reference": "information-horizon-all-on-4"
+          }
+        ]
+      },
+      {
+        "frame": "information-focus-off",
+        "widget": 2,
+        "native_control_boxes": [
+          [
+            402,
+            2,
+            474,
+            54
+          ],
+          [
+            405,
+            5,
+            471,
+            52
+          ]
+        ],
+        "matches": [
+          {
+            "reference": "information-horizon-all-on-1",
+            "difference_bounds": [
+              410,
+              6,
+              467,
+              51
+            ]
+          },
+          {
+            "reference": "information-horizon-all-on-2",
+            "difference_bounds": [
+              410,
+              6,
+              467,
+              51
+            ]
+          },
+          {
+            "reference": "information-horizon-all-on-3",
+            "difference_bounds": [
+              410,
+              6,
+              467,
+              51
+            ]
+          }
+        ]
+      },
+      {
+        "frame": "information-focus-on",
+        "widget": null,
+        "native_control_boxes": [],
+        "matches": [
+          {
+            "reference": "information-horizon-all-on-4"
+          }
+        ]
+      },
+      {
+        "frame": "information-master-off",
+        "widget": null,
+        "native_control_boxes": [],
+        "matches": [
+          {
+            "reference": "information-disabled-native-cycle-0"
+          }
+        ]
+      }
+    ],
+    "standard_native_glyph_matches_verified_for_widgets": [
+      5,
+      51,
+      2
+    ],
+    "newly_present_horizon_widgets": [
+      5,
+      51,
+      2
+    ],
+    "reference_samples": 4,
+    "distinct_iso_region_native_pixel_phases": 2,
+    "information_settings_unchanged_during_phase_sampling": true,
+    "observed_native_operation193": [
+      0
+    ],
+    "alternate_operation_validation": "Original native interpreter with supplied snapshots; not physical AF lifecycle",
+    "key_horizon_and_master_off_frames_visually_inspected": true,
+    "no_outside_pixel_exclusions": true,
+    "control_state_is_not_a_paint_fence": true
+  },
+  "retained_failed_live": {
+    "private_evidence": [
+      ".private/evidence/20261119-information-horizon-live-01",
+      ".private/evidence/20261119-information-horizon-live-02"
+    ],
+    "reason": "Initial all-on references did not include native ISO AUTO pixel phase reached after a settings edit",
+    "outside_shooting_difference_bounds": [
+      626,
+      618,
+      680,
+      672
+    ],
+    "custom_horizon_glyphs_and_non_information_protection_passed": true,
+    "failed_off_on_cycle_did_not_qualify_missing_all_on_phase": true,
+    "investigated_with": "Original ISO preparation and phase helper execution at fixed native phase; bounded unchanged-settings sampling and complete native RGB membership",
+    "production_module_changed_for_iso_phase_qualification": false
+  },
+  "prior_single_seed_prototype": {
+    "module_sha256": "a76b0884ecc5f94ed3ab6419159dc8b74af285051152fd9a23ba0b8c9aa8e825",
+    "successful_live": ".private/evidence/20261120-information-horizon-live-03",
+    "checks": 60,
+    "frames": 16,
+    "remaining_at_that_point": "One seed for both native operation states lost native operation-only eligibility; corrected in current groups03"
+  },
+  "graph": {
+    "nodes": 2213,
+    "edges": 5575,
+    "generated_graph_ignored": true
+  },
+  "remaining": [
+    "Other information and focal length",
+    "Native information app",
+    "Photo highlights",
+    "Portrait display",
+    "Persistence",
+    "Native menu-return and broader lifecycle",
+    "Successful real histogram statistics production",
+    "Physical card/cache/wake validation",
+    "Exact-candidate installation/recovery assessment"
+  ],
+  "camera_access": false,
+  "physical_card_access": false,
+  "firmware_staged": false,
+  "flashed": false,
+  "pushed": false,
+  "full_software_goal_complete": false
+}

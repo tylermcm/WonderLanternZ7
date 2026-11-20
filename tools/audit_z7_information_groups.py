@@ -26,7 +26,7 @@ def audit(raw, host, packet, module):
     def check(name, good):
         checks.append(dict(name=name, passed=bool(good)))
         if not good: raise AssertionError(name)
-    def load():
+    def load(mixed=True):
         f = BaseFixture(raw, host, packet)
         if f.call(host['symbols']['z7_module_load_once'], STATE) != 8: raise AssertionError('Load')
         base = f.words()[12]
@@ -36,7 +36,7 @@ def audit(raw, host, packet, module):
             f.call(base + symbols['z7_settings_component'], base + symbols['z7_menu_settings'], preset, 2, 0)
         desc = [int.from_bytes(f.u.mem_read(TABLE + i * 4, 4), 'little') for i in range(61)]
         for i in WIDGETS:
-            f.u.mem_write(desc[i] + 4, struct.pack('<9I', *([0xa5faffff ^ (i << 20)] * 9)))
+            if mixed: f.u.mem_write(desc[i] + 4, struct.pack('<9I', *([0xa5faffff ^ (i << 20)] * 9)))
             f.u.mem_write(int.from_bytes(f.u.mem_read(desc[i] + 44, 4), 'little'), b'\1')
         return f, base, desc
     def masks(f, desc): return [bytes(f.u.mem_read(p + 4, 36)) for p in desc]
@@ -53,8 +53,10 @@ def audit(raw, host, packet, module):
         result = list(original)
         for index, i in enumerate(WIDGETS):
             words = list(struct.unpack('<9I', result[i]))
-            if not bits & (1 << index) and not special & (1 << index):
-                for bank in (0, 3): words[bank] &= ~0x909
+            if not special & (1 << index):
+                for bank in (0, 3):
+                    photo = (9 if words[bank] & 1 else 0) | (0x900 if words[bank] & 0x100 else 0)
+                    words[bank] = (words[bank] & ~0x909) | (photo if bits & (1 << index) else 0)
             result[i] = struct.pack('<9I', *words)
         return result
     f, base, desc = load(); original = masks(f, desc)
@@ -80,6 +82,39 @@ def audit(raw, host, packet, module):
                 check(f'native-excludes-six-groups-page{page}-bank{bank}-operation{operation}', all(f.call(0x102f2690, i) == 1 for i in WIDGETS))
     f.u.mem_write(SNAPSHOT + 0x18a, b'\0'); f.u.mem_write(SNAPSHOT + 0x338, bytes(2)); f.u.mem_write(SNAPSHOT + 0x193, b'\0')
     master(0); before(); check('master-off-restores-all-12-owned-words', masks(f, desc) == original and not word('readout_pending'))
+    # Real native masks expose the former gap: shooting/focus have standard
+    # page permission but omit horizon. Validate all four photo-bit patterns,
+    # with opposite standard-page eligibility in the two LCD banks.
+    f, base, desc = load(mixed=False); native_original = masks(f, desc)
+    f.u.mem_write(0xa18237b8, bytes(7))
+    for widget in WIDGETS:
+        index = WIDGETS.index(widget)
+        for pattern in range(16):
+            for enabled in (0, 1):
+                master(0); before()
+                for i in WIDGETS: f.u.mem_write(desc[i] + 4, native_original[i])
+                words = list(struct.unpack('<9I', native_original[widget]))
+                photo_bits = sum(1 << bit for n, bit in enumerate((0, 3, 8, 11)) if pattern & (1 << n))
+                words[0] = 0xa5f0f0f0 | photo_bits
+                words[3] = 0xa5f0f0f0 | (photo_bits ^ 0x909)
+                f.u.mem_write(desc[widget] + 4, struct.pack('<9I', *words))
+                original = masks(f, desc)
+                details = (63 & ~(1 << index)) | (enabled << index)
+                information(0, details); master(1); snapshot = bytes(f.u.mem_read(SNAPSHOT, 0x33c)); before()
+                check(f'{widget}-photo-pattern{pattern}-on{enabled}-normalizes-only-owned-bits', masks(f, desc) == expected(details))
+                check(f'{widget}-photo-pattern{pattern}-on{enabled}-does-not-alter-native-snapshot', bytes(f.u.mem_read(SNAPSHOT, 0x33c)) == snapshot)
+                for bank in (0, 1):
+                    f.u.mem_write(SNAPSHOT + 0x338, struct.pack('<H', bank))
+                    for operation in (0, 1):
+                        seed = bool((words[0] if bank == 0 else words[3]) & (0x100 if operation == 1 else 1))
+                        f.u.mem_write(SNAPSHOT + 0x193, bytes([operation]))
+                        for page in (0, 3):
+                            f.u.mem_write(SNAPSHOT + 0x18a, bytes([page]))
+                            check(f'{widget}-pattern{pattern}-on{enabled}-native-bank{bank}-operation{operation}-page{page}',
+                                f.call(0x102f2690, widget) == int(not (enabled and seed)))
+                f.u.mem_write(SNAPSHOT + 0x338, bytes(2)); f.u.mem_write(SNAPSHOT + 0x193, b'\0'); f.u.mem_write(SNAPSHOT + 0x18a, b'\0')
+                master(0); before()
+                check(f'{widget}-pattern{pattern}-on{enabled}-restores-original-page-specific-baseline', masks(f, desc) == original)
     # Each new group must independently follow conditional restoration rules.
     for widget in WIDGETS[3:]:
         for kind in ('foreign-word', 'descriptor', 'updater'):
@@ -102,6 +137,7 @@ def audit(raw, host, packet, module):
     check('no-direct-dispatch-or-object-drawing', not f.readout_dispatches and not f.hud_redraws)
     return dict(passed=True, checks=checks, module_sha256=module['module_sha256'], main_sha256=host['main_payload_sha256'],
         widgets=list(WIDGETS), masks_only=True, native_mask_interpreter_executes=True, preset_selection_supplied=True,
+        custom_page_eligibility_seed='Each LCD bank: original bit0 seeds0/3; original bit8 seeds8/11 independently',
         supplied_boundaries=['Loader', 'GUI/property/snapshot state', 'Native label/drawing sinks'], actual_pixels=False, camera_access=False)
 
 

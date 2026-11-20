@@ -43,8 +43,10 @@ installer, firmware or camera screenshots were downloaded.
 **Latest display milestone:** [Z7_DISPLAY_MODULE_RESEARCH.md](Z7_DISPLAY_MODULE_RESEARCH.md)
 records the staged callback/menu API, native six-choice grid module, compiled
 instruction audits and assisted-QEMU menu/pixel checks. The SDK exports display
-registration now; the initial offline-stage limits below are historical. Native
-histogram exclusions remain, including a shooting-context gap in the live fixture.
+registration now; the initial offline-stage limits below are historical. Latest
+custom-DISP/base/grid/information and guarded histogram work is recorded in
+[DISPLAY_SETTINGS.md](z7-native-modules/DISPLAY_SETTINGS.md). Native histogram
+pixels pass with explicitly supplied bins; real statistics production is unverified.
 
 **Continuation:** the [original-Z7 host probe](Z7_MODULE_HOST_RESEARCH.md) now adds
 boot/task, filesystem and cache bindings. The actual C module and host compile
@@ -73,9 +75,9 @@ existing candidate, card contents or physical camera was changed.
 | Feature group | Source mechanism / current Z7 position | Next step |
 | --- | --- | --- |
 | SD module host | Original-Z7 host probe implemented; native wrappers audited and no-card boot tested in QEMU | Validate physical card/cache behavior; retain the no-feature probe before display modules |
-| Framing grids | Native geometry/template edits; this lab already has owner-tested grids | Expose existing Z7 geometry through the module ABI; preserve saved grid encoding |
-| Histogram + horizon | Native widget masks/gates; this lab already has a Z7 implementation | Package that known implementation as a module; retain photo/video/output gates |
-| Custom DISP pages | Independent settings UI/model, three readout groups, native warning-selector audit and admitted-cycle prototype; full-cycle pixel restoration still under validation | Finish native control preparation, base components, information app, remaining groups and persistence; see z7-native-modules/DISPLAY_SETTINGS.md |
+| Framing grids | Six native module styles, combined registration and native visibility component implemented; scoped instruction/QEMU menu/pixel checks | Preserve saved encoding and complete broader combined/physical lifecycle validation |
+| Histogram + horizon | Native base-page ownership and guarded histogram pass implemented; real getter failures and supplied-bin native pixels validated separately | Validate successful real statistics production and broader combined/physical lifecycle; preserve photo/video/output gates |
+| Custom DISP pages | Native four-preset cycle, base/grid selection, six information groups and guarded histogram integration; native horizon information/toggle/restoration pixels validated with scoped fixtures | Finish Other information/focal, native information app, highlights, portrait, persistence and broader native lifecycle; see z7-native-modules/DISPLAY_SETTINGS.md |
 | Focal length | Updates native focal-length text using live lens properties | Identify Z7 lens properties, widget lifetime, dirty/update/erase paths and LCD/EVF exclusions |
 | Battery percentage | Automatic LCD-photo module and combined grid/battery package implemented; rejects bar fallback, retains compact native text/warning colors; stock restoration and MENU lifecycle tested in assisted QEMU | Validate playback/AF, other outputs and physical telemetry before installation review |
 | Photo highlights / zebras | Producer/display callbacks and photo-specific parameters | Trace Z7 native movie highlights path, ownership and LCD/EVF routing; keep movie settings separate |

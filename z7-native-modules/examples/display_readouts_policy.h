@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 readout mask adapter.
  * Only independently identified ordinary groups are bound here.
- * No custom DISP routing, forced visibility or unidentified widget edits.
+ * No direct control visibility stores or unidentified widget edits.
  */
 volatile uint32_t z7_readout_preset, z7_readout_active, z7_readout_conflicts, z7_readout_changes;
 #ifdef Z7_INFORMATION_GROUPS_PROBE
@@ -133,7 +133,21 @@ static void readouts_before(void)
              * nibble4..7, alternate outputs and the third bank stay untouched.
              */
             uint32_t value = readout_saved[i][bank];
+#ifdef Z7_INFORMATION_GROUPS_PROBE
+            /* Match custom-DISP information semantics using this Z7's own
+             * interpreter bits. Each operation state's standard-photo bit
+             * seeds its own pair of base pages independently in each bank.
+             * Native control eligibility/visibility still runs afterward.
+             * Exposure warnings retain the whole original mask unchanged.
+             */
+            if (readout_formats[i] == 255u || !B(0xa18237b8u + readout_formats[i])) {
+                uint32_t photo = (value & 1u) ? 9u : 0u;
+                if (value & 0x100u) photo |= 0x900u;
+                value = (value & ~0x909u) | ((information & readout_bits[i]) ? photo : 0u);
+            }
+#else
             if (!(information & readout_bits[i]) && (readout_formats[i] == 255u || !B(0xa18237b8u + readout_formats[i]))) value &= ~0x909u;
+#endif
             uint32_t address = readout_descriptors[i] + 4 + bank * 12;
             if (W(address) != value) { W(address) = value; changed |= 1u << i; }
             readout_applied[i][bank] = value;

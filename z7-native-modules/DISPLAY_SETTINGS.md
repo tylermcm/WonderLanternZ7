@@ -813,3 +813,72 @@ The new live sequence covers standard page0; contract suppression covers0/3.
 Other information, focal length, information app, highlights, portrait,
 persistence and broader lifecycle remain open. This is an independent modified
 experimental package, not a completed or installation-cleared release.
+
+### Standard and horizon information eligibility
+
+Groups02 corrects the cross-page ON limitation above. Pinned upstream
+`sdk/disp.h` uses each LCD bank's original standard-photo bit to seed information
+on both custom base pages. The original-Z7 mask interpreter uses bits0/3 for
+standard/horizon and8/11 in operation193 states. For ordinary selected groups,
+the adapter therefore normalizes only0x909 from that bank's saved bit0. OFF
+clears those bits; a bank lacking native standard eligibility stays excluded.
+Movie bits, other outputs, the third bank and following native control-level
+eligibility remain unchanged. Nonzero exposure formats retain the complete
+saved mask, including native warning permissions. Disable restores the original
+page-specific masks rather than retaining their expanded custom-page form.
+
+This rule applies only to the optional six-group adapter. Earlier three-group
+and histogram08 variants rebuild unchanged. Groups02 is reproducible SHA
+a76b0884ecc5f94ed3ab6419159dc8b74af285051152fd9a23ba0b8c9aa8e825,
+14604bytes/image14336/BSS5060/API32, using unchanged host07. Information-pages01
+passes2753 compiled cases: the prior group/ownership/warning cases plus every
+four-photo-bit pattern for every group, opposite patterns in the two LCD banks,
+ON/OFF native interpreter results on pages0/3 and operations0/1, snapshot
+preservation and exact original-mask restoration. Root55/no-skips pass.
+
+Live horizon validation and remaining regressions are recorded in the current
+handoff while they run. Other information, focal length, information app,
+highlights, portrait, persistence and broader lifecycle remain open; no physical
+camera behavior or installation clearance is established by these checks.
+
+The first two live horizon probes pass selected-glyph and non-information-pixel
+checks, but their first isolated Shooting OFF check fails on the native ISO AUTO
+region. A native settings OFF/ON reference cycle does not qualify the missing
+all-on phase. Those failures remain private; no isolated-toggle success is
+claimed from them. The original ISO preparation10369C06, selector102F2586 and
+visibility helper102F2656 now execute with the compiled policy in an independent
+18-check/four-case audit. At fixed supplied phase0 or1, Shooting ON/OFF produces
+identical native ISO controls and preserves the current snapshot. This proves
+the covered native path's phase dependence, not the temporal source or a paint
+fence. The subsequent live probe records full snapshot/source diagnostics and
+samples bounded varied native intervals with settings unchanged to qualify
+complete captured-native RGB phases before testing isolated toggles.
+
+Groups03 further separates the original Z7's operation states. Saved bit0 seeds
+only0/3; saved bit8 independently seeds8/11. Original shooting-mode bank1 is0x110:
+it permits the alternate operation's standard page but lacks ordinary bit0.
+Focus/release have the converse pattern in bank0. One bit0 seed for both states
+would lose the former permission and invent the latter. The current adapter
+preserves both original standard-page eligibility decisions while extending each
+eligible state to its own horizon bit. Movie permissions and warnings stay native.
+
+Current groups03 is reproducible SHA
+a951a2574b80a41114f4dde62d012506b35388a7d2c9fa45eceb5ead9f487b83,
+14604bytes/image14336/BSS5060/API32, unchanged host07. The updated2753-case matrix
+passes with independent operation-state seeds. The strengthened phase audit now
+passes22 checks, including actual compiled Shooting mask-change assertions.
+Root55/no-skips pass and histogram08 still rebuilds byte-identically.
+
+Prior groups02 live03 passes60checks/16frames after four unchanged-settings
+samples qualify both complete native ISO pixel states. It proves all three
+selected horizon glyphs, protected native horizon/non-information pixels,
+isolated toggles and complete captured-native horizon/standard restoration for
+that package. Current groups03 live04 also passes60checks/16frames, with the
+same exact native glyph/protected-pixel/toggle/restoration requirements. All61
+descriptor masks restore and the saved standard page0 returns on master-off.
+Live operation193 is0; alternate-operation results remain original-instruction
+tests with supplied snapshots, not physical AF proof. Current03 base68/
+histogram170/grid282(native geometry109) regressions pass. Key horizon and
+master-off crop were inspected, with exact decoded full-frame equality verified
+independently. Source evidence `evidence/20261120-native-information-pages.json`
+distinguishes both packages. All jobs are terminal; full software goal stays open.

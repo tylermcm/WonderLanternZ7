@@ -147,8 +147,9 @@ private emulator research, not an installation-cleared camera update.
 `tools/build_z7_display_module.py --variant display-groups-probe --output .private/builds/NEW`
 extends the32-byte histogram/base stack with independently identified original-Z7
 Shooting mode, Release mode and Focus mode widgets, in addition to the existing
-shutter/aperture/ISO groups. It changes only owned photo-LCD mask bits and leaves
-native selection, formatting, warnings and painting to the original pipeline.
+shutter/aperture/ISO groups. Each LCD bank and native operation state's own
+standard-photo eligibility seeds its two custom base pages; only owned photo-LCD bits change. Native
+control selection, formatting, warnings and painting stay in the original pipeline.
 Other information, focal length and the separate information app remain open.
 See [DISPLAY_SETTINGS.md](DISPLAY_SETTINGS.md) for validation scope. Earlier
 histogram08 still rebuilds byte-identically with the optional extension disabled.

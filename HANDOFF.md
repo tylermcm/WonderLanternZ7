@@ -1,5 +1,69 @@
 # Laptop handoff — October 20, 2026
 
+## Custom information across native states — November 20, 2026
+
+Previous goal turn made progress; this turn fixes cross-page information ON.
+All current jobs are TERMINAL. Latest groups03
+`.private/builds/20261120-display-groups-03` is reproducible SHA
+a951a2574b80a41114f4dde62d012506b35388a7d2c9fa45eceb5ead9f487b83,
+14604bytes/image14336/BSS5060/API32, unchanged host07. No camera/card access,
+staging, flash or push. Full software goal stays active.
+
+Each LCD bank AND native operation state retains its own original standard-page
+eligibility: saved bit0 seeds0/3, saved bit8 independently seeds8/11. Only0x909
+changes; movie/other-output/third-bank bits remain native. Nonzero exposure
+formats keep their complete saved native mask. Original shooting bank1=0x110
+permits only the alternate operation; focus/release bank0 have bit0 but no bit8.
+Do not seed both states from bit0 or copy the Z7II0x99 mask. Earlier groups02's
+single-seed prototype is superseded. Native control-level eligibility still runs;
+there are no direct visibility stores or changed current shooting snapshots.
+
+Information-pages02 PASSES2753 compiled cases across4presets/all64combinations,
+warnings/ownership and all16photo-bit patterns with independently seeded native
+operation0/1 and pages0/3 in both banks. Phase02 PASSES22checks/4cases: actual
+compiled Shooting masks change, but at fixed supplied native phase the original
+ISO preparation10369C06, selector102F2586 and visibility helper102F2656 produce
+identical controls. It supplies incoming state and three native context-service
+returns; no pixels or temporal producer semantics are established by that audit.
+Current03 also passes base68/histogram170/grid282(native geometry109)/root55
+no-skips. Old histogram08 rebuild remains byte-identical29155d33...dc91b2.
+
+Current groups03 live04 `.private/evidence/20261120-information-horizon-live-04`
+PASSES60checks/16frames. Actual native DISP1/3/0 references precede custom enable.
+Selected Shooting5, Release51 and Focus2 glyphs appear on native horizon3 and
+match standard-native crops. Every pixel outside the six information-control
+rectangles matches the original horizon reference, including the level graphic.
+Each isolated OFF changes only its own control pixels; each ON restores an exact
+captured all-on horizon frame. Master-off restores saved native0, all61 native
+descriptor masks and complete captured-native standard RGB. Key horizon and
+master-off crop inspected; exact decoded full-frame membership verified.
+Settings setters are diagnostic calls, not native-menu editing/lifecycle proof.
+Live operation193 remains0; alternate operation visibility is native-instruction
+coverage with supplied snapshots, not physical AF behavior.
+
+Retain failed live01/02 on groups02. Initial all-on references lacked the later
+native ISO AUTO pixel phase; a settings OFF/ON cycle did not qualify it. Live03
+on unchanged groups02 then PASSED60checks/16frames by sampling unchanged settings
+at varied native125/250 intervals; four all-on samples captured both actual ISO
+RGB phases. Current03 live04 repeats that success. Source/control values can
+precede pixels: never call them a paint fence or invent phase completion. No ISO
+pixel exclusions, composited reference images or production phase overrides.
+This proves complete captured-native-frame membership, not temporal coherence.
+
+Source evidence `evidence/20261120-native-information-pages.json` identifies the
+current03 and prior02 packages separately. Ignored graph refreshed2213nodes/
+5575edges; source manifest refreshed at this source-only local checkpoint.
+
+NEXT: bind Other information using original-Z7 updater/icon identity, then focal
+length and the native information app; highlights, portrait, persistence and
+native menu-return/broader lifecycle remain. Original60 is flash-focus, not the
+Z7II focal widget. Private prior native icon inventory is a lead, not complete
+binding proof. Current pending/release ownership uses two bits per group in a
+32-bit word; expand that representation before exceeding15 groups. Successful
+real histogram statistics and physical card/cache/
+wake remain unverified. User wants software finished first. No camera staging
+or flash without explicit authorization and exact installation/recovery review.
+
 ## Six ordinary information groups — November 19, 2026
 
 Previous goal turn completed histogram pixels. This turn implements three more
