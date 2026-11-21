@@ -23,8 +23,24 @@ static void z7_portrait_defer_completion(uint32_t code, uint32_t result)
  * producer acknowledgement follows the final dispatch return, exactly once. Admission
  * failure changes neither the original message nor its source payload.
  */
-static uint32_t z7_portrait_draw_boxes(volatile uint32_t *message,
-    const struct z7_portrait_box *boxes, uint32_t count, uint32_t orientation)
+__attribute__((target("hwdiv")))
+static uint32_t z7_portrait_strip19_box(struct z7_portrait_box *dest,int32_t sw,int32_t sh,uint32_t angle)
+{
+    if (sw<=0 || sh<=0 || sw>720 || sh>480) return 0;
+    if (angle==90 || angle==270) {
+        int32_t width=(dest->w*sw+sh/2)/sh,height=(dest->h*sh+sw/2)/sw;
+        if (width<1) width=1;
+        if (height<1) height=1;
+        int32_t half=(width+height)/2;
+        if (angle==90) {dest->x+=height-half;dest->y+=dest->h-half;}
+        else {dest->x+=dest->w-half;dest->y+=width-half;}
+        dest->w=width;dest->h=height;
+    }
+    return dest->w<=720 && dest->h<=480 && dest->x>=INT16_MIN && dest->y>=INT16_MIN &&
+        dest->x+dest->w<=INT16_MAX && dest->y+dest->h<=INT16_MAX;
+}
+static uint32_t z7_portrait_draw_boxes_ex(volatile uint32_t *message,
+    const struct z7_portrait_box *boxes, uint32_t count, uint32_t orientation,uint32_t strip)
 {
     struct z7_portrait_box destinations[2];
     if (!z7_portrait_native_words((uint32_t)(uintptr_t)message,7) ||
@@ -65,6 +81,17 @@ static uint32_t z7_portrait_draw_boxes(volatile uint32_t *message,
     if (image) {
         uint32_t angle=(payload[15]&0xffffu)+(orientation==2 ? 90u : 270u);
         angle%=360u;
+        if (strip) {
+            payload[9]=0; /* Original image19/1A clear-enable field. */
+            if (command==0x19) {
+                int32_t sw=(int16_t)source[5]-(int16_t)source[4];
+                int32_t sh=(int16_t)(source[5]>>16)-(int16_t)(source[4]>>16);
+                /* Native auxiliary mode14 is not admitted by this strip path. */
+                if (source[14]) return 0;
+                for (uint32_t i=0;i<count;++i)
+                    if (!z7_portrait_strip19_box(destinations+i,sw,sh,angle)) return 0;
+            }
+        }
         payload[0]=0;
         payload[15]=(payload[15]&0xffff0000u) | angle;
     }
@@ -75,8 +102,8 @@ static uint32_t z7_portrait_draw_boxes(volatile uint32_t *message,
     for (uint32_t i=0;i<count;++i) {
         const struct z7_portrait_box *dest=destinations+i;
         if (image) {
-            payload[6]=(uint32_t)dest->x | ((uint32_t)dest->y<<16);
-            payload[7]=(uint32_t)(dest->x+dest->w) | ((uint32_t)(dest->y+dest->h)<<16);
+            payload[6]=(uint16_t)dest->x | ((uint32_t)(uint16_t)dest->y<<16);
+            payload[7]=(uint16_t)(dest->x+dest->w) | ((uint32_t)(uint16_t)(dest->y+dest->h)<<16);
         } else {
             payload[0]=(uint32_t)dest->x;
             payload[1]=(uint32_t)(480-dest->y-dest->h);
@@ -89,7 +116,20 @@ static uint32_t z7_portrait_draw_boxes(volatile uint32_t *message,
     ((void (*)(uint32_t,uint32_t))(uintptr_t)0x1042eadfu)(0x42010062u,local[6]);
     return 1;
 }
+static inline uint32_t z7_portrait_draw_boxes(volatile uint32_t *message,
+    const struct z7_portrait_box *boxes,uint32_t count,uint32_t orientation)
+{ return z7_portrait_draw_boxes_ex(message,boxes,count,orientation,0); }
 static inline uint32_t z7_portrait_draw_box(volatile uint32_t *message,
                                    const struct z7_portrait_box *box, uint32_t orientation)
 { return z7_portrait_draw_boxes(message,box,1,orientation); }
+static inline uint32_t z7_portrait_draw_strip_box(volatile uint32_t *message,
+    const struct z7_portrait_box *box,uint32_t orientation)
+{ return z7_portrait_draw_boxes_ex(message,box,1,orientation,1); }
+static inline uint32_t z7_portrait_consume_draw(volatile uint32_t *message)
+{
+    if (!z7_portrait_native_words((uint32_t)(uintptr_t)message,7) || message[3]!=0x1042eadfu) return 0;
+    message[6]=0;
+    ((void (*)(uint32_t,uint32_t))(uintptr_t)0x1042eadfu)(0x42010062u,0);
+    return 1;
+}
 #endif

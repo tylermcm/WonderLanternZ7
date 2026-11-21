@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 page draw adaptation.
  * Derived from JKWTCN portrait_menu.c, pinned50a22b24c50619cffa646dac386e8334659f475a,
  * copyright (c) 2026 JKWTCN. Explicit caller-admitted page/orientation only.
- * No footer/text/input/transition ownership. Dial19/clear-field handling pending.
+ * No footer/text/input/transition ownership or native external-app binding.
  */
 #ifndef Z7_PORTRAIT_PAGE_MESSAGE_H
 #define Z7_PORTRAIT_PAGE_MESSAGE_H
@@ -40,17 +40,19 @@ static uint32_t z7_portrait_page_message(volatile uint32_t *message,uint32_t pag
         uint32_t edge=!source.image && stock.y>=278 && stock.h<=2 && stock.w>=118 && stock.w<=123;
         if (edge || stock.y<44 || stock.y+stock.h>280)
             return z7_portrait_grid_message(message,orientation);
-        /* The 19 renderer's centre-based rotation and native image clear field
-         * need a separate strip adapter. Preserve stock until that port lands. */
-        if (source.image && (source.command==0x19 ||
-            (source.command==0x1a && ((volatile const uint32_t *)(uintptr_t)message[5])[9]))) return 0;
     }
     if (source.image) {
         if (stock.w>=600 && stock.h>=400) return 0;
         uint32_t angle=source.angle==360 ? 0 : source.angle;
-        if (angle>270 || angle%90 || (angle && page==Z7_LAYOUT_SETTING)) return 0;
+        if (angle>270 || angle%90 || (angle && page==Z7_LAYOUT_SETTING))
+            return page==Z7_LAYOUT_DIAL ? z7_portrait_consume_draw(message) : 0;
     }
-    if (!z7_portrait_page_scale(&stock,page,&dest)) return 0;
+    if (!z7_portrait_page_scale(&stock,page,&dest))
+        return page==Z7_LAYOUT_DIAL ? z7_portrait_consume_draw(message) : 0;
+    if (page==Z7_LAYOUT_DIAL) {
+        uint32_t handled=z7_portrait_draw_strip_box(message,&dest,orientation);
+        return handled ? handled : z7_portrait_consume_draw(message);
+    }
     return z7_portrait_draw_box(message,&dest,orientation);
 }
 #endif

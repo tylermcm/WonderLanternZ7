@@ -1,5 +1,47 @@
 # Laptop handoff — October 20, 2026
 
+## Dial strip images and original image renderer math - November 21, 2026
+
+Previous901219c left dial19/clear fields on stock fallback. Dedicated strip
+variant in portrait_draw.h now zeros local image19/1A word9, compensates19
+centre rotation with pinned integer aspect/centre rules and signed packed coords,
+and preflights all boxes before drawing. Source payload unchanged. Native19
+auxiliary mode14, invalid source dimensions, oversized compensated boxes and
+unsupported dial angles consume once without drawing, per pinned strip policy.
+Do not call native auxiliary14 a proven hardware mirror field.
+
+portrait_page_message.h uses the strip variant for dial. Unsupported strip
+images/geometry acknowledge once instead of falling through into stock strip
+painting. Normal drawing paths retain their tested behavior; diagnostic modules
+have NEW hashes even when sizes match. Do not infer byte identity from size.
+
+Private portrait-native-image-01 PASS97/44 compiled-strip native renderer cases.
+Original19/1A bodies, float/trig/clear branches, normalization and completion run;
+GPU state/creation/draw, target shape, sampler/cacheability supplied. Controls with
+word9=1 cause one19/four1A native clears; adapted strip causes zero. Native1A
+90/270 uses translate/rotate/scale positive angles; general1A/19 uses scale/
+translate/rotate negative angles. Initial audit order/sign assumptions corrected
+from native branches before accepted run. No ideal pixel phase, GPU pixels,
+real image buffer capacity/lifetime, task timing or hardware acceptance proved.
+
+strip-page-01 PASS752/236 draws, probe3328/3264image/0BSS/0relocs, SHA
+2dce75bb11b18d4278d24595561bbde533ce6951421e5fb7692820649516d582;
+native-image probe identical. strip-host-01 PASS50, probe3968/3904image/8BSS/
+0relocs SHAd1d5f83638f5572bab535fe0bdd7fe2778148ecfa8495e1eecd14f885f182473.
+Regressions strip-draw-01 PASS186/150 cases (832 bytes), strip-grid-01 PASS760/
+336 draws (1664), strip-grid-message-01 PASS996/266 draws (2304); reproducible,
+but these ordinary probe bytes differ from prior versions. Root71/no skips;
+all six direct source maps verified; ignored Graphify3535nodes/9621edges,
+existing parser warnings. Five source-only summaries updated/new native-image
+summary. See z7-native-modules/PORTRAIT_RESEARCH.md.
+
+Next footer and orientation latch/cleanup, text/input/settings controls, pending
+native requests/live/external/magnified binding, font files/symbols, Info mirror,
+real histogram, native lifetime/writer closure and exact installation/recovery.
+Full goal ACTIVE. Accepted host MAIN and functional combined display module
+unchanged. No camera/card/staging/flash/push. Emulator-only diagnostic remains
+incomplete and is not an installation candidate.
+
 ## Dial/settings raw-message placement - November 21, 2026
 
 Previous46331d5 loaded GRID-only diagnostic. New portrait_page_message.h maps

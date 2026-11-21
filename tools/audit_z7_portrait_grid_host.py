@@ -15,6 +15,7 @@ from audit_z7_module_host import HostFixture
 from audit_z7_information_native import InformationFixture
 from audit_z7_portrait_draw import BACKENDS,WORDS,reference_destination
 from audit_z7_portrait_grid_message import packpoint
+from audit_z7_portrait_page_message import strip19_reference
 from build_z7_module import build
 from build_z7_module_host import ROOT,STATE,ZIG
 from audit_splash_image import MEM
@@ -54,12 +55,13 @@ class GridHostFixture(HostFixture):
         if address==0x10170be8:
             self.flags.append((u.reg_read(UC_ARM_REG_R0),u.reg_read(UC_ARM_REG_R1)));self.ret(0);return
         super().hook(u,address,size,context)
-    def dispatch(self,command=0x17,box=(10,290,100,53)):
+    def dispatch(self,command=0x17,box=(10,290,100,53),clear=0):
         x,y,w,h=box;s=[0]*WORDS[command]
         if command==0x17:s[:4]=[x,480-y-h,w,h]
         else:
             s[4]=0;s[5]=packpoint(w,h);s[6]=packpoint(x,y);s[7]=packpoint(x+w,y+h)
             if command==0x1c:s[6:10]=[x<<16,y<<16,(x+w)<<16,(y+h)<<16]
+            else:s[9]=clear
         data=struct.pack('<%dI'%len(s),*s);self.u.mem_write(PAYLOAD,data)
         msg=struct.pack('<7I',1,2,3,0x1042eadf,0x42010000+command,PAYLOAD,123);self.u.mem_write(MESSAGE,msg)
         self.rendered.clear();self.acks.clear();self.flags.clear();self.targets=0;self.orientations=0
@@ -87,7 +89,7 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
             check(f'loaded-native-message-{orientation}-{command}',handled==1 and len(f.rendered)==1 and actual==expected and f.targets==2 and f.orientations==1)
         f.setup(orientation);handled=f.dispatch(box=(480,280,1,73))
         check(f'loaded-split-border-completes-once-{orientation}',handled==1 and len(f.rendered)==2)
-        for mode,page,commands in ((2,2,(0x17,0x1a,0x1c)),(1,3,(0x17,0x19,0x1a,0x1c))):
+        for mode,page,commands in ((2,2,(0x17,0x19,0x1a,0x1c)),(1,3,(0x17,0x19,0x1a,0x1c))):
             for command in commands:
                 f.setup(orientation);f.u.mem_write(0xa18298b8,bytes([mode,0]))
                 handled=f.dispatch(command,box=(199,100,201,111))
@@ -95,6 +97,7 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
                 top=100 if page==3 else 100*43691//65536
                 bottom=211 if page==3 else 211*43691//65536
                 expected=reference_destination((left,top+(235 if page==3 else 254),right-left,bottom-top),orientation)
+                if page==2 and command==0x19:expected=strip19_reference(expected,201,111,90 if orientation==2 else 270)
                 _,data=f.rendered[0]
                 if command==0x17:
                     x,y,w,h=struct.unpack_from('<4i',data);actual=(x,480-y-h,w,h)
@@ -113,7 +116,7 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
     f.setup();f.mutation=(0xa18298b8,b'\2')
     check('page-change-across-native-target-query-rejects-reflow',f.dispatch()==0 and len(f.rendered)==1)
     f.setup();f.u.mem_write(0xa18298b8,b'\2')
-    check('unported-dial19-strip-retains-stock-dispatch',f.dispatch(0x19,box=(199,100,201,111))==0 and len(f.rendered)==1)
+    check('dial-image1a-strip-disables-source-clear',f.dispatch(0x1a,box=(199,100,201,111),clear=1)==1 and len(f.rendered)==1 and struct.unpack_from('<I',f.rendered[0][1],36)[0]==0)
     f.setup();f.write(SLOT,0x12345679);before=f.read(f.variable('received'))
     check('foreign-slot-prefetched-bridge-falls-back-without-module',f.dispatch()==0 and len(f.rendered)==1 and f.read(f.variable('received'))==before)
     old=GridHostFixture(old_raw,old_host,packet,metadata)
@@ -136,7 +139,7 @@ def main():
     again,other=build(ROOT/'z7-native-modules/examples/portrait_grid_host_probe.c',zig=ZIG);assert packet==again and metadata==other
     result=audit(raw,host,packet,metadata,old_raw,old_host)
     names=('tools/audit_z7_portrait_grid_host.py','tools/audit_z7_module_host.py','tools/audit_z7_information_native.py','tools/audit_z7_portrait_draw.py',
-           'tools/audit_z7_portrait_grid_message.py','tools/audit_splash_image.py','tools/build_z7_module.py','z7-native-modules/sdk/module.ld',
+           'tools/audit_z7_portrait_grid_message.py','tools/audit_z7_portrait_page_message.py','tools/audit_splash_image.py','tools/build_z7_module.py','z7-native-modules/sdk/module.ld',
            'z7-native-modules/examples/portrait_grid_host_probe.c','z7-native-modules/plugins/portrait_grid_message.h',
            'z7-native-modules/plugins/portrait_page_message.h',
            'z7-native-modules/plugins/portrait_draw.h','z7-native-modules/plugins/portrait_geometry.h','z7-native-modules/plugins/portrait_grid.h',

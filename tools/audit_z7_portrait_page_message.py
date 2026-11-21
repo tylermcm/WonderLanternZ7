@@ -2,7 +2,7 @@
 
 SPDX-License-Identifier: MIT. Actual dispatch/normalizers/completion execute;
 backend renderer/events and page/orientation admission supplied. External app
-bindings, dial19/clear fields, footer/text/input/transitions and pixels unproved.
+bindings, footer/text/input/transitions and pixels unproved.
 """
 import argparse
 import hashlib
@@ -19,6 +19,14 @@ def scaled(box,page):
     x,y,w,h=box;left=x*43691//65536;right=(x+w)*43691//65536
     top=y if page==3 else y*43691//65536;bottom=y+h if page==3 else (y+h)*43691//65536
     return left,top+{2:254,3:235,4:394}[page],max(1,right-left),max(1,bottom-top)
+
+def strip19_reference(dest,sw,sh,angle):
+    x,y,w,h=dest
+    if angle in (90,270):
+        nw=max(1,(w*sw+sh//2)//sh);nh=max(1,(h*sh+sw//2)//sw);half=(nw+nh)//2
+        x,y=(x+nh-half,y+h-half) if angle==90 else (x+w-half,y+nw-half)
+        w,h=nw,nh
+    return x,y,w,h
 
 def audit(raw,packet,metadata):
     meta=dict(metadata,symbols=dict(metadata['symbols']));meta['symbols']['z7_portrait_draw_probe']=metadata['symbols']['z7_portrait_page_message_probe']
@@ -45,7 +53,10 @@ def audit(raw,packet,metadata):
             check(name+'-angle',struct.unpack_from('<H',out,60)[0]==((90 if orientation==2 else 270)+angle)%360)
         else:
             x,y,w,h=struct.unpack_from('<4i',out);actual=(x,480-y-h,w,h)
-        check(name,actual==reference_destination(expected,orientation) and backend==BACKENDS[0x1a if command==0x1c else command] and
+        physical=reference_destination(expected,orientation)
+        if page==2 and command==0x19:physical=strip19_reference(physical,box[2],box[3],((90 if orientation==2 else 270)+angle)%360)
+        if page==2 and command>=0x19:check(name+'-strip-clearing-disabled',struct.unpack_from('<I',out,36)[0]==0)
+        check(name,actual==physical and backend==BACKENDS[0x1a if command==0x1c else command] and
               f.events==['render',('deferred',0x42010062,0),('ack',0x42010062,0),'event'] and
               bytes(f.u.mem_read(MESSAGE,24))==msg[:24] and int.from_bytes(f.u.mem_read(MESSAGE+24,4),'little')==0 and bytes(f.u.mem_read(PAYLOAD,len(data)))==data)
         draws+=1
@@ -58,15 +69,16 @@ def audit(raw,packet,metadata):
             for orientation in (1,2):
                 for command in WORDS:
                     for mode in ((0,1) if command>=0x19 else (0,)):
-                        expected=None if page==2 and command==0x19 else scaled(box,page)
+                        expected=scaled(box,page)
                         run(f'draw-{page}-{box}-{orientation}-{command}-{mode}',command,page,orientation,box,mode,expected=expected)
     for page in (2,4):
         for command in (0x19,0x1a):
             for angle in (90,180,270,360):
-                expected=None if page==2 and command==0x19 else scaled((199,100,201,111),page)
+                expected=scaled((199,100,201,111),page)
                 run(f'pre-rotated-{page}-{command}-{angle}',command,page,2,(199,100,201,111),angle=angle,expected=expected)
     for angle in (1,90,180,270,361):run(f'settings-pre-rotated-reject{angle}',0x1a,3,1,(199,100,201,111),angle=angle)
-    run('unported-dial-image-clear-retains-stock',0x1a,2,1,(199,100,201,111),clear=1)
+    for command in (0x19,0x1a):
+        run(f'dial-image-clear-disabled{command}',command,2,1,(199,100,201,111),clear=1,expected=scaled((199,100,201,111),2))
     for page in (2,3,4):
         for command in WORDS:run(f'full-screen-pass-{page}-{command}',command,page,1,(0,0,720,480))
     for page in (0,5,0xffffffff):run(f'unknown-page{page}',0x17,page,1,(199,100,201,111))
@@ -80,7 +92,7 @@ def audit(raw,packet,metadata):
     run('dial-grid-tile',0x17,2,2,(10,290,100,53),expected=(10,450,100,53))
     return dict(passed=True,checks=checks,native_draws=draws,original_dispatch_normalization_completion_and_page_scaling_execute=True,
                 backend_renderer_kernel_events_and_page_orientation_admission_supplied=True,
-                external_app_binding_dial19_clear_footer_text_input_transition_or_pixels_proven=False,camera_card_access=False)
+                external_app_binding_footer_text_input_transition_or_pixels_proven=False,camera_card_access=False)
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--stock-main',type=Path,required=True);p.add_argument('--output',type=Path,required=True)

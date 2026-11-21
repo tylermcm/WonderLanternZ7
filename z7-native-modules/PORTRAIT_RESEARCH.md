@@ -365,6 +365,44 @@ The previously documented supplied-NULL allocator counterexamples remain open.
 
 ## Remaining integration
 
+### Dial image19 compensation and native renderer execution
+
+The dial strip now uses a dedicated draw variant. It clears only the local
+image19/1A clear-enable word9, preserving the original payload. Original19 reads
+that word at104303EE and conditionally calls native clear1045081E via10430A50;
+original1A reads it at1042F8BE and enters its surface-clear branches at10430146.
+These branches execute in the new audit: a supplied clear1 produces one native19
+clear or four native1A clears in the control, and zero after strip adaptation.
+
+Image19 scales before centre rotation. For quarter turns, the adapter computes
+pre-rotation width/height from the destination and source aspect ratio, then
+adjusts the centre using the pinned integer rule. Both dimensions and signed
+packed coordinates are checked before any native draw. All batch destinations
+are preflighted before dispatch. Native19 auxiliary mode14, invalid source sizes,
+oversized compensated boxes and unsupported dial angles are consumed with one
+producer acknowledgement and no renderer call, following the pinned strip policy.
+The auxiliary field is not relabeled as a proven hardware mirror control.
+
+Private `20261121-portrait-native-image-01/result.json` passed97 checks with44
+compiled-strip cases executing the original19 and1A renderer bodies, including
+fixed1C-to-1A conversion, both rotations, modes0/1 and angle composition. Original
+float/trigonometric and coordinate code executes, followed by supplied GPU APIs.
+Native1A quarter turns use translate/rotate/scale with positive angle; its general
+branch and19 use scale/translate/rotate with negative angle. Initial audit
+expectations assumed one1A order/sign and were corrected from actual native
+branches before the accepted run. GPU state/image creation/draw, target shape,
+sampler and cacheability are supplied; no pixels or buffer lifetime is proved.
+Native trigonometric approximations are not treated as ideal integer pixel phase.
+
+Final strip-page-01 passed752 checks/236 native draws; strip-host-01 passed50
+loaded integration checks including dial19 and clear suppression. Native-image
+and standalone page probes match exactly at3328 bytes; loaded probe3968 bytes.
+Existing one-box186, grid760 and raw-grid996 regressions passed. Their updated
+probes rebuild reproducibly but differ from preceding versions; unchanged sizes
+do not establish byte identity. Footer, transition
+latch/cleanup, text/input/settings controls and native request/lifetime admission
+remain unfinished. See [native image evidence](../evidence/20261121-portrait-native-image.json).
+
 ### Dial/settings placement and loaded page selection
 
 `portrait_page_message.h` extends the raw-message adapter to DIAL and SETTING;
@@ -380,9 +418,9 @@ The loaded diagnostic now accepts native i-menu GRID/DIAL/SETTING and requires
 the same page again before dispatch. It maps those native page values explicitly
 to the draw layout and retains scene/task/output/target/orientation checks. It
 still samples each message's orientation without the pinned transition latch or
-complete cleanup. Dial command19 and nonzero image1A clear fields retain stock
-dispatch until their centre-rotation/clear behavior is ported. This is an explicit
-unfinished path, not final portrait behavior. Text/footer/input/settings controls
+complete cleanup. The initial checkpoint retained stock dispatch for dial19 and
+nonzero image1A clear fields; the dedicated strip path above now handles them.
+This remains incomplete portrait behavior. Text/footer/input/settings controls
 and pending-request/task lifetime policies remain unfinished.
 
 Private `20261121-portrait-page-message-01/result.json` passed649 checks with214
