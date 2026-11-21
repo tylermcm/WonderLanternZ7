@@ -5,6 +5,9 @@ upstream `plugins/portrait_menu.c`, copyright (c) 2026 JKWTCN, MIT. Bounded
 original-Z7 transforms, read-only orientation sampling and native queue audits
 are independent local modifications under the same license. See
 `PORTRAIT_RESEARCH.md` for scope; portrait display integration is unfinished.
+`plugins/portrait_draw.h` follows the same pinned synchronous local-message and
+deferred-completion approach, with independently bound original-Z7 payloads,
+native adapter addresses, angle offset and argument layouts under MIT.
 
 This is an independent, modified adaptation for **original Nikon Z7 C 3.80**.
 It is not a Nikon, Wonder Lantern, or JKWTCN release. It currently contains a

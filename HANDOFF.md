@@ -1,5 +1,42 @@
 # Laptop handoff — October 20, 2026
 
+## Synchronous portrait rectangle/image adapter - November 20, 2026
+
+Previous94c65c4 is the geometry/queue foundation. This checkpoint is PROGRESS:
+compiled caller-admitted portrait_draw.h now executes original Z7 dispatch for
+rectangle13/16/17 and image19/1A with transformed destination and image angle.
+No graphics hook is installed; caller LCD/page/task admission remains required.
+Full original goal ACTIVE; no camera/card/stage/flash/push.
+
+CRITICAL original-Z7 format difference: image angle is source word15 (Z7II16),
+flags16/17;1A ignores word18 and copies19..23 to extra backend fields. Source
+word counts13/16/17/19/1A are8/7/6/18/24. Local copies preserve source payload;
+native dispatcher runs synchronously with deferred callback, then original
+producer acknowledged once with42010062/0. Invalid spans/callbacks/commands,
+angles/modes/orientations/boxes return unchanged without acknowledgement.
+Fixed-point image1C, text reflow, navigation and real LCD admission unfinished.
+
+Private portrait-draw-02/result.json PASS155 (138 draws+17 rejection cases),
+probe640file/576image/0BSS/0relocs/reproducible,
+SHAfea18c4dd08683f85e4a26e9403b64536c2ce17f0294b89d15b49195631013f8.
+Original dispatcher/image normalization/completion execute; backend renderer,
+event service and admitted layout supplied. No pixels or renderer lifetime proof.
+Draw01 failed unused static helper under-Werror; geometry header now inline.
+Orientation-02 PASS13405 refreshes header/audit fingerprints and384-byte probe,
+SHA31af1709d71ec6d97e9fd99c59496c9bb7ebfd3e3f40a51edccc59bb6cf2f970.
+Orientation timeout-thread overhead removed; instruction bound remains in force.
+
+See PORTRAIT_RESEARCH.md and evidence/20261120-portrait-draw.json. Original
+highlight host/module unchanged. Next: fixed-point image1C, text adapter,
+LCD output/target/page admission and graphics-task ownership, then reflow/input/
+settings integration. Native lifecycle/writer/bank/engine closure, Info mirror,
+real histogram producer and exact release/install/recovery assessment remain.
+
+Final checks: root71/no skips (20261120-portrait-draw-root-tests.log), both final
+audit fingerprints current. Ignored Graphify refreshed3327nodes/8966edges with
+new code present; existing parser warnings retained. No full functional module
+rebuild implied: these are diagnostic probe and standalone adapter changes.
+
 ## Orientation foundation and original graphics queue - November 20, 2026
 
 Previous a753620 is the accepted logical LCD/EVF highlight pair. This checkpoint

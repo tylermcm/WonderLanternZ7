@@ -39,12 +39,15 @@ are bounded before subtraction. Failure preserves the output, and exact
 input/output aliasing is supported. This is abstract geometry, not a native
 payload layout or complete HUD reflow.
 
-Private audit `20261120-orientation-01/result.json` passes13405 checks:9216 native
+Private audit `20261120-orientation-02/result.json` passes13405 checks:9216 native
 gate/selector/sensor combinations,504 original override/notification cases,
 2604 valid compiled geometry cases, invalid/extreme coordinates, null pointers,
 nonmutation and in-place round trips. The flat compiled probe is reproducible,
 384 bytes including its header,320 image,0 BSS and0 relocations. Its manual
 fixture loading does not exercise the module loader admission path.
+Run02 refreshes the current header fingerprint after changing reusable geometry
+helpers to `static inline`. The probe remains384 bytes, with a changed image
+layout; run01 remains historical evidence for the previous source checkpoint.
 
 ## Native rectangle queue and dispatcher
 
@@ -87,9 +90,53 @@ not real task concurrency, installed-hook lifetime or pixels. Early fixture runs
 04 passed26 before registration coverage was added in05. Failed runs are not
 accepted evidence.
 
+## Caller-admitted synchronous portrait drawing
+
+`plugins/portrait_draw.h` now connects a caller-selected portrait box to original
+Z7 message dispatch. It supports native rectangle commands13/16/17 and image
+commands19/1A. This is callable software, not an installed graphics hook: the
+caller must own the graphics task and admit the intended LCD output/page.
+
+The Z7 payloads differ from the pinned Z7II layouts:
+
+| Command | Source words | Original Z7 backend |
+| --- | --- | --- |
+| 13 | 8 | 1042F066,28-byte normalized shape |
+| 16 | 7 | 1042F426,seven arguments |
+| 17 | 6 | 1042F5A8,28-byte normalized shape |
+| 19 | 18 | 104303E6,68-byte normalized image |
+| 1A | 24 | 1042F894,88-byte normalized image |
+
+Image angles are the low half of source word15. Source words16/17 become
+two flag bytes, while1A skips source word18 and copies words19..23 into its
+extra backend fields. Using the pinned angle word16 would alter a flag instead.
+The adapter preserves other source fields, converts destination corners and
+adds the intended quarter turn to angles0/90/180/270/360. Mode0/1 input becomes
+explicit-destination mode0. Rectangles convert top-origin portrait geometry into
+the native bottom-origin payload. Original source bytes are never changed.
+
+The local message defers completion until original dispatch returns, then copies
+its result and invokes the original producer completion exactly once. Admission
+checks reject foreign callbacks, unknown commands, malformed RAM spans, invalid
+angles/modes, unsupported orientations and invalid boxes without dispatch or
+acknowledgement. Fixed-point image1C is deliberately pending its original-Z7
+format conversion; text and page policy are also unfinished.
+
+Private `20261120-portrait-draw-02/result.json` passes155 checks:138 draw cases
+covering all five commands, both portrait directions, three boxes, both image
+modes and five angles;17 rejected-input cases preserve message/payload state.
+The original dispatcher, image normalization adapters and completion execute.
+Only backend renderers and the kernel event boundary are supplied. Comparison
+excludes backend padding bytes that native adapters leave undefined. Render,
+deferred completion, original acknowledgement and event order are checked.
+The probe builds reproducibly:640 file/576 image/0 BSS/0 relocations. Flat fixture
+loading does not prove module-loader admission or actual renderer lifetime.
+Draw01 failed compilation because the original shared header emitted an unused
+direction helper under `-Werror`; reusable inline helpers corrected02.
+
 ## Remaining integration
 
-Bind actual LCD output/target admission, image and text adapters and payloads,
+Bind actual LCD output/target admission, fixed-point image and text payloads,
 draw-task lifetime and callback ownership before installing a rotation hook.
 Preserve producer completion and payload lifetime: never redirect asynchronous
 native work to a temporary stack copy. Then port portrait reflow, navigation and

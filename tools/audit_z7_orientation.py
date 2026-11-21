@@ -27,6 +27,9 @@ MAPPING = {1:0,2:3,3:1,4:2}
 class OrientationFixture(NativePNG):
     def __init__(self,raw,packet,metadata):
         super().__init__(raw)
+        # These small calls retain NativePNG's instruction bound. Avoid a new
+        # Unicorn timeout thread for each matrix cell on Windows.
+        self.native_call_timeout_us=0
         self.u.mem_map(0xa1d49000,0x1000)
         if metadata['relocations']:raise AssertionError('Unexpected flat-probe relocation')
         self.u.mem_write(CODE,packet[HEADER:HEADER+metadata['image_bytes']])
