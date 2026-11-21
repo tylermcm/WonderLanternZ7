@@ -63,7 +63,15 @@ static uint32_t z7_portrait_text_render(uint32_t *context,void *options,
     matrix[2]=(uint32_t)x;
     matrix[3]=(uint32_t)(t->orientation==2 ? ax : -ax);
     matrix[5]=(uint32_t)y;
+#ifdef Z7_PORTRAIT_TEXT_SYMBOLS_BEGIN
+    struct z7_portrait_symbol_scope symbols;
+    Z7_PORTRAIT_TEXT_SYMBOLS_BEGIN(context,t,z7_portrait_text_state.descriptor,
+                                  z7_portrait_text_state.plan_argument,&symbols);
+#endif
     uint32_t result=render(context,options,origin,metrics,bounds);
+#ifdef Z7_PORTRAIT_TEXT_SYMBOLS_BEGIN
+    z7_portrait_symbol_end(&symbols);
+#endif
     for (uint32_t i=0;i<7;++i) matrix[i]=saved[i];
     return result;
 }

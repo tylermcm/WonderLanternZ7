@@ -5,6 +5,38 @@ Independent work against original Z7 C3.80, following the MIT-licensed
 This is an incomplete port. No orientation drawing hook is installed by the
 current display module. The accepted LCD/EVF highlight pair is unchanged.
 
+## Scoped menu symbol rotation
+
+`portrait_symbols.h` temporarily clones the verified native symbol provider for
+one synchronous glyph render. It preserves stock measurement, handles resource
+overrides, decodes native bitmap data, computes placement from the rounded native
+glyph matrix, and clips whole symbols to the selected footer/dial/settings band.
+The text adapter selects matching scales and restores the provider after rendering;
+foreign replacements survive cleanup. Grid tile/title symbols retain stock behavior
+as in pinned source. Live/battery symbol paths are not implemented.
+
+Rendering uses original format conversion10431197 and a24-word internal image1A
+message with deferred completion. Original dispatcher normalization removes word18
+and packs angle/flags before native backend1042F894. No extra producer event is
+emitted. The original image body and explicit finish1042EB0F execute before pixel
+release. The graphics-task query is supplied false, exercising immediate finish;
+the queued path, bitmap mutex and native task/output lifetime remain unproved.
+
+Private portrait-symbols-03 passes234 checks, including8 standalone rotated image
+cases and48 original descriptor34/37/38 cases across four layouts, two directions,
+mixed text and overrides. Provider cleanup is asserted before final text ack.
+Original PNG, format conversion, native glyph/provider dispatch, image geometry,
+float/trig helpers and destruction execute. Font metrics/glyph lookup/shaping
+(including explicit native type5 symbol tags), resources, allocator, GPU and task
+query are supplied. Native34 registers the provider;37/38 receive an explicitly
+pre-registered descriptor provider. This is not real font classification or GPU
+pixel proof. The source-only summary is `evidence/20261121-portrait-symbols.json`.
+
+Text/layout459, native settings/background254, loaded109, fixed text273/native
+provider90 and root71 checks pass. The fixed text probe remains byte-identical.
+The loaded diagnostic includes this path; functional combined display/host MAIN
+remain unchanged. Input/settings, real assets/fonts and lifecycle closure remain.
+
 ## Native inline-symbol foundation
 
 `portrait_symbol_bitmap.h` uses the original reader init104313D1, header10431279,
@@ -30,8 +62,8 @@ descriptor7E/86/8E and values80/88/90. Original symbol measurement, PNG metadata
 and draw argument construction execute; resource callbacks, font metrics,
 allocator and final image renderer are supplied. Disabled draw makes no calls.
 
-This establishes bindings and decode support for the next temporary provider
-interception. Portrait symbol rotation/clipping is not connected yet. Original
+This earlier checkpoint established bindings and decode support before temporary
+provider interception. Portrait rotation/clipping was not connected then. Original
 image1A angle word15 differs from pinned Z7II symbol image word16. Format helper
 10431197 and finish1042EB0F need caller-specific verification. Root71 checks pass.
 Source-only summaries: `evidence/20261121-portrait-symbol-bitmap.json` and

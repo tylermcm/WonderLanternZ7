@@ -1,24 +1,42 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 C3.80 menu text reflow.
  * Derived from JKWTCN portrait_menu.c at50a22b24c50619cffa646dac386e8334659f475a,
  * copyright (c) 2026 JKWTCN. Caller owns page/target/execution admission.
- * No inline symbols, live widgets or input.
+ * Menu symbols only; no live widgets, input or bitmap/task lifetime closure.
  */
 #ifndef Z7_PORTRAIT_TEXT_LAYOUT_H
 #define Z7_PORTRAIT_TEXT_LAYOUT_H
 #include "portrait_bands.h"
+#include "portrait_symbols.h"
 struct z7_portrait_text_transform;
 static uint32_t z7_portrait_text_plan(const uint32_t *,const int32_t *,uint32_t,
                                      void *,struct z7_portrait_text_transform *);
 static uint32_t z7_portrait_text_background(uint32_t,void *);
+static void z7_portrait_text_symbols_begin(uint32_t *,const struct z7_portrait_text_transform *,
+                                          uint32_t,void *,struct z7_portrait_symbol_scope *);
 #define Z7_PORTRAIT_TEXT_PLAN z7_portrait_text_plan
 #define Z7_PORTRAIT_TEXT_BACKGROUND z7_portrait_text_background
+#define Z7_PORTRAIT_TEXT_SYMBOLS_BEGIN z7_portrait_text_symbols_begin
 #include "portrait_text.h"
 #undef Z7_PORTRAIT_TEXT_PLAN
 #undef Z7_PORTRAIT_TEXT_BACKGROUND
+#undef Z7_PORTRAIT_TEXT_SYMBOLS_BEGIN
 struct z7_portrait_text_page {
     uint32_t page,orientation;
     struct z7_portrait_bands *bands;
 };
+static void z7_portrait_text_symbols_begin(uint32_t *context,const struct z7_portrait_text_transform *t,
+    uint32_t descriptor,void *argument,struct z7_portrait_symbol_scope *scope)
+{
+    scope->slot=0;
+    if (!argument) return;
+    const struct z7_portrait_text_page *p=argument;
+    uint32_t hint=t->sx==57344 && t->sy==57344;
+    uint32_t dial=p->page==Z7_LAYOUT_DIAL && t->sx==43691 && t->sy==43691;
+    if (!hint && !dial && p->page!=Z7_LAYOUT_SETTING && p->page!=Z7_LAYOUT_EXTERNAL) return;
+    struct z7_portrait_symbol_config config={descriptor,t->orientation,t->sx,t->sy,
+        hint ? 660 : dial ? 283 : p->page==Z7_LAYOUT_SETTING ? 235 : 394,dial ? 440 : 720};
+    z7_portrait_symbol_begin((uint32_t)(uintptr_t)context,&config,scope);
+}
 /* Native34 paints its backing rectangle before the glyph callback. Suppress
  * this stock-position rectangle for footer/dial descriptors only, then restore
  * the producer's color word before acknowledgement (synchronous owner only). */

@@ -103,7 +103,7 @@ def main():
     names=['tools/audit_z7_native_text_layout.py','tools/audit_z7_native_text_descriptor.py','tools/audit_z7_native_glyph.py',
            'tools/audit_z7_portrait_text.py','tools/audit_splash_image.py','tools/build_z7_module.py',
            'z7-native-modules/examples/portrait_text_layout_probe.c','z7-native-modules/sdk/module.h','z7-native-modules/sdk/module.ld']
-    names += ['z7-native-modules/plugins/'+n+'.h' for n in ('portrait_text_layout','portrait_text','portrait_bands','portrait_page_message',
+    names += ['z7-native-modules/plugins/'+n+'.h' for n in ('portrait_text_layout','portrait_text','portrait_symbols','portrait_symbol_bitmap','portrait_bands','portrait_page_message',
               'portrait_grid_message','portrait_grid','portrait_footer','portrait_geometry','portrait_draw')]
     result.update(probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,
                   source_sha256={n:hashlib.sha256((ROOT/n).read_bytes()).hexdigest() for n in names})

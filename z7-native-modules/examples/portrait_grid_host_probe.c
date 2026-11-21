@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 API84 portrait diagnostic.
- * Incomplete port: menu text placement; no inline symbols/input, pending-request fence or live
+ * Incomplete port: menu text/symbol placement; no input, pending-request fence or live
  * task/lifetime proof. Emulator only; not a release or installation candidate.
  */
 #include "module.h"

@@ -1,5 +1,55 @@
 # Laptop handoff — October 20, 2026
 
+## Scoped portrait menu symbol drawing - November 21, 2026
+
+Previous94250ec verified bindings/decode but did not rotate symbols. New
+portrait_symbols.h clones the known native20-byte provider for one synchronous
+glyph render, retains its measurement callback, intercepts draw and restores
+the slot afterward. Foreign replacements are preserved. Scope/config/descriptor/
+context/provider spans, orientation/scales/clipping and native callback identities
+are checked. Nested reuse of the same already-intercepted provider rejects.
+Footer/dial/settings/external text callbacks now select the matching symbol
+scale and whole-symbol clipping band; ordinary grid tile/title symbols remain
+stock as in pinned source. Live/battery symbols are not implemented.
+
+The callback obtains native resources/overrides/metrics, decodes bounded native
+bitmap data, computes portrait placement from the actual rounded native glyph
+matrix, uses original format helper10431197, and dispatches an internal image1A
+packet with deferred completion. Original dispatcher packs the24-word payload
+into the native88-byte image ABI (angle word15, flags16/17, skips18). It executes
+original image1A backend1042F894. No extra producer acknowledgement/event occurs.
+Original finish1042EB0F takes its immediate path with a supplied false task query,
+then font color is restored and pixels freed. Native image body also finishes.
+Queued finish/native bitmap mutex/task/output/allocation lifetime remain open.
+
+Private portrait-symbols-03 PASS234:8 direct rotated native image cases, invalid
+provider/config cases, clipping/disabled/resource/metrics/allocation failures,
+foreign replacement preservation and48 actual descriptor34/37/38 text cases
+across both orientations and four page layouts, including mixed text and overrides.
+Native PNG, format conversion, glyph/provider dispatch, image normalization,
+float/trig geometry, immediate finish and destruction execute. Tests assert
+provider restored at final once-only text ack and exact active decoded RGBA.
+Font files/metrics/glyph lookup/shaping (including explicit native type5 tags),
+resource callbacks, allocation, GPU and graphics-task query are supplied. This
+does NOT prove native font classification, real assets, queued finish or pixels.
+For37/38 the descriptor provider is explicitly pre-registered;34 registers itself.
+Probe8832/image8768/BSS40/0relocs SHA
+287c4b146d510af48b38c9df99b39c76a7c06769e6085f377733abd83de057ec.
+symbols-text-layout-01 PASS459; symbols-native-text-01 PASS254 (24 settings pairs/
+72 backgrounds); symbols-grid-host-01 PASS109 loaded regressions, probe9728/
+image9664/BSS64/0relocs SHA
+72410e9e424273c37ae5196384dbb4c028eec299303e8bbbec2dd26f3c085e7f.
+Fixed text273/native provider90 pass with byte-identical original1216-byte probe.
+Seven direct source maps verified, root71/no skips. Ignored Graphify refreshed
+to3674nodes/10086links; existing conditional-C parser warnings remain.
+See evidence/20261121-portrait-symbols.json and updated text/native/loaded summaries.
+
+Next input/settings controls, native pending request/live/external/magnified page
+bindings, real font/asset classification, bitmap mutex/queued finish and full
+task/writer/allocation closure, Info mirror/real histogram, integrated release
+and exact installation/recovery. Full goal ACTIVE. Accepted host MAIN/functional
+combined display unchanged; no camera/card/staging/flash/push.
+
 ## Native symbol provider and bitmap reader - November 21, 2026
 
 Previous1201faf closed menu34 background suppression. Native inline symbol

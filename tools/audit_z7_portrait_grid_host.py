@@ -255,6 +255,7 @@ def main():
            'z7-native-modules/examples/portrait_grid_host_probe.c','z7-native-modules/plugins/portrait_grid_message.h',
            'z7-native-modules/plugins/portrait_page_message.h','z7-native-modules/plugins/portrait_footer.h','z7-native-modules/plugins/portrait_layout.h','z7-native-modules/plugins/portrait_bands.h',
            'tools/audit_z7_portrait_text.py','z7-native-modules/plugins/portrait_text.h','z7-native-modules/plugins/portrait_text_layout.h',
+           'z7-native-modules/plugins/portrait_symbols.h','z7-native-modules/plugins/portrait_symbol_bitmap.h',
            'z7-native-modules/plugins/portrait_draw.h','z7-native-modules/plugins/portrait_geometry.h','z7-native-modules/plugins/portrait_grid.h',
            'z7-native-modules/plugins/portrait_page.h','z7-native-modules/plugins/portrait_takeover.h','z7-native-modules/plugins/portrait_target.h','z7-native-modules/plugins/orientation_sample.h')
     result.update(host_sha256=host['main_payload_sha256'],probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),
