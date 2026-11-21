@@ -1,5 +1,89 @@
 # Laptop handoff — October 20, 2026
 
+## Highlight preferences and settings version2 - November 20, 2026
+
+Previousa9e7b86 was PROGRESS (native warning transaction API72). This turn is
+PROGRESS: global pattern/threshold menu, captured native requests and persistence
+migration implemented in a NEW opt-in display-highlight-preferences-probe. Full
+original goal ACTIVE; no camera/card/staging/flash/push. Physical menu/overlay
+raster, card durability, native lifecycle and installation/recovery remain open.
+
+Pinned private z7ii-50a22b2/sdk/photo_zebra.h confirms global patterns0 Off/1/2,
+threshold indices0..7 ->255,248,235,224,213,202,191,180; native request pattern
+bytes0/1. Independently constructed original-Z7 requests retain LCD palette15,
+groups255/threshold/15/5 and4x4. No foreign Nikon addresses installed. Current
+fixed defaults1/248 preserved (index1). Global pattern0 makes wanted=false;
+owned worker restores latest Nikon baseline rather than submitting an override.
+
+Z7_HIGHLIGHT_PREFERENCES only in new variant. Settings model adds2 words48bytes;
+wire stays64. Optional Z7C1 version2 reuses reserved words56/60 for pattern and
+threshold index. Strict range/CRC/schema validation, staged decode/output and
+legacy version1 zero-reserved acceptance defaults1/1. All existing flags, masks
+and4 page selections preserved. Journal Z7J1 envelope remains80/version1 with
+same native I/O, two slots, CRC, verification and worker. Startup does NOT write
+migration. A later real settings edit saves canonicalv2 into the other slot.
+Older variants stillv1 and CANNOT decodev2; do not mix journal/module versions
+without a reviewed rollback/configuration plan. No actual card migration done.
+
+Preset Highlight row5 now opens view4 only in new variant. Row0 Show on this
+page toggles that preset's component bit; row1 Pattern (all pages) cyclesOFF/
+Type1/Type2; row2 Threshold (all pages) cycles8 values; row6 Back and native Back
+return to owning preset row5. Existing7-row layout/label pool reused; blank rows
+stay blank. Global style/threshold survive page toggles/preset reset. Menu is
+sole settings writer; GUI actions do no file I/O. Native label slots/focus tested,
+new text raster NOT yet inspected. Existing variants unchanged when macro OFF.
+
+GUI publication captures validated pattern/threshold (or safe invalid-view
+values) in its bounded snapshot. Epoch includes new fields and settings revision.
+Owned and foreign conversion build request from CAPTURED snapshot, not mutable
+menu globals. Current-state recheck precedes native payload copy. Style changes
+before GUI publication invalidate pending work; worker reaps/retries latest epoch.
+Lease continues retaining original/latest native baseline across preference edits.
+
+FINAL module .private/builds/20261120-display-highlight-preferences-01,
+SHA99d5f7357a1fd5c4b369837ddccd304d9b6a22ee0da1a00829d1cd5739c2a795,
+30988file/30592image/6680BSS/minAPI72/reproducible;61 source inputs current.
+Host UNCHANGED20261120-native-transaction-host-04,
+MAINef6f1f703b87978336465452ee572f0b464fedfc37b90d4afb36c1ede6aaec1a.
+Old72 module rebuilt20261120-preferences-compat72-module-01 exact
+b918362c22da8b1b2d92fe6337e3e12e4680a22e39924b7a6a30e28692236fc0.
+
+.private/evidence/20261120-highlight-preferences-03/result.json PASS609 codec +
+95 preference integration on final pair. Model probe1536bytes/image1472 executes
+compiled C; independent Python CRC/wire checks cover24 valid pairs, v1 forward
+migration preserving existing fields, canonicalv2, sealed invalid schema/ranges,
+all512 single-bit damage cases, invalid lengths/nonmutation and global prefs
+across preset reset. Native profile exercises submenu enter/Back/focus/text slots,
+16 enabled pattern/threshold choices ->actual converter/consumer/driver/MMIO
+field checks, current preferences on foreign native update, globalOff restoration
+of latest native baseline, per-page toggle/global-choice separation, queuedold
+preference cancellation BEFOREcopy after a menu edit, retry newer captured choice,
+worker v2 save in80B record, first migration save preserving legacy slot and
+restart reload. UI/FS/kernel/colors/surfaces/engine/context/MMIO supplied.
+01 failed test bytearray input type for Unicorn;02 PASS609+91;03 adds4 stale-
+queued/retry cases, bounded menu-cycle helper and probe fingerprint/metadata.
+Production bytes unaffected by those test corrections.
+
+20261120-preferences-transactions-01.json PASS41 native transaction regressions
+on THIS preference module.20261120-preferences-cleanup-regression-01.json PASS27
+cleanup/publication +36 owned. OwnedFixture.toggle now selects the preference
+variant's actual view4/row0 via report metadata; old variant stillview1/row5.
+Cleanup CLI admits explicit preference kind with same API72 host requirements.
+Original30s/10M guards retained; all jobs terminal. Source hashes in all results
+and final module inputs verified current. Root71/no skips:
+20261120-preferences-root-tests.log. Ignored Graphify refreshed3160nodes/
+8443edges; all3 new code files present. Source-only evidence:
+evidence/20261120-highlight-preferences.json.
+
+NEXT: continue full remaining display ports, especially EVF/native preservation
+and orientation/portrait paths, native Info mirror and real histogram producer.
+Inspect new preference UI raster in assisted native rendering when applicable;
+physical camera appearance remains a separately authorized hardware test. Retain
+API72 caller/writer/math-task/lifetime and fixed consumer-only borrowed-gate
+contracts. Do not have GUI/style controls directly call native gate; they use
+asynchronous owned requests. Final integrated release candidate and exact
+installation/recovery assessment still required; no flash clearance or push.
+
 ## Native warning transactions API72 - November 20, 2026
 
 Previous0c49637 was PROGRESS (owned-only API64, foreign race reproduced). This

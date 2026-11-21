@@ -62,8 +62,9 @@ class OwnedFixture(ParameterProfileFixture):
         if result != 1 or self.read(PAYLOAD + 100) != 1: raise AssertionError('Native parameter copy/completion')
     def parameters(self): return bytes(self.u.mem_read(NATIVE + 0x28, 100))
     def toggle(self):
-        self.write(self.address('z7_settings_view'), 1); self.write(self.address('z7_settings_preset'), 0)
-        self.u.mem_write(0xa1833548 + 22, struct.pack('<2H', 5, 0))
+        preferences = bool(self.module.get('highlight_preferences'))
+        self.write(self.address('z7_settings_view'), 4 if preferences else 1); self.write(self.address('z7_settings_preset'), 0)
+        self.u.mem_write(0xa1833548 + 22, struct.pack('<2H', 0 if preferences else 5, 0))
         self.call(self.address('sm_activate'))
     def dispatch(self): return self.call(0x10239840, self.queued[-1])
 

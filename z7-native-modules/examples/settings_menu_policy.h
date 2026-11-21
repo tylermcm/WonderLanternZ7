@@ -122,6 +122,12 @@ static uint32_t sm_back(uint32_t object)
     if (!sm_owned(object)) return 0;
     uint32_t old = z7_settings_view;
     if (!old) return F(0x104025edu, uint32_t, uint32_t)(0x3a1);
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    if (old == 4) {
+        z7_settings_view = 1; sm_render(object); sm_focus(object, 5);
+        sm_redraw_request(); return 0;
+    }
+#endif
     z7_settings_view = old == 3 ? 2 : old == 2 ? 1 : 0;
     sm_render(object); sm_focus(object, old == 1 ? z7_settings_preset + 1 : old == 2 ? 1 : 6);
     sm_redraw_request();
@@ -147,6 +153,9 @@ static uint32_t sm_action(uint32_t object)
     } else if (view == 1) {
         if (!row) z7_settings_page(&SM_MODEL, p, !(SM_MODEL.enabled_pages & (1u << p)));
         else if (row == 1) z7_settings_view = 2;
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+        else if (row == 5) z7_settings_view = 4;
+#endif
         else if (row < 6) z7_settings_component(&SM_MODEL, p, row - 2, !(SM_MODEL.components[p] & (1u << (row - 2))));
         else z7_settings_reset(&SM_MODEL, p);
     } else if (view == 2) {
@@ -155,6 +164,13 @@ static uint32_t sm_action(uint32_t object)
     } else if (view == 3) {
         if (row < 2) z7_settings_information(&SM_MODEL, p, row + 6, !(SM_MODEL.information[p] & (1u << (row + 6))));
         else if (row == 6) z7_settings_view = 2;
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    } else if (view == 4) {
+        if (!row) z7_settings_component(&SM_MODEL, p, 3, !(SM_MODEL.components[p] & Z7_COMPONENT_HIGHLIGHTS));
+        else if (row == 1) z7_settings_highlights(&SM_MODEL, (SM_MODEL.highlight_pattern + 1) % 3, SM_MODEL.highlight_threshold);
+        else if (row == 2) z7_settings_highlights(&SM_MODEL, SM_MODEL.highlight_pattern, (SM_MODEL.highlight_threshold + 1) % 8);
+        else if (row == 6) z7_settings_view = 1;
+#endif
     }
 #ifdef Z7_SETTINGS_PERSISTENCE
     persistence_commit(&staged);
@@ -163,22 +179,47 @@ static uint32_t sm_action(uint32_t object)
     ++z7_settings_actions;
     z7_battery_enabled = !!(z7_menu_settings.flags & Z7_SETTINGS_BATTERY);
     sm_render(object);
-    if (view != z7_settings_view) sm_focus(object, 0);
+    if (view != z7_settings_view) sm_focus(object,
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+        view == 4 ? 5 :
+#endif
+        0);
     sm_redraw_request();
     return 0;
 }
 static uint32_t sm_render(uint32_t object)
 {
-    if (!sm_owned(object) || z7_settings_view > 3 || z7_settings_preset >= 4 || !sm_label_ownership()) return 0;
+    if (!sm_owned(object) || z7_settings_view >
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+        4
+#else
+        3
+#endif
+        || z7_settings_preset >= 4 || !sm_label_ownership()) return 0;
     static const char *const roots[7] = {"Custom pages", "Standard", "Minimal", "Composition", "Exposure", "Information display", "Battery percentage"};
     static const char *const preset[7] = {"Page enabled", "Shooting information", "Framing grid", "Histogram", "Virtual horizon", "Photo highlights", "Reset preset"};
     static const char *const info[7] = {"Shutter speed", "Aperture", "ISO sensitivity", "Shooting mode", "Release mode", "Focus information", "More information"};
     static const char *const extra[7] = {"Other information", "Focal length", "", "", "", "", "Back"};
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    static const char *const highlights[7] = {"Show on this page", "Pattern (all pages)", "Threshold (all pages)", "", "", "", "Back"};
+    static const char *const patterns[3] = {"OFF", "Type 1", "Type 2"};
+    static const char *const thresholds[8] = {"255", "248", "235", "224", "213", "202", "191", "180"};
+    const char *const *names = z7_settings_view == 4 ? highlights :
+        !z7_settings_view ? roots : z7_settings_view == 1 ? preset : z7_settings_view == 2 ? info : extra;
+#else
     const char *const *names = !z7_settings_view ? roots : z7_settings_view == 1 ? preset : z7_settings_view == 2 ? info : extra;
+#endif
     const char *title = !z7_settings_view ? "Display settings" : z7_settings_view == 1 ? roots[z7_settings_preset + 1] : "Shooting information";
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    if (z7_settings_view == 4) title = "Photo highlights";
+#endif
 #ifdef Z7_SETTINGS_PERSISTENCE
     uint32_t save_status = persistence_display_status();
-    title = sm_persistent_title(!z7_settings_view ? "Display" : z7_settings_view == 1 ? title : "Information", save_status);
+    title = sm_persistent_title(!z7_settings_view ? "Display" :
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+        z7_settings_view == 4 ? "Highlights" :
+#endif
+        z7_settings_view == 1 ? title : "Information", save_status);
 #endif
     sm_text_put(230, title);
 #ifdef Z7_SETTINGS_PERSISTENCE
@@ -195,6 +236,13 @@ static uint32_t sm_render(uint32_t object)
             mask = !row ? 1u << z7_settings_preset : 1u << (row - 2);
         } else if (z7_settings_view == 2 && row < 6) { bits = z7_menu_settings.information[z7_settings_preset]; mask = 1u << row; }
         else if (z7_settings_view == 3 && row < 2) { bits = z7_menu_settings.information[z7_settings_preset]; mask = 1u << (row + 6); }
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+        else if (z7_settings_view == 4) {
+            if (!row) { bits = z7_menu_settings.components[z7_settings_preset]; mask = Z7_COMPONENT_HIGHLIGHTS; }
+            else if (row == 1) value = patterns[z7_menu_settings.highlight_pattern];
+            else if (row == 2) value = thresholds[z7_menu_settings.highlight_threshold];
+        }
+#endif
         if (mask) value = bits & mask ? "ON" : "OFF";
         if (!names[row][0] || (z7_settings_view && row == 6 && z7_settings_view != 2)) value = "";
         sm_text_put(231 + row, names[row]); sm_text_put(238 + row, value);

@@ -886,3 +886,21 @@ writer closure, native math/task wait graph, engine allocation lifetime and
 pre-cold boot sequencing remain unproved. Physical pixels, camera update
 acceptance and recovery require separate hardware validation and authorization.
 See `evidence/20261120-native-warning-transactions.json` and root HANDOFF.md.
+
+## Configurable pattern and threshold
+
+`display-highlight-preferences-probe` adds the global pattern/threshold controls
+from the pinned photo-zebra design to the API72 profile. Its per-preset component
+mask still controls whether highlights are requested on that page. The new menu
+keeps global Off separate from each page's visibility choice. The eight native
+levels are255,248,235,224,213,202,191,180, default248; enabled patterns1/2 map to
+the original request bytes0/1. No physical appearance is inferred from names.
+
+Both foreign conversion and owned asynchronous requests use captured GUI
+snapshot values. Preference revisions invalidate stale queued work. The existing
+lease continues to retain the latest Nikon baseline across pattern changes and
+restores it when the page/global preference turns off. The version2 settings
+payload migrates old records and persists the two new global words through the
+existing two-slot journal. The API72 host bytes are unchanged. LCD scope remains;
+EVF/orientation and physical raster validation are separate work.
+See [version2 preferences](DISPLAY_SETTINGS.md#highlight-preferences-version2).

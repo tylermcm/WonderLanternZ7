@@ -23,6 +23,9 @@
 #define Z7_INFO_FOCAL 128u
 struct z7_display_settings {
     uint32_t flags, enabled_pages, components[4], information[4];
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    uint32_t highlight_pattern, highlight_threshold;
+#endif
 };
 void z7_settings_defaults(struct z7_display_settings *);
 uint32_t z7_settings_valid(const struct z7_display_settings *);
@@ -34,4 +37,7 @@ uint32_t z7_settings_next(const struct z7_display_settings *, uint32_t);
 uint32_t z7_settings_information(struct z7_display_settings *, uint32_t, uint32_t, uint32_t);
 uint32_t z7_settings_component(struct z7_display_settings *, uint32_t, uint32_t, uint32_t);
 uint32_t z7_settings_flag(struct z7_display_settings *, uint32_t, uint32_t);
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+uint32_t z7_settings_highlights(struct z7_display_settings *, uint32_t pattern, uint32_t threshold);
+#endif
 #endif

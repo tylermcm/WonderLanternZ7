@@ -95,6 +95,12 @@ owned feature drains while native traffic continues through a terminal lane.
 Use its exact paired host/module bundle; cross-profile module loading is
 unvalidated. See [native warning transactions](PHOTO_HIGHLIGHTS.md#native-warning-transactions-api72)
 for the supplied schedules and remaining native/hardware gaps.
+`display-highlight-preferences-probe` uses that same API72 host and adds a
+highlight submenu: a per-page visibility toggle, global Off/Type1/Type2 pattern,
+and eight global thresholds. Its optional version2 settings payload migrates
+version1 records to Pattern1/248 and keeps the existing64-byte payload/80-byte
+journal sizes. Older variants retain version1 and rebuild byte-identically.
+See [highlight preferences](DISPLAY_SETTINGS.md#highlight-preferences-version2).
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

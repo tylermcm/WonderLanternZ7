@@ -1172,3 +1172,47 @@ movie/EVF selection rejection and original key admission. This is not a custom
 information-page implementation; the bit16 configuration guard remains until
 actual owned entry/return/update routing is installed and tested. See
 `Z7_INFORMATION_APP_RESEARCH.md` and `evidence/20261120-information-native.json`.
+
+## Highlight preferences version2
+
+The optional `display-highlight-preferences-probe` composes the API72 native
+warning transaction profile with the pinned photo-zebra preference semantics.
+Its Highlight entry in each preset opens a submenu with these controls:
+
+| Control | Scope | Values |
+| --- | --- | --- |
+| Show on this page | Selected DISP preset | ON/OFF |
+| Pattern (all pages) | Global | OFF, Type1, Type2 |
+| Threshold (all pages) | Global | 255,248,235,224,213,202,191,180 |
+
+Pattern1/248 preserve the earlier fixed behavior. Pattern names identify the
+native enumeration; physical appearance is not established by these tests.
+Back returns to the Highlight row of the owning preset. Per-preset reset keeps
+the global pattern/threshold choices. Turning a page or global pattern off
+restores the latest captured native baseline rather than erasing Nikon settings.
+
+Only this variant defines `Z7_HIGHLIGHT_PREFERENCES`. Its in-memory model adds
+two words (48 bytes total); the wire payload stays64 bytes. `Z7C1` payload
+version2 uses former reserved words56/60 for pattern0..2 and threshold index0..7.
+The existing `Z7J1` envelope remains80 bytes and keeps the same two-slot transport.
+The new decoder accepts valid version1 payloads with zero reserved words and
+supplies pattern1/threshold index1. All existing flags, page masks and component/
+information selections are preserved. Migration does not write during startup;
+a later actual edit is saved canonically as version2 by the existing worker.
+Older modules cannot read version2 payloads. Earlier variants still emit version1.
+
+The menu is the settings writer. GUI publication captures pattern/threshold in
+its bounded snapshot and epoch; conversion uses that captured choice at native
+consumption. A preference edit before consumption cancels old queued work before
+parameter copying. A fresh publication retries the new choice. GUI actions
+perform no file I/O. Saving, verification and restart loading use the existing
+worker/journal path.
+
+The scoped audit passes609 codec/migration checks and95 native menu/parameter/
+register/persistence checks. All16 enabled pattern/threshold combinations reach
+original-Z7 conversion and register programming; global Off, latest native
+baseline restoration, page visibility, stale queued edits, first migration save
+and restart loading are exercised. The settings controller emits the expected
+native label slots; menu raster and physical camera pixels remain unverified.
+Native transaction41 and cleanup27/ownership36 regressions also pass with this
+variant. See `evidence/20261120-highlight-preferences.json` and root HANDOFF.md.

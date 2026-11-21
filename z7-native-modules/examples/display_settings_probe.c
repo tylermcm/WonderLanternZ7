@@ -17,6 +17,9 @@ __attribute__((noinline)) uint32_t z7_settings_operation(uint32_t operation, uin
     case 6: return z7_settings_information(&z7_settings_model, a, b, c);
     case 7: return z7_settings_component(&z7_settings_model, a, b, c);
     case 8: return z7_settings_flag(&z7_settings_model, a, b);
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    case 9: return z7_settings_highlights(&z7_settings_model, a, b);
+#endif
     default: return 0;
     }
 }

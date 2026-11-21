@@ -259,7 +259,8 @@ def main():
         p.error('Exact host/module required')
     admitted = module.get('kind') in ('original-Z7-display-highlight-cleanup-diagnostic', 'original-Z7-display-highlight-cached-diagnostic',
                                     'original-Z7-display-highlight-coordinated-diagnostic',
-                                    'original-Z7-display-highlight-native-transaction-diagnostic')
+                                    'original-Z7-display-highlight-native-transaction-diagnostic',
+                                    'original-Z7-display-highlight-preferences-diagnostic')
     if (not host.get('frame_permission_hooks') or not admitted or
         module['api_minimum_bytes'] > host.get('api_bytes', 0) or
         (module['api_minimum_bytes'] >= 60 and not host.get('cached_frame_permission_hooks')) or

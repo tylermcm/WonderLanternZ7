@@ -119,6 +119,7 @@ static uint32_t highlight_native_lease_capture(const struct z7_highlight_snapsho
     z7_highlight_owned_parked = !ok;
     return ok;
 }
+#ifndef Z7_HIGHLIGHT_PREFERENCES
 static void highlight_owned_request_make(struct highlight_native_request *request)
 {
     for (uint32_t i = 0; i < sizeof(*request); ++i) ((volatile uint8_t *)request)[i] = 0;
@@ -129,6 +130,7 @@ static void highlight_owned_request_make(struct highlight_native_request *reques
     }
     request->horizontal = request->vertical = 4;
 }
+#endif
 static uint32_t highlight_owned_cancel(void)
 {
     z7_highlight_request_cancel_claim(&z7_highlight_owned_request);
@@ -160,7 +162,11 @@ static uint32_t highlight_owned_before(void *packet)
         if (same && !lease.record.disabled && lease.record.epoch == epoch && lease.record.palette == palette)
             return highlight_owned_cancel(); /* Native update already settled it. */
         struct highlight_native_request request;
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+        if (!highlight_preferences_request_make(&request, &wanted)) return highlight_owned_cancel();
+#else
         highlight_owned_request_make(&request);
+#endif
         if (!z7_highlight_request_convert_deferred(&z7_highlight_owned_request, &request, epoch) ||
             !highlight_current(&publication) || publication.epoch != epoch || W(0xa1f18facu) != palette ||
             generation != __atomic_load_n(&z7_highlight_native_parameter_generation, __ATOMIC_ACQUIRE)) return highlight_owned_cancel();

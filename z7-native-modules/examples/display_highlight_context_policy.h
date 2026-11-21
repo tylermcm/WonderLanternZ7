@@ -44,6 +44,11 @@ static void highlight_gui_publish(void)
         (settings.enabled_pages & (1u << view.preset)) &&
         (settings.components[view.preset] & Z7_COMPONENT_HIGHLIGHTS);
     view.wanted = !!view.wanted;
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    view.pattern = valid ? settings.highlight_pattern : 0;
+    view.threshold = valid ? settings.highlight_threshold : 1;
+    view.wanted = view.wanted && view.pattern != 0;
+#endif
     view.eligible = context && view.context.mode == 0 && view.context.selector == 0 &&
         view.context.output_kind == 1 && view.context.ready == 1 &&
         (view.context.service == 3 || view.context.service == 4) && highlight_ui_ready();
@@ -134,6 +139,24 @@ struct highlight_native_request {
     uint32_t horizontal, vertical;
     uint8_t patterns[2], tail[2];
 };
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+/* Independent original-Z7 request construction, following the pinned MIT
+ * JKWTCN photo_zebra.h settings semantics. LCD only; EVF admission unchanged. */
+static uint32_t highlight_preferences_request_make(struct highlight_native_request *r,
+                                                   const struct z7_highlight_snapshot *s)
+{
+    static const uint16_t levels[8] = {255,248,235,224,213,202,191,180};
+    if (s->view.pattern > 2 || s->view.threshold > 7) return 0;
+    for (uint32_t i = 0; i < sizeof(*r); ++i) ((volatile uint8_t *)r)[i] = 0;
+    r->enabled = s->view.pattern != 0;
+    for (uint32_t i = 0; i < 2; ++i) {
+        r->groups[i * 4] = 255; r->groups[i * 4 + 1] = levels[s->view.threshold];
+        r->groups[i * 4 + 2] = 15; r->groups[i * 4 + 3] = 5;
+        r->patterns[i] = s->view.pattern ? s->view.pattern - 1 : 2;
+    }
+    r->horizontal = r->vertical = 4; return 1;
+}
+#endif
 _Static_assert(sizeof(struct highlight_native_request) == 36 &&
     offsetof(struct highlight_native_request, groups) == 6 &&
     offsetof(struct highlight_native_request, horizontal) == 24 &&
@@ -163,6 +186,10 @@ static void highlight_native_parameters(uint32_t command, void *payload100)
     if (!ram(palette, 256 * 4)) return;
     struct highlight_native_request request;
     uint32_t converted[25];
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    if (!highlight_preferences_request_make(&request, &snapshot)) return;
+    for (uint32_t i = 0; i < 25; ++i) ((volatile uint32_t *)converted)[i] = 0;
+#else
     for (uint32_t i = 0; i < sizeof(request); ++i) ((volatile uint8_t *)&request)[i] = 0;
     for (uint32_t i = 0; i < 25; ++i) ((volatile uint32_t *)converted)[i] = 0;
     request.enabled = 1;
@@ -173,6 +200,7 @@ static void highlight_native_parameters(uint32_t command, void *payload100)
         request.groups[i * 4 + 3] = 5;
     }
     request.horizontal = request.vertical = 4;
+#endif
     F(0x1034fe23u, void, void *, const void *, uint32_t)(converted, &request, 1);
     if (!highlight_current(&final) || final.epoch != snapshot.epoch || W(0xa1f18facu) != palette) return;
     volatile uint32_t *data = payload100;

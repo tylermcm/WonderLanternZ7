@@ -25,6 +25,9 @@ void z7_settings_defaults(struct z7_display_settings *s)
 {
     if (!s) return;
     s->flags = 0; s->enabled_pages = 15;
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    s->highlight_pattern = 1; s->highlight_threshold = 1;
+#endif
     for (uint32_t i = 0; i < 4; ++i) {
         s->components[i] = default_components[i]; s->information[i] = default_information[i];
     }
@@ -32,6 +35,9 @@ void z7_settings_defaults(struct z7_display_settings *s)
 uint32_t z7_settings_valid(const struct z7_display_settings *s)
 {
     if (!s || s->flags & ~3u || !s->enabled_pages || s->enabled_pages & ~31u) return 0;
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    if (s->highlight_pattern > 2 || s->highlight_threshold > 7) return 0;
+#endif
     for (uint32_t i = 0; i < 4; ++i)
         if (s->components[i] & ~15u || s->information[i] & ~255u) return 0;
     return 1;
@@ -42,9 +48,15 @@ uint32_t z7_settings_encode(const struct z7_display_settings *s, uint8_t *out, u
     /* Stage all bytes before writing so source/output overlap is well-defined. */
     uint8_t packet[Z7_SETTINGS_BYTES];
     put32(packet, 0x3143375au); put32(packet + 4, 1); put32(packet + 8, 0x03800007u);
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    put32(packet + 4, 2);
+#endif
     put32(packet + 12, 0);
     put32(packet + 16, s->flags); put32(packet + 20, s->enabled_pages);
     put32(packet + 56, 0); put32(packet + 60, 0);
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    put32(packet + 56, s->highlight_pattern); put32(packet + 60, s->highlight_threshold);
+#endif
     for (uint32_t i = 0; i < 4; ++i) {
         put32(packet + 24 + i * 4, s->components[i]); put32(packet + 40 + i * 4, s->information[i]);
     }
@@ -55,9 +67,20 @@ uint32_t z7_settings_encode(const struct z7_display_settings *s, uint8_t *out, u
 uint32_t z7_settings_decode(const uint8_t *p, uint32_t bytes, struct z7_display_settings *out)
 {
     if (!p || !out || bytes != Z7_SETTINGS_BYTES || get32(p) != 0x3143375au ||
-        get32(p + 4) != 1 || get32(p + 8) != 0x03800007u || get32(p + 56) || get32(p + 60) || get32(p + 12) != crc(p)) return 0;
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+        (get32(p + 4) != 1 && get32(p + 4) != 2) ||
+        (get32(p + 4) == 1 && (get32(p + 56) || get32(p + 60))) ||
+        get32(p + 8) != 0x03800007u || get32(p + 12) != crc(p)
+#else
+        get32(p + 4) != 1 || get32(p + 8) != 0x03800007u || get32(p + 56) || get32(p + 60) || get32(p + 12) != crc(p)
+#endif
+        ) return 0;
     struct z7_display_settings staged;
     staged.flags = get32(p + 16); staged.enabled_pages = get32(p + 20);
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    staged.highlight_pattern = get32(p + 4) == 1 ? 1 : get32(p + 56);
+    staged.highlight_threshold = get32(p + 4) == 1 ? 1 : get32(p + 60);
+#endif
     for (uint32_t i = 0; i < 4; ++i) {
         staged.components[i] = get32(p + 24 + i * 4); staged.information[i] = get32(p + 40 + i * 4);
     }
@@ -100,3 +123,10 @@ uint32_t z7_settings_flag(struct z7_display_settings *s, uint32_t flag, uint32_t
     if (!z7_settings_valid(s) || flag >= 2 || enabled > 1) return 0;
     s->flags = enabled ? s->flags | (1u << flag) : s->flags & ~(1u << flag); return 1;
 }
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+uint32_t z7_settings_highlights(struct z7_display_settings *s, uint32_t pattern, uint32_t threshold)
+{
+    if (!z7_settings_valid(s) || pattern > 2 || threshold > 7) return 0;
+    s->highlight_pattern = pattern; s->highlight_threshold = threshold; return 1;
+}
+#endif

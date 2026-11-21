@@ -7,6 +7,9 @@
 struct z7_highlight_view {
     struct z7_highlight_context context;
     uint32_t settings_revision, preset, wanted, eligible, preset_generation;
+#ifdef Z7_HIGHLIGHT_PREFERENCES
+    uint32_t pattern, threshold;
+#endif
 };
 struct z7_highlight_publication {
     uint32_t sequence, epoch, halted;
