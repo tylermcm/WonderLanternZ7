@@ -1,5 +1,34 @@
 # Laptop handoff — October 20, 2026
 
+## Observed native MENU/playback task guard - November 21, 2026
+
+Previous0019fc4 added original i-menu classification. Native configuration
+10053A50/101F2474/101F247A identifies APPMENU10007 and APPPLAY10008. Original
+constructors1048B0E8/105006E8 bind A182ECB8/A183DD90; object getters1048B0E4/
+105006E4. Both use1020BA5E and native kernel event/task creation. Task state is
++74, NOT pinned Z7II+6C; getter/setter10465020/10465026. Setter0 also clears94/98.
+
+New plugins/portrait_takeover.h checks native object/callback identities and
+states, rejecting1..3/unknown, admitting0/4 only to continued page classification.
+portrait_page.h checks this before and after native i-menu queries. It observes
+task state; pending-request fences, task exclusion, ABA/lifetime and full live/
+external/magnified page policy are NOT established. No portrait callback installed.
+
+Private portrait-takeover-01 PASS1044 (native constructors/config/getters/setters,
+supplied kernel creation, all256 state values/ownership/races). Task bodies do
+not run. Probe320 SHA2130bd7497cc34c71efcb700b040da734577a2e6dfdbbbbd281823613c9d8b51.
+Updated portrait-page-02 PASS3070, including both native tasks and observed changes
+during page queries. Probe448 SHAb196c545d96711261c546df798ebfe01d78ef72c66ff2af973c3d126abed1988.
+Root71/no skips; direct fingerprints current. Ignored Graphify3447nodes/9328edges,
+existing parser warnings. See z7-native-modules/PORTRAIT_RESEARCH.md and updated
+evidence/20261121-portrait-page.json plus20261121-portrait-takeover.json.
+
+Next bind pending native screen requests and live/external/magnified exclusions,
+then connect the graphics callback to full portrait reflow/text/input/settings.
+Native font-file/bitmap symbols, Info mirror, real histogram producer, native
+lifetime/writer closure and exact install/recovery remain unfinished. Full goal
+ACTIVE. Accepted firmware/module bytes unchanged; no camera/card/stage/flash/push.
+
 ## Original i-menu page binding - November 21, 2026
 
 Previous43b148c established read-only logical2 LCD target lookup. New

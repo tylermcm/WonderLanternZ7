@@ -367,6 +367,33 @@ The previously documented supplied-NULL allocator counterexamples remain open.
 
 ### Original i-menu classification
 
+The later observed-task guard extends the initial classifier below. Native
+configuration getter `10053A50` and registration `101F2474` establish the task
+table; `101F247A(10007/10008)` yields named APPMENU/APPPLAY configurations.
+Original constructors `1048B0E8`/`105006E8` bind objects `A182ECB8`/`A183DD90`.
+Their getters are `1048B0E4`/`105006E4`. Both use generic `1020BA5E`, which calls
+kernel event/task creation. Original task state is at +74, NOT pinned Z7II +6C;
+native getter/setter `10465020`/`10465026` access that byte. Setter0 also clears
+the two words at +94/+98. Native object templates start with state4.
+
+`plugins/portrait_takeover.h` verifies the object getters and original init/poll
+callback identities, reads both native states and checks observed consistency.
+States1..3 and unknown values reject;0/4 permit continued page classification.
+`portrait_page.h` invokes this guard before and after its original i-menu queries.
+This observes active native tasks; it is not a pending-request fence, task lock,
+ABA exclusion or complete live/external/magnified-page admission policy.
+
+Private `20261121-portrait-takeover-01/result.json` passed1044 checks: native
+configuration/name lookup, both constructors with supplied kernel boundaries,
+all256 states through native setter/getter and the compiled guard, inactive
+combinations, callback ownership and changes observed during queries. Kernel
+task/event creation returns supplied success; no native task body executes.
+Private `portrait-page-02/result.json` passed3070 checks, including both tasks'
+all256 state values and changes during i-menu getter calls. Reproducible
+takeover/page probes are320/448 bytes. No real scheduling, boot or pixels proved.
+See [takeover evidence](../evidence/20261121-portrait-takeover.json) and
+[updated page evidence](../evidence/20261121-portrait-page.json).
+
 The original app registration prefix `1030CF74..1030D00A` binds index3 to
 `A1829970`. Original indices4/5 bind `A1829B1C`/`A1829B40`, not the same i-menu
 root. Native getters `10385B6A`/`10385B72` read mode/variant at `A18298B8`/+1.
@@ -378,11 +405,12 @@ upstream constants rather than applying an address offset.
 `plugins/portrait_page.h` classifies that original i-menu root into grid
 (mode3, or mode0/variant0-or29), dial (mode2/variant0-or29), setting (remaining
 modes0..2) or other. It queries the original getters and rechecks app/root and
-mode/variant afterward. It does not admit drawing, exclude physical MENU or
-playback task takeover, classify live/external pages, or establish task lifetime.
-The caller must supply those final policies before the portrait callback uses it.
+mode/variant afterward. The observed-task guard above extends this classifier;
+it still does not admit drawing, fence pending native requests, classify
+live/external pages or establish task lifetime. The caller must supply those
+final policies before the portrait callback uses it.
 
-Private `20261121-portrait-page-01/result.json` passed2552 checks: actual native
+The initial private `20261121-portrait-page-01/result.json` passed2552 checks: actual native
 registration prefix, all256 variants through the original routing branch,
 2032 compiled classification cases, other app IDs, foreign roots and observed
 changes during the getter calls. The reproducible probe is256 bytes. Inputs and

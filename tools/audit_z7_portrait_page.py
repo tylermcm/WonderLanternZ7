@@ -1,8 +1,8 @@
 """Original Z7 app registry/getters and i-menu variant routing prefix.
 
 SPDX-License-Identifier: MIT. App registration prefix, native state getters and
-variant routing branch execute. State/race inputs supplied. No task takeover
-admission, reflow, input mapping, full boot, rendering, camera or card access.
+variant routing branch execute, with observed native task state guards. State/race
+inputs supplied. No pending-request fence, reflow, input mapping, full boot or pixels.
 """
 import argparse
 import hashlib
@@ -67,8 +67,20 @@ def audit(raw,packet,metadata):
         f.setup(3,0);f.mutation=(p,data)
         check(f'observed-change-across-query{p}',f.call(f.operation)==0 and f.getters==[0x10385b6a,0x10385b72])
         f.u.mem_write(ROOTS+12,struct.pack('<I',0xa1829970))
+    for task in (0xa182ecb8,0xa183dd90):
+        for mode in range(256):
+            f.setup(3,0);f.u.mem_write(task+0x74,bytes([mode]))
+            got=f.call(f.operation)
+            check(f'task{task}-state{mode}-gates-imenu',got==int(mode in (0,4)) and
+                  f.getters==([0x10385b6a,0x10385b72] if mode in (0,4) else []))
+        f.u.mem_write(task+0x74,b'\4')
+        for off,data in ((0x74,b'\1'),(0x38,bytes(4)),(0x3c,bytes(4))):
+            p=task+off;saved=bytes(f.u.mem_read(p,len(data)));f.setup(3,0);f.mutation=(p,data)
+            check(f'task-change-during-page-query{p}',f.call(f.operation)==0 and f.getters==[0x10385b6a,0x10385b72])
+            f.u.mem_write(p,saved)
     return dict(passed=True,checks=checks,classification_cases=len(cases),original_app_registration_state_getters_and_variant_branch_execute=True,
-                app_state_and_race_inputs_supplied=True,native_task_takeover_page_admission_reflow_input_mapping_or_pixels_proven=False,camera_card_access=False)
+                app_state_and_race_inputs_supplied=True,observed_task_takeover_guard_integrated=True,
+                pending_request_fence_page_admission_reflow_input_mapping_or_pixels_proven=False,camera_card_access=False)
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
@@ -81,7 +93,8 @@ def main():
     result=audit(raw,packet,metadata)
     names=('tools/audit_z7_portrait_page.py','tools/audit_z7_information_native.py','tools/audit_splash_image.py',
            'tools/build_z7_module.py','z7-native-modules/sdk/module.h','z7-native-modules/sdk/module.ld',
-           'z7-native-modules/plugins/portrait_page.h','z7-native-modules/examples/portrait_page_probe.c')
+           'z7-native-modules/plugins/portrait_page.h','z7-native-modules/plugins/portrait_takeover.h',
+           'z7-native-modules/examples/portrait_page_probe.c')
     result.update(probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),
                   source_sha256={n:hashlib.sha256((ROOT/n).read_bytes()).hexdigest() for n in names})
     out.mkdir(parents=True);(out/'probe.BIN').write_bytes(packet)
