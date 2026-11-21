@@ -365,6 +365,46 @@ The previously documented supplied-NULL allocator counterexamples remain open.
 
 ## Remaining integration
 
+### Native GRID messages and loaded diagnostic callback
+
+`portrait_grid_message.h` now extracts original rectangle13/16/17 bottom-origin
+coordinates, packed image19/1A coordinates and fixed1C 16.16 coordinates. Mode1
+uses source width/height; angle comes from original word15, not Z7II word16.
+Invalid messages leave output/message/payload unchanged. The GRID-only path
+selects tiles, shared borders, the 480x219 portrait backdrop, title placement and
+two-part title clearing before using the synchronous batch adapter. Preview
+copies, unsupported/pre-rotated tile images and unrelated geometry fall through.
+Footer/dial and complete transition policies remain unfinished.
+
+Private `20261121-portrait-grid-message-01/result.json` passed996 checks with266
+native draws. It exercises all12 tiles in both orientations, rectangle and image
+commands, modes0/1, signed source coordinates, fractional fixed1C coordinates,
+native angle layout, split borders, backdrop/title and no-side-effect rejection.
+The reproducible standalone message probe is2304 bytes. Native normalization and
+completion execute; backend renderer/events and page admission are supplied.
+
+`examples/portrait_grid_host_probe.c` is an emulator-only API84 module registering
+an actual grid callback. It checks native scene, i-menu GRID page, observed MENU/
+playback states and logical2 exclusive-LCD target, samples original orientation,
+then rechecks page/target/scene before handling a native message. The host loader
+stages registration and its worker binds the resident bridge. The probe does not
+provide a pending-request fence, task lock/lifetime closure, latched transition
+layout, text/footer/dial/input/settings or complete portrait behavior. The
+functional combined display module remains unchanged.
+
+Private `20261121-portrait-grid-host-02/result.json` passed32 loaded-module checks:
+actual filesystem wrapper/loader/relocation, SDK registration/worker/bridge,
+native registry prefix, page/state/target/orientation getters and original draw/
+completion instructions execute. It covers rectangle17 and image19/1A/fixed1C,
+two-draw borders with one completion, native scene/app/task/target exclusions,
+unknown/landscape orientation, changes observed during lookup, foreign slot
+ownership and API80 runtime rejection with module cleanup before publication.
+Filesystem/kernel/allocator, UI/task/target/orientation state and backend rendering
+are supplied. No actual scheduled graphics task, complete boot, pixels, card or
+camera update acceptance is proved. The reproducible loaded probe is2944 bytes.
+See [message evidence](../evidence/20261121-portrait-grid-message.json) and
+[loaded-module evidence](../evidence/20261121-portrait-grid-host.json).
+
 ### Grid tile/edge reflow and synchronous batches
 
 `plugins/portrait_grid.h` ports pinned JKWTCN's 6x2-to-4x3 tile placement:

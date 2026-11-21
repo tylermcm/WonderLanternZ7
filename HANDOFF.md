@@ -1,5 +1,42 @@
 # Laptop handoff — October 20, 2026
 
+## Raw GRID messages and loaded portrait diagnostic - November 21, 2026
+
+Previousa2b3833 reflowed caller-supplied geometry. New portrait_grid_message.h
+extracts original rect13/16/17, packed19/1A and fixed1C geometry (native angle15,
+mode1 source dimensions). GRID tiles/shared borders/backdrop/title placement and
+two-part title clearing now dispatch from the actual native message. Invalid/
+unrelated/preview/pre-rotated tile inputs fall through without side effects.
+Footer/dial, transition layout, text/input/settings still unfinished.
+
+New examples/portrait_grid_host_probe.c registers an actual API84 callback. It
+checks scene, observed native task/i-menu GRID state, exclusive LCD logical2
+target and original orientation, then rechecks context before reflow. Loader
+stages registration; worker installs resident bridge. This is an EMULATOR-ONLY
+diagnostic, not the functional combined display module or release candidate.
+Pending-request fence, graphics task/lifetime/ABA closure and complete page/
+transition policy are still NOT established. No camera/card/stage/flash/push.
+
+Private portrait-grid-message-01 PASS996/266 native draws, probe2304/2240image/
+0BSS/0relocs, reproducible SHA25a20a22595145418f55b5466a0112828908ef754622843eae1dfac30518f5d2.
+portrait-grid-host-02 PASS32 actual loaded SDK/bridge/page/target/orientation/
+draw/completion cases; probe2944/2880image/8BSS/0relocs, reproducible SHA
+e40f4ad396780bfa8b6b8694049aea9a0672edd2957c1d160b684fe148011404.
+Includes native context exclusions, split-border single acknowledgement,
+scene changes during lookup, foreign slot and API80 runtime rejection/cleanup.
+UI/task/registry/orientation, kernel/fs/allocator and backend are supplied; no
+full boot, scheduled graphics tasks, real card I/O, pixels or update acceptance.
+Final host probe bytes match host-01; host-02 adds API80 check and audit cleanup.
+Host MAIN unchanged390368fbfb49850eeaeb5c7d729b30bd39ad8077c73f4592480bbc65888c3ef9.
+Root71/no skips; direct fingerprints verified. Ignored Graphify3503nodes/9511edges
+with existing warnings. See evidence/20261121-portrait-grid-{message,host}.json
+and z7-native-modules/PORTRAIT_RESEARCH.md. Full original goal ACTIVE.
+
+Next full footer/dial/settings/text/input and latched orientation/cleanup policy,
+pending screen requests/live/external/magnified admission, native font files/
+symbols, Info mirror, real histogram, lifetime/writer closure and exact install/
+recovery assessment. Original accepted functional display/highlight pair unchanged.
+
 ## Portrait grid reflow and batched native drawing - November 21, 2026
 
 Previous0ae2d68 added observed native MENU/playback guards. Pending request word
