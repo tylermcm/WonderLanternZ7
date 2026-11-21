@@ -61,3 +61,38 @@ per-output requests and the currently shared module-owned100-byte parameter
 block. Do not move native synchronous queue waits into consumer callbacks.
 The native-update-driven EVF profile remains unchanged while this binding is
 unfinished; it continues to wait for matching native updates.
+
+## Compiled write observation core
+
+`plugins/cache_observation.h` supplies a12-byte active/serial/halted record. Every
+covered complete write increments active and serial before the write, then serial
+and decrements active after it. Counts support overlapping writers; serial parity
+alone is not used for admission. A reader obtains a ticket, performs its copy,
+then checks that serial still matches and active is zero. Three-attempt bounded
+CAS operations halt observation on exhaustion/contention failure instead of
+recycling identities. Invalid/unbalanced retirements halt observation. Halting
+observation does not block the original native writer; integration must stop or
+drain owned features that require trustworthy snapshots.
+
+The core does not perform the payload copy, exclude writers, pin pointers or make
+later parameter application atomic. All relevant writers and bank/index changes
+must participate. Caller owns aligned observation state and a separate exclusive
+ticket output; native payload reads need the appropriate volatile/order contract.
+State initialization/activation must precede all writes relevant to an admitted
+snapshot. A writer that began before observation activation is not covered merely
+by reading an idle counter afterward.
+
+The constructor at10433C78 also writes the request via memcpy10433CEE. Normal
+writer copy sites are10434910/1043494A/1043497E. These are candidates for native
+bridges, not an exhaustive writer inventory. Constructor header and neighboring
+fields are written separately; the current test brackets only request-copy spans.
+
+`tools/audit_z7_cache_observation.py` compiles a reproducible576-byte flat probe
+and passes48 checks. Real setter and constructor copies at LCD/EVF logical outputs
+pause after16 bytes: raw equal reads are torn and compiled observation rejects
+both current and stale tickets. Native completion preserves original guards and
+admits a new ticket. Overlapping writers, balanced/invalid retirements, counter
+exhaustion and continued native writes after observation halt are checked.
+Probe execution includes compiled atomic instructions; begin/end boundaries and
+task scheduling remain supplied by the test. There are no installed firmware
+bridges, module-host loader checks, physical lifetime or automatic handoff claims.

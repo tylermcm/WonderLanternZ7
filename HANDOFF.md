@@ -1,5 +1,58 @@
 # Laptop handoff — October 20, 2026
 
+## Compiled cache write observation core - November 20, 2026
+
+Previousac58cb1 was PROGRESS (native cache/torn-read proof). This checkpoint is
+PROGRESS toward original full automatic LCD/EVF handoff: bounded atomic cache
+observation core plus actual native setter AND constructor copy tests. Existing
+firmware host, SDK/API72 and display module bytes unchanged. Full goal ACTIVE;
+no camera/card/staging/flash/push. This core is NOT a finished producer binding.
+
+NEW plugins/cache_observation.h keeps active/serial/halted in12 bytes. Every
+covered writer begins before its complete request write, returns token1, and
+retires it once afterward. Active counts overlapping/nested writers; serial
+advances on begin/end. Reader obtains ticket, copies data, then validates ticket
+with active0 and matching non-exhausted serial. Bounded3-CAS retries; exhaustion,
+unbalanced/invalid retirement or retry failure halt observation without counter
+reuse. Token0 never denies the original native write. There is NO reader lock,
+writer exclusion, native bank/allocation pin or later-application atomicity.
+Integration must drain owned features when observation halts and cover every
+writer; copying still needs the proper volatile/native ordering contract.
+
+New original-Z7 constructor10433C78 also copies request36 at10433CEE, besides
+regular writer104348E4 at10434910/1043494A/1043497E. It initializes header/other
+fields separately. A regular-setter-only hook would miss request initialization.
+Direct-BL scan and PC-relative literal scans are research leads, not full writer/
+indirect caller closure. INDEX initialized bytes observed0000010002020000;
+index immutability and all transitions remain unproved. Future host must close
+constructor/init, normal writers, index lifetime and activation before snapshots.
+Existing early cold-state reservation precedes native workspace allocation;
+validate its ordering against all cache initialization before using it to seed
+observation. Avoid synchronous producer queue waits inside native consumer.
+
+.private/evidence/20261120-cache-observation-03/result.json PASS48 checks.
+Probe576file/512image/0BSS/0relocations/reproducible. Compiled ARM atomics plus
+original native setter and constructor/memcpy execute. At output1 and4 both
+writers pause before request memcpy and after16/36 stores. Two equal raw reads
+are torn; compiled observer rejects ticket and stale generation; resumed writer
+keeps stack/callee-saves, completion admits fresh generation. Covers overlapping
+writers (even serial still busy), balanced retirement, inactive/no-token behavior,
+invalid/unbalanced token halt, active overflow, serial exhaustion/nonreuse and
+native writes continuing after observation halt. Observation begin/end boundaries
+are supplied by audit, NOT installed firmware hooks; flat zero-relocation probe
+load is NOT module loader validation.01 missing fixture memory helper corrected;
+02 PASS48;03 adds complete direct build-input fingerprints/PASS48.10s/10M guards.
+All source hashes verified current. Root71/no skips:
+20261120-cache-observation-root-tests.log. Ignored Graphify refreshed
+3225nodes/8635edges; all3 new code files present.
+
+Details:z7-native-modules/Z7_HIGHLIGHT_CACHE_RESEARCH.md; source-only evidence
+`evidence/20261120-cache-observation.json`. NEXT: wire complete request-copy spans
+into opt-in host bridges, establish early activation and bank/index/writer closure,
+then expose coherent native requests for automatic baseline/handoff integration.
+Native-update-driven EVF remains the latest functional module. All other original
+ports/lifecycle and integrated installation/recovery requirements remain open.
+
 ## Native highlight cache binding and torn-read proof - November 20, 2026
 
 Previous3362f4f was PROGRESS (native-update-driven EVF). This is PROGRESS toward
