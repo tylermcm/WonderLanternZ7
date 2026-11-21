@@ -58,6 +58,13 @@ conditionally restores the captured native baseline, and cancels stale work
 after native updates. See [owned parameter integration](PHOTO_HIGHLIGHTS.md#owned-parameter-integration).
 Its source-frame permissions remain native; immediate pending-frame cleanup,
 visible warning pixels and camera installation/recovery are still open.
+The opt-in `display-highlight-frame-probe` requires API56 and
+`--frame-permission-hooks` in addition to the API52 host flags. It filters the
+permission consumed by the primary frame gate, including forced deferred replay,
+while keeping caller/pending frame data native. See the
+[consumption-time gate record](PHOTO_HIGHLIGHTS.md#consumption-time-primary-frame-permission-api56)
+for stale replay checks and supplied hardware boundaries. It has no physical
+pixel or installation clearance.
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

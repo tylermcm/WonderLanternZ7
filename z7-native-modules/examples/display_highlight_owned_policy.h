@@ -26,6 +26,33 @@ static uint32_t highlight_parameters_match(uint32_t state, const uint32_t *param
     for (uint32_t i = 0; i < 25; ++i) if (W(state + 0x28 + i * 4) != parameters[i]) return 0;
     return 1;
 }
+#ifdef Z7_HIGHLIGHT_FRAME_PROBE
+volatile uint32_t z7_highlight_frame_enabled, z7_highlight_frame_inhibited;
+static uint32_t highlight_frame_permission(const void *frame, uint32_t native_permission)
+{
+    (void)frame; (void)native_permission;
+    struct z7_highlight_lease_snapshot lease;
+    struct z7_highlight_snapshot wanted;
+    uint32_t state = W(0xa180a588u);
+    uint32_t generation = __atomic_load_n(&z7_highlight_native_parameter_generation, __ATOMIC_ACQUIRE);
+    if (!ram(state, 0x22c)) return 0;
+    /* An interrupted/exhausted publication cannot prove that native parameters
+     * are free of an earlier owned application. Inhibit until readable. */
+    if (!z7_highlight_lease_read(&z7_highlight_lease, &lease)) return 2;
+    if (!lease.record.valid || lease.record.context.state != state ||
+        lease.record.native_generation != generation ||
+        !highlight_parameters_match(state, lease.record.parameters)) return 0;
+    /* Inhibit stale owned parameters even when native permission was1. Once
+     * restoration/new native traffic relinquishes the lease, delegate native. */
+    uint32_t enabled = !z7_highlight_owned_parked && !lease.record.disabled &&
+        highlight_current(&wanted) && wanted.epoch == lease.record.epoch &&
+        highlight_identity(&wanted.view.context, &lease.record.context) &&
+        W(0xa1f18facu) == lease.record.palette &&
+        generation == __atomic_load_n(&z7_highlight_native_parameter_generation, __ATOMIC_ACQUIRE);
+    if (enabled) ++z7_highlight_frame_enabled; else ++z7_highlight_frame_inhibited;
+    return enabled ? 1 : 2;
+}
+#endif
 static void highlight_record_copy(struct z7_highlight_lease_record *to,
                                  const struct z7_highlight_lease_record *from)
 {

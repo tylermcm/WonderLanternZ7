@@ -202,7 +202,25 @@ def add_highlight_hooks(plan, symbols):
     return helpers
 
 
-def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False):
+def add_frame_permission_hook(plan, symbols):
+    """Filter the consumed permission without changing stored pending frames."""
+    address = plan.alloc(bytes(192))
+    code = f'''
+        push.w {{r0-r12,lr}}; mrs r0,apsr; push {{r0,r1}};
+        mov r0,r5; ldr r1,[r4,#0x30];
+        {invoke(symbols['z7_primary_frame_permission'])}
+        str r0,[sp,#8]; pop {{r0,r1}}; msr APSR_nzcvq,r0;
+        pop.w {{r0-r12,lr}};
+        ldr r1,[r6,#0x20]; str r0,[r1,#0x20]; ldrb r0,[r4,#1];
+        .balign 4; ldr.w pc,[pc,#0]; .word 0x1023bab9;
+    '''
+    plan.put(address, assemble(code, address, 192))
+    plan.edit(0x1023bab0, jump(0x1023bab0, address, 8),
+              'Optional primary frame permission consumption filter', expected=bytes.fromhex('316a206b08626078'))
+    return dict(primary_frame_permission=address)
+
+
+def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False):
     """Fixed-address, BSS-free host; all writable state is explicitly reserved."""
     temporary = ROOT / '.private/tmp'
     temporary.mkdir(parents=True, exist_ok=True)
@@ -220,6 +238,7 @@ def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False):
                 '-I', str(COMPONENT / 'sdk'), '-I', str(COMPONENT / 'host'),
                 *(['-DZ7_HOST_HIGHLIGHTS=1'] if highlight_hooks else []),
                 *(['-DZ7_HOST_PARAMETERS=1'] if parameter_hooks else []),
+                *(['-DZ7_HOST_FRAME_PERMISSION=1'] if frame_permission_hooks else []),
                 '-c', str(COMPONENT / 'host' / source), '-o', str(obj)], check=True, env=environment)
             objects.append(str(obj))
         linker = folder / 'host.ld'
@@ -264,12 +283,14 @@ ASSERT(SIZEOF(.bss) == 0, "Host must not contain unreserved BSS");
     return code, symbols
 
 
-def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False):
+def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False):
     if highlight_hooks and not display_hooks:
         raise ValueError('Highlight host requires the display host profile')
     if parameter_hooks and not highlight_hooks:
         raise ValueError('Parameter host requires the highlight host profile')
-    state_bytes = 272 if parameter_hooks else STATE_BYTES
+    if frame_permission_hooks and not parameter_hooks:
+        raise ValueError('Frame permission host requires the parameter host profile')
+    state_bytes = 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
     workspace_bytes = (state_bytes + 63) & ~63
     if sha(container) != Z7_CONTAINER_SHA256:
         raise ValueError('Requires exact original Z7 C 3.80 container')
@@ -282,7 +303,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Unexpected native task descriptor')
     if plan.image.words(0x101e3ee4, 1) != (CURSOR,) or plan.image.words(0x101e3e70, 1) != (STATE,):
         raise ValueError('Unexpected native workspace')
-    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks)
+    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks)
     host_address = plan.alloc(code)
     cold_address = plan.alloc(bytes(160))
     # Preserve original initializer's stack unwind and tail continuation. R0
@@ -293,6 +314,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         {constant('r2', STATE + 240)} {constant('r3', 0xa5a5a5a5)}
         str r3,[r2]; str r3,[r2,#4]; str r3,[r2,#8]; str r3,[r2,#12];
         {(constant('r2', STATE + 264) + ' str r3,[r2]; str r3,[r2,#4];') if parameter_hooks else ''}
+        {(constant('r2', STATE + 280) + ' str r3,[r2]; str r3,[r2,#4];') if frame_permission_hooks else ''}
         {constant('r2', STATE + 32)} {constant('r3', MAGIC)} str r3,[r2];
         dmb sy; pop {{r2,r3}}; msr APSR_nzcvq,r2; pop {{r2,r3}};
         {constant('r1', CURSOR)} {constant('r0', STATE + workspace_bytes)} str r0,[r1];
@@ -307,6 +329,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
               expected=struct.pack('<I', 0x102697f5))
     display_bridges = add_display_hooks(plan, symbols) if display_hooks else {}
     highlight_bridges = add_highlight_hooks(plan, symbols) if highlight_hooks else {}
+    frame_permission_bridges = add_frame_permission_hook(plan, symbols) if frame_permission_hooks else {}
     output, report = plan.finish()
     report.update(preset=DISPLAY_PRESET if display_hooks else PRESET, emulator_only=True, candidate_cleared=False,
         container_sha256=Z7_CONTAINER_SHA256, main_payload_size=len(output) - 2,
@@ -323,6 +346,8 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         report.update(highlight_hooks=True, highlight_bridges=highlight_bridges, api_bytes=48)
     if parameter_hooks:
         report.update(parameter_hooks=True, api_bytes=52, workspace_reserved_bytes=workspace_bytes)
+    if frame_permission_hooks:
+        report.update(frame_permission_hooks=True, api_bytes=56, frame_permission_bridges=frame_permission_bridges)
     return output, report
 
 
@@ -331,7 +356,8 @@ def validate_candidate(path, report_path, stock_path, zig=ZIG):
     if actual.get('preset') not in (PRESET, DISPLAY_PRESET):
         raise ValueError('Unknown module-host profile')
     expected, report = build_image(Path(stock_path).read_bytes(), zig, actual['preset'] == DISPLAY_PRESET,
-                                   actual.get('highlight_hooks', False), actual.get('parameter_hooks', False))
+                                   actual.get('highlight_hooks', False), actual.get('parameter_hooks', False),
+                                   actual.get('frame_permission_hooks', False))
     if (Path(path).read_bytes() != expected[:-2] or actual != report or binascii.crc_hqx(expected, 0)):
         raise ValueError('Module host candidate or report differs from independent rebuild')
     return dict(modified=True, independently_rebuilt=True, sha256=sha(expected[:-2]),
@@ -346,6 +372,7 @@ def main():
     parser.add_argument('--display-hooks', action='store_true', help='Install guarded stock-fallback display bridges')
     parser.add_argument('--highlight-hooks', action='store_true', help='Opt in to experimental API48 source/consumer bridges; requires --display-hooks')
     parser.add_argument('--parameter-hooks', action='store_true', help='Opt in to API52 native highlight payload callback; requires --highlight-hooks')
+    parser.add_argument('--frame-permission-hooks', action='store_true', help='Opt in to API56 primary frame permission filter; requires --parameter-hooks')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
@@ -354,8 +381,10 @@ def main():
         parser.error('--highlight-hooks requires --display-hooks')
     if args.parameter_hooks and not args.highlight_hooks:
         parser.error('--parameter-hooks requires --highlight-hooks')
-    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks)
-    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks)
+    if args.frame_permission_hooks and not args.parameter_hooks:
+        parser.error('--frame-permission-hooks requires --parameter-hooks')
+    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks)
+    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks)
     if eg != repeated or report != second or binascii.crc_hqx(eg, 0):
         raise RuntimeError('Host build is not deterministic or CRC failed')
     output.mkdir(parents=True)

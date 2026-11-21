@@ -536,11 +536,59 @@ supplied. Source evidence: `evidence/20261120-owned-highlight-integration.json`.
 .venv\Scripts\python.exe tools/audit_z7_highlight_lease.py --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/lease-new
 ```
 
+## Consumption-time primary frame permission API56
+
+The optional `--frame-permission-hooks` host build adds
+`sdk/frame_permission.h` with an init-only resident Thumb callback. It requires
+the existing display/highlight/parameter host flags. The exact eight-byte window
+at1023BAB0 in original primary-frame application1023B9D0 now calls a guarded
+filter immediately before publishing state+20 and calling warning gate1023B76E.
+Native instructions and the surrounding stack/register/NZCVQ contract are
+preserved. The callback returns preserve/enable/inhibit; unsupported kinds,
+nonboolean native permission, invalid frame ranges, missing/corrupt callback,
+host guard failure and recursive entry delegate native behavior.
+
+`display-highlight-frame-probe` composes the full owned/native parameter profile
+with this callback. A matched settled lease with current context/epoch/palette
+enables the consumed permission. Stale owned parameters inhibit it until
+restoration or replacement. A busy/halted lease publication also inhibits because
+ownership cannot be established; a halted publication requires restart. Native
+behavior resumes once restoration relinquishes the lease. No caller frame flag
+is overridden, so no module-enabled1 is copied into the deferred4B8 buffer.
+Every primary forced replay reaches this filter and rechecks live settings/UI.
+The native pending-ready byte and all stored frame metadata stay unchanged.
+
+This addresses stale pending replay at its consumption boundary. It does not
+provide asynchronous plane teardown in the absence of a native frame/gate call,
+pin native allocations, or establish a physical frame fence. Native context/
+parameter writer serialization remains an explicit precondition. Whole lifecycle
+acceptance, successful hardware programming and actual warning pixels remain open.
+
+Final private host: `20261120-frame-host-01`, API56/state288/reservation320,
+MAIN `bbda6819e395fce90fa6f4a4f67d307ffddb8d1539c3ac0794274e5e12468968`.
+Final reproducible profile: `20261120-display-highlight-frame-02`,
+28612file/28288image/6484BSS bytes,
+SHA `3536d86c7adac1ab21b5fa63662ec2322a5fb7c39819cffa30f757653c40d476`.
+The original API52 host and owned profile rebuild byte-identically with the new
+option disabled. The final45-check audit executes native source, primary apply,
+deferred copy/replay and warning gate instructions. It covers cold reservation/
+guards/allocator, registration/reentry/cleanup, live bridge registers/NZCVQ,
+active application, Off before GUI/worker, native baseline restoration, menu/
+movie/output/preset/palette changes, unreadable leases, and API52 rejection.
+Kernel/FS/UI/context/surface/color and warning-plane programming remain supplied.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_module_host.py --display-hooks --highlight-hooks --parameter-hooks --frame-permission-hooks --output .private/builds/frame-host-new
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-highlight-frame-probe --output .private/builds/frame-profile-new
+.venv\Scripts\python.exe tools/audit_z7_frame_permission.py --build .private/builds/frame-host-new --module .private/builds/frame-profile-new --legacy-build .private/builds/20261120-parameter-host-03 --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/frame-permission-new
+```
+
 ## Remaining implementation work
 
-Complete immediate pending-frame cleanup, source permissions, and broader
-ownership/restoration lifecycle acceptance. Both native packet conversion and
-owned asynchronous requests are now connected in the opt-in full profile.
+Complete visible rendering and broader ownership/restoration lifecycle
+acceptance, including plane teardown where no subsequent frame is applied.
+Native packet conversion, owned asynchronous requests and consumption-time
+primary permission filtering are connected in the opt-in API56 full profile.
 The pinned photo_zebra implementation changes eligible native100-byte parameter
 payloads before dispatch, preserving the descriptor/callback, and also submits
 owned requests for output switches that generate no native packet. Both paths
@@ -557,6 +605,7 @@ interception and cancellation/restoration with frame cleanup, preset visibility,
 and native LCD/EVF/movie preservation across the full resident lifecycle. Pixels and output/
 capture/menu/lens transitions require separate acceptance evidence.
 
-The Photo highlights preference drives native parameter conversion; its frame
-permission override and cleanup are still not connected to the producer.
+The Photo highlights preference drives native/owned parameter conversion and
+the API56 consumption-time primary permission filter. Broader teardown and
+physical rendering acceptance remain open.
 No visible highlight feature or installation/recovery clearance is claimed.

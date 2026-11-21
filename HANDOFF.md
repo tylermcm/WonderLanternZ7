@@ -1,5 +1,72 @@
 # Laptop handoff — October 20, 2026
 
+## Consumption-time primary permission API56 - November 20, 2026
+
+Previous6f6963b was PROGRESS (owned parameter integration). This turn adds an
+opt-in native primary-frame consumption filter and full-profile wiring. Full
+goal ACTIVE. No camera/card/staging/flash/push. Warning-plane calls execute to
+supplied hardware sinks; no actual pixels or physical timing clearance.
+
+NEW sdk/frame_permission.h API56 embeds52-prefix plus init-only resident Thumb
+callback registration. Requires existing parameter/highlight/display host flags
+and --frame-permission-hooks. Host state288 preserves entire272prefix; callback
+272/running276/guards280,284; workspace remains320 (64aligned). Cold clears288,
+sets both older/new tail guards and reserves320. Original allocator arithmetic
+and continuation registers/NZCVQ execute. Failure clears pointer/claim beforefree.
+Missing/invalid callback, guard corruption, reentry, invalid/unaligned/noncamera/
+short frame pointer, unsupported kind and native permission>1 delegate unchanged.
+Callback decisions0/native,1/enable,2/inhibit; other decisions delegate native.
+
+Exact8-byte hook1023BAB0 in1023B9D0 replaces permission load/store before native
+warning gate1023B76E. All live registers/SP/NZCVQ preserved except native r0/r1
+outputs. Callback sees actual frame and native permission. Both immediate apply
+and forced pending replay traverse hook. Native caller/pending frames and508ready
+stay UNCHANGED: module never copies a forced1 into pending metadata. No need to
+clear native ready byte or restore a producer's copied flag after the fact.
+
+NEW display-highlight-frame-probe composes full API52 owned/native path and
+filters consumed permission only. Matched actual params/nativegen/context/epoch/
+palette/current UI ->enable. Owned but stale ->inhibit, including native1 while
+owned params await restore. Busy/halted lease ->inhibit unverified params; halted
+lease requires restart. Restored/replaced native lease ->delegate. Native writer/
+context serialization remains assumed, not a native allocation pin/frame fence.
+NEXT: actual warning-plane rendering/pixels and lifecycle teardown when NO next
+frame/gate arrives, then style/threshold preferences/EVF/portrait/Info/histogram.
+
+Reproducible host .private/builds/20261120-frame-host-01,
+MAIN bbda6819e395fce90fa6f4a4f67d307ffddb8d1539c3ac0794274e5e12468968,
+hostC5513bytes/API56/state288/reserve320/EGCRCzero.
+Final module .private/builds/20261120-display-highlight-frame-02,
+SHA3536d86c7adac1ab21b5fa63662ec2322a5fb7c39819cffa30f757653c40d476,
+28612file/28288image/6484BSS/minAPI56. Host/module source inputs verified current.
+
+.private/evidence/20261120-frame-permission-04/result.json PASS45 exact final pair:
+cold/allocator, registration/integrity/guards/reentry/cleanup, bridge native entry
+and live regs/flags, native source/immediate/pending4B8copy/forced replay, checkbox
+Off BEFORE GUI/worker, restoration/delegation, menu/movie/output/preset/palette
+changes, busy/halted lease and API52 early rejection. Source/pending memory is
+unchanged. Original native highlight mutex wrappers execute; bypass unrelated
+histogram fixture's mutex model only for A1D6AB80; kernel mutex/plane/color/surface
+boundaries supplied. Initial01 failed because cold test omitted normal boot's
+retained_fd initialization before direct load; fixed independent fixture (same
+as older audits).02 hit unrelated histogram mutex model; no production workaround.
+03 was an intermediate41-check run;04 is final45/current source/bytes evidence.
+
+Owned regression36: .private/evidence/20261120-frame-owned-01.json on FINAL pair.
+Root71/no skips:20261120-frame-root-tests.log. API52 host rebuilt WITHOUT frame
+option:20261120-frame-compat52-host-01 exact old da7cfc45...7e6f9; old owned module
+20261120-frame-compat52-module-01 exact f1f39562...2189. No old52 behavior change.
+Older107 request/9 lease/84 persistence reports remain scoped prior-checkpoint
+evidence, not a rerun of those suites against API56. Source record:
+evidence/20261120-highlight-frame-permission.json. All audit/build jobs terminal;
+final ignored Graphify graph refreshed3004nodes/7865edges; source manifest
+refreshed when saving checkpoint.
+
+Full goal incomplete: physical warning pixels, lifecycle/asynchronous teardown,
+style/threshold menu preferences, EVF feature/preservation, portrait/rotation,
+native Info mirror, real histogram producer and exact installation/recovery.
+No flash clearance. Keep source-only; no remote push authorized.
+
 ## Full-profile owned highlight parameter lease - November 20, 2026
 
 Previous70ec7ad was PROGRESS (deferred helper). Latest status-only turn made no

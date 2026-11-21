@@ -18,7 +18,12 @@ static uint32_t register_worker(void (*callback)(void));
 static uint32_t register_highlight(const struct z7_highlight_hooks *hooks);
 #ifdef Z7_HOST_PARAMETERS
 static uint32_t register_parameters(void (*callback)(uint32_t, void *));
+#ifdef Z7_HOST_FRAME_PERMISSION
+static uint32_t register_frame_permission(z7_frame_permission_callback callback);
+static const struct z7_module_frame_permission_api api = { { { {
+#else
 static const struct z7_module_parameters_api api = { { {
+#endif
 #else
 static const struct z7_module_highlight_api api = { {
 #endif
@@ -34,8 +39,13 @@ static const struct z7_module_worker_api api = {
 #ifdef Z7_HOST_PARAMETERS
 }, register_parameters
 #endif
+#ifdef Z7_HOST_FRAME_PERMISSION
+}, register_frame_permission
+#endif
 };
-#ifdef Z7_HOST_PARAMETERS
+#ifdef Z7_HOST_FRAME_PERMISSION
+_Static_assert(sizeof(api) == 56, "Frame permission API prefix layout");
+#elif defined(Z7_HOST_PARAMETERS)
 _Static_assert(sizeof(api) == 52, "Parameter API prefix layout");
 #elif defined(Z7_HOST_HIGHLIGHTS)
 _Static_assert(sizeof(api) == 48, "Highlight API prefix layout");
@@ -57,6 +67,9 @@ static uint32_t valid_state(const struct z7_host_state *s)
     for (uint32_t i = 0; i < 4; ++i) if (s->guards[i] != 0xa5a5a5a5u) return 0;
 #ifdef Z7_HOST_PARAMETERS
     for (uint32_t i = 0; i < 2; ++i) if (s->parameter_guards[i] != 0xa5a5a5a5u) return 0;
+#endif
+#ifdef Z7_HOST_FRAME_PERMISSION
+    for (uint32_t i = 0; i < 2; ++i) if (s->frame_permission_guards[i] != 0xa5a5a5a5u) return 0;
 #endif
     return 1;
 }
@@ -81,6 +94,9 @@ static void clear_highlight(struct z7_host_state *s)
     s->highlight_source_running = s->highlight_consumer_running = 0;
 #ifdef Z7_HOST_PARAMETERS
     s->parameter_callback = s->parameter_running = 0;
+#endif
+#ifdef Z7_HOST_FRAME_PERMISSION
+    s->frame_permission_callback = s->frame_permission_running = 0;
 #endif
 }
 static uint32_t register_highlight(const struct z7_highlight_hooks *h)
@@ -172,6 +188,32 @@ static uint32_t register_parameters(void (*callback)(uint32_t, void *))
         !loading_code(s, (uint32_t)(uintptr_t)callback)) return 0;
     s->parameter_callback = (uint32_t)(uintptr_t)callback;
     return 1;
+}
+#endif
+#ifdef Z7_HOST_FRAME_PERMISSION
+static uint32_t register_frame_permission(z7_frame_permission_callback callback)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->image || s->display_ready ||
+        !s->parameter_callback || s->frame_permission_callback ||
+        !loading_code(s, (uint32_t)(uintptr_t)callback)) return 0;
+    s->frame_permission_callback = (uint32_t)(uintptr_t)callback;
+    return 1;
+}
+uint32_t z7_primary_frame_permission(const void *frame, uint32_t native_permission)
+{
+    struct z7_host_state *s = highlight_state();
+    uintptr_t p = (uintptr_t)frame;
+    if (!s || !s->frame_permission_callback || !(s->frame_permission_callback & 1) ||
+        !within(s->frame_permission_callback & ~1u, s->image, s->resident_image_size, 2) ||
+        (p & 3) || p < 0xa1800000u || p > 0xc0000000u - 0x38 || native_permission > 1 ||
+        *(const volatile uint8_t *)frame != 0) return native_permission;
+    uint32_t expected = 0;
+    if (!__atomic_compare_exchange_n(&s->frame_permission_running, &expected, 1, 0,
+                                    __ATOMIC_ACQUIRE, __ATOMIC_RELAXED)) return native_permission;
+    uint32_t decision = FN(s->frame_permission_callback, uint32_t, const void *, uint32_t)(frame, native_permission);
+    __atomic_store_n(&s->frame_permission_running, 0, __ATOMIC_RELEASE);
+    return decision == 1 ? 1 : decision == 2 ? 0 : native_permission;
 }
 #endif
 void z7_highlight_consumer_leave(void *packet, uint32_t decision)
@@ -493,7 +535,9 @@ __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
 {
     return ((uint32_t (*)(const struct z7_module_api *))
              ((uintptr_t)body + entry + 1))(
-#ifdef Z7_HOST_PARAMETERS
+#ifdef Z7_HOST_FRAME_PERMISSION
+                &api.parameters.highlight.worker.information.gui.disp.update.base);
+#elif defined(Z7_HOST_PARAMETERS)
                 &api.highlight.worker.information.gui.disp.update.base);
 #elif defined(Z7_HOST_HIGHLIGHTS)
                 &api.worker.information.gui.disp.update.base);

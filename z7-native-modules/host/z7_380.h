@@ -14,9 +14,14 @@
 #ifdef Z7_HOST_PARAMETERS
 #include "parameters.h"
 #endif
+#ifdef Z7_HOST_FRAME_PERMISSION
+#include "frame_permission.h"
+#endif
 
 #define Z7_HOST_STATE 0xa9700000u
-#ifdef Z7_HOST_PARAMETERS
+#ifdef Z7_HOST_FRAME_PERMISSION
+#define Z7_HOST_STATE_BYTES 288u
+#elif defined(Z7_HOST_PARAMETERS)
 #define Z7_HOST_STATE_BYTES 272u
 #else
 #define Z7_HOST_STATE_BYTES 256u
@@ -57,6 +62,9 @@ struct z7_host_state {
     uint32_t guards[4];
 #ifdef Z7_HOST_PARAMETERS
     uint32_t parameter_callback, parameter_running, parameter_guards[2];
+#endif
+#ifdef Z7_HOST_FRAME_PERMISSION
+    uint32_t frame_permission_callback, frame_permission_running, frame_permission_guards[2];
 #endif
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");

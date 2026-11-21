@@ -9,6 +9,9 @@
 #ifdef Z7_HIGHLIGHT_PARAMETERS_PROBE
 #include "parameters.h"
 #endif
+#ifdef Z7_HIGHLIGHT_FRAME_PROBE
+#include "frame_permission.h"
+#endif
 static void highlight_gui_publish(void);
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
@@ -147,6 +150,10 @@ uint32_t z7_main(const struct z7_module_api *api)
     const struct z7_module_parameters_api *parameter_api = (const struct z7_module_parameters_api *)api;
     if (api->size < sizeof(*parameter_api) || !parameter_api->register_parameters) return 1;
 #endif
+#ifdef Z7_HIGHLIGHT_FRAME_PROBE
+    const struct z7_module_frame_permission_api *frame_api = (const struct z7_module_frame_permission_api *)api;
+    if (api->size < sizeof(*frame_api) || !frame_api->register_frame_permission) return 1;
+#endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
     const struct z7_module_update_api *update_api = (const struct z7_module_update_api *)api;
     if (api->size < sizeof(*update_api) || !update_api->register_before_update) return 1;
@@ -196,6 +203,9 @@ uint32_t z7_main(const struct z7_module_api *api)
         !worker_api->register_worker(highlight_combined_worker)) return 1;
 #ifdef Z7_HIGHLIGHT_PARAMETERS_PROBE
     if (!parameter_api->register_parameters(highlight_native_parameters)) return 1;
+#endif
+#ifdef Z7_HIGHLIGHT_FRAME_PROBE
+    if (!frame_api->register_frame_permission(highlight_frame_permission)) return 1;
 #endif
 #else
     if (!worker_api->register_worker(persistence_worker)) return 1;
