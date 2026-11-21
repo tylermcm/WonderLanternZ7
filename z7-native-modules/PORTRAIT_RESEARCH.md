@@ -39,6 +39,29 @@ clear an installation candidate or establish camera update acceptance/recovery.
 
 ## Native orientation and bounded geometry
 
+`plugins/portrait_target.h` now supplies a read-only predicate for the original
+logical2, 720x480 target with exclusive LCD output. Original `10414756` searches
+33 registry records (20 bytes each) for the selected hardware ID at `A180AD84`;
+the table pointer is at +4. Record +0 is the buffer, +4 the hardware ID byte,
++6/+8 width/height. A hardware ID of12 can therefore resolve to logical2.
+This differs from treating the raw selected byte as a logical target index.
+
+The helper bounds the table, rejects inactive255, requires a nonzero buffer,
+720x480 dimensions and exactly one matching hardware ID, executes the original
+getter and requires result2. It rechecks output, registry identity and all five
+descriptor words afterward. These are observed consistency checks, not a lock,
+allocation pin, ABA exclusion, physical LCD mapping proof or page policy. Other
+portrait layers may use other targets; this predicate is not their final policy.
+
+Private `20261121-portrait-target-01/result.json` passed44 compiled checks. Hardware
+IDs0/1/2/12/32/254 resolve through the actual native getter; non-LCD output,
+other logical targets, invalid registry spans, inactive/duplicate IDs, wrong
+dimensions and changes observed across the getter are rejected. Input memory is
+unchanged except explicitly supplied race mutations. The 384-byte probe rebuilds
+identically. Registry/output states are supplied; no renderer, live task, native
+surface allocation, camera or card is exercised. The functional display module
+still does not register a portrait callback.
+
 `plugins/orientation_sample.h` calls the original read-only Thumb API
 `101B331B`. It accepts native values0..3 and leaves the caller's output unchanged
 for unknown4 or any larger value. It never changes the native override.

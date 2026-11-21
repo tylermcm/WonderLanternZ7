@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## Native logical2 LCD target lookup - November 21, 2026
+
+Previous4f0aa7d added the API84 resident graphics bridge. New read-only
+plugins/portrait_target.h resolves the original registry hardware ID through
+native10414756, rather than equating the raw selected byte with a logical index.
+Logical2 requires exclusive LCD output, bounded33x20-byte registry, nonzero
+buffer,720x480 shape, unique active ID and observed descriptor/registry/output
+consistency across the native query. Hardware12 can resolve to logical2.
+
+Private portrait-target-01 PASS44; reproducible384-byte diagnostic, SHA
+32442089bb8038db1c14062cc20720b11137b4cd78b0745cfb98384cd904f134.
+Actual getter executes; registry/output/race mutations are supplied. Native
+allocation, physical mapping, task ownership/lifetime, ABA, page policy and
+pixels are NOT established. No portrait callback registered by functional module.
+Other portrait layers can use other targets; this is not their final policy.
+Root71/no skips; source fingerprints current. Ignored Graphify refreshed
+3414nodes/9238edges with existing parser warnings. See PORTRAIT_RESEARCH.md in
+z7-native-modules and evidence/20261121-portrait-target.json.
+
+Next bind original page/app/menu/playback exclusions before connecting the
+graphics callback to reflow/text/input/settings. Native font files/bitmap symbols,
+Info mirror, real histogram producer, lifetime/writer closure and exact install/
+recovery assessment remain unfinished. Full goal ACTIVE; no camera/card access,
+staging, flash or push. Existing accepted firmware/module bytes unchanged.
+
 ## Resident graphics dispatch bridge - November 21, 2026
 
 PROGRESS only: opt-in API84 host graphics registration now waits for committed
