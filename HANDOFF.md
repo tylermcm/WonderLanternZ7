@@ -1,5 +1,57 @@
 # Laptop handoff — October 20, 2026
 
+## Native warning-plane programming and teardown binding - November 20, 2026
+
+Previous644d9c8 was PROGRESS (API56 consumption gate). This turn moves validation
+below the supplied plane-programming sink: original driver/validator/readback
+execute against emulated MMIO. Full goal ACTIVE. No production host/module edits,
+no camera/card/staging/flash/push. This is register evidence, NOT visible pixels.
+
+NEW tools/audit_z7_highlight_plane.py composes FrameProfileFixture and bypasses
+ONLY driver10241A0E sink, executing NativePNG native instructions instead. Maps
+emulated MMIO20140000..20145FFF, records actual writes. Converter/owned consumer/
+source/frame/gate execute. Surface checks, hardware colors, kernel/FS/UI/context
+and task handoffs still supplied. Engine identities141/142 with bank offsets0/
+4000 are supplied descriptors, NOT live engine construction/output mapping proof.
+
+.private/evidence/20261120-highlight-plane-02.json PASS24, exact unchanged final
+API56 pair: frame-host-01 MAINbbda6819e395fce90fa6f4a4f67d307ffddb8d1539c3ac0794274e5e12468968;
+display-highlight-frame-02 SHA3536d86c7adac1ab21b5fa63662ec2322a5fb7c39819cffa30f757653c40d476.
+Full profile enables actual native register bit, native transformed60B config
+passes validator10258EF8, selected mode/threshold/color/control fields match
+actual registers, and original readback10241C2E observes enable/mode. Deferred
+copy stays native; Off before GUI/worker forced replay clears real enable bit.
+
+NO-FRAME PRIMITIVE: original GATE1023B76E withstate+20=0/active1 invokes driver
+10241A0E(engine,NULL,0). Driver disable reads engine+4 bank offset, clears ONLY
+bit0 of20140000+offset+430, returns0. Gate clears active1C and dirty24. Both
+banks, preservation of all other register bits/banks and repeated-call no-op
+verified. Module asynchronous cleanup NOT CONNECTED by this binding audit.
+Native pending-ready508 and original frame metadata remain unchanged.
+
+IMPORTANT: format4 bypasses gate and returns1 without teardown. Driver enable
+returns0 EVEN when validator rejects configuration, without MMIO programming.
+Diagnostic reversed native group upper0/lower256 makes upper gate return1 and
+setactive1/dirty0 while hardware enable remains0. Do not treat gate status or
+bookkeeping as proof of actual register programming/plane ownership.
+
+NEXT: qualify no-frame cleanup using matched current parameter ownership/native
+update generation/context AND native engine. Capture/preserve ORIGINAL consumed
+native permission separately from filtered1; enabled native baseline restoration
+must not mistake filtered permission for native policy. Gate cleanup belongs in
+the serialized native consumer lane; do not call driver/paint from worker/source
+observation. Verify no-frame Off, native update precedence, enabled/disabled
+baseline, mode/output/menu departure, format4, engine changes and register effects.
+Then actual warning rendering/ISP pixels, style/threshold prefs, EVF/portrait,
+Info mirror, real histogram producer, full lifecycle, installation/recovery.
+
+Source evidence:evidence/20261120-highlight-plane-registers.json. Audit01 was
+intermediate23-check pass;02 final24 adds upper-gate false-positive bookkeeping.
+Current sources/exact binary fingerprints verified. No broad suite rerun because
+production unchanged; prior45/36/71 remain previous checkpoint scopes. All jobs
+terminal; ignored graph refreshed3015nodes/7905edges; source manifest refreshed
+at source-only checkpoint.
+
 ## Consumption-time primary permission API56 - November 20, 2026
 
 Previous6f6963b was PROGRESS (owned parameter integration). This turn adds an

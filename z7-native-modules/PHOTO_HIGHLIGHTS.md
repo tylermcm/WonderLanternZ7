@@ -583,6 +583,46 @@ Kernel/FS/UI/context/surface/color and warning-plane programming remain supplied
 .venv\Scripts\python.exe tools/audit_z7_frame_permission.py --build .private/builds/frame-host-new --module .private/builds/frame-profile-new --legacy-build .private/builds/20261120-parameter-host-03 --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/frame-permission-new
 ```
 
+## Native warning-plane registers and no-frame control
+
+`tools/audit_z7_highlight_plane.py` now executes original driver10241A0E,
+validator10258EF8 and readback10241C2E below the API56 gate. The prior plane
+programming sink is bypassed; real native instructions write emulated MMIO.
+All24 checks pass on the unchanged final API56 host/profile pair above.
+Both supplied engine-bank offsets0/4000 are checked; these supplied descriptors
+do not establish a physical LCD/EVF mapping or live native engine allocation.
+
+The default full-profile converter/consumer/source/gate path reaches the real
+driver, and its transformed60-byte configuration passes native validation.
+Selected mode/threshold/color/control fields match the actual register values;
+native readback observes the programmed enable/mode. Deferred source storage
+remains native, and Off before GUI/worker inhibits forced replay down to the
+actual register enable bit. MMIO storage, surface checks, hardware color values,
+kernel/FS/UI/context and task scheduling are supplied. This does not execute ISP
+image processing or prove warning pixels/physical register application.
+
+Calling original gate1023B76E with permission0 and an active plane, without any
+source/frame call, invokes the real driver disable path. It clears only bit0
+of engine-bank register+430, preserves every other register/bank bit, and clears
+the native active flag. Repeated disabled calls perform no driver writes.
+This is a verified no-frame teardown primitive, not yet connected module cleanup.
+
+Two important admission limits are now explicit. Format4 returns success while
+bypassing teardown. Also the driver returns its ordinary status0 when native
+configuration validation rejects an input, without programming any registers.
+The upper gate can consequently return1 and mark active1/dirty0 while the actual
+register remains disabled. Gate status or bookkeeping alone cannot establish
+that a requested plane was programmed. Later ownership/cleanup must qualify the
+native engine/context and account for real register effects and original frame
+permission; a filtered1 must not be mistaken for native baseline permission.
+
+Private final result: `.private/evidence/20261120-highlight-plane-02.json`.
+Source evidence: `evidence/20261120-highlight-plane-registers.json`.
+
+```powershell
+.venv\Scripts\python.exe tools/audit_z7_highlight_plane.py --build .private/builds/20261120-frame-host-01 --module .private/builds/20261120-display-highlight-frame-02 --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-plane-new.json
+```
+
 ## Remaining implementation work
 
 Complete visible rendering and broader ownership/restoration lifecycle

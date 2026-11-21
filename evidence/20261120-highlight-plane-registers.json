@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "checks": 24,
+  "host_sha256": "bbda6819e395fce90fa6f4a4f67d307ffddb8d1539c3ac0794274e5e12468968",
+  "module_sha256": "3536d86c7adac1ab21b5fa63662ec2322a5fb7c39819cffa30f757653c40d476",
+  "original_native_plane_driver_validator_and_readback_execute": true,
+  "prior_plane_programming_sink_removed_in_this_audit": true,
+  "full_profile_converter_consumer_source_gate_reaches_actual_plane_register_writes": true,
+  "both_supplied_register_bank_offsets_verified": [
+    0,
+    16384
+  ],
+  "physical_engine_descriptor_or_output_mapping_verified": false,
+  "actual_register_fields_and_native_readback_verified": true,
+  "off_before_gui_worker_pending_replay_clears_actual_register_enable": true,
+  "original_gate_no_frame_disable_clears_only_enable_bit_and_preserves_other_registers": true,
+  "already_disabled_gate_never_repeats_driver_writes": true,
+  "format4_skips_teardown_with_success_status": true,
+  "invalid_configuration_driver_returns_normal_status_without_programming": true,
+  "successful_upper_gate_active_dirty_bookkeeping_does_not_prove_register_enable": true,
+  "module_no_frame_teardown_connected": false,
+  "mmio_storage_surface_colors_kernel_filesystem_ui_context_and_task_scheduling_supplied": true,
+  "physical_register_application_isp_image_processing_or_warning_pixels_verified": false,
+  "production_host_or_module_bytes_changed": false,
+  "camera_card_access_staging_flash_or_push": false,
+  "full_goal_complete": false,
+  "source_sha256": {
+    "tools/audit_z7_highlight_plane.py": "8fd652a75befbb0694e6e0a35118c8a0d06b65b85b8b358f8504fc6abcfda2b6",
+    "tools/audit_z7_frame_permission.py": "1cfc0aab88fe3fc686d022d35f101aede1e7c57200c812166bc6ab7702e9f75e",
+    "z7-native-modules/examples/display_highlight_owned_policy.h": "8504e70082258c8766111f55da94e278b4d7b604dc48cc8c61432edde7b94577"
+  }
+}
