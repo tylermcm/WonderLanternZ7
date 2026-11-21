@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "tool": "tools/inspect_z7_card.py",
+  "synthetic_tests": 8,
+  "repository_tests": 81,
+  "tests_passed": true,
+  "real_windows_system_drive_rejected_before_output": true,
+  "card_inventory": "Only internal C disk; no connected card identified",
+  "actual_card_backup": false,
+  "source_access": "read-only",
+  "card_written": false,
+  "installed_image_readback": false,
+  "installation_cleared": false,
+  "source_sha256": {
+    "tools/inspect_z7_card.py": "d4820000d23f9b90b96b4bec3dc09cc530e826ec050cac170385e9183524b1fb",
+    "tests/test_card_inspection.py": "a3b232314a56e4b4b05d6a634163a602435cc0e7f8ce667d2280ed84b0e1011d"
+  },
+  "limits": [
+    "Synthetic backup tests and actual internal-drive rejection only; external-card path not run",
+    "Selected card files are not camera flash/calibration backups",
+    "Combined native battery visual MENU/PLAY remains unproven"
+  ]
+}

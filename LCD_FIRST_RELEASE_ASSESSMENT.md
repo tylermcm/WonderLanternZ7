@@ -104,6 +104,20 @@ survive; it does not establish emergency recovery or preserve prior experiments.
 
 ## Requirements before staging
 
+Read-only inspection is prepared in `tools/inspect_z7_card.py`. After positively
+identifying the connected card, supply its explicit drive letter and a new
+`.private/` backup directory. The helper rejects system/internal disks and writes
+only the private destination. It backs up the five named root update/module/
+journal files when present, verifies each copy against the source and rechecks
+volume/disk identity. Missing files and incomplete inspections are recorded;
+existing backup directories are never overwritten. Unrelated card files are
+untouched. This does not read the camera's installed image or clear installation.
+
+Eight synthetic cases and the full 81-test repository suite pass. Actual Windows
+lookup of C: is rejected before creating output. No real card inspection/backup
+has run: the latest inventory still shows only the internal disk. The request
+to connect the card remains pending.
+
 1. Finish the focused combined-profile shooting gate and retain failed results.
 2. The explicit independent reconstruction and selected updater checks above
    are complete. Preserve their limits when reviewing the remaining hardware

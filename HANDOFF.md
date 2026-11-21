@@ -1,5 +1,37 @@
 # Laptop handoff — October 20, 2026
 
+## Read-only card inspection prepared - November 21, 2026
+
+Previous goal turn7654ba0 was progress. Card connection question remains pending;
+no user card-write/flash authorization. Fresh Get-Volume/Get-Disk inventory still
+ONLY C:/internal WDC disk. No card contents or camera accessed.
+
+New tools/inspect_z7_card.py takes an explicit drive letter, reads Windows disk/
+volume identity, rejects system/internal disks, and copies ONLY named root
+EG161080.BIN/Z_7_0380.bin/Z7APP.BIN/Z7CFG0.DAT/Z7CFG1.DAT into a NEW project
+.private directory. Source opens rb only, output files xb; copy/source SHA and
+size/mtime plus identity recheck. Reports missing files and incomplete failures;
+preserves partial private backup, never overwrites. No installed-image readback,
+staging or installation clearance inferred. Does not auto-select a drive.
+
+Eight synthetic tests pass: source rb-only/unchanged unrelated files, verified
+backup, system/internal rejection, no overwrite, changed identity/source, private
+destination, bounded journals and drive argument validation. Full root81 passes,
+no skips. Actual Windows helper invocation with C: rejects before output creation.
+This is not a real card backup. Card assessment updated. No firmware edits or
+binary rebuilds. Graph refresh and source-only manifest checkpoint follow.
+
+Next: when user connects the camera card, inspect Windows identity first, select
+only the positively identified card, then run helper into a new private backup
+and compare backed-up EG/module hashes with known private reviews. A card file
+is NOT an installed camera readback. Do not stage/flash without exact assessment
+and explicit authorization. Pending combined battery visual MENU/PLAY gap remains
+as recorded below; do not count it passed or resume blind QEMU/portrait loops.
+Ignored Graphify refreshed after code edits (existing extractor warnings). All
+processes finished. Broad goal stays active; no card writes, camera programming
+or push.
+
+
 ## LCD native grid selection passed; battery fixture boundary isolated - November 21, 2026
 
 Previous goal turn c60fcf7 was progress. Same release04 module/API44 host; NO
