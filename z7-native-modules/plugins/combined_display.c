@@ -18,6 +18,11 @@
 #ifdef Z7_HIGHLIGHT_OWNED_FRAME_COORDINATION_PROBE
 #include "owned_frame_coordination.h"
 #endif
+#ifdef Z7_HIGHLIGHT_NATIVE_WARNING_PROBE
+#include "native_warning_transaction.h"
+static const struct z7_module_native_warning_api *native_warning_api;
+#define Z7_HIGHLIGHT_COORDINATION_AVAILABLE() (native_warning_api && native_warning_api->owned_warning_available())
+#endif
 static void highlight_gui_publish(void);
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
@@ -168,6 +173,11 @@ uint32_t z7_main(const struct z7_module_api *api)
     const struct z7_module_owned_frame_api *owned_frame_api = (const struct z7_module_owned_frame_api *)api;
     if (api->size < sizeof(*owned_frame_api) || !owned_frame_api->enable_owned_frame_coordination) return 1;
 #endif
+#ifdef Z7_HIGHLIGHT_NATIVE_WARNING_PROBE
+    native_warning_api = (const struct z7_module_native_warning_api *)api;
+    if (api->size < sizeof(*native_warning_api) || !native_warning_api->enable_native_warning_transactions ||
+        !native_warning_api->owned_warning_available) return 1;
+#endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
     const struct z7_module_update_api *update_api = (const struct z7_module_update_api *)api;
     if (api->size < sizeof(*update_api) || !update_api->register_before_update) return 1;
@@ -226,6 +236,9 @@ uint32_t z7_main(const struct z7_module_api *api)
 #endif
 #ifdef Z7_HIGHLIGHT_OWNED_FRAME_COORDINATION_PROBE
     if (!owned_frame_api->enable_owned_frame_coordination()) return 1;
+#endif
+#ifdef Z7_HIGHLIGHT_NATIVE_WARNING_PROBE
+    if (!native_warning_api->enable_native_warning_transactions()) return 1;
 #endif
 #else
     if (!worker_api->register_worker(persistence_worker)) return 1;

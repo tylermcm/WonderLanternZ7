@@ -27,6 +27,9 @@ class CleanupFixture(PlaneFixture):
     def __init__(self, *args):
         self.frame_calls = 0
         self.cleanup_running = False
+        symbols = args[1]['symbols']
+        self.validation_span = (symbols['z7_module_validate'] & ~1, symbols['z7_module_prepare'] & ~1)
+        if not self.validation_span[0] < self.validation_span[1]: raise AssertionError('Host validation span')
         self.reject_disable = False
         self.stuck_control = None
         super().__init__(*args)
@@ -36,6 +39,10 @@ class CleanupFixture(PlaneFixture):
 
     def hook(self, u, address, size, context):
         if not self.cleanup_running:
+            # This pure compiled C routine has no modeled service boundaries.
+            # Its CRC/header/relocation instructions ALL execute, with the same
+            #30s/10M guards; avoid layered Python fixture dispatch per opcode.
+            if self.validation_span[0] <= address < self.validation_span[1]: return
             # Module CRC/init does not use frame/plane boundaries. Keep the
             # original ownership fixture's hooks during that expensive phase.
             OwnedFixture.hook(self, u, address, size, context); return
@@ -251,11 +258,13 @@ def main():
     if hashlib.sha256(raw).hexdigest() != host['main_payload_sha256'] or hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         p.error('Exact host/module required')
     admitted = module.get('kind') in ('original-Z7-display-highlight-cleanup-diagnostic', 'original-Z7-display-highlight-cached-diagnostic',
-                                    'original-Z7-display-highlight-coordinated-diagnostic')
+                                    'original-Z7-display-highlight-coordinated-diagnostic',
+                                    'original-Z7-display-highlight-native-transaction-diagnostic')
     if (not host.get('frame_permission_hooks') or not admitted or
         module['api_minimum_bytes'] > host.get('api_bytes', 0) or
         (module['api_minimum_bytes'] >= 60 and not host.get('cached_frame_permission_hooks')) or
-        (module['api_minimum_bytes'] == 64 and not host.get('owned_frame_coordination_hooks'))):
+        (module['api_minimum_bytes'] >= 64 and not host.get('owned_frame_coordination_hooks')) or
+        (module['api_minimum_bytes'] == 72 and not host.get('native_warning_transaction_hooks'))):
         p.error('Explicit compatible cleanup profile and host required')
     result = audit(raw, host, packet, module)
     if a.owned_regression:

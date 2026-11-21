@@ -24,9 +24,14 @@
 #include "owned_frame_coordination.h"
 #include "highlight_lane.h"
 #endif
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+#include "native_warning_transaction.h"
+#endif
 
 #define Z7_HOST_STATE 0xa9700000u
-#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+#define Z7_HOST_STATE_BYTES 336u
+#elif defined(Z7_HOST_OWNED_FRAME_COORDINATION)
 #define Z7_HOST_STATE_BYTES 324u
 #elif defined(Z7_HOST_CACHED_FRAME)
 #define Z7_HOST_STATE_BYTES 304u
@@ -84,6 +89,9 @@ struct z7_host_state {
     uint32_t owned_frame_enabled;
     struct z7_highlight_lane owned_frame_lane;
     uint32_t owned_frame_guards[2];
+#endif
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+    uint32_t native_warning_enabled, native_warning_guards[2];
 #endif
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");

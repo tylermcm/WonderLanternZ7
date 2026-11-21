@@ -86,6 +86,15 @@ Foreign Nikon parameter requests remain uncoordinated: a separate supplied
 schedule reproduces a stale-frame enable after such an update. Generation
 exhaustion refuses admission without shutdown handling. This diagnostic is an
 intermediate integration step; see [owned/frame exclusion](PHOTO_HIGHLIGHTS.md#owned-frame-exclusion-api64).
+The API72 `display-highlight-native-transaction-probe` additionally requires
+`--native-warning-transaction-hooks`. It moves permission writes into the
+warning gate, coordinates qualified foreign100-copy requests, and retires their
+bridge-local tokens before native completion callbacks. The earlier frame
+mutex remains outside the warning transaction. Near generation exhaustion the
+owned feature drains while native traffic continues through a terminal lane.
+Use its exact paired host/module bundle; cross-profile module loading is
+unvalidated. See [native warning transactions](PHOTO_HIGHLIGHTS.md#native-warning-transactions-api72)
+for the supplied schedules and remaining native/hardware gaps.
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

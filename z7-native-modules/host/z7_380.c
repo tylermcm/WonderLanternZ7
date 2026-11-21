@@ -24,7 +24,15 @@ static uint32_t register_frame_permission(z7_frame_permission_callback callback)
 static uint32_t register_cached_frame_permission(z7_frame_permission_callback callback);
 #ifdef Z7_HOST_OWNED_FRAME_COORDINATION
 static uint32_t enable_owned_frame_coordination(void);
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+uint32_t z7_primary_frame_permission(const void *, uint32_t);
+uint32_t z7_cached_frame_permission(const void *, uint32_t);
+static uint32_t enable_native_warning_transactions(void);
+static uint32_t owned_warning_available(void);
+static const struct z7_module_native_warning_api api = { { { { { { {
+#else
 static const struct z7_module_owned_frame_api api = { { { { { {
+#endif
 #else
 static const struct z7_module_cached_frame_api api = { { { { {
 #endif
@@ -58,8 +66,13 @@ static const struct z7_module_worker_api api = {
 #ifdef Z7_HOST_OWNED_FRAME_COORDINATION
 }, enable_owned_frame_coordination
 #endif
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+}, enable_native_warning_transactions, owned_warning_available
+#endif
 };
-#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+_Static_assert(sizeof(api) == 72, "Native warning API prefix layout");
+#elif defined(Z7_HOST_OWNED_FRAME_COORDINATION)
 _Static_assert(sizeof(api) == 64, "Owned frame API prefix layout");
 #elif defined(Z7_HOST_CACHED_FRAME)
 _Static_assert(sizeof(api) == 60, "Cached frame API prefix layout");
@@ -97,6 +110,9 @@ static uint32_t valid_state(const struct z7_host_state *s)
 #ifdef Z7_HOST_OWNED_FRAME_COORDINATION
     for (uint32_t i = 0; i < 2; ++i) if (s->owned_frame_guards[i] != 0xa5a5a5a5u) return 0;
 #endif
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+    for (uint32_t i = 0; i < 2; ++i) if (s->native_warning_guards[i] != 0xa5a5a5a5u) return 0;
+#endif
     return 1;
 }
 
@@ -131,6 +147,9 @@ static void clear_highlight(struct z7_host_state *s)
     s->owned_frame_enabled = 0;
     /* Never reset a lane: a native frame can still be returning through it. */
 #endif
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+    __atomic_store_n(&s->native_warning_enabled, 0, __ATOMIC_RELEASE);
+#endif
 }
 static uint32_t register_highlight(const struct z7_highlight_hooks *h)
 {
@@ -162,6 +181,126 @@ static struct z7_host_state *highlight_state(void)
                                          s->resident_image_size, 2)) return 0;
     return s;
 }
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+/* Ordinary operations use nonrecycled core tokens. At exhaustion the owned
+ * feature is already draining; native traffic and owned restoration continue
+ * in a terminal lane.
+ * Terminal identities can repeat ONLY because bridge-local tokens are retired
+ * before publication of the free lane. No valid old token survives a release.
+ */
+static uint32_t native_lane_enter(struct z7_highlight_lane *p, uint32_t role, uint32_t owner)
+{
+    if (role != Z7_LANE_FRAME && role != Z7_LANE_PARAMETERS) return 0;
+    uint32_t token = z7_highlight_lane_enter(p, role, owner);
+    if (token) return token;
+    uint32_t idle = 0xfffffffcu;
+    if (!owner || !__atomic_compare_exchange_n(&p->state, &idle, UINT32_MAX, 0,
+                                               __ATOMIC_ACQ_REL, __ATOMIC_RELAXED)) return 0;
+    __atomic_store_n(&p->owner, owner, __ATOMIC_RELAXED);
+    __atomic_store_n(&p->state, idle | role, __ATOMIC_RELEASE);
+    return idle | role;
+}
+static uint32_t native_lane_leave(struct z7_highlight_lane *p, uint32_t token, uint32_t owner)
+{
+    if (token < 0xfffffffcu) return z7_highlight_lane_leave(p, token, owner);
+    if (!z7_highlight_lane_owns(p, token, owner)) return 0;
+    uint32_t expected = token;
+    if (!__atomic_compare_exchange_n(&p->state, &expected, UINT32_MAX, 0,
+                                    __ATOMIC_ACQ_REL, __ATOMIC_RELAXED)) return 0;
+    __atomic_store_n(&p->owner, 0, __ATOMIC_RELAXED);
+    __atomic_store_n(&p->state, 0xfffffffcu, __ATOMIC_RELEASE);
+    return 1;
+}
+static uint32_t enable_native_warning_transactions(void)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->image || s->display_ready ||
+        !s->owned_frame_enabled || __atomic_load_n(&s->native_warning_enabled, __ATOMIC_ACQUIRE)) return 0;
+    uint32_t token = native_lane_enter(&s->owned_frame_lane, Z7_LANE_PARAMETERS, s->loading_image);
+    if (!token) return 0;
+    __atomic_store_n(&s->native_warning_enabled, 1, __ATOMIC_RELEASE);
+    return native_lane_leave(&s->owned_frame_lane, token, s->loading_image);
+}
+static uint32_t owned_warning_available(void)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    return valid_state(s) && __atomic_load_n(&s->native_warning_enabled, __ATOMIC_ACQUIRE) &&
+        __atomic_load_n(&s->owned_frame_lane.state, __ATOMIC_ACQUIRE) < 0xfffffff0u;
+}
+struct native_parameter_slot { uint32_t token, packet; };
+uint32_t z7_native_parameter_enter(void *packet, struct native_parameter_slot *slot)
+{
+    struct z7_host_state *s = highlight_state();
+    slot->token = 0; slot->packet = (uint32_t)(uintptr_t)packet;
+    if (!s || !s->owned_frame_enabled) return 0;
+    uint32_t owned = (uintptr_t)packet == s->highlight_descriptor;
+    if (!owned) {
+        uint32_t address = (uint32_t)(uintptr_t)packet;
+        if (!__atomic_load_n(&s->native_warning_enabled, __ATOMIC_ACQUIRE) || (address & 3) || address < 0xa1800000u ||
+            address > 0xc0000000u - 28) return 0;
+        uint32_t cmd = ((const uint32_t *)packet)[4];
+        if (cmd != 0x42060007u && cmd != 0x42062007u) return 0;
+        uint32_t phase = *(const volatile uint8_t *)(uintptr_t)0xa1d68e54u;
+        if (*(const volatile uint8_t *)(uintptr_t)0xa180a568u != (cmd == 0x42062007u) ||
+            phase < 1 || phase > 4) return 0; /* Only the identified100-copy handlers. */
+    }
+    for (;;) {
+        uint32_t token = native_lane_enter(&s->owned_frame_lane, Z7_LANE_PARAMETERS, (uint32_t)(uintptr_t)slot);
+        if (token) { slot->token = token; return token; }
+        if (owned) return UINT32_MAX;
+        /* Only the warning gate, not the earlier native frame mutex, owns
+         * frame-role admission in this profile. No module callback is held. */
+        delay(1);
+    }
+}
+void z7_native_parameter_leave(struct native_parameter_slot *slot)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    uint32_t token = slot->token;
+    slot->token = 0; /* LAST usable token, before another owner can acquire. */
+    if (valid_state(s) && token)
+        (void)native_lane_leave(&s->owned_frame_lane, token, (uint32_t)(uintptr_t)slot);
+}
+void z7_native_parameter_completing(void *packet, struct native_parameter_slot *slot)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !__atomic_load_n(&s->native_warning_enabled, __ATOMIC_ACQUIRE) ||
+        (uintptr_t)packet == s->highlight_descriptor ||
+        __atomic_load_n(&s->owned_frame_lane.owner, __ATOMIC_ACQUIRE) != (uintptr_t)slot ||
+        (__atomic_load_n(&s->owned_frame_lane.state, __ATOMIC_ACQUIRE) & 3) != Z7_LANE_PARAMETERS) return;
+    /* No dereference until the pointer equals our active bridge-local slot. */
+    if (slot->packet == (uintptr_t)packet) z7_native_parameter_leave(slot);
+}
+uint32_t z7_native_gate_enter(uint32_t owner, uint32_t caller)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s)) return 0;
+    if ((__atomic_load_n(&s->owned_frame_lane.state, __ATOMIC_ACQUIRE) & 3) == Z7_LANE_PARAMETERS &&
+        __atomic_load_n(&s->display_ready, __ATOMIC_ACQUIRE) &&
+        (caller & 1) && within(caller & ~1u, s->image, s->resident_image_size, 2)) return 0;
+    uint32_t token = native_lane_enter(&s->owned_frame_lane, Z7_LANE_FRAME, owner);
+    return token ? token : UINT32_MAX;
+}
+void z7_native_gate_leave(uint32_t owner, uint32_t token)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (valid_state(s) && token && token != UINT32_MAX)
+        (void)native_lane_leave(&s->owned_frame_lane, token, owner);
+}
+void z7_native_gate_permission(uint32_t caller, const uint8_t *primary, const uint8_t *cached)
+{
+    volatile uint32_t *state = *(volatile uint32_t **)(uintptr_t)0xa180a588u;
+    uint32_t permission;
+    if ((caller & ~1u) == 0x1023babcu) {
+        permission = *(const uint32_t *)(primary + 0x34);
+        permission = z7_primary_frame_permission(primary, permission);
+    } else if ((caller & ~1u) == 0x1023d894u) {
+        permission = cached ? *(const uint32_t *)(cached + 0x30) : state[8];
+        permission = z7_cached_frame_permission(cached, permission);
+    } else return;
+    state[8] = permission;
+}
+#endif
 #ifdef Z7_HOST_OWNED_FRAME_COORDINATION
 static uint32_t enable_owned_frame_coordination(void)
 {
@@ -633,7 +772,9 @@ __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
 {
     return ((uint32_t (*)(const struct z7_module_api *))
              ((uintptr_t)body + entry + 1))(
-#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+                &api.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
+#elif defined(Z7_HOST_OWNED_FRAME_COORDINATION)
                 &api.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
 #elif defined(Z7_HOST_CACHED_FRAME)
                 &api.frame.parameters.highlight.worker.information.gui.disp.update.base);

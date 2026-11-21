@@ -830,3 +830,59 @@ result means the counterexample reproduced. It does not mean ordering is safe.
 Foreign request coordination must preserve completion/reentry and resolve the
 native mutex wait graph; it cannot be inferred from the owned-only tests.
 See `evidence/20261120-owned-frame-coordination.json` and root HANDOFF.md.
+
+## Native warning transactions API72
+
+`display-highlight-native-transaction-probe` and host flag
+`--native-warning-transaction-hooks` opt into the API72 research profile,
+requiring all API64 flags. Use the exact paired bundle. Earlier API64 host and
+module payloads rebuild unchanged with this flag disabled; loading an API64
+module on the new API72 host has not been validated.
+
+Frame-role ownership now spans the warning gate `1023B76E`, including its
+permission selection and native driver work. Primary/cached permission stores
+are deferred into that span. The earlier native frame mutex and geometry work
+remain outside it. Foreign aligned camera-RAM descriptors for the two highlight
+commands, matching the sampled selector/service1..4, wait for an active gate
+before entering their module callback and original100-copy handler. Other native
+requests keep original dispatch. The native dispatcher bounds service below5;
+the group0/operation6 table has no handler at0 and selects `1023E215` at1..4.
+
+Each consumer owns an eight-byte slot on its own bridge stack. Foreign native
+completion retires that slot before calling the original callback, which may
+reenter frame or parameter dispatch. The old consumer's later return reads its
+retired slot rather than a stale register token. Owned requests keep ownership
+through their after-consumer cleanup; busy owned work still cancels/retries.
+The completion shim reloads the original packet after saving processor flags.
+Shared lane state and native activation use acquire/release atomics.
+Borrowed gate calls assume the fixed module calls that gate only from its
+parameter-consumer callbacks; executable-range checking is not per-task
+authorization for arbitrary additional module callers.
+
+`owned_warning_available()` becomes false near generation exhaustion, so frame
+policy inhibits owned rendering and the existing worker restores the native
+baseline. Native traffic and owned restoration continue in a terminal lane
+without wrapping the counter. Terminal token identities repeat; correctness
+there depends on closed bridge-local lifetimes and token retirement before
+release, rather than a globally unique generation. Both the ordinary core and
+terminal protocol remain independently scoped.
+
+The final pair passes41 explicit native schedule checks,22 lifecycle/qualification
+checks,27 cleanup/publication and36 owned regressions. Cases include primary,
+cached fresh/NULL foreign waits, reverse copy contention, owned cancellation,
+actual completion callback reentry, an older consumer unwinding while a new one
+owns the lane, the earlier native mutex boundary, post-gate frame tail, and
+injected near/terminal exhaustion. All71 repository tests pass. The API72 module
+rejects the prior API64 host before feature publication.
+
+The ARM validation instructions and existing30-second/10-million-instruction
+guards remain intact. Fixture hooks skip layered Python service dispatch only
+inside the pure compiled host validation routine, which has no modeled service
+boundaries. This avoids CRC observation overhead without replacing validation.
+
+These checks supply kernel/services, surfaces/colors, engine/context, MMIO,
+callback code, counter states and scheduling. Complete indirect native caller/
+writer closure, native math/task wait graph, engine allocation lifetime and
+pre-cold boot sequencing remain unproved. Physical pixels, camera update
+acceptance and recovery require separate hardware validation and authorization.
+See `evidence/20261120-native-warning-transactions.json` and root HANDOFF.md.

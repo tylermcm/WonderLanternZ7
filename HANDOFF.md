@@ -1,5 +1,125 @@
 # Laptop handoff — October 20, 2026
 
+## Native warning transactions API72 - November 20, 2026
+
+Previous0c49637 was PROGRESS (owned-only API64, foreign race reproduced). This
+checkpoint is PROGRESS: identified warning gate plus qualified foreign100-copy
+transactions integrated. Full original software/display-port goal ACTIVE. No
+camera/card/staging/flash/push; no pixel, installation or recovery clearance.
+Physical native caller/writer/task/allocation closure remains unproved.
+
+NEW sdk/native_warning_transaction.h API72 extends64 with init-only activation
+and owned_warning_available(). Host --native-warning-transaction-hooks requires
+all64 flags; new display-highlight-native-transaction-probe opts in after prior
+registrations. State336: Native flag324/guards328,332; preserves324 prefix;
+reserve384/cold192. New fields/lane reads use acquire/release atomics.
+Exact paired bundle only: old64 host+module rebuild unchanged with new flag OFF;
+old64 module on new72 host is UNVALIDATED. Prefix layout alone is not a claim
+of cross-profile behavior. New72 frame admission spans the warning gate, not
+API64's whole frame bodies. Native frame entries themselves remain original.
+
+New primary/cached bridges elide their state+20 permission stores; fresh input
+is re-read/filter-stored under native GATE1023B76E ownership immediately before
+original gate body. Cached NULL uses existing state and retained original policy.
+Native LR1023BABD/1023D895 identifies primary/cached frame and original r5/r4
+inputs; all input registers/flags preserved through C helpers. Gate body original
+10-byte prologue reconstructed with format4 branch. Module gate calls under
+PARAM role borrow that transaction (caller must be resident module executable).
+This assumes the FIXED module calls original gate only from consumer callbacks;
+module text bounds are NOT per-task authorization for arbitrary new callers.
+Keep future GUI/worker code on the asynchronous request path, not direct gate.
+
+Consumer bridge now owns an8-byte LOCAL stack slot {token,packet}, pointer r8.
+Registered owned descriptor remains nonblocking cancel/retry. Qualified foreign
+aligned camera-RAM descriptors, commands42060007/42062007 with matching sampled
+selector/service1..4, yield delay1 until gate releases BEFORE module callback.
+Other requests keep original native dispatch. Original dispatcher checks service
+<5; group0/op6 table0 NULL and1..4 all1023E215. No unidentified service handler
+is admitted deliberately. Native service/context state is sampled, not pinned.
+Completion102396C0 shim saves all regs/flags, RELOADS original packet [sp+8],
+passes slot to helper, restores native prologue. Foreign slot token is zeroed
+BEFORE release and original callback. Late consumer return checks local zero,
+not stale r7. Owned retains token through native completion and module after-
+consumer cleanup. New bridge code never accesses foreign caller payload/
+descriptor memory after the original completion callback.
+Native completion reentry can run frame or foreign consumer with a new slot.
+Before-consumer callbacks still MUST NOT dispatch recursively/wait (API52 rule).
+
+Near generation0xfffffff0 query returnsfalse, highlight_current becomesfalse,
+owned frame policy inhibits and worker restores captured native baseline. At
+idle0xfffffffc native traffic AND owned restoration use a terminal lane with
+phase3/owner publication; tokensfffffffd/frame,fffffffe/parameters can REPEAT.
+Counter never wraps/resets. Terminal correctness depends on closed native bridge
+lifetimes (slot retirement before release, one final gate leave), not globally
+unique generations. Core generic lane remains unchanged and refuses exhaustion.
+Injected terminal cycles and delayed original return are tested; physical timing
+and arbitrary external token misuse are not proved.
+
+FINAL host .private/builds/20261120-native-transaction-host-04,
+MAINef6f1f703b87978336465452ee572f0b464fedfc37b90d4afb36c1ede6aaec1a,
+C7521/API72/state336/reserve384/reproducible/EGCRCzero.
+Module20261120-display-highlight-native-transaction-02,
+SHAb918362c22da8b1b2d92fe6337e3e12e4680a22e39924b7a6a30e28692236fc0,
+30404file/30080image/6616BSS/minAPI72;60 current source inputs verified.
+Module01 is same bytes,02 refreshes SDK comment/source hashes. Host01 had broken
+completion packet handoff (R0 contained saved APSR), exposed by actual native
+callback reentry;02 fixes [sp+8] reload;03 adds atomic shared reads;04 limits
+foreign admission to identified matching selector/service handlers. Only04 is
+accepted for this checkpoint. Prior64 compat host02 MAIN8c12dc12...cef438e6 and
+compat64-module01 SHA4d83e278...eab0380c match prior exact accepted payloads.
+
+.private/evidence/20261120-native-warning-transaction-05.json PASS41 FINAL pair:
+SOURCE/cached fresh/NULL old frame pauses at real enable, foreign request yields
+without copy/ack/lease invalidation, frame completes, native consumer quiesces,
+copies/acks/retires, settled frame staysOff. Owned busy cancellation retained.
+Reverse foreign copy pause: all three frame gates reject without permission
+store or warning programming. Actual supplied ARM completion thunk reenters
+frame+consumer. First consumer paused after token retirement, second owns lane,
+first late return cannot release second. Native earlier mutex boundary pause
+holds no warning token and foreign consumer completes; post-gate old frame tail
+cannot resurrect disabled plane. Injected near-exhaustion inhibits owned plane,
+worker restores baseline;3 terminal native frame/completion/reentry cycles run
+without wrap. Kernel/FS/UI/surface/color/engine/context/MMIO/schedules supplied.
+
+20261120-native-warning-host-04/result.json PASS22 FINAL host: cold336/reserve384/
+guards/allocator; activation prerequisites/single/init-only; module PARAM gate
+borrow versus native frame rejection; unrelated completion cannot release;
+retired slot protects later gate; sampled out-of-service/wrong-selector passes
+native; terminal slots/counter/old-return; failed init clears flags/callbacks;
+preactivation gate token blocks init and survives failed load; retry after leave.
+Host audit03 attempted to remap parent's existing service RAM; corrected test
+setup in04. Fresh-open offset0 is explicitly supplied for loader retry.
+20261120-native-transaction-cleanup-regression-03.json PASS27 cleanup/publication
+plus36 owned on FINAL pair. Existing30s/10M guards retained. CLI admits72 only
+with native transaction flag. 20261120-native-transaction-api64-rejection.json:
+module72 rejects host64 before feature publication. Root71/no skips:
+20261120-native-transaction-final2-root-tests.log.
+
+Native audit01/04 and cleanup regression02 hit ORIGINAL30s CRC wall cap during
+layered fixture dispatch/concurrent work; known sessions exited, no blind restart.
+Final CleanupFixture bypasses ONLY Python model dispatch inside the pure compiled
+z7_module_validate..prepare code span, where no modeled service boundaries exist.
+ALL CRC/header/relocation ARM instructions still execute; no validation shortcut,
+instruction budget change or wall limit increase. Transaction bootstrap invokes
+this lean Cleanup hook before load. Final05 and cleanup03 ran serially. Earlier
+transaction02 found actual completion reentry bug; intermediate03 passed41 on
+host02. Those results are NOT final04 evidence. Final source/build hashes checked.
+
+Source record:evidence/20261120-native-warning-transactions.json. All jobs terminal;
+ignored Graphify refreshed3137nodes/8359edges, all5 new code files present.
+Preliminary private CFG gate scan unresolved tables/math/returns is NOT closure
+proof. Native math/task wait graph, indirect callers/writers, pre-cold sequencing,
+engine allocation/lifetime and physical pixel/update/recovery gaps remain.
+
+NEXT software: finish API72 cached original-policy/unsupported-context regression
+coverage as needed, then highlight style/threshold settings from pinned Z7II
+source, EVF/orientation handling, native Info mirror and real histogram producer.
+Keep original full display-port scope. Continue native lifecycle/caller research
+where required for safe bindings; distinguish software proof from hardware gaps.
+Actual camera pixels/update acceptance/recovery require later separately authorized
+hardware work and an exact-candidate installation/recovery assessment. No flash
+clearance follows these emulator results; no push authorization.
+
 ## Owned/frame exclusion API64 - November 20, 2026
 
 Previous6afdbd2 was PROGRESS (counterexample/core primitive). This checkpoint is

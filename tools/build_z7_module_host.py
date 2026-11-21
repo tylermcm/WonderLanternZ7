@@ -151,7 +151,7 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def add_highlight_hooks(plan, symbols, owned_frame_coordination_hooks=False):
+def add_highlight_hooks(plan, symbols, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False):
     """Whole-function bridges with exact native fallback and owned-only cancel."""
     helpers = {name: plan.alloc(bytes(size)) for name, size in
                dict(highlight_source_original=64, highlight_consumer_original=64,
@@ -165,6 +165,16 @@ def add_highlight_hooks(plan, symbols, owned_frame_coordination_hooks=False):
                    if owned_frame_coordination_hooks else '')
     lane_leave = (f"mov r0,r4; mov r1,r7; {invoke(symbols['z7_owned_parameter_leave'])}"
                   if owned_frame_coordination_hooks else '')
+    local_start = local_end = ''
+    fallback = f'fallback: {lane_leave} {restore} pop.w {{r4-r8,lr}};'
+    if native_warning_transaction_hooks:
+        local_start, local_end = 'sub sp,#8; mov r8,sp;', 'add sp,#8;'
+        lane_enter = f"mov r0,r4; mov r1,r8; {invoke(symbols['z7_native_parameter_enter'])} mov r7,r0;"
+        lane_leave = f"mov r0,r8; {invoke(symbols['z7_native_parameter_leave'])}"
+        fallback = f'''fallback: cmp r7,#0; beq fallback_tail;
+            {restore} bl native_consumer;
+            {save} {lane_leave} {restore} {local_end} pop.w {{r4-r8,pc}};
+            fallback_tail: {restore} {local_end} pop.w {{r4-r8,lr}};'''
     plan.put(helpers['highlight_source_original'], assemble(f'''
         push {{r4-r6,lr}}; mov r5,r1; mov.w r4,#0;
         cbz r0,zero_output; {tail(0x10348678)}
@@ -185,19 +195,19 @@ def add_highlight_hooks(plan, symbols, owned_frame_coordination_hooks=False):
         native_source: {tail(helpers['highlight_source_original'])}
     ''', helpers['highlight_source'], 384))
     plan.put(helpers['highlight_consumer'], assemble(f'''
-        push.w {{r4-r8,lr}}; mov r4,r0;
+        push.w {{r4-r8,lr}}; mov r4,r0; {local_start}
         {save} {lane_enter} mov r0,r4; {invoke(symbols['z7_highlight_consumer_enter'])}
         mov r6,r0; {lane_cancel} cmp r6,#0; beq fallback;
         cmp r6,#1; beq consume; cmp r6,#2; beq cancel;
-        {lane_leave} {restore} mov.w r0,#0; pop.w {{r4-r8,pc}};
+        {lane_leave} {restore} mov.w r0,#0; {local_end} pop.w {{r4-r8,pc}};
         consume: {restore} bl native_consumer; b completed;
         cancel: {restore} mov r0,r4; movs r1,#0;
         {invoke(0x102396c0)} mov.w r0,#0;
         completed: {save} mov r0,r4; mov r1,r6;
         {invoke(symbols['z7_highlight_consumer_leave'])}
         {lane_leave}
-        {restore} pop.w {{r4-r8,pc}};
-        fallback: {lane_leave} {restore} pop.w {{r4-r8,lr}};
+        {restore} {local_end} pop.w {{r4-r8,pc}};
+        {fallback}
         native_consumer: {tail(helpers['highlight_consumer_original'])}
     ''', helpers['highlight_consumer'], 512))
     for site, name, expected in (
@@ -289,7 +299,57 @@ def add_owned_frame_coordination_hooks(plan, symbols):
     return helpers
 
 
-def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False):
+def add_native_warning_transaction_hooks(plan, symbols):
+    """Warning-gate-only frame span; native parameter completion retires slot.
+
+    Earlier frame mutex/geometry work remains outside this transaction. The
+    original permission writes move immediately before the guarded gate body.
+    """
+    tail = lambda p: f'.balign 4; ldr.w pc,[pc,#0]; .word {p | 1};'
+    helpers = {n: plan.alloc(bytes(size)) for n, size in
+               dict(primary_permission=64, cached_permission=64, gate_original=64, gate=384, completion=192).items()}
+    for name, site, expected, code in (
+            ('primary_permission', 0x1023bab0, '316a206b08626078',
+             f'ldr r1,[r6,#0x20]; ldrb r0,[r4,#1]; {tail(0x1023bab8)}'),
+            ('cached_permission', 0x1023d82a, '286a216b016290f85012',
+             f'ldr r0,[r5,#0x20]; ldrb.w r1,[r0,#0x250]; {tail(0x1023d834)}')):
+        plan.put(helpers[name], assemble(code, helpers[name], 64))
+        plan.edit(site, jump(site, helpers[name], len(bytes.fromhex(expected))),
+                  'Defer permission write into warning transaction: ' + name, expected=bytes.fromhex(expected))
+    plan.put(helpers['gate_original'], assemble(f'''
+        push {{r4,r5,lr}}; cmp r0,#4; sub sp,#0x3c; beq format_four;
+        {constant('r4', 0xa180a568)} {tail(0x1023b778)}
+        format_four: {tail(0x1023b7f2)}
+    ''', helpers['gate_original'], 64))
+    save = 'push.w {r0-r3,r12,lr}; mrs r0,apsr; push {r0,r1};'
+    restore = 'pop {r0,r1}; msr APSR_nzcvq,r0; pop.w {r0-r3,r12,lr};'
+    plan.put(helpers['gate'], assemble(f'''
+        push.w {{r4-r8,lr}}; mov r5,sp;
+        {save} mov r0,r5; ldr r1,[sp,#52]; {invoke(symbols['z7_native_gate_enter'])}
+        mov r4,r0; cmn r4,#1; beq busy;
+        ldr r0,[sp,#52]; ldr r1,[sp,#36]; ldr r2,[sp,#32];
+        {invoke(symbols['z7_native_gate_permission'])}
+        {restore} bl native_body;
+        {save} mov r0,r5; mov r1,r4; {invoke(symbols['z7_native_gate_leave'])}
+        {restore} pop.w {{r4-r8,pc}};
+        busy: {restore} mov.w r0,#0; pop.w {{r4-r8,pc}};
+        native_body: {tail(helpers['gate_original'])}
+    ''', helpers['gate'], 384))
+    plan.edit(0x1023b76e, jump(0x1023b76e, helpers['gate'], 10),
+              'Guard entire native warning gate', expected=bytes.fromhex('30b504288fb03dd0fe4c'))
+    save_all = 'push.w {r0-r12,lr}; mrs r0,apsr; push {r0,r1};'
+    restore_all = 'pop {r0,r1}; msr APSR_nzcvq,r0; pop.w {r0-r12,lr};'
+    plan.put(helpers['completion'], assemble(f'''
+        {save_all} ldr r0,[sp,#8]; mov r1,r8; {invoke(symbols['z7_native_parameter_completing'])} {restore_all}
+        push {{r4-r6,lr}}; movs r4,r0; mov r5,r1; beq null_packet;
+        {tail(0x102396c8)} null_packet: {tail(0x102396d2)}
+    ''', helpers['completion'], 192))
+    plan.edit(0x102396c0, jump(0x102396c0, helpers['completion'], 8),
+              'Retire foreign transaction before native completion callback', expected=bytes.fromhex('70b504000d4604d0'))
+    return helpers
+
+
+def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False):
     """Fixed-address, BSS-free host; all writable state is explicitly reserved."""
     temporary = ROOT / '.private/tmp'
     temporary.mkdir(parents=True, exist_ok=True)
@@ -310,6 +370,7 @@ def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, fr
                 *(['-DZ7_HOST_FRAME_PERMISSION=1'] if frame_permission_hooks else []),
                 *(['-DZ7_HOST_CACHED_FRAME=1'] if cached_frame_permission_hooks else []),
                 *(['-DZ7_HOST_OWNED_FRAME_COORDINATION=1'] if owned_frame_coordination_hooks else []),
+                *(['-DZ7_HOST_NATIVE_WARNING_TRANSACTION=1'] if native_warning_transaction_hooks else []),
                 '-c', str(COMPONENT / 'host' / source), '-o', str(obj)], check=True, env=environment)
             objects.append(str(obj))
         linker = folder / 'host.ld'
@@ -354,7 +415,7 @@ ASSERT(SIZEOF(.bss) == 0, "Host must not contain unreserved BSS");
     return code, symbols
 
 
-def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False):
+def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False):
     if highlight_hooks and not display_hooks:
         raise ValueError('Highlight host requires the display host profile')
     if parameter_hooks and not highlight_hooks:
@@ -365,7 +426,9 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Cached frame host requires the primary frame host profile')
     if owned_frame_coordination_hooks and not cached_frame_permission_hooks:
         raise ValueError('Owned frame coordination requires cached frame hooks')
-    state_bytes = 324 if owned_frame_coordination_hooks else 304 if cached_frame_permission_hooks else 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
+    if native_warning_transaction_hooks and not owned_frame_coordination_hooks:
+        raise ValueError('Native warning transactions require owned coordination hooks')
+    state_bytes = 336 if native_warning_transaction_hooks else 324 if owned_frame_coordination_hooks else 304 if cached_frame_permission_hooks else 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
     workspace_bytes = (state_bytes + 63) & ~63
     if sha(container) != Z7_CONTAINER_SHA256:
         raise ValueError('Requires exact original Z7 C 3.80 container')
@@ -378,7 +441,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Unexpected native task descriptor')
     if plan.image.words(0x101e3ee4, 1) != (CURSOR,) or plan.image.words(0x101e3e70, 1) != (STATE,):
         raise ValueError('Unexpected native workspace')
-    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks, cached_frame_permission_hooks, owned_frame_coordination_hooks)
+    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks, cached_frame_permission_hooks, owned_frame_coordination_hooks, native_warning_transaction_hooks)
     host_address = plan.alloc(code)
     cold_size = 192 if owned_frame_coordination_hooks else 160
     cold_address = plan.alloc(bytes(cold_size))
@@ -393,6 +456,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         {(constant('r2', STATE + 280) + ' str r3,[r2]; str r3,[r2,#4];') if frame_permission_hooks else ''}
         {(constant('r2', STATE + 296) + ' str r3,[r2]; str r3,[r2,#4];') if cached_frame_permission_hooks else ''}
         {(constant('r2', STATE + 316) + ' str r3,[r2]; str r3,[r2,#4];') if owned_frame_coordination_hooks else ''}
+        {(constant('r2', STATE + 328) + ' str r3,[r2]; str r3,[r2,#4];') if native_warning_transaction_hooks else ''}
         {constant('r2', STATE + 32)} {constant('r3', MAGIC)} str r3,[r2];
         dmb sy; pop {{r2,r3}}; msr APSR_nzcvq,r2; pop {{r2,r3}};
         {constant('r1', CURSOR)} {constant('r0', STATE + workspace_bytes)} str r0,[r1];
@@ -406,10 +470,11 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
               'Call original AUTOOP initializer before scheduling the isolated module loader',
               expected=struct.pack('<I', 0x102697f5))
     display_bridges = add_display_hooks(plan, symbols) if display_hooks else {}
-    highlight_bridges = add_highlight_hooks(plan, symbols, owned_frame_coordination_hooks) if highlight_hooks else {}
-    frame_permission_bridges = add_frame_permission_hook(plan, symbols) if frame_permission_hooks else {}
-    cached_frame_bridges = add_cached_frame_hooks(plan, symbols) if cached_frame_permission_hooks else {}
-    owned_frame_bridges = add_owned_frame_coordination_hooks(plan, symbols) if owned_frame_coordination_hooks else {}
+    highlight_bridges = add_highlight_hooks(plan, symbols, owned_frame_coordination_hooks, native_warning_transaction_hooks) if highlight_hooks else {}
+    frame_permission_bridges = add_frame_permission_hook(plan, symbols) if frame_permission_hooks and not native_warning_transaction_hooks else {}
+    cached_frame_bridges = add_cached_frame_hooks(plan, symbols) if cached_frame_permission_hooks and not native_warning_transaction_hooks else {}
+    owned_frame_bridges = add_owned_frame_coordination_hooks(plan, symbols) if owned_frame_coordination_hooks and not native_warning_transaction_hooks else {}
+    native_warning_bridges = add_native_warning_transaction_hooks(plan, symbols) if native_warning_transaction_hooks else {}
     output, report = plan.finish()
     report.update(preset=DISPLAY_PRESET if display_hooks else PRESET, emulator_only=True, candidate_cleared=False,
         container_sha256=Z7_CONTAINER_SHA256, main_payload_size=len(output) - 2,
@@ -434,6 +499,10 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         report.update(owned_frame_coordination_hooks=True, api_bytes=64, owned_frame_bridges=owned_frame_bridges)
         report['limitations'] += ['Owned-frame exclusion only; foreign native parameters remain uncoordinated.',
                                   'Lane generation exhaustion refuses admission; diagnostic has no shutdown handling.']
+    if native_warning_transaction_hooks:
+        report.update(native_warning_transaction_hooks=True, api_bytes=72, native_warning_bridges=native_warning_bridges)
+        report['limitations'] = [v for v in report['limitations'] if not v.startswith(('Owned-frame exclusion only;', 'Lane generation exhaustion refuses'))]
+        report['limitations'] += ['Warning-gate transaction only: earlier frame geometry and indirect native writer/caller closure remain open.', 'Terminal token reuse relies on closed bridge token lifetimes; native task/math-service scheduling needs validation.']
     return output, report
 
 
@@ -444,7 +513,7 @@ def validate_candidate(path, report_path, stock_path, zig=ZIG):
     expected, report = build_image(Path(stock_path).read_bytes(), zig, actual['preset'] == DISPLAY_PRESET,
                                    actual.get('highlight_hooks', False), actual.get('parameter_hooks', False),
                                    actual.get('frame_permission_hooks', False), actual.get('cached_frame_permission_hooks', False),
-                                   actual.get('owned_frame_coordination_hooks', False))
+                                   actual.get('owned_frame_coordination_hooks', False), actual.get('native_warning_transaction_hooks', False))
     if (Path(path).read_bytes() != expected[:-2] or actual != report or binascii.crc_hqx(expected, 0)):
         raise ValueError('Module host candidate or report differs from independent rebuild')
     return dict(modified=True, independently_rebuilt=True, sha256=sha(expected[:-2]),
@@ -462,6 +531,7 @@ def main():
     parser.add_argument('--frame-permission-hooks', action='store_true', help='Opt in to API56 primary frame permission filter; requires --parameter-hooks')
     parser.add_argument('--cached-frame-permission-hooks', action='store_true', help='Opt in to API60 cached primary permission filter; requires --frame-permission-hooks')
     parser.add_argument('--owned-frame-coordination-hooks', action='store_true', help='Opt in to diagnostic API64 owned parameter / primary frame exclusion; requires cached frame hooks')
+    parser.add_argument('--native-warning-transaction-hooks', action='store_true', help='Opt in to API72 native warning gate / parameter transactions; requires owned coordination flags')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
@@ -476,8 +546,10 @@ def main():
         parser.error('--cached-frame-permission-hooks requires --frame-permission-hooks')
     if args.owned_frame_coordination_hooks and not args.cached_frame_permission_hooks:
         parser.error('--owned-frame-coordination-hooks requires --cached-frame-permission-hooks')
-    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks)
-    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks)
+    if args.native_warning_transaction_hooks and not args.owned_frame_coordination_hooks:
+        parser.error('--native-warning-transaction-hooks requires --owned-frame-coordination-hooks')
+    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks)
+    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks)
     if eg != repeated or report != second or binascii.crc_hqx(eg, 0):
         raise RuntimeError('Host build is not deterministic or CRC failed')
     output.mkdir(parents=True)

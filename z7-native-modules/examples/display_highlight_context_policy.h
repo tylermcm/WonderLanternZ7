@@ -55,6 +55,9 @@ static uint32_t highlight_current(struct z7_highlight_snapshot *snapshot)
 {
     struct z7_highlight_context live;
     if (!z7_highlight_snapshot(&z7_highlight_publication, snapshot) ||
+#ifdef Z7_HIGHLIGHT_NATIVE_WARNING_PROBE
+        !Z7_HIGHLIGHT_COORDINATION_AVAILABLE() ||
+#endif
         !snapshot->view.wanted || !snapshot->view.eligible || !highlight_ui_ready() ||
         snapshot->view.settings_revision != __atomic_load_n(&z7_settings_revision, __ATOMIC_ACQUIRE) ||
         snapshot->view.preset != z7_readout_preset || snapshot->view.preset_generation != z7_preset_cycles ||
