@@ -1,0 +1,29 @@
+{
+  "kind": "original-Z7-entry-disabled-diagnostic",
+  "entry_offset": 3844,
+  "image_bytes": 20800,
+  "bss_bytes": 5584,
+  "file_bytes": 21104,
+  "source_module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+  "module_sha256": "ecba70f7e93974cda15f7515c2747a06c2ed1c77731cc60fac2cbc8b95c77cdc",
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "entry_returns_zero": true,
+  "display_and_worker_registration": false,
+  "native_loader_instruction_check_passed": true,
+  "native_load_status": 8,
+  "same_file_size_image_bss_and_relocations": true,
+  "emulator_only": true,
+  "hardware_trial_authorized": false,
+  "do_not_stage": true,
+  "camera_firmware_image": false,
+  "repair_claimed": false,
+  "limits": [
+    "Filesystem/kernel/allocator boundaries supplied; no real card startup proof",
+    "Same byte count/layout does not prove identical card timing",
+    "Installed host remains unchanged; no hardware test authorized"
+  ],
+  "source_sha256": "8c6dda6272347d9ac24d7bdd07f0a2b511ec9409d38d83f7fb8b70d8fd5cbdf4",
+  "relocation_count": 60,
+  "repository_tests": 91,
+  "hardware_observation_limit": "Responsive controls alone would not prove entry executed; no on-camera load-status marker"
+}

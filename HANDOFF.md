@@ -6,9 +6,12 @@ WITHDRAW the LCD flash-ready recommendation. Owner reports update finished,
 then all buttons/touch stopped responding. Controls recovered immediately when
 the card was removed, WITHOUT a restart. Owner confirms MENU/touch both work;
 reinserting the same card without restarting also works. Owner now confirms a
-normal COLD boot without card, with MENU and touch responding. Exact initial
-freeze timing relative to the first post-update restart is still being asked;
-do not assume the module actually loaded or that this was a post-boot freeze.
+normal COLD boot without card, with MENU and touch responding. Owner now confirms
+normal COLD boot WITH DISABLED card, too. Original failure was definitely AFTER
+update-success screen, instructed power-off, and subsequent power-on; all controls
+including power switch froze and a battery pull was required. Separate reported
+card-removal/reinsertion recovery without restart is preserved. This is not merely
+the update-completion screen being locked. Do not assume the module initialized.
 No permanent brick is
 established, but the installed build has FAILED hardware acceptance. Do not
 reuse previous software-gates-passed language as hardware clearance.
@@ -44,17 +47,47 @@ retries. No equivalent explicit readiness gate. This is a concrete difference
 and investigation lead, NOT established freeze cause or verified repair. Do not
 copy Z7II addresses/app bytes or add an arbitrary delay and call that fixed.
 
-Next: owner was asked for ONE normal startup with DISABLED card (no update) to
-separate card-presence from enabled-module effects, plus exact initial restart
-timing. Await observations; no duplicate flash or new binary. Investigate native
-startup task/file readiness and initialization boundaries offline. No production
-change/new binary until a specific supported cause is found. QEMU file-service
+Disabled-card startup and original restart timing are now confirmed, as above.
+BOTH trial filenames were disabled together: result does not uniquely identify
+Z7APP versus EG detection. The update file stays disabled for any later SD-only
+isolation. No new flash/production repair until a supported cause is found.
+Investigate native startup task/file readiness and initialization offline.
+QEMU file-service
 HLE bypasses physical card/mount/locking behavior: its prior passes did NOT prove
 those contracts. First priority is keeping the owner's camera usable and files
 intact, not completing deferred display features. All previous records below
 are historical; this hold takes precedence. No live emulator/process from this
 investigation, no firmware writes or push. Only authorized filename quarantine
 changed card metadata; file contents and photos preserved.
+
+Offline-only diagnostic prepared: tools/build_z7_noinit_diagnostic.py modifies
+only four entry bytes to Thumb return0 plus packet CRC, preserving exact21104
+filebytes/image20800/BSS5584/60relocs/entry3844 from failed module. Canonical
+header/CRC/relocs and exact source SHA checked; relocation overlap rejected.
+Private build 20261121-lcd-noinit-diagnostic-01 SHAecba70f7...5c77cdc. HostFixture
+executes real loader/prepare/cache/call instructions with supplied FS/kernel:
+load status8, retained allocation, all display/update/worker registrations zero,
+repeat load returns10 without reading again. Not a physical-card proof or fix.
+Not camera firmware: NO EG file produced. do_not_stage=true, hardware approval
+false. It has NOT been copied to card; originals remain .disabled and preserved.
+This is preparation for an OPTIONAL explicit owner-approved SD-only diagnostic,
+which could still freeze if loader I/O/cache is responsible. Do not deploy without
+fresh consent; prior trial/rename approval does not authorize this diagnostic.
+Readiness gap remains a lead, not an explanation proven by these model checks.
+Responsive controls alone would not prove entry executed (no on-camera status
+marker); a pass is comparison data, not proof of load completion or a fix.
+
+Also checked suspected Z7II-versus-Z7 read-buffer ABI difference: actual Z7
+102d86d8 forwards raw buffer to1027c018, which places it directly in read-request
+offset0x28. Do NOT blindly transplant upstream Z7II's buffer descriptor argument.
+No production C/host changes made, no card writes after quarantine/eject.
+Root91/no skips after five diagnostic integrity tests. Graph refreshed after
+code edits to3948nodes/10899links (existing warnings); no further hardware/camera
+test implied by these results. Next offer
+the OPTIONAL SD-only no-init diagnostic with explicit consent, explaining it can
+still freeze and does not isolate every cause if it passes (EG remains disabled).
+Camera currently owner-confirmed usable with BOTH trial files disabled. Do not
+reenable original module/update file or deploy the diagnostic automatically.
 
 
 ## Owner-authorized pair staged additively; card safely ejected - November 21, 2026

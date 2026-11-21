@@ -4,16 +4,39 @@
 update, all controls/touch froze. Removing the card immediately restored MENU
 and touch without restarting; reinserting it without restarting also worked.
 The cause is not established. Startup loading/card-file service or initialization
-is suspected, not proven. Owner confirms a normal cold boot without the card.
-The initial freeze's timing relative to the post-update restart is unconfirmed.
-Do not assume the module was running when controls stopped.
+is suspected, not proven. Owner confirms normal cold boots without the card AND
+with both trial files disabled. The initial freeze occurred after the successful
+update message, power-off and subsequent power-on; even the power switch failed
+and a battery pull was required. This was not simply the completion screen.
+Both files were disabled together, so module loading versus update-file detection
+is not isolated. Do not assume the module initialized when controls stopped.
 
 Both post-failure card files were preserved privately and match the staged
 hashes. With explicit owner approval, ONLY their names were changed to
 Z7APP.BIN.disabled and EG161080.BIN.disabled. Contents/hashes, 217 existing
 user-file metadata records and Nikon catalog hash are unchanged. Card safely
-ejected; installed host NOT removed or reflashed. A normal startup with this
-disabled card is the pending isolation check, not another firmware trial.
+ejected; installed host NOT removed or reflashed. Normal startup with the disabled
+card is now owner-confirmed. Keep both files disabled. An offline entry-disabled
+SD diagnostic exists, but has not been authorized/deployed and is not a fix or
+hardware-validated image. No further firmware flash is proposed.
+
+Optional next isolation: the private no-init diagnostic preserves the failed
+module's exact 21,104-byte size, image/BSS sizes and relocation table, replacing
+only four entry bytes with return-zero instructions and resealing its CRC.
+SHA-256: ecba70f7e93974cda15f7515c2747a06c2ed1c77731cc60fac2cbc8b95c77cdc.
+Offline original-loader instructions accept it with no display/worker hooks
+registered. Those checks still supply filesystem services; they do not prove
+physical loading is safe or identify the failure cause.
+
+Only with fresh owner consent would this be added as Z7APP.BIN for ONE ordinary
+startup check. Both original .disabled files would stay intact; EG stays disabled
+and no Firmware version > Update action is involved. The diagnostic enables no
+features. It could reproduce the freeze if loading itself is responsible. A pass
+would leave full initialization and update-file interaction unresolved. No such
+card copy or hardware test has been authorized/performed.
+A responsive camera alone would not prove the diagnostic entry executed: this
+host exposes no on-camera load-status marker. This would provide comparison
+data, not a verified repair or complete stage trace.
 
 Do not perform another update or automatic rollback. Preserve all files and
 frozen evidence. The previous software-ready recommendation below is historical
