@@ -186,9 +186,11 @@ def main():
     host = json.loads((a.build / 'module-host.emulator.json').read_text(encoding='utf-8'))
     module = json.loads((a.module / 'module.json').read_text(encoding='utf-8'))
     raw, packet = (a.build / 'module-host.emulator.main.bin').read_bytes(), (a.module / 'Z7APP.BIN').read_bytes()
-    if not host.get('native_warning_transaction_hooks') or module['api_minimum_bytes'] != 72 or (
+    if (not host.get('native_warning_transaction_hooks') or module['api_minimum_bytes'] not in (72,80) or
+            module['api_minimum_bytes'] > host.get('api_bytes',0) or
+            (module['api_minimum_bytes']==80 and not host.get('native_cache_copy_hooks')) or
             hashlib.sha256(raw).hexdigest() != host['main_payload_sha256'] or hashlib.sha256(packet).hexdigest() != module['module_sha256']):
-        p.error('Exact API72 host and module required')
+        p.error('Exact compatible API72/80 host and module required')
     result = audit(raw, host, packet, module)
     names = {*host['source_files'], *module['source_inputs_sha256'],
              'tools/audit_z7_native_warning_transaction.py', 'tools/build_z7_module_host.py', 'tools/build_z7_display_module.py',

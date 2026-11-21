@@ -30,6 +30,8 @@ class CacheHostFixture(HostFixture):
         self.watch=self.copied=0;self.pause_copy=self.pause_validate=False;self.writes=[]
         super().__init__(raw,report,packet)
         self.u.mem_map(0xa1f18000,0x5000)
+        self.u.mem_map(0xa24e1000,0x1000)
+        self.write(0xa24e1e00,0)
         self.u.mem_map(0xa2510000,0x10000)
         # Observe cache stores only; filesystem/loader stack writes are outside
         # this schedule probe and retain their ordinary HostFixture execution.
@@ -109,6 +111,20 @@ def audit(raw,host,stock,packet,module):
     check('sdk-validation-rejects-tampered-bank',f.api(2,1)==0)
     f.u.mem_write(SNAPSHOT,snapshot);f.write(SNAPSHOT+36,f.read(SNAPSHOT+36)+1)
     check('sdk-validation-rejects-tampered-generation',f.api(2,1)==0)
+    f.put(1,request(1,2,224));f.api(1,1);before=f.snapshot();f.write(0xa24e1e00,1)
+    check('movie-mode-refuses-photo-snapshot-without-output-mutation',f.api(1,1)==0 and f.api(2,1)==0 and f.snapshot()==before)
+    f.put(1,request(1,1,180));f.write(0xa24e1e00,0)
+    check('movie-cache-copy-is-not-reused-as-photo-baseline-after-mode-return',f.api(1,1)==0 and f.observation()[3]&1==0)
+    f.put(1,request(1,2,235))
+    check('fresh-photo-copy-readmits-photo-snapshot',f.api(1,1)==1 and f.snapshot()[:36]==request(1,2,235))
+    for start_mode,end_mode in ((0,1),(1,0)):
+        f.write(0xa24e1e00,start_mode);f.u.mem_write(MEM+0x1000,request(1,1,202))
+        f.watch=f.base(0)+REQUEST_OFFSET;f.copied=0;f.pause_copy=True
+        guards=enter(f,WRITER,(1,0,MEM+0x1000,0),CALLER_STACK)
+        context=f.u.context_save();f.write(0xa24e1e00,end_mode);f.u.context_restore(context);resume(f)
+        f.write(0xa24e1e00,0)
+        check(f'copy-spanning-mode{start_mode}-to{end_mode}-does-not-publish-photo-ready',returned(f,CALLER_STACK,guards) and f.observation()[3]&1==0 and f.api(1,1)==0)
+        f.put(1,request(1,2,235))
     # Constructor's nonzero first field /zero second field exercises the extra
     # displaced load in its unaligned ten-byte jump window without GPU calls.
     for output,bank in ((1,0),(4,2)):
@@ -165,6 +181,7 @@ def audit(raw,host,stock,packet,module):
     check('cold-hook-preserves-native-continuation-registers-and-flags',f.heap_observation==dict(r0=STATE,r1=CURSOR,r2=0x22334455,r3=0x66778899,flags=0xf8000000))
     return dict(passed=True,checks=checks,host_sha256=host['main_payload_sha256'],loaded_sdk_probe_sha256=hashlib.sha256(packet).hexdigest(),
                 actual_copy_bridges_constructor_setter_getter_memcpy_and_sdk_calls_execute=True,
+                copy_begin_end_photo_mode_source_tracking_checked=True,
                 kernel_filesystem_bank_indices_and_task_schedule_supplied=True,
                 full_native_boot_pre_cold_writer_closure_index_aba_bank_lifetime_or_apply_atomicity_proven=False,
                 automatic_no_native_update_display_handoff_implemented=False,camera_card_access=False)
@@ -176,7 +193,8 @@ def main():
     a=p.parse_args();out=a.output.resolve()
     if not out.is_relative_to(ROOT/'.private') or out.exists():p.error('Choose a new private output directory')
     stock=a.stock_main.read_bytes();host=json.loads((a.build/'module-host.emulator.json').read_text(encoding='utf-8'));raw=(a.build/'module-host.emulator.main.bin').read_bytes()
-    if hashlib.sha256(stock).hexdigest()!=STOCK_SHA or hashlib.sha256(raw).hexdigest()!=host['main_payload_sha256'] or not host.get('native_cache_copy_hooks'):p.error('Exact stock MAIN and cache-copy host required')
+    if (hashlib.sha256(stock).hexdigest()!=STOCK_SHA or hashlib.sha256(raw).hexdigest()!=host['main_payload_sha256'] or
+        not host.get('native_cache_copy_hooks') or not host.get('native_cache_photo_copies_only')):p.error('Exact stock MAIN and photo-source-tracked cache-copy host required')
     source=ROOT/'z7-native-modules/examples/native_cache_probe.c';packet,module=build(source,zig=ZIG);again,repeated=build(source,zig=ZIG)
     if packet!=again or module!=repeated:raise AssertionError('SDK probe must build reproducibly')
     result=audit(raw,host,stock,packet,module)

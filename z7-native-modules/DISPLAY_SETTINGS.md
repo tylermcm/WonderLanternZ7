@@ -1240,3 +1240,45 @@ a new native update still require producer binding; physical output mapping,
 engine lifetime, EVF pixels and orientation remain unverified. Existing preference
 profile bytes remain unchanged when the EVF option is absent. See root HANDOFF.md
 and `evidence/20261120-highlight-evf.json` for exact validation scope.
+
+## Cache-driven LCD/EVF highlight handoff
+
+`display-highlight-handoff-probe` requires the paired API80 cache-copy host and
+extends the EVF profile. It can acquire each output's native baseline from a
+tracked native request-cache copy without a foreign display-parameter packet.
+Only tracked copies that begin and end in photo mode are admitted, while current
+mode is photo. Movie cache writes and copies crossing a mode boundary retire that
+bank readiness; returning to photo waits for a fresh photo cache copy or native
+photo parameter source. An unobserved cache is rejected. Per-output origins keep LCD and EVF
+baselines separate, including exact foreign native parameter updates.
+
+On an output change, the worker first queues a native-consumer disable. Only after
+that completes does it queue the target output's application or native restoration.
+The consumer confirms the old plane is disabled before retiring its frame-policy
+record. A new actual frame supplies the target's native permission; no old frame
+pointer or other output's permission is reused. Global Off on the destination
+restores that destination's native baseline and relinquishes module ownership.
+An enabled Nikon baseline may still render under its original native permission.
+
+A cache-only change invalidates cache-bound frame ownership immediately at the
+permission callback. The worker refreshes the baseline and captured generation.
+If a native cache copy is incomplete, it disables the owned override and waits;
+completion permits retry without a new GUI or foreign parameter update. Queued
+application cannot consume a partial cache snapshot. Cache-counter exhaustion
+also disables cache-bound ownership without guessing a restoration baseline;
+a subsequent genuine native update can reestablish native ownership.
+
+Cache-derived baselines are converted using the current palette. Exact foreign
+native parameters remain byte-preserved when their bound raw native cache request
+has not changed, including across palette and other-output updates. A newer changed
+raw request becomes the restoration baseline. Disabled requests define no useful
+tail and restore a normalized zero parameter block. Configuration and journal
+formats remain the existing preference version2 /envelope version1.
+
+This is an independent experimental logical-output port. Tracking covers the
+host's four audited copy spans; complete native boot/pre-cold writer ordering,
+other writers, index ABA, engine allocation lifetime and physical pixels remain
+open. Snapshot validation does not make later application atomic with writers.
+The full display-port goal also retains orientation/portrait, native Info mirror,
+real histogram producer, lifecycle and final installation/recovery assessment.
+See root HANDOFF.md and `evidence/20261120-highlight-handoff.json` for validation.

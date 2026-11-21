@@ -1,5 +1,94 @@
 # Laptop handoff — October 20, 2026
 
+## Cache-driven logical LCD/EVF handoff - November 20, 2026
+
+Previous0fe3f8b was PROGRESS (API80 cache-copy host). This checkpoint is PROGRESS:
+new display-highlight-handoff-probe uses actual API80 snapshots for baseline
+acquisition and logical LCD/EVF round trips WITHOUT foreign display-parameter
+packets. Full original goal ACTIVE. Native boot/pre-cold writer ordering, full
+writer/index/bank/engine lifetime closure, physical pixels and installation remain
+unproved. No camera/card/staging/flash/push. This is not a finished camera release.
+
+Module20261120-display-highlight-handoff-03:
+SHAea5ef0a4704897ebff6ca2baa447e842982c1baf6ae7597f4404cf300f49cd59,
+32972file/32576image/7376BSS/minAPI80/reproducible;65 source inputs.
+Paired photo-source host20261120-native-cache-host-05,
+MAIN11933df6daf28d1f1988e72d070e84e2a958a229c36d47214b0c1af8bf999ca3,
+33065600main/8453host/360state/384reserve/cold224slot/API80/reproducible/EGCRCzero.
+Earlier EVF flag-OFF rebuild20261120-handoff-compat-evf-01 remains byte-identical
+1fb3afc1f389c636d4bb681ce19cccc571593bd6b64747dc4a6191124b071c21.
+New full API80 module rejects API72 before publication(status7/image0), verified
+in20261120-handoff-api72-rejection-final.json. No generic cross-profile clearance.
+
+Handoff macro ONLY appends cache_bound/baseline_foreign and44-byte snapshot to
+lease record: record300/publication312 bytes, old baseline/params offsets60/160
+unchanged. Two bounded consumer-written origin publications retain each output's
+native baseline/context/cache binding. Older-output native baselines survive a
+new native generation on the other output when their native request is unchanged.
+Actual foreign native100 preserved exactly; cache-derived baselines convert the
+native36-byte request at consumption. Changed native request supersedes old
+cache binding. Palette changes reconvert cache-derived baselines, preserve exact
+foreign payloads when raw request unchanged. Disabled cache ignores undefined
+request tail and restores normalized zero100. Config/journal formats unchanged.
+
+Worker still only queues/reaps, no conversion or native gate. It disables old
+owned plane first, waits for acknowledgement, then applies target or restores its
+native baseline if Off. Consumer confirms old disabled state/engine/register0
+before retiring old frame-policy record. New actual frame supplies native policy;
+no cross-output permission/frame pointer reuse. Global Off can restore an enabled
+Nikon baseline under its native permission; it does not blindly force native Off.
+
+Cache generation participates in owned frame permission. Cache-only update
+inhibits old ownership before worker refresh. Busy cache queues owned disable
+even if GUI still wants highlights, then waits without repeated requests. Cache
+completion permits retry/restoration without GUI or native parameter update.
+Queued apply with partial source cancels before100-copy; completed newer source
+is reacquired at consumer. Cache observation exhaustion disables cache-bound owner
+without stale restoration. A genuine native update can return native ownership.
+Preflight rejects exhausted lease/origin publication identities before owned copy.
+Snapshot validity still does NOT make later application atomic with cache writers.
+
+.private/evidence/20261120-highlight-handoff-08.json PASS68: actual native cache
+constructors before module load(supplied ordering), no-foreign-packet round trip,
+all16 EVF choices, native source/frame/gate/driver enable effects, cache-only
+baseline refresh, per-output exact foreign preservation, Off destination/native
+permission, real partial memcpy with owned disable/retry, queued cancel/latest
+source, Off during busy copy, counter exhaustion/native recovery, palette-derived
+vs foreign distinction, undefined disabled request tail, movie-cache exclusion
+and fresh-photo recovery. Engine/context/UI/FS/
+kernel/palette/MMIO storage and schedules supplied. No physical mapping/pixels.
+
+Audit01 fixture missed an already queued second-stage request; explicit pending
+state consumption fixed02/PASS11. Module01's current-GUI disable condition would
+reject cache-busy shutdown; corrected new-profile branch in accepted02. Audit03
+PASS35;04 PASS51 adds all16 EVF choices;05 PASS59 adds pending-Off/exhaustion;
+06 PASS63 adds palette and disabled-tail cases. Mode review found that raw
+cache readiness lacked producer-mode tracking: host05 now stamps whether copy
+begins/ends in photo0, clears bank readiness otherwise and requires currentphoto0
+for capture/validation. API80/44-byte snapshot/state360 unchanged. Native cache
+host audit08 PASS102, including mode rejection and copies spanning both mode
+directions. Handoff07/08 PASS68 add photo/movie/photo native cache recovery.
+Mode/index ABA and original producer semantic context remain unproved; stamps
+sample boundaries, not task/allocation pins. Earlier host04 is NOT accepted for
+this handoff pairing. The module packet stays identical;03 refreshes source
+fingerprints for the updated SDK contract. Failed runs remain failed.
+
+FINAL accepted pairing checks: native-cache-host-08/result.json PASS102;
+highlight-handoff-08.json PASS68;handoff-transactions-02.json PASS41;
+handoff-cleanup-02.json PASS28 +36owned;handoff-preferences-02/result.json
+PASS609 codec +95native preferences. Root71/no skips:handoff-root-tests-final.log.
+Host independent exact payload/report rebuild PASS:handoff-host-independent.json.
+API72 flag-OFF host rebuildhandoff-compat72-host-02 remainsEF6F payload identical.
+All final audit fingerprints,20 host and65 module inputs verified current; source
+frozen during live runs. Ignored Graphify refreshed3273nodes/8820edges;
+all3 new code files present. Source-only evidence:evidence/20261120-highlight-handoff.json.
+
+NEXT: validate native pre-cold constructor/boot ordering and other writers/index
+ABA/bank lifetime; broaden native lifecycle/pixel evidence and finish remaining
+orientation/portrait, native Info mirror and real histogram producer. Final
+integrated release and exact installation/recovery assessment remain required.
+Do not redefine the full goal around the admitted logical shared-engine fixture.
+
 ## Native request cache bridges and SDK API80 - November 20, 2026
 
 Previouse5114eb was PROGRESS (unwired observation core). This checkpoint is

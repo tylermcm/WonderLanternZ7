@@ -539,7 +539,8 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
     if native_cache_copy_hooks:
         report.update(native_cache_copy_hooks=True, api_bytes=80, native_cache_bridges=native_cache_bridges,
                       native_cache_observation_bytes=12, native_cache_snapshot_bytes=44,
-                      native_cache_requires_tracked_completion=True, native_cache_fixed_indices={'lcd':0,'evf':2})
+                      native_cache_requires_tracked_completion=True, native_cache_fixed_indices={'lcd':0,'evf':2},
+                      native_cache_photo_copies_only=True)
         report['source_files']['z7-native-modules/plugins/cache_observation.h'] = sha((COMPONENT/'plugins/cache_observation.h').read_bytes())
         report['limitations'] += ['Cache observation covers four kind0 request copy sites, not all indirect writers or index ABA.',
                                   'Pre-cold writer closure, native startup ordering and fixed bank allocation/lifetime remain open.',

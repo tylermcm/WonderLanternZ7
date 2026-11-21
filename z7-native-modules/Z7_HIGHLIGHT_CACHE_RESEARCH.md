@@ -141,3 +141,50 @@ started before cold state initialization cannot be assumed covered by idle
 counters afterward. Close that ordering before using this as an automatic
 handoff baseline source. Earlier API72 host bytes remain identical with the new
 flag disabled. No camera/card/update/recovery clearance follows.
+
+## Display-module snapshot consumer
+
+The API80 `display-highlight-handoff-probe` now consumes snapshots for logical
+LCD/EVF baseline acquisition. Two312-byte bounded native-origin publications
+retain context, baseline, optional raw cache binding and whether the baseline
+came from an exact foreign native packet. Lease records append these fields only
+under `Z7_HIGHLIGHT_HANDOFF_PROBE`; the old baseline/parameter prefix is preserved.
+Native consumer callbacks are their sole writer; GUI/worker code does not convert
+or program the native gate. Worker work remains resident asynchronous requests.
+
+Changed output ownership requires an acknowledged old-plane disable before new
+application/restoration. A readable disabled lease and actual engine/state/register
+checks precede retiring the old frame-policy record. Cache validity participates
+in the frame permission decision, while the worker handles refresh, busy disable,
+retry and restoration. Per-output native records survive updates on the other
+output. Cache-derived colors follow palette changes; exact native packet baselines
+are retained when the bound raw request is unchanged.
+
+These mechanisms use the existing warning-parameter lane for module application,
+while native cache writers remain observed rather than excluded. A writer can
+start after validation; this is not an atomic cache-to-plane commit. A completed
+tracked cache source is required for initial cache-driven ownership. Full native
+startup/writer/index/allocation closure is still needed before claiming a complete
+camera lifecycle or installation-ready release.
+
+## Photo-mode source stamp
+
+The paired handoff host also stamps whether each observed copy began and ended
+with native property138D/MODE at0. Only such completions set photo-ready bits;
+a movie/unknown-mode completion or a copy crossing a mode boundary clears that
+bank's readiness. Snapshot and validation also require current mode0. This prevents
+a request written in movie mode from becoming a photo baseline just because the
+mode word later returns to0. A new complete photo-mode copy readmits the bank.
+Tokens carry bank+1 in their low byte and the sampled photo-start flag in bit8.
+State and SDK snapshot sizes remain360/44 bytes; API prefix remains80. This is a
+correction within the experimental exact-pair contract, not compatibility clearance
+for earlier API80 host binaries. Audit admission requires the photo-source flag.
+
+The source stamp samples mode at copy boundaries; it is not a mode-transition
+allocation pin or proof of all native producer contexts. Mode/index ABA, writes
+before cold activation, indirect writers and lifetime still need closure. Five
+additional native host checks cover current movie rejection, movie-copy readiness,
+fresh-photo recovery and copies spanning each direction of the mode transition.
+The functional handoff audit also exercises photo/movie/photo with movie-cache
+writes, waiting, fresh-photo recovery and exact photo restoration without a foreign
+display packet. Earlier mode-agnostic host04 is not the accepted handoff pairing.

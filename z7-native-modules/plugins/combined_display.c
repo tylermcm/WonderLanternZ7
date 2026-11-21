@@ -4,6 +4,10 @@
  */
 #include "module.h"
 #include "display.h"
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+#include "native_cache.h"
+static const struct z7_module_native_cache_api *highlight_cache_api;
+#endif
 #ifdef Z7_HIGHLIGHT_CONTEXT_PROBE
 #include "highlight.h"
 #ifdef Z7_HIGHLIGHT_PARAMETERS_PROBE
@@ -149,6 +153,11 @@ uint32_t z7_main(const struct z7_module_api *api)
 {
     if (!api || api->abi != Z7_MODULE_ABI || api->target != Z7_MODULE_TARGET ||
         api->size < sizeof(*api) || !api->register_display || !api->register_grid_menu) return 1;
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+    highlight_cache_api = (const struct z7_module_native_cache_api *)api;
+    if (api->size < sizeof(*highlight_cache_api) || !highlight_cache_api->native_cache_snapshot ||
+        !highlight_cache_api->native_cache_snapshot_valid) return 1;
+#endif
 #ifdef Z7_SETTINGS_PERSISTENCE
     const struct z7_module_worker_api *worker_api = (const struct z7_module_worker_api *)api;
     if (api->size < sizeof(*worker_api) || !worker_api->register_worker) return 1;

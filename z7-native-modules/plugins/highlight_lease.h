@@ -5,10 +5,17 @@
 #ifndef Z7_HIGHLIGHT_LEASE_H
 #define Z7_HIGHLIGHT_LEASE_H
 #include "highlight_context.h"
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+#include "native_cache.h"
+#endif
 struct z7_highlight_lease_record {
     uint32_t valid, native_generation, epoch, palette, disabled;
     struct z7_highlight_context context;
     uint32_t baseline[25], parameters[25];
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+    uint32_t cache_bound, baseline_foreign;
+    struct z7_native_cache_snapshot cache;
+#endif
 };
 struct z7_highlight_lease {
     uint32_t sequence, serial, halted;

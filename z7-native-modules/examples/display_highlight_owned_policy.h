@@ -5,6 +5,9 @@
 #include "../plugins/highlight_lease.h"
 enum highlight_owned_operation { HO_NONE, HO_APPLY, HO_RESTORE, HO_DISABLE };
 struct z7_highlight_lease z7_highlight_lease;
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+static uint32_t highlight_handoff_source_current(const struct z7_highlight_lease_record *);
+#endif
 volatile uint32_t z7_highlight_owned_queued, z7_highlight_owned_applied;
 volatile uint32_t z7_highlight_owned_restored, z7_highlight_owned_disabled;
 volatile uint32_t z7_highlight_owned_cancelled, z7_highlight_owned_parked;
@@ -68,6 +71,9 @@ static uint32_t highlight_frame_permission(const void *frame, uint32_t native_pe
     /* Inhibit stale owned parameters even when native permission was1. Once
      * restoration/new native traffic relinquishes the lease, delegate native. */
     uint32_t enabled = !z7_highlight_owned_parked && !lease.record.disabled &&
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+        highlight_handoff_source_current(&lease.record) &&
+#endif
         highlight_current(&wanted) && wanted.epoch == lease.record.epoch &&
         highlight_identity(&wanted.view.context, &lease.record.context) &&
         W(0xa1f18facu) == lease.record.palette &&
@@ -98,7 +104,9 @@ static void highlight_baseline(uint32_t *to, const volatile uint32_t *from)
     /* Disabled native conversion defines only word0. Normalize the unused
      * remainder; never interpret undefined native disabled scratch fields. */
 }
-#ifdef Z7_HIGHLIGHT_EVF_PROBE
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+#include "display_highlight_handoff_policy.h"
+#elif defined(Z7_HIGHLIGHT_EVF_PROBE)
 /* An output switch does not prove that the shared100-byte parameter state is
  * a native baseline for the newly selected output. Require a matching native
  * update before a first owned application there. No caller pointer retained.
@@ -142,6 +150,14 @@ static uint32_t highlight_native_lease_capture(const struct z7_highlight_snapsho
     record.valid = 1; record.native_generation = generation; record.epoch = snapshot->epoch;
     record.palette = palette; record.disabled = 0; record.context = snapshot->view.context;
     highlight_baseline(record.baseline, native);
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+    struct z7_highlight_lease_snapshot origin;
+    if (!highlight_handoff_origin(&record.context, &origin) || !origin.record.valid ||
+        origin.record.native_generation != generation || !highlight_identity(&record.context, &origin.record.context)) return 0;
+    record.cache_bound = origin.record.cache_bound; record.cache = origin.record.cache;
+    record.baseline_foreign = origin.record.baseline_foreign;
+    if (record.cache_bound && !highlight_handoff_source_current(&record)) return 0;
+#endif
     for (uint32_t i = 0; i < 25; ++i) record.parameters[i] = converted[i];
     uint32_t ok = z7_highlight_lease_publish(&z7_highlight_lease, &record);
     z7_highlight_owned_parked = !ok;
@@ -183,14 +199,28 @@ static uint32_t highlight_owned_before(void *packet)
         lease.record.context.state == context.state && highlight_parameters_match(context.state, lease.record.parameters);
     uint32_t same = owned && highlight_identity(&lease.record.context, &context);
     uint32_t operation = highlight_owned_metadata.operation;
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+    if (lease.serial == UINT32_MAX) return highlight_owned_cancel();
+#endif
     if (operation == HO_APPLY) {
         uint32_t palette = W(0xa1f18facu);
         if (!current || wanted.epoch != epoch || !ram(palette, 1024) ||
-            (owned && !same) || W(context.state + 0x28) > 1) return highlight_owned_cancel();
-#ifdef Z7_HIGHLIGHT_EVF_PROBE
+            (owned && !same
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+             && !lease.record.disabled
+#endif
+            ) || W(context.state + 0x28) > 1) return highlight_owned_cancel();
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+        if (!highlight_handoff_prepare(&highlight_owned_next, &context) ||
+            (owned && !same && !highlight_handoff_retire_frame(&context, &lease.record))) return highlight_owned_cancel();
+#elif defined(Z7_HIGHLIGHT_EVF_PROBE)
         if (!same && !highlight_native_origin_matches(&context, generation)) return highlight_owned_cancel();
 #endif
-        if (same && !lease.record.disabled && lease.record.epoch == epoch && lease.record.palette == palette)
+        if (same && !lease.record.disabled && lease.record.epoch == epoch && lease.record.palette == palette
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+            && highlight_handoff_source_current(&lease.record)
+#endif
+        )
             return highlight_owned_cancel(); /* Native update already settled it. */
         struct highlight_native_request request;
 #ifdef Z7_HIGHLIGHT_PREFERENCES
@@ -201,20 +231,44 @@ static uint32_t highlight_owned_before(void *packet)
         if (!z7_highlight_request_convert_deferred(&z7_highlight_owned_request, &request, epoch) ||
             !highlight_current(&publication) || publication.epoch != epoch || W(0xa1f18facu) != palette ||
             generation != __atomic_load_n(&z7_highlight_native_parameter_generation, __ATOMIC_ACQUIRE)) return highlight_owned_cancel();
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+        if (highlight_owned_next.cache_bound && !highlight_handoff_source_current(&highlight_owned_next)) return highlight_owned_cancel();
+#endif
         highlight_owned_next.valid = 1; highlight_owned_next.native_generation = generation;
         highlight_owned_next.epoch = epoch; highlight_owned_next.palette = palette;
         highlight_owned_next.disabled = 0; highlight_owned_next.context = context;
+#ifndef Z7_HIGHLIGHT_HANDOFF_PROBE
         if (same) for (uint32_t i = 0; i < 25; ++i) highlight_owned_next.baseline[i] = lease.record.baseline[i];
         else highlight_baseline(highlight_owned_next.baseline, (const volatile uint32_t *)(uintptr_t)(context.state + 0x28));
+#endif
         for (uint32_t i = 0; i < 25; ++i) highlight_owned_next.parameters[i] = z7_highlight_owned_request.payload[i];
     } else {
         if (!owned || lease.serial != highlight_owned_metadata.lease_serial ||
             (operation != HO_RESTORE && operation != HO_DISABLE)) return highlight_owned_cancel();
-        if ((operation == HO_RESTORE && (!same || current)) ||
-            (operation == HO_DISABLE && (lease.record.disabled || (current && same)))) return highlight_owned_cancel();
+        if ((operation == HO_RESTORE && (current || (!same
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+             && !lease.record.disabled
+#endif
+            ))) ||
+            (operation == HO_DISABLE && (lease.record.disabled || (current && same
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+             && highlight_handoff_available(&context)
+#endif
+            )))) return highlight_owned_cancel();
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+        if (operation == HO_RESTORE) {
+            if (!highlight_handoff_prepare(&highlight_owned_next, &context) ||
+                (!same && !highlight_handoff_retire_frame(&context, &lease.record))) return highlight_owned_cancel();
+            highlight_owned_next.native_generation = generation;
+            for (uint32_t i = 0; i < 25; ++i) z7_highlight_owned_request.payload[i] = highlight_owned_next.baseline[i];
+        } else {
+#endif
         highlight_record_copy(&highlight_owned_next, &lease.record);
         for (uint32_t i = 0; i < 25; ++i)
             z7_highlight_owned_request.payload[i] = operation == HO_RESTORE ? lease.record.baseline[i] : lease.record.parameters[i];
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+        }
+#endif
         if (operation == HO_DISABLE) z7_highlight_owned_request.payload[0] = 0;
         for (uint32_t i = 0; i < 25; ++i) highlight_owned_next.parameters[i] = z7_highlight_owned_request.payload[i];
         highlight_owned_next.disabled = operation == HO_DISABLE;
@@ -238,6 +292,9 @@ static void highlight_owned_after(uint32_t decision)
             !highlight_parameters_match(context.state, highlight_owned_next.parameters) ||
 #ifdef Z7_HIGHLIGHT_CLEANUP_PROBE
             !highlight_cleanup_finish(&highlight_owned_next) ||
+#endif
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+            (operation != HO_DISABLE && !highlight_handoff_commit(&highlight_owned_next)) ||
 #endif
             !z7_highlight_lease_publish(&z7_highlight_lease, &highlight_owned_next)) z7_highlight_owned_parked = 1;
         else if (operation == HO_APPLY) ++z7_highlight_owned_applied;
@@ -264,6 +321,19 @@ static void highlight_owned_worker(void)
         lease.record.context.state == context.state && highlight_parameters_match(context.state, lease.record.parameters);
     uint32_t same = owned && highlight_identity(&lease.record.context, &context);
     uint32_t operation = HO_NONE;
+#ifdef Z7_HIGHLIGHT_HANDOFF_PROBE
+    uint32_t available = highlight_handoff_available(&context);
+    if (owned && !same) {
+        if (!lease.record.disabled) operation = HO_DISABLE;
+        else if (available) operation = current ? HO_APPLY : HO_RESTORE;
+    } else if (current && available) {
+        if (!same || lease.record.disabled || lease.record.epoch != wanted.epoch ||
+            lease.record.palette != W(0xa1f18facu) || !highlight_handoff_source_current(&lease.record)) operation = HO_APPLY;
+    } else if (same) {
+        if (available && !current) operation = HO_RESTORE;
+        else if (!available && !lease.record.disabled) operation = HO_DISABLE;
+    }
+#else
     if (owned && !same) { if (!lease.record.disabled) operation = HO_DISABLE; }
     else if (current) {
 #ifdef Z7_HIGHLIGHT_EVF_PROBE
@@ -271,6 +341,7 @@ static void highlight_owned_worker(void)
 #endif
         if (!same || lease.record.disabled || lease.record.epoch != wanted.epoch || lease.record.palette != W(0xa1f18facu)) operation = HO_APPLY;
     } else if (same) operation = HO_RESTORE;
+#endif
     if (!operation) return;
     highlight_owned_metadata.operation = operation;
     highlight_owned_metadata.native_generation = generation;

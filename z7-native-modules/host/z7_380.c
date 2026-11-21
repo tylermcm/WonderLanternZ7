@@ -141,21 +141,26 @@ uint32_t z7_native_cache_copy_begin(uint32_t destination, uint32_t bytes)
     if (!valid_state(s) || bytes != 36) return 0;
     for (uint32_t bank = 0; bank < 3; ++bank)
         if (destination == 0xa1f18fc0u + bank * 0xe84u + 0x58u)
-            return z7_cache_observation_begin(&s->native_cache) ? bank + 1 : 0;
+            return z7_cache_observation_begin(&s->native_cache) ? (bank + 1) |
+                (*(const volatile uint32_t *)(uintptr_t)0xa24e1e00u == 0 ? 0x100u : 0) : 0;
     return 0;
 }
 void z7_native_cache_copy_end(uint32_t token)
 {
     struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
     if (!valid_state(s) || !token) return;
-    if (token > 3) { z7_cache_observation_halt(&s->native_cache); return; }
+    uint32_t bank_token = token & 0xffu;
+    if ((token & ~0x1ffu) || bank_token < 1 || bank_token > 3) { z7_cache_observation_halt(&s->native_cache); return; }
     z7_cache_observation_end(&s->native_cache, 1);
-    if (!__atomic_load_n(&s->native_cache.halted, __ATOMIC_ACQUIRE))
-        __atomic_fetch_or(&s->native_cache_ready, 1u << (token - 1), __ATOMIC_RELEASE);
+    uint32_t mask = 1u << (bank_token - 1);
+    if (!__atomic_load_n(&s->native_cache.halted, __ATOMIC_ACQUIRE) && (token & 0x100u) &&
+        *(const volatile uint32_t *)(uintptr_t)0xa24e1e00u == 0)
+        __atomic_fetch_or(&s->native_cache_ready, mask, __ATOMIC_RELEASE);
+    else __atomic_fetch_and(&s->native_cache_ready, ~mask, __ATOMIC_RELEASE);
 }
 static uint32_t native_cache_bank(uint32_t output, uint32_t *bank)
 {
-    if (output != 1 && output != 4) return 0;
+    if ((output != 1 && output != 4) || *(const volatile uint32_t *)(uintptr_t)0xa24e1e00u != 0) return 0;
     uint32_t expected = output == 1 ? 0 : 2;
     if (*(const volatile uint8_t *)(uintptr_t)(0xa180f274u + output) != expected) return 0;
     *bank = expected; return 1;

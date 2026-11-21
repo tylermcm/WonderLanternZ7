@@ -167,7 +167,7 @@ def audit(raw, host, packet, module):
           f.dispatch() == 0 and f.parameters() == newer and len(f.programs) == programs)
     f.worker(); f.write(0xa24e1e00, 0); f.gui()
     f.toggle(); f.gui()
-    if module.get('highlight_evf_native_update_required'):
+    if module.get('highlight_evf_native_update_required') or module.get('highlight_cache_handoff'):
         # This profile records native origin, so a movie update cannot become
         # a photo baseline just because the mode word changed back to photo.
         queued = len(f.queued); f.worker()
@@ -284,12 +284,14 @@ def main():
                                     'original-Z7-display-highlight-coordinated-diagnostic',
                                     'original-Z7-display-highlight-native-transaction-diagnostic',
                                     'original-Z7-display-highlight-preferences-diagnostic',
-                                    'original-Z7-display-highlight-evf-diagnostic')
+                                    'original-Z7-display-highlight-evf-diagnostic',
+                                    'original-Z7-display-highlight-handoff-diagnostic')
     if (not host.get('frame_permission_hooks') or not admitted or
         module['api_minimum_bytes'] > host.get('api_bytes', 0) or
         (module['api_minimum_bytes'] >= 60 and not host.get('cached_frame_permission_hooks')) or
         (module['api_minimum_bytes'] >= 64 and not host.get('owned_frame_coordination_hooks')) or
-        (module['api_minimum_bytes'] == 72 and not host.get('native_warning_transaction_hooks'))):
+        (module['api_minimum_bytes'] >= 72 and not host.get('native_warning_transaction_hooks')) or
+        (module['api_minimum_bytes'] >= 80 and not host.get('native_cache_copy_hooks'))):
         p.error('Explicit compatible cleanup profile and host required')
     result = audit(raw, host, packet, module)
     if a.owned_regression:
