@@ -5,6 +5,36 @@ Independent work against original Z7 C3.80, following the MIT-licensed
 This is an incomplete port. No orientation drawing hook is installed by the
 current display module. The accepted LCD/EVF highlight pair is unchanged.
 
+## Resident navigation API88
+
+`sdk/navigation.h` extends the API84 prefix with init-only navigation registration.
+`--navigation-hooks` requires the graphics profile. The permanent host bridge
+replaces the14-byte central dispatcher104389B0, keeping all17 native RAM mode
+slots unchanged. It admits only committed, bounded resident callbacks with valid
+state and the original current native slot. Recursion delegates once. A foreign
+slot bypasses module policy; fallback refreshes the current slot. Null/even/self
+slots and modes>=17 reject. Failed init clears callbacks before module free.
+State404 reserves448 bytes and preserves the384-byte prefix; cold code is288 bytes.
+
+The loaded `portrait_navigation_host_probe.c` registers graphics and navigation,
+uses the actual graphics-entry orientation latch and native page/task getters,
+then rechecks page/layout/scene/exclusive-LCD before grid/settings handling.
+Pre-latch, landscape, native takeover, dial and foreign contexts delegate. Native
+pending-request/task ownership closure is not established by these observed checks.
+
+Private navigation-host-01 passes152 bridge/publication/cold checks. The private
+API88 host is9333 bytes; MAIN SHA
+`707d071675ea9c98ae0158b43f885249d8d03308d73c6324a0dd0c091f52beaf`.
+portrait-navigation-host-02 passes441 loaded cases, including288 grid cases,
+settings across17 modes/both directions, observed context changes and all four
+original i-menu key handlers. Native selector completion, rendering and task/
+page/output/sensor/kernel/fs/allocator state remain supplied. No complete boot,
+physical input task scheduling, touch or pixels is claimed. Graphics/text109 and
+API84 compatibility29 pass; root71 pass. The opt-out API84 MAIN and existing
+graphics/text module remain byte-identical. Public source-only summaries are
+`evidence/20261121-navigation-host.json`, `portrait-navigation-host.json` and
+`navigation-api84-compat.json`. The functional combined module remains unchanged.
+
 ## Portrait controls and original navigation
 
 `portrait_input.h` maps pinned4x3 grid wrapping/disabled items, settings directions,

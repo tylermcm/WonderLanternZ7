@@ -22,6 +22,12 @@ The opt-in API84 `sdk/graphics.h` adds staged resident graphics dispatch. Its
 [scope and checks](PORTRAIT_RESEARCH.md#opt-in-resident-graphics-bridge-api84)
 cover registration and stock fallback; the functional portrait module is unfinished.
 
+The opt-in API88 `sdk/navigation.h` adds a resident central navigation bridge,
+preserving all17 native RAM mode slots. `--navigation-hooks` requires the full
+API84 graphics profile. Its [scoped navigation checks](PORTRAIT_RESEARCH.md#resident-navigation-api88)
+cover committed callback publication, foreign/stock fallback and the loaded menu
+layout latch. Touch, rotation preferences and full input task lifetime remain open.
+
 The SDK now exports ABI, API size, target identity and staged display/menu
 registration. See [the display module record](../Z7_DISPLAY_MODULE_RESEARCH.md)
 for ownership, publication, the additive API size and reproducible audit commands.

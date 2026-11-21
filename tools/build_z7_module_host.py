@@ -377,7 +377,16 @@ def add_native_cache_copy_hooks(plan, symbols):
     return helpers
 
 
-def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False):
+def add_navigation_hook(plan,symbols):
+    address=0x104389b0
+    plan.edit(address,jump(address,symbols['z7_navigation_bridge'],14),
+              'Resident navigation bridge; preserve all17 native RAM mode slots',
+              expected=bytes.fromhex('e9490a78091d01ebc20149680847'))
+    return dict(entry=hex(address),bridge=hex(symbols['z7_navigation_bridge']),modes=17,
+                mode='0xa182df80',slots='0xa182df88',original_functions='0x11eca19c')
+
+
+def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False):
     """Fixed-address, BSS-free host; all writable state is explicitly reserved."""
     temporary = ROOT / '.private/tmp'
     temporary.mkdir(parents=True, exist_ok=True)
@@ -401,6 +410,7 @@ def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, fr
                 *(['-DZ7_HOST_NATIVE_WARNING_TRANSACTION=1'] if native_warning_transaction_hooks else []),
                 *(['-DZ7_HOST_NATIVE_CACHE_COPY=1'] if native_cache_copy_hooks else []),
                 *(['-DZ7_HOST_GRAPHICS=1'] if graphics_queue_hooks else []),
+                *(['-DZ7_HOST_NAVIGATION=1'] if navigation_hooks else []),
                 '-c', str(COMPONENT / 'host' / source), '-o', str(obj)], check=True, env=environment)
             objects.append(str(obj))
         linker = folder / 'host.ld'
@@ -445,7 +455,7 @@ ASSERT(SIZEOF(.bss) == 0, "Host must not contain unreserved BSS");
     return code, symbols
 
 
-def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False):
+def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False):
     if highlight_hooks and not display_hooks:
         raise ValueError('Highlight host requires the display host profile')
     if parameter_hooks and not highlight_hooks:
@@ -462,7 +472,9 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Native cache copies require native warning transactions')
     if graphics_queue_hooks and not native_cache_copy_hooks:
         raise ValueError('Graphics queue requires the native cache API prefix')
-    state_bytes = 384 if graphics_queue_hooks else 360 if native_cache_copy_hooks else 336 if native_warning_transaction_hooks else 324 if owned_frame_coordination_hooks else 304 if cached_frame_permission_hooks else 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
+    if navigation_hooks and not graphics_queue_hooks:
+        raise ValueError('Navigation requires the graphics API prefix')
+    state_bytes = 404 if navigation_hooks else 384 if graphics_queue_hooks else 360 if native_cache_copy_hooks else 336 if native_warning_transaction_hooks else 324 if owned_frame_coordination_hooks else 304 if cached_frame_permission_hooks else 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
     workspace_bytes = (state_bytes + 63) & ~63
     if sha(container) != Z7_CONTAINER_SHA256:
         raise ValueError('Requires exact original Z7 C 3.80 container')
@@ -475,9 +487,9 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Unexpected native task descriptor')
     if plan.image.words(0x101e3ee4, 1) != (CURSOR,) or plan.image.words(0x101e3e70, 1) != (STATE,):
         raise ValueError('Unexpected native workspace')
-    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks, cached_frame_permission_hooks, owned_frame_coordination_hooks, native_warning_transaction_hooks, native_cache_copy_hooks, graphics_queue_hooks)
+    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks, cached_frame_permission_hooks, owned_frame_coordination_hooks, native_warning_transaction_hooks, native_cache_copy_hooks, graphics_queue_hooks,navigation_hooks)
     host_address = plan.alloc(code)
-    cold_size = 256 if graphics_queue_hooks else 224 if native_cache_copy_hooks else 192 if owned_frame_coordination_hooks else 160
+    cold_size = 288 if navigation_hooks else 256 if graphics_queue_hooks else 224 if native_cache_copy_hooks else 192 if owned_frame_coordination_hooks else 160
     cold_address = plan.alloc(bytes(cold_size))
     # Preserve original initializer's stack unwind and tail continuation. R0
     # still reports the original workspace base; only the monotonic cursor moves.
@@ -493,6 +505,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         {(constant('r2', STATE + 328) + ' str r3,[r2]; str r3,[r2,#4];') if native_warning_transaction_hooks else ''}
         {(constant('r2', STATE + 352) + ' str r3,[r2]; str r3,[r2,#4];') if native_cache_copy_hooks else ''}
         {(constant('r2', STATE + 376) + ' str r3,[r2]; str r3,[r2,#4];') if graphics_queue_hooks else ''}
+        {(constant('r2', STATE + 396) + ' str r3,[r2]; str r3,[r2,#4];') if navigation_hooks else ''}
         {constant('r2', STATE + 32)} {constant('r3', MAGIC)} str r3,[r2];
         dmb sy; pop {{r2,r3}}; msr APSR_nzcvq,r2; pop {{r2,r3}};
         {constant('r1', CURSOR)} {constant('r0', STATE + workspace_bytes)} str r0,[r1];
@@ -512,6 +525,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
     owned_frame_bridges = add_owned_frame_coordination_hooks(plan, symbols) if owned_frame_coordination_hooks and not native_warning_transaction_hooks else {}
     native_warning_bridges = add_native_warning_transaction_hooks(plan, symbols) if native_warning_transaction_hooks else {}
     native_cache_bridges = add_native_cache_copy_hooks(plan, symbols) if native_cache_copy_hooks else {}
+    navigation_bridge = add_navigation_hook(plan,symbols) if navigation_hooks else {}
     output, report = plan.finish()
     report.update(preset=DISPLAY_PRESET if display_hooks else PRESET, emulator_only=True, candidate_cleared=False,
         container_sha256=Z7_CONTAINER_SHA256, main_payload_size=len(output) - 2,
@@ -554,6 +568,10 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
                       graphics_original_dispatch='0x10372391',graphics_cold_bytes=cold_size)
         report['limitations'] += ['Graphics task caller closure, LCD/page admission and renderer lifetime remain open.',
                                   'Graphics callback install waits for stock task registration; foreign replacement blocks takeover.']
+    if navigation_hooks:
+        report.update(navigation_hooks=True,api_bytes=88,navigation_bridge=navigation_bridge,navigation_cold_bytes=cold_size)
+        report['limitations'] += ['Navigation bridge preserves RAM mode slots; module admission requires the original slot value.',
+                                  'Navigation task/page/output ownership and native selection completion remain unproved.']
     return output, report
 
 
@@ -565,7 +583,7 @@ def validate_candidate(path, report_path, stock_path, zig=ZIG):
                                    actual.get('highlight_hooks', False), actual.get('parameter_hooks', False),
                                    actual.get('frame_permission_hooks', False), actual.get('cached_frame_permission_hooks', False),
                                    actual.get('owned_frame_coordination_hooks', False), actual.get('native_warning_transaction_hooks', False),
-                                   actual.get('native_cache_copy_hooks', False),actual.get('graphics_queue_hooks',False))
+                                   actual.get('native_cache_copy_hooks', False),actual.get('graphics_queue_hooks',False),actual.get('navigation_hooks',False))
     if (Path(path).read_bytes() != expected[:-2] or actual != report or binascii.crc_hqx(expected, 0)):
         raise ValueError('Module host candidate or report differs from independent rebuild')
     return dict(modified=True, independently_rebuilt=True, sha256=sha(expected[:-2]),
@@ -586,6 +604,7 @@ def main():
     parser.add_argument('--native-warning-transaction-hooks', action='store_true', help='Opt in to API72 native warning gate / parameter transactions; requires owned coordination flags')
     parser.add_argument('--native-cache-copy-hooks', action='store_true', help='Opt in to API80 native request cache-copy observation; requires native warning transactions')
     parser.add_argument('--graphics-queue-hooks',action='store_true',help='Opt in to API84 resident graphics dispatch; requires native cache API prefix')
+    parser.add_argument('--navigation-hooks',action='store_true',help='Opt in to API88 resident central navigation dispatch; requires graphics API prefix')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
@@ -606,8 +625,10 @@ def main():
         parser.error('--native-cache-copy-hooks requires --native-warning-transaction-hooks')
     if args.graphics_queue_hooks and not args.native_cache_copy_hooks:
         parser.error('--graphics-queue-hooks requires --native-cache-copy-hooks')
-    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks)
-    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks)
+    if args.navigation_hooks and not args.graphics_queue_hooks:
+        parser.error('--navigation-hooks requires --graphics-queue-hooks')
+    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks)
+    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks)
     if eg != repeated or report != second or binascii.crc_hqx(eg, 0):
         raise RuntimeError('Host build is not deterministic or CRC failed')
     output.mkdir(parents=True)

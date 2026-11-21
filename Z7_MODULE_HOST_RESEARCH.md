@@ -1,5 +1,21 @@
 # Original-Z7 module host probe
 
+## Optional resident navigation API88 - November 21, 2026
+
+The opt-in `--navigation-hooks` profile extends the full API84 graphics profile
+with `sdk/navigation.h`. It patches only central dispatcher104389B0 to permanent
+host code, preserving all17 native RAM navigation slots. Committed module code,
+state guards and recursion are checked; foreign slots delegate without invoking
+the module. Failed initialization publishes no navigation callback. State404
+reserves448 bytes, with a288-byte cold stub. This is emulator-only research.
+
+Private builds are reproducible with zero EG CRC. The resident contract passed152
+checks; loaded portrait controls passed441, graphics/text regression109 and API84
+compatibility29. The opt-out API84 firmware remains byte-identical. See the
+[portrait navigation record](z7-native-modules/PORTRAIT_RESEARCH.md#resident-navigation-api88)
+for native boundaries and supplied selector/task/rendering inputs. Touch, full
+input lifetime, physical camera acceptance and recovery remain unproved.
+
 ## Optional native parameter extension - November 20, 2026
 
 The explicit API52 `--parameter-hooks` build extends the opt-in API48 highlight

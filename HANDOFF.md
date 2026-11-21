@@ -1,5 +1,58 @@
 # Laptop handoff — October 20, 2026
 
+## Resident API88 portrait navigation - November 21, 2026
+
+Previous131f974 mapped controls without an installed input path. New opt-in
+--navigation-hooks profile extends API84 to88 with init-only register_navigation.
+Host state preserves384-byte prefix, appends callback/registered/running at
+384/388/392 and guards396/400; size404 reserves448 bytes, cold stub288.
+The stock14-byte central dispatcher104389B0 is replaced by a resident host jump.
+All17 native RAM mode slots remain untouched. No unloadable module pointer is
+published in native slots; the inline bridge falls back before/after failed init.
+
+Module admission requires committed ready state, valid guards/resident code span,
+original current native slot, and a recursion CAS. Callback return1 supplies a
+synchronous result;0/invalid delegates once. Fallback re-reads the current native
+slot, preserving foreign replacements, and rejects null/even/self-recursive slots.
+Modes>=17 reject without table access. Module failure clears staged nav pointers
+before freeing. This is observed admission, NOT task exclusion or page lifetime.
+
+New portrait_navigation_host_probe.c enables graphics and navigation registration
+in the loaded diagnostic. Original page/task getters, exclusive LCD/scene and the
+atomically read graphics layout latch gate GRID/SETTING input. A second page/
+layout/output check rejects observed changes. Pre-latch/landscape/foreign native
+screens and dial delegate. Mode0 grid calls the existing bounded native adapter;
+settings rotates directions. No synthetic UI event is queued. Touch/rotation
+preference controls, pending-request and full input task fencing remain open.
+
+Private navigation-host-01 MAIN33066544 SHA
+707d071675ea9c98ae0158b43f885249d8d03308d73c6324a0dd0c091f52beaf,
+host9333 bytes, deterministic twice/CRC zero. navigation-host-01 audit PASS152
+loader/SDK,17 modes, owned/delegated/invalid/recursive/foreign callbacks, failed
+init/API84 rejection, and cold448 reservation/register/flag preservation. Probe320/
+image256/BSS32/0relocs SHA6b07a944ab18f72fa9984431585e23bae27d58246fdf86d306d82616e108febc.
+portrait-navigation-host-02 PASS441 includes288 grid cases, settings across17
+modes/both orientations, native takeover/scene/output/layout/getter changes and
+ALL FOUR original i-menu key handlers reaching the resident bridge. Probe10240/
+image10176/BSS72/0relocs SHA
+ee12b1d7dfef5216d228e75d0b3ca69ca57c0321be39d80d56c6d1a316e66fa4.
+Native selector/rendering and scene/task/property/allocator/fs/sensor inputs are
+supplied. This is not full boot, UI selection completion, native task scheduling,
+touch or pixels. Graphics/text regression PASS109 on API88; API84 regression29.
+Rebuilt opt-out API84 MAIN is byte-identical to accepted390368fb...6ef9, as is
+the prior graphics/text diagnostic module. Root71/no skips; four direct source
+maps and both host build source maps verified. Ignored Graphify refreshed to
+3738nodes/10274links with conditional-C parser warnings; compiled checks are primary.
+See evidence/20261121-navigation-host.json, portrait-navigation-host.json,
+navigation-api84-compat.json and updated portrait-grid-host.json.
+
+Next native touch callback/calibration/copy lifetime, rotation settings, pending
+native screens/live/external/magnified bindings, real fonts/assets, bitmap mutex/
+queued finish and full task/writer/allocation closure, Info mirror/real histogram,
+integrated release and exact installation/recovery. Full goal ACTIVE. Accepted
+API84 host/functional combined display unchanged; new API88 host is private and
+emulator-only. No camera/card/staging/flash/push.
+
 ## Portrait control mapping and native navigation binding - November 21, 2026
 
 Previousad0b283 connected symbol rendering; input remained stock. New

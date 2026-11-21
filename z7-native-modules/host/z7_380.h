@@ -37,9 +37,17 @@
 #endif
 #include "graphics.h"
 #endif
+#ifdef Z7_HOST_NAVIGATION
+#ifndef Z7_HOST_GRAPHICS
+#error Navigation API requires the graphics API prefix
+#endif
+#include "navigation.h"
+#endif
 
 #define Z7_HOST_STATE 0xa9700000u
-#ifdef Z7_HOST_GRAPHICS
+#ifdef Z7_HOST_NAVIGATION
+#define Z7_HOST_STATE_BYTES 404u
+#elif defined(Z7_HOST_GRAPHICS)
 #define Z7_HOST_STATE_BYTES 384u
 #elif defined(Z7_HOST_NATIVE_CACHE_COPY)
 #define Z7_HOST_STATE_BYTES 360u
@@ -115,11 +123,19 @@ struct z7_host_state {
     uint32_t graphics_callback, graphics_registered, graphics_phase, graphics_running;
     uint32_t graphics_guards[2];
 #endif
+#ifdef Z7_HOST_NAVIGATION
+    uint32_t navigation_callback,navigation_registered,navigation_running;
+    uint32_t navigation_guards[2];
+#endif
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");
 #ifdef Z7_HOST_GRAPHICS
 _Static_assert(__builtin_offsetof(struct z7_host_state,graphics_callback)==360, "Graphics state prefix");
 _Static_assert(__builtin_offsetof(struct z7_host_state,graphics_guards)==376, "Graphics state guards");
+#endif
+#ifdef Z7_HOST_NAVIGATION
+_Static_assert(__builtin_offsetof(struct z7_host_state,navigation_callback)==384, "Navigation state prefix");
+_Static_assert(__builtin_offsetof(struct z7_host_state,navigation_guards)==396, "Navigation guards");
 #endif
 uint32_t z7_module_load_once(struct z7_host_state *state);
 void z7_module_worker(struct z7_host_state *state);

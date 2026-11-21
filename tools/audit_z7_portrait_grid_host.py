@@ -244,7 +244,7 @@ def main():
     a=p.parse_args();out=a.output.resolve()
     if not out.is_relative_to(ROOT/'.private') or out.exists():p.error('Choose a new private directory')
     host=json.loads(a.report.read_text(encoding='utf-8'));raw=a.host.read_bytes()
-    assert hashlib.sha256(raw).hexdigest()==host['main_payload_sha256'] and host.get('api_bytes')==84
+    assert hashlib.sha256(raw).hexdigest()==host['main_payload_sha256'] and host.get('api_bytes') in (84,88)
     old_host=json.loads(a.old_report.read_text(encoding='utf-8'));old_raw=a.old_host.read_bytes()
     assert hashlib.sha256(old_raw).hexdigest()==old_host['main_payload_sha256'] and old_host.get('api_bytes')==80
     packet,metadata=build(ROOT/'z7-native-modules/examples/portrait_grid_host_probe.c',zig=ZIG)
@@ -258,7 +258,7 @@ def main():
            'z7-native-modules/plugins/portrait_symbols.h','z7-native-modules/plugins/portrait_symbol_bitmap.h',
            'z7-native-modules/plugins/portrait_draw.h','z7-native-modules/plugins/portrait_geometry.h','z7-native-modules/plugins/portrait_grid.h',
            'z7-native-modules/plugins/portrait_page.h','z7-native-modules/plugins/portrait_takeover.h','z7-native-modules/plugins/portrait_target.h','z7-native-modules/plugins/orientation_sample.h')
-    result.update(host_sha256=host['main_payload_sha256'],probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),
+    result.update(api_bytes=host['api_bytes'],host_sha256=host['main_payload_sha256'],probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),
                   source_sha256={**host['source_files'],**{n:hashlib.sha256((ROOT/n).read_bytes()).hexdigest() for n in names}})
     out.mkdir(parents=True);(out/'probe.BIN').write_bytes(packet)
     (out/'probe.json').write_text(json.dumps(metadata,indent=2)+'\n',encoding='utf-8',newline='\n')

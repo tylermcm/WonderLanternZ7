@@ -17,6 +17,9 @@ static uint32_t register_worker(void (*callback)(void));
 #ifdef Z7_HOST_GRAPHICS
 static uint32_t register_graphics(uint32_t (*callback)(volatile uint32_t *));
 #endif
+#ifdef Z7_HOST_NAVIGATION
+static uint32_t register_navigation(z7_navigation_callback callback);
+#endif
 #ifdef Z7_HOST_HIGHLIGHTS
 static uint32_t register_highlight(const struct z7_highlight_hooks *hooks);
 #ifdef Z7_HOST_PARAMETERS
@@ -35,7 +38,9 @@ static uint32_t owned_warning_available(void);
 #ifdef Z7_HOST_NATIVE_CACHE_COPY
 uint32_t z7_native_cache_snapshot(uint32_t, struct z7_native_cache_snapshot *);
 uint32_t z7_native_cache_snapshot_valid(uint32_t, const struct z7_native_cache_snapshot *);
-#ifdef Z7_HOST_GRAPHICS
+#ifdef Z7_HOST_NAVIGATION
+static const struct z7_module_navigation_api api = { { { { { { { { { {
+#elif defined(Z7_HOST_GRAPHICS)
 static const struct z7_module_graphics_api api = { { { { { { { { {
 #else
 static const struct z7_module_native_cache_api api = { { { { { { { {
@@ -88,8 +93,13 @@ static const struct z7_module_worker_api api = {
 #ifdef Z7_HOST_GRAPHICS
 }, register_graphics
 #endif
+#ifdef Z7_HOST_NAVIGATION
+}, register_navigation
+#endif
 };
-#ifdef Z7_HOST_GRAPHICS
+#ifdef Z7_HOST_NAVIGATION
+_Static_assert(sizeof(api) == 88, "Navigation API prefix layout");
+#elif defined(Z7_HOST_GRAPHICS)
 _Static_assert(sizeof(api) == 84, "Graphics API prefix layout");
 #elif defined(Z7_HOST_NATIVE_CACHE_COPY)
 _Static_assert(sizeof(api) == 80, "Native cache API prefix layout");
@@ -141,6 +151,9 @@ static uint32_t valid_state(const struct z7_host_state *s)
 #endif
 #ifdef Z7_HOST_GRAPHICS
     for (uint32_t i = 0; i < 2; ++i) if (s->graphics_guards[i] != 0xa5a5a5a5u) return 0;
+#endif
+#ifdef Z7_HOST_NAVIGATION
+    for (uint32_t i = 0; i < 2; ++i) if (s->navigation_guards[i] != 0xa5a5a5a5u) return 0;
 #endif
     return 1;
 }
@@ -599,6 +612,47 @@ static void graphics_try_bind(struct z7_host_state *s)
     else s->graphics_phase=2; /* Preserve foreign ownership; no automatic takeover. */
 }
 #endif
+#ifdef Z7_HOST_NAVIGATION
+static uint32_t navigation_stock(uint32_t direction)
+{
+    uint32_t mode=*(volatile const uint8_t *)(uintptr_t)0xa182df80u;
+    if (mode>=17) return 0;
+    uint32_t function=__atomic_load_n((uint32_t *)(uintptr_t)(0xa182df88u+8*mode),__ATOMIC_ACQUIRE);
+    /* Preserve a foreign native callback, but reject null/self-recursive slots.
+     * This is not a general native function-pointer or task-lifetime validator. */
+    extern uint32_t z7_navigation_bridge(uint32_t);
+    if (!function || !(function&1) || function==0x104389b1u || function==(uint32_t)(uintptr_t)z7_navigation_bridge) return 0;
+    return FN(function,uint32_t,uint32_t)(direction);
+}
+uint32_t z7_navigation_bridge(uint32_t direction)
+{
+    struct z7_host_state *s=(void *)(uintptr_t)Z7_HOST_STATE;
+    uint32_t mode=*(volatile const uint8_t *)(uintptr_t)0xa182df80u;
+    if (mode>=17) return 0;
+    uint32_t current=__atomic_load_n((uint32_t *)(uintptr_t)(0xa182df88u+8*mode),__ATOMIC_ACQUIRE);
+    uint32_t stock=*(const uint32_t *)(uintptr_t)(0x11eca19cu+8*mode);
+    if (current==stock && valid_state(s) && s->status==Z7_HOST_LOADED && s->image && s->allocation &&
+        !s->loading_image && __atomic_load_n(&s->display_ready,__ATOMIC_ACQUIRE) && s->navigation_registered &&
+        (s->navigation_callback&1) && s->resident_image_size<=s->memory_size &&
+        within(s->navigation_callback&~1u,s->image,s->resident_image_size,2)) {
+        uint32_t expected=0;
+        if (__atomic_compare_exchange_n(&s->navigation_running,&expected,1,0,__ATOMIC_ACQUIRE,__ATOMIC_RELAXED)) {
+            uint32_t result=0;
+            uint32_t handled=FN(s->navigation_callback,uint32_t,uint32_t,uint32_t *)(direction,&result);
+            __atomic_store_n(&s->navigation_running,0,__ATOMIC_RELEASE);
+            if (handled==1) return result;
+        }
+    }
+    return navigation_stock(direction);
+}
+static uint32_t register_navigation(z7_navigation_callback callback)
+{
+    struct z7_host_state *s=(void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->image || s->display_ready || s->navigation_registered ||
+        !loading_code(s,(uint32_t)(uintptr_t)callback)) return 0;
+    s->navigation_callback=(uint32_t)(uintptr_t)callback;s->navigation_registered=1;return 1;
+}
+#endif
 static uint32_t register_worker(void (*callback)(void))
 {
     struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
@@ -911,7 +965,9 @@ __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
     return ((uint32_t (*)(const struct z7_module_api *))
              ((uintptr_t)body + entry + 1))(
 #ifdef Z7_HOST_NATIVE_CACHE_COPY
-#ifdef Z7_HOST_GRAPHICS
+#ifdef Z7_HOST_NAVIGATION
+                &api.graphics.cache.warning.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
+#elif defined(Z7_HOST_GRAPHICS)
                 &api.cache.warning.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
 #else
                 &api.warning.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
@@ -1022,6 +1078,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
 #ifdef Z7_HOST_GRAPHICS
     s->graphics_callback=s->graphics_registered=s->graphics_phase=s->graphics_running=0;
 #endif
+#ifdef Z7_HOST_NAVIGATION
+    s->navigation_callback=s->navigation_registered=s->navigation_running=0;
+#endif
 #ifdef Z7_HOST_HIGHLIGHTS
     clear_highlight(s);
 #endif
@@ -1041,6 +1100,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
         s->worker_callback = s->worker_registered = s->worker_running = s->resident_image_size = 0;
 #ifdef Z7_HOST_GRAPHICS
         s->graphics_callback=s->graphics_registered=s->graphics_phase=s->graphics_running=0;
+#endif
+#ifdef Z7_HOST_NAVIGATION
+        s->navigation_callback=s->navigation_registered=s->navigation_running=0;
 #endif
 #ifdef Z7_HOST_HIGHLIGHTS
         clear_highlight(s);
@@ -1064,6 +1126,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
 #endif
 #ifdef Z7_HOST_GRAPHICS
         || s->graphics_registered
+#endif
+#ifdef Z7_HOST_NAVIGATION
+        || s->navigation_registered
 #endif
         )
         __atomic_store_n(&s->display_ready, 1, __ATOMIC_RELEASE);
