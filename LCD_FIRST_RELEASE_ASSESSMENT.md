@@ -6,9 +6,18 @@ the software under test; it does not clear a camera update.
 The owner confirms normal boot and the most recent Z7 firmware. Nikon currently
 lists C 3.80 on its [Z7 download page](https://downloadcenter.nikonimglib.com/en/products/492/Z_7.html),
 matching this lab's target. This interprets the owner's report; no firmware-screen
-reading or installed-image readback was obtained. Windows disk/volume inventory
-shows only the internal C: disk, so current card files and rollback backups cannot
-yet be checked. No card contents were read or written.
+reading or installed-image readback was obtained. The owner has now connected
+the card. Read-only inventory identifies E: as a Sony QD-G120F XQD card, exFAT,
+with volume label "NIKON Z 9". That label does not identify the current camera
+or its installed firmware; any later write approval must identify this exact
+card as intended for the original Z7.
+
+Private `card-backups/20261121-sony-qd-g120f-01/inspection.json` records stable
+disk/volume identity and a complete read-only inspection. None of the five named
+root update/module/configuration files is present; a root BIN/DAT filename check
+also finds none. Zero existing files were backed up; only the private inspection
+report was created. Photos and other card files were untouched. This is NOT a
+backup of the currently installed camera firmware or calibration.
 
 The selected scope is the SD loader, six native grid choices, four custom DISP
 presets, native horizon, supported information controls, battery percentage,
@@ -114,9 +123,15 @@ existing backup directories are never overwritten. Unrelated card files are
 untouched. This does not read the camera's installed image or clear installation.
 
 Eight synthetic cases and the full 81-test repository suite pass. Actual Windows
-lookup of C: is rejected before creating output. No real card inspection/backup
-has run: the latest inventory still shows only the internal disk. The request
-to connect the card remains pending.
+lookup of C: is rejected before creating output. The real-card inspection above
+has now completed; it exercises identity and missing-file handling, not copying
+an existing update or journal. No update was staged and no card writes occurred.
+
+After inspection, the private candidate full EG/module, stock EG and stock
+container were rehashed successfully against the exact review; both EG CRCs
+remain zero and the current host/module compiler-source fingerprints agree.
+The untouched stock rollback inputs remain available privately. No current-card
+update image exists to compare with an owner-tested modified release.
 
 1. Finish the focused combined-profile shooting gate and retain failed results.
 2. The explicit independent reconstruction and selected updater checks above
@@ -126,10 +141,12 @@ to connect the card remains pending.
    timing, native file/cache operations and missing/bad-module fallback with
    their remaining physical limitations. A stock-based host changes installed
    firmware and must not be represented as retaining all previous experiments.
-4. Identify the current camera firmware and card, preserve and hash the card's
-   existing update/module/settings files, and identify a specific rollback EG.
-   Earlier owner-tested images are historical options, not a verified current
-   backup. Preserve unrelated card files.
+4. Card identity/inspection is complete as above; existing named files are
+   absent, so no current update image or preferences could be backed up.
+   The specific private stock rollback EG is identified above. Earlier
+   owner-tested images are historical options, not a verified current backup.
+   Preserve unrelated card files and explicitly confirm the intended target
+   card before any separately authorized staging.
 5. Present that exact bundle and recovery limits for explicit user authorization.
    No staging or camera update has been authorized by passing these checks.
 

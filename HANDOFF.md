@@ -1,5 +1,35 @@
 # Laptop handoff — October 20, 2026
 
+## Connected XQD inspected without writes - November 21, 2026
+
+User replied to card-connection question: "I've connected the card". This
+authorizes the proposed read-only identification/private backup, NOT staging or
+flash. Read-only inventory identifies sole populated external card E:, Sony
+QD-G120F,108850577408 diskbytes,exFAT label NIKON Z9. D: is reader slot with no
+media; C: remains internal. Label does not prove current camera model. Any later
+write approval must identify this intended original-Z7 target card explicitly.
+
+Ran inspect_z7_card --drive E --output
+.private/card-backups/20261121-sony-qd-g120f-01. COMPLETE; stable identity recheck;
+all FIVE named firmware/module/journal files ABSENT. ROOT BIN/DAT filename query
+also finds none. ZERO files backed up; private inspection.json only. Do not call
+this a backup of installed firmware. No photos read, card writes, staging, flash
+or camera control. Hardware-specific unique IDs stay in private report only.
+
+Rehashed exact review02 candidate full EG/module and untouched stock EG/container
+against review hashes; both EG CRCs zero. Current compiled host/module source
+fingerprints agree. Original module04/API44 host unchanged. Assessment updated
+with actual card state and explicit remaining holds. Existing81 tests not rerun
+for documentation-only changes. No Graphify refresh needed: no code edits.
+
+Card-absence blocker is now cleared. get_goal still reports blocked (tool cannot
+resume goals); user has supplied the missing card and this work proceeded under
+that instruction. Do NOT repeat the earlier card-absence blocked audit. Remaining
+combined battery visual MENU/PLAY proof is still open, as documented below; real
+card inspection does not clear it. Preserve scoped failures and no blind reruns.
+No new staging/flash approval requested or granted. No live processes.
+
+
 ## Read-only card inspection prepared - November 21, 2026
 
 Previous goal turn7654ba0 was progress. Card connection question remains pending;

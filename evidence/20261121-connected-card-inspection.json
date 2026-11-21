@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "inspection_complete": true,
+  "card_model": "Sony QD-G120F",
+  "drive": "E",
+  "filesystem": "exFAT",
+  "volume_label": "NIKON Z 9",
+  "source_identity_details_private": true,
+  "private_inspection_report_sha256": "a6d86e41db9424675a7d8bb34dead1d5b88e1a2793fa103655574ef50d15f496",
+  "named_root_files": {
+    "EG161080.BIN": false,
+    "Z_7_0380.bin": false,
+    "Z7APP.BIN": false,
+    "Z7CFG0.DAT": false,
+    "Z7CFG1.DAT": false
+  },
+  "backed_up_files": 0,
+  "root_bin_dat_files_found": 0,
+  "existing_update_hash_comparison_possible": false,
+  "review_payloads_rehashed": 4,
+  "current_compiler_source_fingerprints_verified": true,
+  "card_written": false,
+  "photos_read": false,
+  "camera_access": false,
+  "installed_image_readback": false,
+  "installation_cleared": false,
+  "remaining": [
+    "Combined battery native visual MENU/PLAY remains unproven",
+    "No installed-image readback or current-card update backup",
+    "Explicit exact-card staging/flash authorization still required; no emergency recovery verified"
+  ]
+}
