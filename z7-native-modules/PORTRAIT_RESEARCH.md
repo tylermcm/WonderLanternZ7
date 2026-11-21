@@ -5,6 +5,33 @@ Independent work against original Z7 C3.80, following the MIT-licensed
 This is an incomplete port. No orientation drawing hook is installed by the
 current display module. The accepted LCD/EVF highlight pair is unchanged.
 
+## Portrait controls and original navigation
+
+`portrait_input.h` maps pinned4x3 grid wrapping/disabled items, settings directions,
+external key permutations and touch points. Its60-byte touch-copy helper preserves
+event kind/release and optional zero coordinates, maps all six point pairs and
+rejects overlapping output. The1024x682 touch calibration is pinned-source input;
+original Z7 touch registration/calibration and queue-copy lifetime are unproved.
+
+`portrait_navigation.h` binds original dispatcher104389B1, modeA182DF80, callback
+slotsA182DF88+8*mode, countA2023318 and indexA202331C. The immutable initializer
+at11ECA198 contains17 indexed ID/callback rows, with callback0 at11ECA19C. Pinned
+Z7II uses18; the adapter explicitly bounds17. Grid mapping uses original focus
+getter103DD559/item reader103DDE3B/selector103DDE4B, valid orientation/direction,
+mode0/count12/i-menu state0 and caller-admitted GRID. Settings directions rotate
+before stock delegation. Other pages/modes/layouts delegate. Input ownership,
+page/output/task fencing and persistent hook publication are not implemented.
+
+Private portrait-input-02 passes5692 checks:1152 grid cycle/disabled-mask cases
+through compiled mapping and native focus/item reads, all17 native dispatcher
+rows, settings/fallback/invalid modes,3024 touch samples, packet preservation/
+guards and key permutations. Native focus/selector prefixes also execute for
+all12 tile indices up to pre-render boundary103DDEC2. The selector's admission
+rejection preserves focus. UI admission/old-widget cleanup and final selection
+are supplied boundaries; no complete native UI selection or input task is proved.
+The source-only summary is `evidence/20261121-portrait-input.json`. Root71 checks
+pass. Host MAIN and functional combined display module remain unchanged.
+
 ## Scoped menu symbol rotation
 
 `portrait_symbols.h` temporarily clones the verified native symbol provider for

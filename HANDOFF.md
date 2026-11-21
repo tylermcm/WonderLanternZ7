@@ -1,5 +1,50 @@
 # Laptop handoff — October 20, 2026
 
+## Portrait control mapping and native navigation binding - November 21, 2026
+
+Previousad0b283 connected symbol rendering; input remained stock. New
+portrait_input.h implements pinned4x3 navigation wrap/disabled-item skipping,
+settings directions/external-key permutations, touch point inversion and a60-byte
+event copy preserving release/no-hit behavior and optional zero point fields.
+It rejects overlapping/unaligned/missing event destinations and unsupported kinds.
+Touch1024x682 calibration follows pinned source and is NOT bound to native Z7 yet.
+Control page IDs are an explicit caller-admitted enum; no native hook is installed.
+
+Original nav dispatcher104389B1 reads modeA182DF80 and callback slotsA182DF88+8*m.
+There are17 initialized pairs with IDs0..16 in immutable ROM11ECA198; callback0
+starts11ECA19C. Pinned Z7II has18; copying18 would overwrite beyond this table.
+New portrait_navigation.h bounds mode<17 and delegates through immutable original
+callbacks. Grid mapping additionally requires caller GRID, orientation1/2,
+direction0..3, i-menu-state byteA18298B8==0, mode0, countA2023318==12 and valid
+focus. It reads native focus103DD559 and items103DDE3B, writes nav indexA202331C
+and calls selector103DDE4B. Settings rotates directions before stock delegation;
+other modes/pages/invalid layout delegate. No page/output/task fence is supplied.
+
+Native focus stateA182E2FC is selected by UI kindA20235A8; grid kinds0/1 read+4.
+Items are two words atA20235A8+194+8*index. Native selector may reject via
+1030119E; with admitted gate it updates focus+C/+4 before renderer boundary
+103DDEC2. This prefix is executed separately; full native selection/render/task
+completion is NOT established by the C adapter's supplied selector callback.
+
+Private portrait-input-02 PASS5692 includes1152 grid cycle/mask cases through
+compiled mapping AND native getter/item reads, all17 original dispatcher rows,
+settings/fallback/invalid modes,3024 touch samples,60-byte packet guards/immutability,
+key permutations,12 native selector-prefix cases and one native admission rejection.
+Mode dispatch callbacks/selector completion/page/layout/output/item state/touch
+calibration are supplied. No actual input event is enqueued or synthesized.
+Probe1216/image1152/0BSS/0relocs SHA
+12263b3f9a21bfd45f52245c6e18b1fa03fabc1954bc92e7b87bddcfde431369.
+Direct source map verified; root71/no skips; ignored Graphify refreshed to
+3708nodes/10164links with existing conditional-C parser warnings.
+See evidence/20261121-portrait-input.json and PORTRAIT_RESEARCH.md.
+
+Next resident native input integration with page/layout/task/output fencing,
+original touch callback/registration/calibration/copy lifetime, rotation settings,
+pending native screens/live/external/magnified pages, real fonts/assets, bitmap
+mutex/queued finish/task/writer/allocation closure, Info mirror/real histogram,
+integrated release and exact installation/recovery. Full goal ACTIVE. Accepted
+host MAIN/functional combined display unchanged; no camera/card/staging/flash/push.
+
 ## Scoped portrait menu symbol drawing - November 21, 2026
 
 Previous94250ec verified bindings/decode but did not rotate symbols. New
