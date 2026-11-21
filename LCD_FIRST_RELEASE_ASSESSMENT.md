@@ -33,10 +33,16 @@ startup check. Both original .disabled files would stay intact; EG stays disable
 and no Firmware version > Update action is involved. The diagnostic enables no
 features. It could reproduce the freeze if loading itself is responsible. A pass
 would leave full initialization and update-file interaction unresolved. No such
-card copy or hardware test has been authorized/performed.
+card copy or hardware test had been authorized at diagnostic preparation.
 A responsive camera alone would not prove the diagnostic entry executed: this
 host exposes no on-camera load-status marker. This would provide comparison
 data, not a verified repair or complete stage trace.
+
+Owner subsequently approved "yeah lets try it". The no-init diagnostic alone is
+now staged as Z7APP.BIN, exact hash/readback verified and flushed. Both original
+.disabled files remain unchanged; 219 existing file metadata records and Nikon
+catalog hash are unchanged. Card safely ejected. One ordinary startup/control
+observation is pending; NO firmware update or hardware success is claimed.
 
 Do not perform another update or automatic rollback. Preserve all files and
 frozen evidence. The previous software-ready recommendation below is historical

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "authorization": "yeah lets try it",
+  "scope": "One SD-only no-init diagnostic; no firmware update; preserve disabled originals and existing files",
+  "diagnostic_sha256": "ecba70f7e93974cda15f7515c2747a06c2ed1c77731cc60fac2cbc8b95c77cdc",
+  "source_module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+  "staging_complete": true,
+  "only_diagnostic_added": true,
+  "full_readback_verified": true,
+  "file_flushed": true,
+  "disabled_originals_preserved": true,
+  "updater_file_disabled": true,
+  "existing_file_count": 219,
+  "existing_file_metadata_unchanged": true,
+  "existing_catalog_hash_unchanged": true,
+  "safe_eject_verified": true,
+  "firmware_flashed": false,
+  "repair_claimed": false,
+  "hardware_result": "pending",
+  "private_staging_record_sha256": "565786a74893e61521c5102f3397d687011a147e5f3e29dedf2a91878136abfd"
+}

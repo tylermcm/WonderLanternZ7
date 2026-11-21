@@ -1,5 +1,27 @@
 # Laptop handoff — October 20, 2026
 
+## SD-only no-init diagnostic authorized, staged and ejected - November 21, 2026
+
+User explicitly approved explained SD-only diagnostic: "yeah lets try it", then
+"lets get it started gain". No new firmware flash authorized/performed. Original
+failed full module and EG remain .disabled, unchanged. Existing host still
+installed; full release remains withdrawn.
+
+Same Sony card identity checked. Only diagnostic Z7APP.BIN added with exclusive
+creation, flush/os.fsync and exact readback. SHAecba70f7...5c77cdc,21104bytes.
+Independently regenerated from post-failure original using disable_entry before
+copy: exact match. Both .disabled originals SHA verified.219 existing file
+metadata records and Nikon catalog SHA unchanged; no photos read/deletes/format.
+Private log .private/card-staging/20261121-noinit-diagnostic-01/staging.json.
+Safe eject VERIFIED, volume unmounted. Card ready for ONE ordinary OFF/insert/ON
+check of MENU/touch, NOT Firmware version > Update. No new features expected.
+
+Await owner observations. Diagnostic is not a fix; may still freeze. Responsive
+controls alone do not prove entry executed (host lacks on-camera load status).
+Do not automatically enable original full module, update file, or another probe.
+No live process; source record only, no tests rerun for card staging/docs.
+
+
 ## HARDWARE FAILURE HOLD: post-update card/control freeze - November 21, 2026
 
 WITHDRAW the LCD flash-ready recommendation. Owner reports update finished,
