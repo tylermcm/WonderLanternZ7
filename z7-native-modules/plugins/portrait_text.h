@@ -73,6 +73,13 @@ static uint32_t z7_portrait_text_draw(volatile uint32_t *message,
         *(const volatile uint32_t *)(uintptr_t)(descriptor+0x94)!=context ||
         *(const volatile uint32_t *)(uintptr_t)(context+0x45b4)!=0x11b6e120u ||
         *(const uint32_t *)(uintptr_t)0x11b6e13cu!=0x10539575u) return 0;
+    uint32_t glyph_state=*(const volatile uint32_t *)(uintptr_t)(context+0x45d8);
+    if (!z7_portrait_text_span(glyph_state,0x1bc)) return 0;
+    /* Stock initialization publishes the table before allocating its state.
+     * A table match alone does not establish even basic glyph readiness. */
+    const volatile uint32_t *glyph=(const volatile uint32_t *)(uintptr_t)glyph_state;
+    if (!z7_portrait_text_span(glyph[0x1ac/4],4) || !z7_portrait_text_span(glyph[0x18c/4],4) ||
+        !z7_portrait_text_span(glyph[0x19c/4],4) || !z7_portrait_text_span(glyph[0x178/4],4)) return 0;
     if (__atomic_exchange_n(&z7_portrait_text_state.busy,1,__ATOMIC_ACQUIRE)) return 0;
     uint32_t table[8],local[7];
     for (uint32_t i=0;i<8;++i) table[i]=((const uint32_t *)(uintptr_t)0x11b6e120u)[i];

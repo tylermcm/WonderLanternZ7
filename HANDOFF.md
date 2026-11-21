@@ -1,5 +1,53 @@
 # Laptop handoff — October 20, 2026
 
+## Native glyph contours and incomplete-font admission - November 21, 2026
+
+Previouse0bc399 added text interception against supplied glyph renderer. This
+checkpoint is PROGRESS: original native glyph renderer and contour transform
+execute; portrait_text.h now rejects basic incomplete native font state. Full
+original goal ACTIVE. No camera/card/stage/flash/push. No installed graphics hook.
+
+New admission requires context+45D8 state span1BC and native-RAM buffers at
+state1AC/18C/19C/178. Stock provider publishes its table before initialization
+finishes; the prior table-only guard was insufficient. These bounded readiness
+checks do NOT pin allocations or establish capacity/task/lifetime closure.
+portrait-text-03 PASS273; probe1216file/1152image/28BSS/0relocs/reproducible,
+SHA82fbd88cfa691acd3d65f022e8bb5dcaa306d82b186bd95dfc3508c8a9d10fa8.
+
+native-glyph-09/result.json PASS192 exact-behavior checks with36 native paired
+layouts (34/37/38, both rotations, A/ABC, unit/.75/half-height scales). Actual
+provider initializer10477C30, glyph renderer10539574, metrics/face selection,
+contour transform104A9416 and destruction10477B9C execute. Font face metrics/
+triangle outline, shaping, descriptor processing, allocator and final contour
+emission remain supplied. Native UTF16->UTF32 buffer checked independently.
+Normal buffers all freed; native metric error2 restores matrix/provider and
+acknowledges through stock completion. No Nikon font-file shaping or GPU pixels.
+
+IMPORTANT native10539EB0..CE ceilings glyph translations after rotation. Audit
+checks pre-round affine mapping, exact native ceiling phase and final vertices
+without tolerance.01/02 used a post-scaled contour reference;03/04 shaper fixture
+used wrong UTF16 width;05 exposed the ceiling phase;06 reached allocation fault;
+07 recorded it;08 readiness/native-RAM allocator;09 adds separate partial-state
+rejection calls. Failed runs remain failed, not silently cleared evidence.
+
+UNRESOLVED: supplied allocator NULL1 returns error1/no publication; NULL2..5
+fault at104A9C4A (zero-before-null-check) retaining1..4 supplied allocations.
+Four expected counterexamples are included in192 behavior checks, NOT recovery
+passes. Actual camera allocator contract unproved. Separate adapter calls reject
+the resulting partial states without ack/publication; no native fault recovery
+claimed. Carry this gap into exact installation/recovery assessment.
+
+See PORTRAIT_RESEARCH.md and evidence/20261121-native-glyph.json. Next: native
+font-file/live descriptor behavior, inline bitmap symbols, live LCD target/page/
+task admission, portrait reflow/input/settings integration. Prior highlight
+host/module unchanged. Native lifecycle/writer/bank/engine closure, Info mirror,
+real histogram source and integrated release/install/recovery remain open.
+
+Final root71/no skips:20261121-native-glyph-root-tests.log. Both final audit
+fingerprints and identical probe packets verified current. Ignored Graphify
+refreshed3367nodes/9091edges; existing parser warnings retained. Source-only
+checkpoint, no new integrated firmware release or flash clearance.
+
 ## Caller-admitted portrait text matrix interception - November 21, 2026
 
 Previous686929a is the fixed-image/font-binding checkpoint. This is PROGRESS:

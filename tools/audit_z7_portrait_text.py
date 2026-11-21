@@ -49,6 +49,10 @@ class TextFixture(NativePNG):
     def reset(self,command,matrix,transform,origin=ORIGIN,metrics=0,bounds=0):
         self.command=command;self.before_matrix=tuple(v&0xffffffff for v in matrix)
         self.word(0xa180ad98,CONTEXT);self.word(DESCRIPTOR+0x94,CONTEXT);self.word(CONTEXT+0x45b4,TABLE)
+        self.word(CONTEXT+0x45d8,0xa1860000)
+        self.u.mem_write(0xa1860000,bytes(0x1bc))
+        for field,buffer in zip((0x1ac,0x18c,0x19c,0x178),(0xa1861000,0xa1862000,0xa1863000,0xa1864000)):
+            self.word(0xa1860000+field,buffer)
         self.u.mem_write(CONTEXT+0x34,struct.pack('<7I',*(v&0xffffffff for v in matrix)))
         self.u.mem_write(TRANSFORM,struct.pack('<I4i',*transform))
         self.u.mem_write(MESSAGE,struct.pack('<7I',1,2,3,COMPLETE|1,0x42010000+command,PAYLOAD,0xaaaaaaaa))
@@ -136,7 +140,8 @@ def audit(raw,packet,metadata):
           f.call(f.entry,MESSAGE,TRANSFORM)==1 and f.read(CONTEXT+0x45b4)==0xa1804000 and f.matrix()==base and f.events[-1]=='event')
     for kind in ('orientation0','orientation3','scale0','scale-large','translation-large','foreign-completion','unknown-command',
                  'payload-null','payload-end','descriptor-null','descriptor-context','context-null','context-end','foreign-provider','busy',
-                 'message-null','message-unaligned','transform-null'):
+                 'message-null','message-unaligned','transform-null','glyph-state-null','glyph-state-end',
+                 'glyph-buffer-1ac','glyph-buffer-18c','glyph-buffer-19c','glyph-buffer-178'):
         t=[1,UNIT,UNIT,0,0];f.reset(0x34,base,t);mp=MESSAGE;tp=TRANSFORM
         if kind=='orientation0':t[0]=0
         if kind=='orientation3':t[0]=3
@@ -157,6 +162,9 @@ def audit(raw,packet,metadata):
         if kind=='message-null':mp=0
         if kind=='message-unaligned':mp=MESSAGE+1
         if kind=='transform-null':tp=0
+        if kind=='glyph-state-null':f.word(CONTEXT+0x45d8,0)
+        if kind=='glyph-state-end':f.word(CONTEXT+0x45d8,0xaffffffc)
+        if kind.startswith('glyph-buffer-'):f.word(0xa1860000+int(kind.rsplit('-',1)[1],16),0)
         msg=bytes(f.u.mem_read(MESSAGE,28));payload=bytes(f.u.mem_read(PAYLOAD,12));provider=f.read(CONTEXT+0x45b4)
         check(kind+'-rejected-without-publication-or-ack',f.call(f.entry,mp,tp)==0 and not f.events and not f.calls and
               bytes(f.u.mem_read(MESSAGE,28))==msg and bytes(f.u.mem_read(PAYLOAD,12))==payload and f.read(CONTEXT+0x45b4)==provider and f.matrix()==base)

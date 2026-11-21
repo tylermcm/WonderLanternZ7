@@ -218,6 +218,55 @@ SHA256 `9ee393c727b0a817880dc88e9cc4d4702b74e343b59da95d4305f9875535db59`.
 Flat fixture loading does not establish module-loader admission. Run01 passed170
 before extreme-boundary, argument mapping and cleanup coverage expanded in02.
 
+## Native glyph contours and font readiness
+
+The adapter now also requires a bounded1BC-byte glyph state at context+45D8
+and four nonnull, aligned native-RAM buffer pointers at state+1AC/+18C/+19C/+178.
+Original provider initialization publishes its table before allocating those
+buffers, so the earlier table-only check admitted an incomplete context. These
+are basic readiness checks, not allocation pins, capacity validation or task
+exclusion. `20261121-portrait-text-03/result.json` passes273 checks including six
+new partial-state rejection cases and preservation of a busy owner's state.
+The updated probe is1216 file/1152 image/28 BSS/0 relocations, reproducible, SHA256
+`82fbd88cfa691acd3d65f022e8bb5dcaa306d82b186bd95dfc3508c8a9d10fa8`.
+
+`tools/audit_z7_native_glyph.py` executes the original provider initializer10477C30,
+renderer10539574, metrics aggregation10476E28, face selection10476846, contour
+transformation104A9416 and provider destruction10477B9C. Descriptor processing
+remains a supplied Thumb stub. A supplied font face provides metrics and a
+three-vertex outline; a supplied shaper maps ASCII input to one glyph per code.
+The final contour emitter10478AD2 is a sink. Native UTF-16 conversion into the
+provider's UTF-32 buffer is independently checked. This does not establish Nikon
+font-file loading/shaping, bitmap symbols or actual GPU pixels.
+
+Private `20261121-native-glyph-09/result.json` passes192 exact-behavior checks
+across36 paired native layouts: commands34/37/38, orientations1/2, A/ABC input,
+unit/three-quarter/half-height scale and translation. Native provider allocation,
+buffer setup and destruction run with supplied bounded native-RAM allocators.
+Every normal pair frees all its owned buffers. Native metric failure2 also
+restores provider/matrix before stock acknowledgement and permits destruction.
+
+Native translation quantization matters. Instructions10539EB0..CE ceiling each
+glyph translation to an integer pixel AFTER rotation. Reflecting an already
+ceiled translation differs by one pixel at fractional positions. The audit
+captures each pre/post-round native origin, proves the pre-round affine mapping,
+checks the exact ceiling rule and compares all final vertices with that phase.
+There is no comparison tolerance. Earlier01/02 incorrectly post-scaled an
+already laid-out contour;03/04 exposed a supplied shaper reading UTF-16 as32-bit;
+05 exposed the post-rotation ceiling phase.06 completed contour cases but failed
+the assumed allocation unwind.07 recorded counterexamples;08 adds readiness
+guards/native-RAM allocations;09 separately verifies rejection of partial states.
+
+**Unresolved allocator contract:** returning NULL from supplied allocation1
+produces native error1 without state publication. Supplied NULL at allocations
+2..5 instead reaches an unmapped write at104A9C4A: native buffer helpers zero
+the returned pointer before checking it. Those four faults retain1..4 supplied
+allocations and are explicit counterexamples, not successful recovery. The
+actual camera allocator's failure contract remains unproved. A separate emulator
+call shows the portrait adapter rejects each resulting incomplete state without
+publication or acknowledgement; it does not unwind or recover the native fault.
+Do not claim camera OOM safety from this audit.
+
 ## Remaining integration
 
 Bind actual LCD output/target admission, live native text behavior and bitmap symbols,
