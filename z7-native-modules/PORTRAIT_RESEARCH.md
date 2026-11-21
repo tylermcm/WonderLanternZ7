@@ -34,6 +34,40 @@ See source-only evidence
 
 ## Resident touch API92
 
+### Combined driver path and observed program transitions
+
+The later `audit_z7_portrait_touch_driver.py` executes the whole original driver/
+device/program path through the loaded portrait transform and native producer.
+PASS963 covers120 cases across all5 programs,3 pages,2 orientations and mapped,
+foreign, native-rejected and failed-admission events. Driver slots, original
+producer input/return-dependent wake, packet preservation and copy survival
+after driver/host stack return are checked. OS/device/program/UI/render services
+are supplied; failed admission does not establish actual full-ring scheduling.
+
+`audit_z7_native_app_transition.py` PASS33 executes manager1008FCD8 and establishes
+native state2 as steady,3 awaiting stop,1 awaiting start acknowledgement. Its
+events4/3/2 run all5 target transitions, including AUTOOP0 -> MENU1 with supplied
+MENU/PLAY task state4. Native registration1008FCC2 proves A1815C5C is an ack
+callback slot, not a request flag; manager state is atA1815C6C. Task start/stop
+services and active-program selection are supplied. This is not complete queued
+menu request discovery or task scheduling proof.
+
+The combined API92 diagnostic now includes `plugins/portrait_program.h` around
+native page classification. It observes manager state2, a valid current program,
+next sentinel5 and the original object returned by1008FDC0; it then checks state,
+current and next again. Observed transitions reject graphics/navigation/touch,
+and graphics resets the orientation latch. This does not lock tasks, exclude ABA
+or cover every queued UI request. API84/API88 probes keep their previous policy.
+PASS1765 retains576 touch cases and adds8 invalid/transition states across all
+three callbacks plus a state change during native page queries. The reproducible
+combined probe is11072 bytes, SHA
+`c248b6b9c2c6c4bc8990e0a106eff4f6cb602505bfdb904873acdf4b7b1b74cc`.
+Host firmware remains unchanged; navigation441 and graphics/text109 regressions
+retain byte-identical older modules. See evidence/20261121-native-app-transition,
+portrait-touch-driver and portrait-transition-touch.json (same date prefix).
+
+### Initial resident touch contract
+
 `tools/audit_z7_native_touch_driver.py` independently verifies original driver
 registration1020D3D4, veneers1015B85A/10407846, three callback slotsA1F910AC/B0/B4
 and locked fanout1020C2D4. PASS160 covers all8 fanout masks, ready/range/occupied/

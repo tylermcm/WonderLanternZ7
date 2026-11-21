@@ -1,5 +1,55 @@
 # Laptop handoff — October 20, 2026
 
+## Combined native touch path and observed program transitions - November 21, 2026
+
+Previous60faf29 tested the stock driver chain and API92 producer separately.
+New audit_z7_portrait_touch_driver.py executes original driver registration/
+fanout, device state, all5 native program handlers, loaded portrait touch bridge
+and original producer/queue together. PASS963 covers120 cases (5 programs,
+3 portrait pages,2 orientations, mapped/foreign/native-blocked/failed-admission).
+It checks original callback slots, exact selected packet, once-only native
+producer, wake behavior after the native result, and copy survival after the
+entire driver/host stack returns. Failed admission is supplied, not an actual
+full-ring scheduling test. Driver/task/UI/OS/render boundaries remain modeled.
+
+New audit_z7_native_app_transition.py PASS33 executes native program manager
+1008FCD8, registration1008FCC2 and active-program getter1008FDC0. Events4/3/2
+take idle2 -> stop-pending3 -> start-pending1 -> idle2. All5 targets include
+AUTOOP0 -> MENU1 while supplied MENU/PLAY task state remains4. This demonstrates
+an observed program transition the old task-state-only guard could admit.
+Important: A1815C5C is an acknowledgement CALLBACK slot (registered by1008FCC2),
+not a pending-menu flag; do not treat a nonzero value there as pending work.
+A1815C6C is manager state;2 is steady, NOT0. Complete queued native-menu request
+closure and actual task callbacks/scheduling are still unproved.
+
+New plugins/portrait_program.h checks state2, current<5, next==5 and original
+native active-program object, then rereads state/current/next. API92 combined
+portrait diagnostic wraps native page classification before/after with this
+observation. Graphics, navigation and touch delegate during observed transitions;
+graphics also resets the orientation latch, so input waits for a new backdrop.
+This is observation, NOT a lock, ABA exclusion or full pending-request fence.
+The older API84/API88 diagnostic profiles compile the original policy unchanged.
+
+portrait-transition-touch-01 PASS1765 includes the576 previous packet cases,
+8 new transition/invalid-program cases across touch/navigation/graphics and an
+observed state change during the native page getter. New combined probe11072/
+image11008/BSS80/0relocs SHA
+c248b6b9c2c6c4bc8990e0a106eff4f6cb602505bfdb904873acdf4b7b1b74cc.
+Driver integration uses this exact reproducible probe. API92 host9681/MAIN SHA
+3464949a...6aa1ed0 unchanged. Existing navigation441 and graphics/text109 pass,
+with byte-identical old probes. Root71/no skips. Source-only evidence files:
+20261121-native-app-transition.json, portrait-touch-driver.json,
+portrait-transition-touch.json, transition-navigation-regression.json and
+transition-graphics-regression.json under evidence/.
+All5 current source maps verified. Ignored Graphify refreshed to3822nodes/
+10555links, retaining existing conditional-C extraction warnings.
+
+Next close queued menu/UI requests and native input/graphics task ownership,
+then rotation preferences, pending/live/external/magnified bindings, real fonts/
+assets, bitmap/queued-finish/render allocation closure, Info mirror/histogram,
+integrated release and exact installation/recovery. Full goal ACTIVE. No camera/
+card access, staging, flash or push. Nothing here clears a physical flash.
+
 ## Resident API92 touch and loaded portrait controls - November 21, 2026
 
 Previousce031cf proved native calibration and synchronous queue copying. New

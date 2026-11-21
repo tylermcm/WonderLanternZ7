@@ -39,6 +39,11 @@ class GridHostFixture(HostFixture):
     def read(self,p):return int.from_bytes(self.u.mem_read(p,4),'little')
     def variable(self,name):return self.words()[12]+self.metadata['symbols']['z7_portrait_grid_'+name]
     def setup(self,orientation=1,prime=True):
+        if self.report.get('touch_hooks'):
+            # Explicit steady program-manager fixture for the API92 diagnostic.
+            self.write(0xa1815c54,1);self.u.mem_write(0xa1815c64,b'\3\5\0\0');self.write(0xa1815c6c,2)
+            for i,obj in enumerate((0xa1822d74,0xa182ecb8,0xa183dd90,0xa1822e70,0xa183d924)):
+                self.write(0xa1815c74+12*i,obj)
         self.u.mem_write(0xa1829af4,b'\3');self.write(0xa20207bc+12,0xa1829970)
         self.u.mem_write(0xa18298b8,b'\3\0');self.u.mem_write(0xa201d4d0,b'\0')
         self.u.mem_write(0xa182ed2c,b'\4');self.u.mem_write(0xa183de04,b'\4')

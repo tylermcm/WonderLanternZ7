@@ -105,16 +105,35 @@ def audit(raw, host, packet, metadata):
     result, handled, original = f.touch()
     check('touch-before-graphics-latch-delegates', handled == 0 and f.original_events == [(EVENT, original)])
     for location, data in ((0xa201d4d0, b'\1'), (0xa18298b8, b'\2\0'),
-                           (0xa1821394, struct.pack('<I', 2))):
+                           (0xa1821394, struct.pack('<I', 2)),
+                           (0xa1815c6c, struct.pack('<I', 3))):
         f.nav_setup()
         f.nav_mutation = (location, data)
         result, handled, original = f.touch()
         check(f'observed-context-change{location}-discards-copy', handled == 0 and f.original_events == [(EVENT, original)])
+    for label, location, data in (
+        ('initial-manager', 0xa1815c6c, struct.pack('<I', 0)),
+        ('start-pending-manager', 0xa1815c6c, struct.pack('<I', 1)),
+        ('stop-pending-manager', 0xa1815c6c, struct.pack('<I', 3)),
+        ('unknown-manager', 0xa1815c6c, struct.pack('<I', 255)),
+        ('invalid-current-program', 0xa1815c64, b'\5'),
+        ('pending-next-program', 0xa1815c65, b'\1'),
+        ('manager-not-ready', 0xa1815c54, bytes(4)),
+        ('foreign-program-object', 0xa1815c74 + 36, struct.pack('<I', 0xa182ecb8)),
+    ):
+        f.nav_setup()
+        f.u.mem_write(location, data)
+        result, handled, original = f.touch()
+        check(label + '-touch-retains-native-packet', handled == 0 and f.original_events == [(EVENT, original)])
+        result, handled = f.navigate(0)
+        check(label + '-navigation-delegates', handled == 0 and f.nav_stock == [0])
+        check(label + '-graphics-delegates-and-resets-latch', f.dispatch(box=(0,280,720,146)) == 0 and f.read(f.variable('layout')) == 0)
     return dict(schema=1, passed=True, checks=len(checks), check_names=checks,
                 portrait_touch_cases=cases, api_bytes=92,
                 loader_graphics_latch_native_page_getters_mapping_producer_and_queue_execute=True,
                 supplied_boundaries=['filesystem/kernel/allocator', 'scene/page/output/orientation state', 'render backends', 'wake/time', 'profile data', 'queue admission'],
-                limits=['No full task or pending-screen fencing', 'No real touch acquisition, native consumer concurrency, pixels or complete boot', 'No camera/card access, installation or recovery proof'],
+                observed_program_transition_guard_cases=8,
+                limits=['Observed program transitions only; no full task or pending-screen fencing', 'No real touch acquisition, native consumer concurrency, pixels or complete boot', 'No camera/card access, installation or recovery proof'],
                 installation_candidate=False)
 
 

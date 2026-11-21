@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": 33,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "native_targets": 5,
+  "pending_snapshots": [
+    {
+      "target": 0,
+      "current": 4,
+      "pending_manager_state": 3,
+      "menu_state": 4,
+      "play_state": 4
+    },
+    {
+      "target": 1,
+      "current": 0,
+      "pending_manager_state": 3,
+      "menu_state": 4,
+      "play_state": 4
+    },
+    {
+      "target": 2,
+      "current": 1,
+      "pending_manager_state": 3,
+      "menu_state": 4,
+      "play_state": 4
+    },
+    {
+      "target": 3,
+      "current": 2,
+      "pending_manager_state": 3,
+      "menu_state": 4,
+      "play_state": 4
+    },
+    {
+      "target": 4,
+      "current": 3,
+      "pending_manager_state": 3,
+      "menu_state": 4,
+      "play_state": 4
+    }
+  ],
+  "stable_program_manager_state": 2,
+  "stop_pending_state": 3,
+  "start_pending_state": 1,
+  "acknowledgement_callback_address": "0xa1815c5c",
+  "program_manager_state_address": "0xa1815c6c",
+  "scope": "Original program-manager events4/3/2, stop/start/ack transition and actual active-program getter; callback registration identity prevents misclassifying a function pointer as a pending flag",
+  "supplied_boundaries": [
+    "active program objects",
+    "task stop/start services"
+  ],
+  "limits": [
+    "No real task state evolution, scheduling or exclusion",
+    "Does not locate every pending menu/UI request",
+    "No installed transition guard, camera boot, flash or recovery proof"
+  ],
+  "installation_candidate": false,
+  "source_sha256": {
+    "tools/audit_z7_native_app_transition.py": "51464fdc83c62cba224bd0c418580214b386754a7697df16e7b6fab955394d20",
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b",
+    "tools/audit_z7_native_touch_driver.py": "c5e1bec4256ec5203f5ae3ccc270faca3d4a651e3c106985a0b1f9056119ed18",
+    "tools/audit_z7_native_touch_queue.py": "d256055247786cfd54354ffae29a66e44d0888166282853cbc84914d3f3edcb0"
+  },
+  "date": "2026-11-21",
+  "root_tests": 71,
+  "root_tests_skipped": 0,
+  "source_fingerprints_verified": true,
+  "full_goal_complete": false,
+  "installation_candidate_cleared": false,
+  "camera_card_access_staging_flash_or_push": false
+}

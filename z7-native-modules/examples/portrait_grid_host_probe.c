@@ -19,6 +19,17 @@ volatile uint32_t z7_portrait_nav_received,z7_portrait_nav_handled;
 #include "touch.h"
 volatile uint32_t z7_portrait_touch_received,z7_portrait_touch_handled;
 #endif
+#ifdef Z7_PORTRAIT_TOUCH_DIAGNOSTIC
+#include "../plugins/portrait_program.h"
+static uint32_t portrait_observed_page(void)
+{
+    if (!z7_portrait_program_stable()) return Z7_PORTRAIT_OTHER;
+    uint32_t page=z7_portrait_imenu_page();
+    return z7_portrait_program_stable() ? page : Z7_PORTRAIT_OTHER;
+}
+#else
+#define portrait_observed_page z7_portrait_imenu_page
+#endif
 volatile uint32_t z7_portrait_grid_received,z7_portrait_grid_handled;
 struct z7_portrait_layout z7_portrait_grid_layout;
 struct z7_portrait_bands z7_portrait_grid_bands;
@@ -26,13 +37,13 @@ struct z7_portrait_bands z7_portrait_grid_bands;
 static uint32_t portrait_navigation_callback(uint32_t direction,uint32_t *result)
 {
     ++z7_portrait_nav_received;
-    uint32_t page=z7_portrait_imenu_page();
+    uint32_t page=portrait_observed_page();
     volatile const uint8_t *scene=(void *)(uintptr_t)0xa201d4d0u;
     volatile const uint32_t *outputs=(void *)(uintptr_t)0xa1821394u;
     uint32_t layout=__atomic_load_n(&z7_portrait_grid_layout.orientation,__ATOMIC_ACQUIRE);
     if (*scene || (*outputs&7u)!=1 || (layout!=1 && layout!=2) ||
         (page!=Z7_PORTRAIT_GRID && page!=Z7_PORTRAIT_SETTING) || !result) return 0;
-    uint32_t after=z7_portrait_imenu_page();
+    uint32_t after=portrait_observed_page();
     if (after!=page || *scene || (*outputs&7u)!=1 ||
         __atomic_load_n(&z7_portrait_grid_layout.orientation,__ATOMIC_ACQUIRE)!=layout) return 0;
     *result=z7_portrait_navigation(direction,page==Z7_PORTRAIT_GRID ? Z7_CONTROL_GRID : Z7_CONTROL_SETTING,layout);
@@ -43,7 +54,7 @@ static uint32_t portrait_navigation_callback(uint32_t direction,uint32_t *result
 static uint32_t portrait_touch_callback(const uint32_t *event,uint32_t *copy)
 {
     ++z7_portrait_touch_received;
-    uint32_t page=z7_portrait_imenu_page();
+    uint32_t page=portrait_observed_page();
     volatile const uint8_t *scene=(void *)(uintptr_t)0xa201d4d0u;
     volatile const uint32_t *outputs=(void *)(uintptr_t)0xa1821394u;
     uint32_t layout=__atomic_load_n(&z7_portrait_grid_layout.orientation,__ATOMIC_ACQUIRE);
@@ -52,7 +63,7 @@ static uint32_t portrait_touch_callback(const uint32_t *event,uint32_t *copy)
     uint32_t control=page==Z7_PORTRAIT_GRID ? Z7_CONTROL_GRID :
         page==Z7_PORTRAIT_DIAL ? Z7_CONTROL_DIAL : Z7_CONTROL_SETTING;
     if (!z7_portrait_input_event(event,copy,control,layout)) return 0;
-    if (z7_portrait_imenu_page()!=page || *scene || (*outputs&7u)!=1 ||
+    if (portrait_observed_page()!=page || *scene || (*outputs&7u)!=1 ||
         __atomic_load_n(&z7_portrait_grid_layout.orientation,__ATOMIC_ACQUIRE)!=layout) return 0;
     ++z7_portrait_touch_handled;return 1;
 }
@@ -60,7 +71,7 @@ static uint32_t portrait_touch_callback(const uint32_t *event,uint32_t *copy)
 static uint32_t portrait_grid_callback(volatile uint32_t *message)
 {
     ++z7_portrait_grid_received;
-    uint32_t orientation=4,page=z7_portrait_imenu_page();
+    uint32_t orientation=4,page=portrait_observed_page();
     volatile const uint8_t *scene=(void *)(uintptr_t)0xa201d4d0u;
     volatile const uint32_t *outputs=(void *)(uintptr_t)0xa1821394u;
     if (*scene || page==Z7_PORTRAIT_OTHER || (*outputs&7u)!=1) {
@@ -72,7 +83,7 @@ static uint32_t portrait_grid_callback(volatile uint32_t *message)
         return 0;
     }
     z7_orientation_sample(&orientation); /* Unknown leaves the entry in landscape. */
-    uint32_t after=z7_portrait_imenu_page();
+    uint32_t after=portrait_observed_page();
     if (*scene || after!=page || (*outputs&7u)!=1) {
         if (*scene || after==Z7_PORTRAIT_OTHER || (*outputs&7u)!=1) {
             z7_portrait_layout_reset(&z7_portrait_grid_layout);
