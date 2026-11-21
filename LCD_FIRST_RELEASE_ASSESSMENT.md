@@ -1,8 +1,9 @@
 # Original Z7 LCD first-release installation assessment
 
 November 21, 2026. **Scoped software gates have passed for a controlled first
-hardware trial. Card staging and camera programming await explicit owner
-authorization.** This is independent WonderLanternZ7 work for original Z7 C 3.80,
+hardware trial. Owner authorization is recorded; the reviewed pair is staged
+and the card safely ejected. Camera programming awaits the owner's operation.**
+This is independent WonderLanternZ7 work for original Z7 C 3.80,
 with private Nikon inputs and preserved component licenses. Hardware acceptance
 and emergency recovery are unverified.
 
@@ -76,10 +77,18 @@ Read-only inspection identifies E: as Sony QD-G120F XQD, exFAT, label "NIKON Z 9
 Confirm this is the intended card for the ORIGINAL Z7 before any write. Its label
 does not identify the installed camera firmware. Private inspection report
 card-backups/20261121-sony-qd-g120f-01/inspection.json records stable identity.
-None of EG161080.BIN, Z_7_0380.bin, Z7APP.BIN, Z7CFG0.DAT or Z7CFG1.DAT exists;
-the root BIN/DAT filename check also finds none. Zero files were backed up; only
-the private report was created. Photos were untouched. This is not an installed
-firmware or calibration backup.
+Before staging, none of EG161080.BIN, Z_7_0380.bin, Z7APP.BIN, Z7CFG0.DAT or
+Z7CFG1.DAT existed; the root BIN/DAT check found none. Zero files were backed up;
+only the private inspection report was created. This is not an installed firmware
+or calibration backup.
+
+The owner then authorized: "yes go ahead, but keep the files intact". Only the
+exact EG161080.BIN and Z7APP.BIN were added using exclusive creation, flushed and
+fully hash-verified. All 217 existing user-file metadata records and the Nikon
+catalog hash were unchanged; Windows system-volume metadata was excluded from
+inventory. No existing files were overwritten/deleted/moved and no photo contents
+were read. Windows safe eject completed and E: was verified unmounted. The
+private staging/authorization record is card-staging/20261121-lcd-trial-01/staging.json.
 
 ## Proposed owner-operated trial, only after authorization
 
@@ -119,7 +128,9 @@ Selected instruction checks and prior trials are not an official recovery
 procedure. **No emergency recovery is verified for an unbootable camera;
 professional service may be required.**
 
-The bundle retains emulator-only identities, offline review limits and
-installation_cleared=false. No card staging or camera update has occurred.
+The frozen pre-approval bundle retains emulator-only identities, offline review
+limits and installation_cleared=false. Owner approval/staging is recorded
+separately; camera update acceptance, completion and hardware results remain
+unobserved. Card staging does not establish a successful camera update.
 [AGENTS.md](AGENTS.md) requires explicit user authorization and this concrete
 installation/recovery assessment before flashing.

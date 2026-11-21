@@ -1,5 +1,37 @@
 # Laptop handoff — October 20, 2026
 
+## Owner-authorized pair staged additively; card safely ejected - November 21, 2026
+
+After exact assessment/candidate/card question, user explicitly authorized:
+"yes go ahead, but keep the files intact". Authorization covers the reviewed
+pair on Sony QD-G120F E:(NIKON Z9 label) for original Z7 and owner-operated trial.
+Preserve all existing files. Do not ask again for this same approved action.
+
+Rechecked populated card identity against private inspection, confirmed root
+named update/config files absent. Private .private/stage-lcd-trial-01.py adds
+ONLY EG161080.BIN and Z7APP.BIN using exclusive xb creation, flush+os.fsync,
+full hash readbacks. Both match reviewed fa709dba...beaa4d/aafb4b39...eb60e22.
+All217 existing readable user-file metadata records unchanged (Windows System
+Volume Information excluded); existing NIKON001.DSC SHA unchanged. No files
+overwritten/deleted/moved, no photo contents read, no formatting. Preserve private
+inventory/device IDs in .private/card-staging/20261121-lcd-trial-01/staging.json.
+
+Windows Shell safe eject requested after fresh identity check; verified E: volume
+no longer mounted. Card is ready for owner to insert into ORIGINAL Z7 with charged
+battery and operate Setup > Firmware version > Update. Camera has NOT been
+programmed/observed by this agent. Follow camera completion/restart instructions;
+do not interrupt update. Report absence/refusal of update option; no guessed
+filenames/headers. Confirm normal shooting/menus with defaults OFF after restart
+before enabling features individually. No emergency recovery proof implied.
+
+Frozen review package remains an immutable PRE-approval snapshot; authorization
+and staging state are recorded separately. Source/firmware bytes unchanged;
+documentation/evidence-only checkpoint, no tests rerun. Broader port unfinished.
+Do not treat intentional post-eject absence as earlier missing-card blocker or
+restage another pair. Next action is owner-operated update and hardware feedback.
+No live jobs or push.
+
+
 ## Smaller LCD release software gates passed; owner trial awaits authorization - November 21, 2026
 
 User: "ok lets build until the flash is ready". This authorizes continued work,

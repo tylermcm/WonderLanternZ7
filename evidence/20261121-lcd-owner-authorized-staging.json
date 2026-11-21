@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "owner_authorization": "yes go ahead, but keep the files intact",
+  "source_checkpoint": "d34b963b52de4ab28131486a6f52b56659eff71c",
+  "source_release_sha256": "90c895258633f03bb1d116e0c4f87207c23658bff881b02e7419501b1012d39a",
+  "staging_complete": true,
+  "added_files": [
+    {
+      "name": "EG161080.BIN",
+      "bytes": 33058862,
+      "sha256": "fa709dba7eb7a9addc8bd5b90f839edd578cfb6d4bb0df87a1cd8cb4a7beaa4d",
+      "readback_verified": true,
+      "file_flushed": true
+    },
+    {
+      "name": "Z7APP.BIN",
+      "bytes": 21104,
+      "sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+      "readback_verified": true,
+      "file_flushed": true
+    }
+  ],
+  "exclusive_creation": true,
+  "existing_user_file_count": 217,
+  "existing_user_file_metadata_unchanged": true,
+  "existing_nikon_catalog_hash_unchanged": true,
+  "private_identity_and_inventory": true,
+  "windows_system_volume_metadata_excluded": true,
+  "safe_eject_verified": true,
+  "card_volume_unmounted": true,
+  "camera_programmed": false,
+  "hardware_verified": false,
+  "emergency_recovery_verified": false,
+  "private_staging_record_sha256": "616de497533c1e3b1af535855ecd6594f64b9b026d3f948508cf0ceea6897b41"
+}
