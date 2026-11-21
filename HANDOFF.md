@@ -1,5 +1,70 @@
 # Laptop handoff — October 20, 2026
 
+## In-flight ordering counterexample and lane primitive - November 20, 2026
+
+Previous3096ba8 was PROGRESS (cached primary API60). This turn is PROGRESS:
+concrete supplied concurrency counterexample and a compiled ownership primitive.
+Full goal ACTIVE. NO native fence integration or flash readiness claimed.
+No camera/card/staging/flash/push. Accepted API60 binaries have not been changed.
+
+.private/evidence/20261120-gate-interleaving-01.json reproduces the API60 gap in
+5 checks on exact cached-host-02/display-highlight-cached-03. Pause SOURCE frame
+on CALLER_STACK at actual DRIVER10241A0E immediately before enabled1 write;
+run Off GUI/worker/consumer on separate default STACK. Cleanup reports done1,
+restores baseline100, invalidates lease and leaves hardware enable0. Resume old
+native frame: callee regs/SP return correctly, but enable register and active
+state become1 again, with baseline still restored and lease invalid. Native
+gate/consumer/driver/register instructions execute; explicit two-stack schedule,
+kernel/services/context/engine/MMIO supplied. Physical reachability/shared lock
+closure NOT proven. Result passed=true means counterexample reproduced, NOT
+ordering-safe. Source hashes verified current at this checkpoint.
+
+NEW host/highlight_lane.h is NOT included by z7_380.c and NO native hook uses it.
+8-byte {state,owner}, low state bits0 idle/1 frame/2 parameters/3 transition,
+nonrecycled generation in upper bits. CAS admission first claims transition,
+publishes owner then release-publishes token. Release validates owner/token,
+CAS-claims transition, clears owner then release-publishes next idle generation.
+Same owner address cannot let an old token release a new operation (ABA).
+Busy/reentrant entry returns0; final idle0xfffffffc refuses admission forever,
+never wraps/resets. Future integration MUST handle exhaustion via feature
+shutdown and retain tokens through LAST native accesses. CAS uses compiler
+strong-exclusive retry, no wait/yield on another lane owner. No allocation pin,
+callback authorization, task lock order or native correctness claim from core.
+
+Diagnostic examples/highlight_lane_probe.c + tools/audit_z7_highlight_lane.py
+compile original C to Thumb and execute in NativePNG; no native hook registers.
+Final .private/evidence/20261120-highlight-lane-03/result.json PASS56: role/owner
+validation, frame/parameter exclusion/reentry, wrong/stale release rejection,
+reused-owner address token generation, interrupted admission/release both after
+transition claim AND after owner publish/clear, independent-stack ABI, final
+generation/exhaustion. Kernel scheduling/interruptions supplied. 01 exposed a
+TEST expected-generation count error (expected20 vs actual16 after 4 releases);
+fixed test arithmetic; 02 PASS34; final03 adds owner-store interruptions PASS56.
+Ignored Graphify refreshed3079nodes/8155edges; all four new code files present.
+Root71/no skips:20261120-lane-root-tests.log. No accepted feature suite rerun or
+native stale-frame fix claimed. Source record:evidence/20261120-highlight-ordering-lane.json.
+
+Native review constraint: frame1023A3DE takes mutexA1D6AB80 via10170944;
+wrapper calls kernel100361E8 with timeoutFFFFFFFF. Original frame releases this
+mutex before permission capture/gate. A whole-frame lane acquired BEFORE that
+wait needs a proven wait graph before foreign consumer waiting can be safe.
+Gate1023B76E and color getter10243D82 contain no observed blocking in their
+reviewed bodies, but complete transitive closure is still unproved. A narrower
+warning-permission-through-gate span may avoid the earlier mutex; this is a
+candidate design, NOT implemented or a completed closure proof. Parameter
+handler1023E214 does 100-copy atE226, dirty+ack atE22A..E232, completionE236.
+Foreign completion can be an arbitrary callback: release must precede callbacks
+that could reenter rendering, and no old leave may release a later transaction.
+
+NEXT: wire correct native frame/parameter coordination using this primitive or
+a better design. Preserve foreign native requests, owned cancellation/retry,
+original ABI/flags, startup/failure and exhaustion behavior; rerun the actual
+stale-frame schedule against the integrated build plus reversed/interrupted
+schedules. Primitive checks are NOT a replacement for these native tests.
+Then actual warning pixels, style/threshold preferences, EVF, portrait/rotation,
+native Info mirror, real histogram producer, full lifecycle/engine lifetime and
+exact-candidate installation/recovery. Full original software goal unchanged.
+
 ## Cached primary path API60 - November 20, 2026
 
 Previousc32dcff was PROGRESS (no-frame consumer cleanup). This turn investigated

@@ -769,3 +769,24 @@ The Photo highlights preference drives native/owned parameter conversion and
 the API56 consumption-time primary permission filter. Broader teardown and
 physical rendering acceptance remain open.
 No visible highlight feature or installation/recovery clearance is claimed.
+
+## In-flight cleanup ordering gap (November 20)
+
+API60 still allows a deliberately suspended old frame to enable the plane after
+Off cleanup restores native parameters and releases its lease. The five-check
+`tools/audit_z7_gate_interleaving.py` reproduction executes native instructions
+on separate supplied stacks; physical scheduling reachability is unproven.
+It is evidence against an unconditional ordering guarantee.
+
+`host/highlight_lane.h` supplies generation-qualified atomic ownership for
+future frame/parameter coordination. The diagnostic-only lane probe passes56
+compiled ARM checks, including interrupted owner publication and clearing,
+contention, stale-token release, reused owner addresses and exhaustion. It is
+not included in the feature host and does not fix the native race yet. Future
+integration must preserve foreign request completion/reentry, avoid native
+mutex wait cycles and define exhaustion shutdown. See the source-only scoped
+record `evidence/20261120-highlight-ordering-lane.json` and root HANDOFF.md.
+
+```powershell
+.venv\Scripts\python.exe tools/audit_z7_highlight_lane.py --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-lane-new
+```

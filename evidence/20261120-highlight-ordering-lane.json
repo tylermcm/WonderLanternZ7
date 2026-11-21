@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "status": "PROGRESS; native ordering gap remains open",
+  "supplied_stale_frame_interleaving_reproduced": true,
+  "race_reproduction_checks": 5,
+  "host_sha256": "a905e50c63b6c9de8922cd27a8b09ab29b8012f0ae5dce1c228af7d6233f0eb6",
+  "module_sha256": "6a5b066b1aa6f9212b01b30e63f44ed715f79d9f297bff298e02cb00d9af4cd4",
+  "compiled_lane_probe_sha256": "8999a634417627d3ca0b7c2b74b7c8f844bf382c8ce05610ba9c79832f3d4604",
+  "compiled_lane_checks": 56,
+  "root_tests": 71,
+  "root_tests_skipped": 0,
+  "primitive_connected_to_native_bridges": false,
+  "stale_native_frame_fixed": false,
+  "physical_schedule_reachability_or_shared_lock_proven": false,
+  "camera_card_access_staging_flash_or_push": false,
+  "full_goal_complete": false,
+  "supplied_boundaries": [
+    "Exact paused frame/consumer schedule and separate stacks",
+    "Kernel/filesystem/UI/surface/color services",
+    "Native engine/context descriptors and emulated MMIO storage"
+  ],
+  "primitive_scope": [
+    "Nonblocking admission when another owner or transitional publication exists",
+    "Frame/parameter role exclusion and same-owner reentry rejection",
+    "Generation-qualified tokens prevent late-release ABA when stack/packet addresses repeat",
+    "Admission and release deny contenders while owner is published/cleared",
+    "Token generation exhaustion refuses admission without resetting or wrapping"
+  ],
+  "integration_requirements": [
+    "Fence all applicable native frame/gate and parameter-copy operations, not only module callbacks",
+    "Preserve foreign requests and native completion/reentry contracts",
+    "Do not wait on a frame critical span that can wait for consumer-held resources",
+    "Keep ownership through final native access and prevent post-completion stale release",
+    "Handle startup, failure, contention and generation exhaustion before enabling a profile"
+  ],
+  "source_sha256": {
+    "tools/audit_z7_gate_interleaving.py": "e50ef66e4b5dcba0a4dd3d628653a7d92bb58b0a32a31b8703d7a96430b7a710",
+    "tools/audit_z7_highlight_cleanup.py": "64c8433a414435b6355da51d5b9d0eea409deaf9b6150f2f608b14d7f89481b8",
+    "z7-native-modules/examples/display_highlight_cleanup_policy.h": "31ab363d7cad5e084a4e56a6bf4ee57737fc680e1f6d7dbead01d7583aef31a9",
+    "z7-native-modules/examples/display_highlight_owned_policy.h": "25decd7337b6d9a354b5b96a70d8aa4d532d0e775954260ed8de06423fc7afff",
+    "tools/audit_z7_highlight_lane.py": "afd53a980c7f4cff9cd71edac1300218fc5d91a9ec276d2d945105b507983275",
+    "z7-native-modules/examples/highlight_lane_probe.c": "6c574a9d8c67bde2acbed49e2533b1bad1f8efc2f1902073fe2a54937195a3a2",
+    "z7-native-modules/host/highlight_lane.h": "e94e8f8910281974f73def1dcdc436cade4da5c4b8d4d0c063d1936ba67499c2"
+  }
+}
