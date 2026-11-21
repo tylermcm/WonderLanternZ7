@@ -42,7 +42,32 @@ Owner subsequently approved "yeah lets try it". The no-init diagnostic alone is
 now staged as Z7APP.BIN, exact hash/readback verified and flushed. Both original
 .disabled files remain unchanged; 219 existing file metadata records and Nikon
 catalog hash are unchanged. Card safely ejected. One ordinary startup/control
-observation is pending; NO firmware update or hardware success is claimed.
+observation is owner-confirmed: normal operation and usual fast responsiveness.
+No load marker exists, so entry execution is unproven. No firmware update or
+full-release hardware acceptance is claimed.
+
+Next proposed SD-only comparison (NOT authorized/staged): keep display/menu
+initialization, skip settings preparation and its worker. Exact module SHA-256:
+69921c4efc2b2395c76b969499cdf9f78d77ef675017acc2d5130365fbbf63e0.
+Size21,104bytes. No new firmware.95 root tests pass; emulator observes successful
+registration/menu publication and zero settings file operations. Could still
+freeze from UI initialization/callbacks. Not a fix or release candidate.
+
+With fresh explicit consent, verify same card and all three current file hashes.
+Rename current no-init Z7APP.BIN to Z7APP.NOINIT.disabled only if destination is
+absent. Preserve both original .disabled files. Exclusively create new Z7APP.BIN,
+flush/readback/hash, verify existing file metadata/catalog, then safely eject.
+Stop on any mismatch or name collision. No Update action or EG reenable.
+
+Proposed owner check: ONE ordinary cold startup, MENU/touch responsiveness,
+and presence of the additional Display settings row under Framing grid display.
+Do not change settings. A visible row provides stronger initialization evidence;
+normal controls alone do not prove loading. Prior removal/disabled-card recovery
+worked for the failed trial; recovery for this exact comparison is unverified.
+If frozen, stop/report symptoms. With camera off, quarantine diagnostic in reader
+before another card startup, preserving all files. No automatic firmware rollback
+or guaranteed recovery. Installed host remains modified. Consent would cover only
+this specific SD comparison; persistence remains mandatory for actual release.
 
 Do not perform another update or automatic rollback. Preserve all files and
 frozen evidence. The previous software-ready recommendation below is historical

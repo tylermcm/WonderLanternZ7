@@ -1,0 +1,36 @@
+{
+  "kind": "original-Z7-settings-io-disabled-diagnostic",
+  "entry_offset": 3844,
+  "image_bytes": 20800,
+  "bss_bytes": 5584,
+  "file_bytes": 21104,
+  "source_module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+  "module_sha256": "69921c4efc2b2395c76b969499cdf9f78d77ef675017acc2d5130365fbbf63e0",
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "patches": {
+    "persistence_prepare": 8100,
+    "persistence_worker": 7708
+  },
+  "native_load_status": 8,
+  "display_registration": true,
+  "worker_registration": true,
+  "patched_worker_two_instructions_observed": true,
+  "settings_filesystem_events": 0,
+  "menu_dispatch_publication_verified": true,
+  "same_layout": true,
+  "emulator_only": true,
+  "do_not_stage": true,
+  "hardware_trial_authorized": false,
+  "firmware_image": false,
+  "repair_claimed": false,
+  "limits": [
+    "Loader file I/O remains; only module settings preparation/worker are suppressed",
+    "UI/menu callbacks remain active and could still cause a freeze",
+    "Kernel/filesystem/render boundaries supplied; no hardware acceptance proof",
+    "Normal controls alone do not prove module loaded; visible Display settings entry is needed"
+  ],
+  "source_sha256": "aae51cb3cc013785de9fe49a64844da59d9c14c2db32c6cb665dac9a759a5d7f",
+  "relocation_count": 60,
+  "repository_tests": 95,
+  "hardware_observation": "Not staged or tested on camera; fresh owner authorization required"
+}

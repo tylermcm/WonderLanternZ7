@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## Diagnostic owner result and offline comparison - November 21, 2026
+
+Owner reports: "everything works as it should and is fast as it usually is"
+after the authorized no-init SD startup. Controls and usual speed confirmed by
+owner; entry execution is NOT proven because there is no on-camera load marker.
+Original full module/update remain disabled; host remains modified; cause unknown.
+Full release remains withdrawn. No new card writes or firmware flash performed.
+
+Offline settings-I/O-disabled comparison now prepared. Generator changes only
+four bytes each at persistence_prepare and persistence_worker, plus CRC.
+Original entry,21104-byte file,20800-byte image,5584-byte BSS and60 relocations
+remain. SHA69921c4e...bbf63e0. Exact-host emulator observes status8, display/
+worker registration, menu dispatcher publication, two-instruction worker return,
+and zero settings file operations. Loader cache operations remain, separately
+identified.95 root tests pass; existing Pillow deprecation warning. Graph refreshed
+3963nodes/10945edges, with existing conditional-C extraction limitations.
+Private artifact: .private/builds/20261121-lcd-no-settings-io-diagnostic-01.
+Source generator/tests and scoped evidence are public; binaries stay private.
+
+NOT authorized/staged. Current working no-init card state stays unchanged.
+Fresh consent needed for this different SD-only comparison; see exact proposal
+in LCD_FIRST_RELEASE_ASSESSMENT.md. Could still freeze. This is isolation only;
+persistence remains required for the release. No repair or hardware acceptance
+claim. No live process or card operation outstanding.
+
 ## SD-only no-init diagnostic authorized, staged and ejected - November 21, 2026
 
 User explicitly approved explained SD-only diagnostic: "yeah lets try it", then
@@ -16,7 +41,7 @@ Private log .private/card-staging/20261121-noinit-diagnostic-01/staging.json.
 Safe eject VERIFIED, volume unmounted. Card ready for ONE ordinary OFF/insert/ON
 check of MENU/touch, NOT Firmware version > Update. No new features expected.
 
-Await owner observations. Diagnostic is not a fix; may still freeze. Responsive
+Owner observation recorded above. Diagnostic is not a fix. Responsive
 controls alone do not prove entry executed (host lacks on-camera load status).
 Do not automatically enable original full module, update file, or another probe.
 No live process; source record only, no tests rerun for card staging/docs.
