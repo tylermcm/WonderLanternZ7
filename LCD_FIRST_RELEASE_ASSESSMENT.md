@@ -1,5 +1,12 @@
 # Original Z7 LCD first-release installation assessment
 
+Quarantine COMPLETE after owner confirmed camera responds normally without card:
+failed diagnostic renamed to Z7APP.SETTINGS-IO.disabled; all four trial files
+backed up/hash-verified and preserved. No active root .BIN remains. Existing file
+metadata/catalog unchanged except authorized rename; safe eject verified. No
+firmware flash/rollback. Installed host remains modified. Post-quarantine card
+startup not yet owner tested. No further trial proposed.
+
 **Latest diagnostic also FAILED on hardware.** Owner reports the same input
 freeze and unresponsive power switch with settings initialization/worker skipped.
 Card removal restored inputs; battery pull reported for power switch recovery.

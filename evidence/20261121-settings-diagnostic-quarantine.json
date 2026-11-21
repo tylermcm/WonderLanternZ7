@@ -1,0 +1,15 @@
+{
+  "complete": true,
+  "renamed_from": "Z7APP.BIN",
+  "renamed_to": "Z7APP.SETTINGS-IO.disabled",
+  "diagnostic_sha256": "69921c4efc2b2395c76b969499cdf9f78d77ef675017acc2d5130365fbbf63e0",
+  "all_four_payload_hashes_verified": true,
+  "existing_file_count": 221,
+  "existing_metadata_unchanged_except_rename": true,
+  "catalog_unchanged": true,
+  "no_active_root_bin": true,
+  "safe_eject_verified": true,
+  "firmware_flashed": false,
+  "camera_without_card_owner_result": "responds normally",
+  "private_quarantine_record_sha256": "74640059c276da4243398facf7e71dead65baecf7fa77f4e9c06b5f51e1a6446"
+}

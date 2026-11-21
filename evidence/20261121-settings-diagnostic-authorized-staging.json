@@ -23,5 +23,6 @@
   "settings_io_suppression_prevented_freeze": false,
   "menu_row_observed": null,
   "menu_row_observation_status": "not reported",
-  "quarantine_status": "pending card connection"
+  "quarantine_status": "Complete: failed diagnostic preserved as Z7APP.SETTINGS-IO.disabled; no active root BIN; safe eject verified",
+  "camera_without_card_owner_result": "responds normally"
 }

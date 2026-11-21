@@ -1,5 +1,21 @@
 # Laptop handoff — October 20, 2026
 
+## Failed settings diagnostic quarantined - November 21, 2026
+
+Owner confirms card connected and camera responds normally without card.
+Same card identity/four payload hashes verified; readback-verified private backups
+created in .private/card-backups/20261121-settings-freeze-01. Native Move-Item
+renamed ONLY Z7APP.BIN to Z7APP.SETTINGS-IO.disabled, without overwrite.
+All four payload hashes unchanged; original full module, EG and no-init remain
+disabled/intact.221 file metadata records preserved except authorized rename;
+Nikon catalog SHA unchanged. No active root .BIN remains. No photos read/deleted,
+no format, new diagnostic, firmware flash or rollback. Safe eject verified:
+no card media partition/access remained. Public scoped quarantine evidence saved.
+Installed host remains modified; full release withdrawn. No new trial proposed.
+Do not automatically restore no-init or failed modules. If owner uses card again,
+ordinary startup only; no Update. Current post-quarantine card startup has NOT
+been owner tested. No emulator/tests rerun for preservation/docs-only operation.
+
 ## Settings diagnostic FAILED on camera - November 21, 2026
 
 Owner reports same freeze with settings-I/O-disabled diagnostic: no input until
