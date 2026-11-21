@@ -54,17 +54,20 @@ class HostCamera(ui.Camera):
         return super().call(packet, name, function, payload, arguments)
 
 
-def bind_module_fixture(output, packet, host_report):
+def bind_module_fixture(output, packet, host_report, *, settings=False):
     """Configure one explicit immutable module file for a fresh guest."""
     from module_file_fixture import ModuleFileFixture, ModuleFileRemote
-    class RecordingModuleFileFixture(ModuleFileFixture):
+    from settings_file_fixture import SettingsFileFixture
+    fixture_type = SettingsFileFixture if settings else ModuleFileFixture
+    class RecordingModuleFileFixture(fixture_type):
         def request(self, remote, pointer):
             try:
                 return super().request(remote, pointer)
             finally:
                 (output / 'filesystem-events.json').write_text(json.dumps(dict(
                     events=self.events, position=self.position, opened=self.opened,
-                    closed=self.closed, finished=self.finished), indent=2) + '\n', encoding='utf-8')
+                    closed=self.closed, finished=self.finished,
+                    module_finished=self.module_finished if settings else self.finished), indent=2) + '\n', encoding='utf-8')
     fixture = RecordingModuleFileFixture(packet)
     class BoundModuleRemote(ModuleFileRemote):
         def __init__(self, port):

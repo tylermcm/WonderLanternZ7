@@ -53,7 +53,11 @@ def audit(raw, host, packet, module):
         if not good: raise AssertionError(name)
     symbols = module['symbols']
     def load(native=0, horizon=1):
-        f = BaseFixture(raw, host, packet)
+        if module['kind'] == 'original-Z7-LCD-first-release-candidate':
+            from audit_z7_display_persistence import PersistenceFixture
+            f = PersistenceFixture(raw, host, packet)
+        else:
+            f = BaseFixture(raw, host, packet)
         if f.call(host['symbols']['z7_module_load_once'], STATE) != 8: raise AssertionError('Module load')
         base = f.words()[12]
         f.properties[0x2f15] = native

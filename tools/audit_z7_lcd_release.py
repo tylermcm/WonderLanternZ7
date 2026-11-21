@@ -113,8 +113,28 @@ def audit(raw, host, packet, module):
     check('normalization-saved-to-other-journal-slot', migrated.files[PATHS[0]] == original and migrated.files[PATHS[1]] == record(expected, 8))
     again = load(dict(migrated.files))
     check('normalized-restart-is-stable', model(again) == expected and word(again, 'z7_settings_revision') == 0)
+    cycle = load()
+    call(cycle, 'z7_settings_flag', cycle.base + symbols['z7_menu_settings'], 0, 1)
+    for expected_preset in (1, 2, 3, 0):
+        cycle.call(0x1030da56, 0x29)
+        check('native-disp-selects-' + str(expected_preset), word(cycle, 'z7_readout_preset') == expected_preset)
+        cycle.call(host['symbols']['z7_display_before_update'])
+    for preset in (0, 2):
+        call(cycle, 'z7_settings_page', cycle.base + symbols['z7_menu_settings'], preset, 0)
+    for expected_preset in (1, 3, 1):
+        cycle.call(0x1030da56, 0x29)
+        check('native-disp-skips-disabled-to-' + str(expected_preset), word(cycle, 'z7_readout_preset') == expected_preset)
+    for label, address, data in (
+        ('movie', 0xa201d510, b'\1'), ('evf', 0xa18237c6, b'\2'),
+        ('menu', 0xa2c41008, struct.pack('<I', 1))):
+        saved_bytes = bytes(cycle.u.mem_read(address, len(data)))
+        cycle.u.mem_write(address, data)
+        previous = word(cycle, 'z7_preset_cycles')
+        cycle.call(0x1030da56, 0x29)
+        check(label + '-does-not-consume-custom-cycle', word(cycle, 'z7_preset_cycles') == previous)
+        cycle.u.mem_write(address, saved_bytes)
     return dict(schema=1, passed=True, checks=len(checks), check_names=checks,
-                scope='Actual API44 load, compact menu callbacks/count metadata, supported defaults, battery/focal switches, reset, worker save/restart and v1 legacy normalization',
+                scope='Actual API44 load, compact menu callbacks/count metadata, supported defaults, battery/focal switches, reset, worker save/restart, v1 legacy normalization and native DISP cycling/page skipping/context fallback',
                 limits=['UI rendering services supplied; compact menu needs native visual/lifecycle validation',
                         'No complete overlay/output/capture lifecycle or physical card validation',
                         'Not an installation-cleared candidate'], installation_candidate=False)

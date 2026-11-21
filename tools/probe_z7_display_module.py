@@ -119,7 +119,8 @@ def main():
     packet = (args.module / 'Z7APP.BIN').read_bytes()
     if hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Module fingerprint mismatch')
-    fixture = bind_module_fixture(output, packet, host)
+    lcd_release = module['kind'] == 'original-Z7-LCD-first-release-candidate'
+    fixture = bind_module_fixture(output, packet, host, settings=lcd_release)
     if args.graphics_api_trace:
         from graphics_api_observer import observing_remote
         source = Path(__file__).with_name('graphics_api_observer.py').read_bytes()
@@ -148,7 +149,8 @@ def main():
         camera.native_display_wait_ms = 5000
     result = dict(view=args.view, checks=[], steps=[], module_sha256=module['module_sha256'],
         main_sha256=host['main_payload_sha256'], modeled_module_file=True, camera_access=False, physical_card=False,
-        supplied_histogram_context=args.histogram_context_fixture)
+        supplied_histogram_context=args.histogram_context_fixture,
+        modeled_settings_files=lcd_release)
     result['probe_script_sha256'] = hashlib.sha256(probe_source).hexdigest()
     if fixture_source_hash: result['histogram_fixture_source_sha256'] = fixture_source_hash
     if args.view == 'information-groups':
@@ -388,7 +390,8 @@ def main():
                 viewport_flag=camera.remote.memory(0xa2367974 + 0x28, 1).hex(),
                 native_driver_state=camera.remote.memory(0xa188d70c, 3).hex(),
                 normalized_maximum=camera.remote.memory(0xa201d33c, 4).hex())
-        check('module-loaded-and-callbacks-committed', state()[10] == 8 and state()[23] == 1 and fixture.finished)
+        check('module-loaded-and-callbacks-committed', state()[10] == 8 and state()[23] == 1 and
+              (fixture.module_finished if lcd_release else fixture.finished))
         combined = module['kind'] == 'original-Z7-combined-display-module'
         if args.view not in ('battery', 'battery-auto', 'gui-update') or combined:
             for _ in range(20):

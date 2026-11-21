@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "installation_cleared": false,
+  "module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "checks": {
+    "lcd": {
+      "passed": true,
+      "checks": 47
+    },
+    "base": {
+      "passed": true,
+      "checks": 67
+    },
+    "focal": {
+      "passed": true,
+      "checks": 45
+    },
+    "focal_pixels": {
+      "passed": true,
+      "checks": 20,
+      "frames": 13
+    },
+    "battery_pixels": {
+      "passed": false,
+      "checks": 8,
+      "frames": 6,
+      "error": "RuntimeError('Guest exited or stopped during diagnostic call: W02')"
+    }
+  },
+  "root_tests": 71,
+  "source_sha256": {
+    "tools/audit_z7_display_base.py": "ce7ead3a3ff2e8a50b779e25ae6e2fdcd825d829307323c989eae72d3cc682e3",
+    "tools/audit_z7_focal_overlay.py": "68dde85514f9a3731347c2e468d8765263bf5a5d37c0ff1b6f49e28cd80d6e39",
+    "tools/audit_z7_lcd_release.py": "576d7e340a22ff854a09fddeb196077d5a0e82d61baf2804f3b5a3a18d99ea8c",
+    "tools/focal_pixel_probe.py": "4f738c8e72b0c2472eec9d26ac8c8442fa529388d1648631cef5bffac3f2c86d",
+    "tools/probe_z7_display_module.py": "e4f7b37b43ae1ad935b29df68acb224d7c823e7be3b9c17f9476f828fb82710f",
+    "tools/probe_z7_module_host.py": "22266602f36cfacc206f9551633c36a3e9e690676843b00f0f4ab4bc9da3672b"
+  },
+  "boundaries": [
+    "Module/settings files, incoming lens properties, instruction-fixture UI/render/kernel services supplied",
+    "Native QEMU drawing and keys execute; physical card, lens, camera outputs and emergency recovery unverified"
+  ],
+  "remaining": [
+    "Native shooting MENU unmodeled device write; no-card PLAY not reached",
+    "Independent exact-host updater admission and installation/recovery review"
+  ],
+  "camera_access": false,
+  "staging": false
+}

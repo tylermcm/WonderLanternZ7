@@ -1,5 +1,35 @@
 # Laptop handoff — October 20, 2026
 
+## LCD shooting gate narrowed to MENU device stop - November 21, 2026
+
+Committed release module04/API44 host unchanged. Existing live display harness
+now uses the persistent settings-file service for the LCD candidate. Exact
+focal rendering PASS20/13 frames; fractional/whole/lens absence/Other and master
+restoration execute native renderers. Lens inputs and files supplied. Visually
+inspected fractional native frame. Extended LCD instruction audit PASS47 adds
+native DISP cycles, disabled-page skipping and menu/movie/EVF fallback. Existing
+base and focal audits now accept persistent LCD fixture: PASS67 and PASS45.
+These instruction tests supply context/services; no physical outputs claimed.
+
+Native battery run lcd-shooting-battery-01 FAIL retained: draws and restores
+native icon region, excludes adapter, then native MENU call stops QEMU on
+unmodeled write10000aaa/valueaa/PCa2a40652. No PLAY reached. Log copied under
+z7-qemu/.local/sessions/20261121-102809-1893/qemu-1.log. Do not turn this into
+a pass by inventing a device response. Next: bounded comparison with existing
+diagnostic profile to determine original device path versus combined regression.
+
+Private held freeze .private/review/20261121-lcd-first-release-01 contains exact
+EG/MAIN/module/reports and assessment with hashes. EG33058862 SHAfa709dba...beaa4d,
+MAIN prefix and CRC checked; current compiler source fingerprints verified.
+This snapshot is NOT an installation-cleared review. Concrete source-only
+LCD_FIRST_RELEASE_ASSESSMENT.md identifies exact candidate and remaining update
+admission/recovery work. Existing review tool does not yet support this host;
+extend legitimate admission rather than relabeling emulator artifacts. No
+emergency recovery verified, no staging/card/camera/flash/push. Root71 passes.
+Ignored Graphify refreshed3864nodes/10689links (existing extractor warnings).
+All processes from this pass finished; do not rerun passing suites by default.
+
+
 ## LCD release native menu gate passed - November 21, 2026
 
 Smaller LCD release scope remains the priority. The first native menu run exposed

@@ -13,11 +13,12 @@ from display_pixel_geometry import control_scanout_box
 
 
 def run_focal_probe(camera, output, module, base, result, capture, native, key, check, horizon=False):
-    if module['kind'] != 'original-Z7-display-focal-diagnostic':
+    if module['kind'] not in ('original-Z7-display-focal-diagnostic', 'original-Z7-LCD-first-release-candidate'):
         raise ValueError('Focal overlay diagnostic required')
     source = Path(__file__).read_bytes()
     (output / 'focal-probe-source.py').write_bytes(source)
     result['focal_probe_source_sha256'] = hashlib.sha256(source).hexdigest()
+    result['focal_settings_boundary'] = 'Compiled settings helpers called directly for rendering isolation; native menu edits and persistence are tested separately'
     geometry = Path(__file__).with_name('display_pixel_geometry.py').read_bytes()
     (output / 'geometry-source.py').write_bytes(geometry)
     result['information_geometry_source_sha256'] = hashlib.sha256(geometry).hexdigest()
