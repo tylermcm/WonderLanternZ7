@@ -1,5 +1,11 @@
 # Independent original-Z7 module research
 
+`plugins/portrait_geometry.h` derives its quarter-turn geometry from pinned
+upstream `plugins/portrait_menu.c`, copyright (c) 2026 JKWTCN, MIT. Bounded
+original-Z7 transforms, read-only orientation sampling and native queue audits
+are independent local modifications under the same license. See
+`PORTRAIT_RESEARCH.md` for scope; portrait display integration is unfinished.
+
 This is an independent, modified adaptation for **original Nikon Z7 C 3.80**.
 It is not a Nikon, Wonder Lantern, or JKWTCN release. It currently contains a
 firmware-independent loading core, not an installed camera module host.

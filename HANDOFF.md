@@ -1,5 +1,44 @@
 # Laptop handoff — October 20, 2026
 
+## Orientation foundation and original graphics queue - November 20, 2026
+
+Previous a753620 is the accepted logical LCD/EVF highlight pair. This checkpoint
+is PROGRESS only: bounded read-only native orientation sampling, compiled
+portrait box math and an original-Z7 graphics queue binding. No portrait drawing
+hook is installed; full original goal remains ACTIVE. No camera/card/stage/flash/push.
+
+New orientation_sample.h preserves unknown native state; portrait_geometry.h
+provides bounded exclusive-edge720x480/480x720 transforms for orientations1/2,
+including output nonmutation and exact aliasing. A reproducible384-byte flat
+diagnostic executes those helpers. Private orientation-01/result.json PASS13405:
+9216 raw getter/normalizing-wrapper/sampler combinations,504 override/notification
+cases and2604 valid compiled geometry round trips plus invalid/null cases.
+Gate exactly1 selects supplied sensor; otherwise selectors1/2/3/4 map0/3/1/2,
+selector0 is UNKNOWN4. Normalizing native wrapper maps4 to0 but is not established
+as the graphics orientation getter. Physical IMU and live drawing remain unproved.
+
+Original rectangle producer1042F5F6 reaches queued dispatcher10372390 through
+103726B8. Graphics taskA1D75D34 has queue+20 and dispatch+2C, NOT Z7II+24.
+Native101F2414 registration executes in graphics-queue-05/PASS27. Original
+producer/enqueue/dispatcher/completion execute with supplied renderer/kernel and
+serialized two-CPU schedule. Command42010017 is synchronous at the backend,
+copies x/y/w/h plus two flag bytes and acknowledges42010062/0. Mode0 renders
+directly. Failed01/02 expected the wrong completion event;03 bytearray transfer
+fixture error;04 PASS26;05 adds registration and enqueue-self-link coverage.
+
+See z7-native-modules/PORTRAIT_RESEARCH.md for exact bindings, scope and next work.
+Need LCD target/output admission, image/text adapters, graphics task ownership,
+reflow/navigation/settings and cleanup before portrait integration. Accepted
+highlight host/module remain byte-identical to the previous checkpoint. Full
+startup/writer/index/bank/engine lifetime, native Info mirror, real histogram
+producer, integrated release and installation/recovery assessment remain open.
+
+Validation: root71/no skips (20261120-orientation-root-tests.log); both final
+audit source fingerprints match disk. Ignored Graphify updated3308nodes/8915edges
+with new code present; existing preprocessor parser warnings retained. Source-only
+summary: evidence/20261120-orientation-foundation.json. Probe SHA
+cd8266b1e24f75aa06ebdb8098461a4a0a615e9330b74d05da25e0df3a826578.
+
 ## Cache-driven logical LCD/EVF handoff - November 20, 2026
 
 Previous0fe3f8b was PROGRESS (API80 cache-copy host). This checkpoint is PROGRESS:

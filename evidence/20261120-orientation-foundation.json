@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "status": "PROGRESS; orientation geometry and native graphics queue binding; portrait integration unfinished",
+  "orientation_checks": 13405,
+  "native_orientation_cases": 9216,
+  "native_override_notification_cases": 504,
+  "valid_box_cases": 2604,
+  "probe_sha256": "cd8266b1e24f75aa06ebdb8098461a4a0a615e9330b74d05da25e0df3a826578",
+  "probe_bytes": 384,
+  "probe_image_bytes": 320,
+  "probe_bss_bytes": 0,
+  "probe_relocations": 0,
+  "reproducible_probe": true,
+  "graphics_queue_checks": 27,
+  "original_z7_dispatch_slot": "A1D75D60 (task A1D75D34 + 2C)",
+  "orientation_hook_installed": false,
+  "physical_imu_native_task_concurrency_rotated_pixels_or_installation_proven": false,
+  "full_goal_complete": false,
+  "camera_card_access_staging_flash_or_push": false,
+  "source_sha256": {
+    "tools/audit_z7_orientation.py": "c431d13534d8f0a3a553c64cb92902f5cbb397f43434a3e70f449d657d864c32",
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b",
+    "tools/build_z7_module.py": "1db3f23b03729dabe490a4b67fc0d6dd93fa386f4cc6e7760b9e063e92ed2689",
+    "z7-native-modules/sdk/module.h": "0a364de5f2a65e33de2c7095be3111dbb4212815ae56fe62ef1ea940333d6b21",
+    "z7-native-modules/sdk/module.ld": "62a816bb8809dcb18a0c2d46289d30700086ed441b9f8ce2a120cf2f1ea23f67",
+    "z7-native-modules/plugins/portrait_geometry.h": "248472b047a5ed4cca39a3e1b3f2bdf052b33bad988f04251c4a53d4b1506323",
+    "z7-native-modules/plugins/orientation_sample.h": "575bac22f09abd10787dcf9fb42d996b98e2ee5a92c5d073efd8026ad5a36074",
+    "z7-native-modules/examples/portrait_geometry_probe.c": "82da5e60272a3bec75c59029912a33fbc6ee988c4e43fab89025946070f7470b",
+    "tools/audit_z7_graphics_queue.py": "dd8ba3582dbd0df2f81ec6667eca4ea1ccfe14ef6b1633742947a7f85ccf48b8",
+    "tools/build_z7_module_host.py": "5c896c2ba9cc6670b0613f6397bb1aa652606dd21b89527a4fa72cdd67f72007"
+  }
+}
