@@ -147,11 +147,24 @@ static uint32_t highlight_cleanup_native_release(void)
     if (!highlight_cleanup_engine_admitted()) return 0;
     if (!z7_highlight_lease_read(&z7_highlight_lease, &lease)) return 0;
     if (!highlight_frame_native_read(&frame)) return 0;
+#ifdef Z7_HIGHLIGHT_CACHED_PROBE
+    if (frame.valid && highlight_frame_engine_matches(&frame)) {
+        uint32_t permission = W(frame.context.state + 0x20);
+        if (permission > 1) frame.permission = permission; /* Unfiltered native inhibit. */
+    }
+#endif
     if (lease.record.valid && frame.valid &&
         !highlight_cleanup_gate(&frame, 0, 0, lease.record.native_generation, lease.record.parameters)) {
         ++z7_highlight_cleanup_failed; return 0;
     }
     if (lease.record.valid && frame.valid) ++z7_highlight_cleanup_native_releases;
+#ifdef Z7_HIGHLIGHT_CACHED_PROBE
+    /* A parameter update does not erase the last original frame policy. A
+     * subsequent NULL cached refresh may present the new owned parameters. */
+    struct z7_highlight_context context;
+    if (frame.valid && highlight_frame_engine_matches(&frame) && z7_highlight_context_read(&context) &&
+        highlight_identity(&frame.context, &context)) return highlight_frame_native_publish(&frame);
+#endif
     frame.valid = 0;
     return highlight_frame_native_publish(&frame);
 }

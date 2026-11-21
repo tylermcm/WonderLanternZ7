@@ -12,6 +12,9 @@
 #ifdef Z7_HIGHLIGHT_FRAME_PROBE
 #include "frame_permission.h"
 #endif
+#ifdef Z7_HIGHLIGHT_CACHED_PROBE
+#include "cached_frame_permission.h"
+#endif
 static void highlight_gui_publish(void);
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
@@ -154,6 +157,10 @@ uint32_t z7_main(const struct z7_module_api *api)
     const struct z7_module_frame_permission_api *frame_api = (const struct z7_module_frame_permission_api *)api;
     if (api->size < sizeof(*frame_api) || !frame_api->register_frame_permission) return 1;
 #endif
+#ifdef Z7_HIGHLIGHT_CACHED_PROBE
+    const struct z7_module_cached_frame_api *cached_api = (const struct z7_module_cached_frame_api *)api;
+    if (api->size < sizeof(*cached_api) || !cached_api->register_cached_frame_permission) return 1;
+#endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
     const struct z7_module_update_api *update_api = (const struct z7_module_update_api *)api;
     if (api->size < sizeof(*update_api) || !update_api->register_before_update) return 1;
@@ -206,6 +213,9 @@ uint32_t z7_main(const struct z7_module_api *api)
 #endif
 #ifdef Z7_HIGHLIGHT_FRAME_PROBE
     if (!frame_api->register_frame_permission(highlight_frame_permission)) return 1;
+#endif
+#ifdef Z7_HIGHLIGHT_CACHED_PROBE
+    if (!cached_api->register_cached_frame_permission(highlight_cached_frame_permission)) return 1;
 #endif
 #else
     if (!worker_api->register_worker(persistence_worker)) return 1;

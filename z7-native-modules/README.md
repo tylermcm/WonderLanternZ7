@@ -70,6 +70,12 @@ qualified no-frame restoration in the native parameter consumer. It retains the
 original native frame permission and verifies the native gate's register effects.
 See [consumer plane cleanup](PHOTO_HIGHLIGHTS.md#native-consumer-no-frame-cleanup)
 for engine admission, cancellation, failure parking and supplied boundaries.
+`display-highlight-cached-probe` adds API60 filtering for native cached metadata
+and NULL cached-state refreshes. Its host additionally requires
+`--cached-frame-permission-hooks`. See the
+[cached path record](PHOTO_HIGHLIGHTS.md#cached-primary-metadata-and-state-refresh-api60).
+This closes a demonstrated path around the earlier primary-frame filter;
+native frame/parameter scheduling and allocation lifetime remain unproven.
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

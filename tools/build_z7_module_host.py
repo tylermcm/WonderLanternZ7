@@ -220,7 +220,34 @@ def add_frame_permission_hook(plan, symbols):
     return dict(primary_frame_permission=address)
 
 
-def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False):
+def add_cached_frame_hooks(plan, symbols):
+    """Filter both fresh cached metadata and NULL cached-state gate refresh."""
+    helpers = {n: plan.alloc(bytes(192)) for n in ('cached_frame_input', 'cached_frame_gate')}
+    save = 'push.w {r0-r12,lr}; mrs r0,apsr; push {r0,r1};'
+    restore = 'pop {r0,r1}; msr APSR_nzcvq,r0; pop.w {r0-r12,lr};'
+    tail = lambda p: f'.balign 4; ldr.w pc,[pc,#0]; .word {p | 1};'
+    plan.put(helpers['cached_frame_input'], assemble(f'''
+        {save} mov r0,r4; ldr r1,[r4,#0x30];
+        {invoke(symbols['z7_cached_frame_permission'])} str r0,[sp,#12]; {restore}
+        ldr r0,[r5,#0x20]; str r1,[r0,#0x20]; ldrb.w r1,[r0,#0x250];
+        {tail(0x1023d834)}
+    ''', helpers['cached_frame_input'], 192))
+    plan.put(helpers['cached_frame_gate'], assemble(f'''
+        {save} ldr r1,[r5,#0x20]; ldr r1,[r1,#0x20]; movs r0,#0;
+        {invoke(symbols['z7_cached_frame_permission'])}
+        ldr r1,[r5,#0x20]; str r0,[r1,#0x20]; {restore}
+        ldr r0,[r5,#0x20]; ldrb.w r0,[r0,#0x250];
+        bl native_gate; {constant('lr', 0x1023d895)} {tail(0x1023d894)}
+        native_gate: {tail(0x1023b76e)}
+    ''', helpers['cached_frame_gate'], 192))
+    for site, name, expected in ((0x1023d82a, 'cached_frame_input', '286a216b016290f85012'),
+                                  (0x1023d88a, 'cached_frame_gate', '286a90f85002fdf76dff')):
+        plan.edit(site, jump(site, helpers[name], 10), 'Optional cached primary permission: ' + name,
+                  expected=bytes.fromhex(expected))
+    return helpers
+
+
+def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False):
     """Fixed-address, BSS-free host; all writable state is explicitly reserved."""
     temporary = ROOT / '.private/tmp'
     temporary.mkdir(parents=True, exist_ok=True)
@@ -239,6 +266,7 @@ def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, fr
                 *(['-DZ7_HOST_HIGHLIGHTS=1'] if highlight_hooks else []),
                 *(['-DZ7_HOST_PARAMETERS=1'] if parameter_hooks else []),
                 *(['-DZ7_HOST_FRAME_PERMISSION=1'] if frame_permission_hooks else []),
+                *(['-DZ7_HOST_CACHED_FRAME=1'] if cached_frame_permission_hooks else []),
                 '-c', str(COMPONENT / 'host' / source), '-o', str(obj)], check=True, env=environment)
             objects.append(str(obj))
         linker = folder / 'host.ld'
@@ -283,14 +311,16 @@ ASSERT(SIZEOF(.bss) == 0, "Host must not contain unreserved BSS");
     return code, symbols
 
 
-def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False):
+def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False):
     if highlight_hooks and not display_hooks:
         raise ValueError('Highlight host requires the display host profile')
     if parameter_hooks and not highlight_hooks:
         raise ValueError('Parameter host requires the highlight host profile')
     if frame_permission_hooks and not parameter_hooks:
         raise ValueError('Frame permission host requires the parameter host profile')
-    state_bytes = 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
+    if cached_frame_permission_hooks and not frame_permission_hooks:
+        raise ValueError('Cached frame host requires the primary frame host profile')
+    state_bytes = 304 if cached_frame_permission_hooks else 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
     workspace_bytes = (state_bytes + 63) & ~63
     if sha(container) != Z7_CONTAINER_SHA256:
         raise ValueError('Requires exact original Z7 C 3.80 container')
@@ -303,7 +333,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Unexpected native task descriptor')
     if plan.image.words(0x101e3ee4, 1) != (CURSOR,) or plan.image.words(0x101e3e70, 1) != (STATE,):
         raise ValueError('Unexpected native workspace')
-    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks)
+    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks, cached_frame_permission_hooks)
     host_address = plan.alloc(code)
     cold_address = plan.alloc(bytes(160))
     # Preserve original initializer's stack unwind and tail continuation. R0
@@ -315,6 +345,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         str r3,[r2]; str r3,[r2,#4]; str r3,[r2,#8]; str r3,[r2,#12];
         {(constant('r2', STATE + 264) + ' str r3,[r2]; str r3,[r2,#4];') if parameter_hooks else ''}
         {(constant('r2', STATE + 280) + ' str r3,[r2]; str r3,[r2,#4];') if frame_permission_hooks else ''}
+        {(constant('r2', STATE + 296) + ' str r3,[r2]; str r3,[r2,#4];') if cached_frame_permission_hooks else ''}
         {constant('r2', STATE + 32)} {constant('r3', MAGIC)} str r3,[r2];
         dmb sy; pop {{r2,r3}}; msr APSR_nzcvq,r2; pop {{r2,r3}};
         {constant('r1', CURSOR)} {constant('r0', STATE + workspace_bytes)} str r0,[r1];
@@ -330,6 +361,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
     display_bridges = add_display_hooks(plan, symbols) if display_hooks else {}
     highlight_bridges = add_highlight_hooks(plan, symbols) if highlight_hooks else {}
     frame_permission_bridges = add_frame_permission_hook(plan, symbols) if frame_permission_hooks else {}
+    cached_frame_bridges = add_cached_frame_hooks(plan, symbols) if cached_frame_permission_hooks else {}
     output, report = plan.finish()
     report.update(preset=DISPLAY_PRESET if display_hooks else PRESET, emulator_only=True, candidate_cleared=False,
         container_sha256=Z7_CONTAINER_SHA256, main_payload_size=len(output) - 2,
@@ -348,6 +380,8 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         report.update(parameter_hooks=True, api_bytes=52, workspace_reserved_bytes=workspace_bytes)
     if frame_permission_hooks:
         report.update(frame_permission_hooks=True, api_bytes=56, frame_permission_bridges=frame_permission_bridges)
+    if cached_frame_permission_hooks:
+        report.update(cached_frame_permission_hooks=True, api_bytes=60, cached_frame_bridges=cached_frame_bridges)
     return output, report
 
 
@@ -357,7 +391,7 @@ def validate_candidate(path, report_path, stock_path, zig=ZIG):
         raise ValueError('Unknown module-host profile')
     expected, report = build_image(Path(stock_path).read_bytes(), zig, actual['preset'] == DISPLAY_PRESET,
                                    actual.get('highlight_hooks', False), actual.get('parameter_hooks', False),
-                                   actual.get('frame_permission_hooks', False))
+                                   actual.get('frame_permission_hooks', False), actual.get('cached_frame_permission_hooks', False))
     if (Path(path).read_bytes() != expected[:-2] or actual != report or binascii.crc_hqx(expected, 0)):
         raise ValueError('Module host candidate or report differs from independent rebuild')
     return dict(modified=True, independently_rebuilt=True, sha256=sha(expected[:-2]),
@@ -373,6 +407,7 @@ def main():
     parser.add_argument('--highlight-hooks', action='store_true', help='Opt in to experimental API48 source/consumer bridges; requires --display-hooks')
     parser.add_argument('--parameter-hooks', action='store_true', help='Opt in to API52 native highlight payload callback; requires --highlight-hooks')
     parser.add_argument('--frame-permission-hooks', action='store_true', help='Opt in to API56 primary frame permission filter; requires --parameter-hooks')
+    parser.add_argument('--cached-frame-permission-hooks', action='store_true', help='Opt in to API60 cached primary permission filter; requires --frame-permission-hooks')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
@@ -383,8 +418,10 @@ def main():
         parser.error('--parameter-hooks requires --highlight-hooks')
     if args.frame_permission_hooks and not args.parameter_hooks:
         parser.error('--frame-permission-hooks requires --parameter-hooks')
-    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks)
-    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks)
+    if args.cached_frame_permission_hooks and not args.frame_permission_hooks:
+        parser.error('--cached-frame-permission-hooks requires --frame-permission-hooks')
+    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks)
+    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks)
     if eg != repeated or report != second or binascii.crc_hqx(eg, 0):
         raise RuntimeError('Host build is not deterministic or CRC failed')
     output.mkdir(parents=True)

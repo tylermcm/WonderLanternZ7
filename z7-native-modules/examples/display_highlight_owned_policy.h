@@ -45,11 +45,25 @@ static uint32_t highlight_frame_permission(const void *frame, uint32_t native_pe
     if (!lease.record.valid || lease.record.context.state != state ||
         lease.record.native_generation != generation ||
         !highlight_parameters_match(state, lease.record.parameters)) return 0;
+#ifdef Z7_HIGHLIGHT_CACHED_PROBE
+    if (!frame) {
+        struct highlight_frame_native_record original;
+        if (!highlight_frame_native_read(&original) || !original.valid || original.permission > 1 ||
+            !highlight_frame_engine_matches(&original) ||
+            !highlight_identity(&original.context, &lease.record.context)) return 2;
+    }
+#endif
 #ifdef Z7_HIGHLIGHT_CLEANUP_PROBE
+#ifdef Z7_HIGHLIGHT_CACHED_PROBE
+    if (frame) {
+#endif
     uint32_t note = highlight_frame_native_note(frame, native_permission, &lease.record);
     if (note != 1) {
         z7_highlight_owned_parked = 1; return note == 2 ? 0 : 2;
     }
+#ifdef Z7_HIGHLIGHT_CACHED_PROBE
+    }
+#endif
 #endif
     /* Inhibit stale owned parameters even when native permission was1. Once
      * restoration/new native traffic relinquishes the lease, delegate native. */
@@ -61,6 +75,15 @@ static uint32_t highlight_frame_permission(const void *frame, uint32_t native_pe
     if (enabled) ++z7_highlight_frame_enabled; else ++z7_highlight_frame_inhibited;
     return enabled ? 1 : 2;
 }
+#ifdef Z7_HIGHLIGHT_CACHED_PROBE
+static uint32_t highlight_cached_frame_permission(const void *fields, uint32_t native_permission)
+{
+    /* The cached path supplies the native metadata substructure at frame+4.
+     * The common filter reads only its format at +1; no preceding bytes are
+     * read and no pointer is retained. NULL refreshes supply no new input. */
+    return highlight_frame_permission(fields ? (const void *)((uintptr_t)fields - 4) : 0, native_permission);
+}
+#endif
 #endif
 static void highlight_record_copy(struct z7_highlight_lease_record *to,
                                  const struct z7_highlight_lease_record *from)

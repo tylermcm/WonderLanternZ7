@@ -1,5 +1,85 @@
 # Laptop handoff — October 20, 2026
 
+## Cached primary path API60 - November 20, 2026
+
+Previousc32dcff was PROGRESS (no-frame consumer cleanup). This turn investigated
+caller/lane assumptions and found/fixed another native path around API56 gating.
+Full goal ACTIVE. Native source/parameter shared lane or locks STILL UNPROVEN.
+No camera/card/staging/flash/push; no physical pixels/installation clearance.
+
+Native cached primary1023D794 stores metadata+30 into state+20 at1023D82E, then
+calls warning gate at1023D890. NULL input bypasses metadata and uses cached state.
+This NEVER passes original primary1023B9D0/permission hook1023BAB0. Focused audit
+reproduces accepted API56 module re-enabling old owned params after primary Off
+filter cleared the real MMIO enable. Original direct gate-call candidates are
+1023BAB8 and1023D890, both now filtered in new opted-in profile. Indirect/native
+caller closure not proved. Private branch refs:highlight-lane-xrefs.json.
+
+New sdk/cached_frame_permission.h API60: frame56 prefix +init-only resident cached
+callback. Fresh fields pointer is native frame+4 metadata (format+1/permission+30),
+NULL provides NO new original input. Decision0 preserve/1 enable/2 inhibit. Host
+--cached-frame-permission-hooks requires all prior flags; state304 preserves288
+prefix, cachedCB288/running292/guards296,300; reserve320. Native cold/allocator and
+all prefix/tail guards tested. Invalid field range, callback/guards, reentry and
+nonboolean native permission delegate. Failure clears all callback state beforefree.
+
+Exact10-byte bridges1023D82A and1023D88A: fresh metadata filters before store;
+NULL recheck filters immediately before native gate. Native gate veneer uses BL
+local tail stub, preserving R12 input, resets LR to original1023D895 on return.
+Native result/volatile+callee regs/SP/NZCVQ fallback compared for NULL/nonNULL,
+three flag patterns. Earlier API56 host/module remain byte-identical when disabled.
+
+NEW display-highlight-cached-probe includes full cleanup API56 stack +registration
+before startup I/O. Fresh fields feed common permission policy, reading only
+format atfields+1 (no preceding bytes/no retained pointer); NULL skips capture.
+NULL cannot overwrite original native0/1 with filtered1/0. Same engine/context
+native parameter handoff retains original frame policy, including native inhibit2.
+A NULL-only refresh without known original policy inhibits rather than creating
+untracked owned plane. Fresh cached metadata can establish original policy without
+primary-frame input. Off cleanup restores latest baseline/native permission even
+following cached-only presentation. Menu/movie changes rechecked before GUI/worker.
+
+Final host .private/builds/20261120-cached-host-02,
+MAINa905e50c63b6c9de8922cd27a8b09ab29b8012f0ae5dce1c228af7d6233f0eb6,
+C5777bytes/API60/state304/reserve320/reproducible/EGCRCzero.
+Final module20261120-display-highlight-cached-03,
+SHA6a5b066b1aa6f9212b01b30e63f44ed715f79d9f297bff298e02cb00d9af4cd4,
+30340file/30016image/6616BSS/minAPI60;56 source inputs verified current.
+
+.private/evidence/20261120-cached-frame-03/result.json PASS61 exact final pair:
+cold/allocator, registration/ranges/guards/reentry/cleanup, delegated cached native
+ABI, API56 rejection, OLD bypass reproduced, native cached fresh/NULL path actual
+register effects, original policy across fresh+NULL and native updates, explicit
+inhibit2 retention, first cached presentation and no-frame cleanup, menu/movie.
+Kernel/FS/UI/surface/colors/engine/MMIO/context/task scheduling supplied. Focused
+01 PASS51 intermediate;02 PASS59 added policy-retention cases;03 final61 adds
+explicit native inhibit handoff. Earlier macro nesting compile error confined to
+diagnostic probe; fixed by including original parameter initializer once.
+
+Cleanup regression20261120-cached-cleanup-regression-01.json PASS27 +owned36 on
+FINAL pair. Cleanup audit CLI now admits compatible API56/60 cleanup kinds, keeps
+all original30s/10M guards. Root71/no skips:20261120-cached-root-tests.log.
+Compatibility host20261120-cached-compat56-host-01 exact
+bbda6819e395fce90fa6f4a4f67d307ffddb8d1539c3ac0794274e5e12468968.
+API56 cleanup module20261120-cached-compat56-module-01 exact5d570653...d2ad3.
+Source evidence:evidence/20261120-highlight-cached-primary.json. All jobs terminal;
+ignored graph refreshed3052nodes/8057edges (new cached files confirmed present);
+source manifest refreshed at checkpoint. No broad previous45/24/107
+rerun claimed on API60. Known native engine lifetime and concurrency gaps remain.
+
+NEXT: resolve native upstream frame/parameter concurrency. Direct source branch
+candidates at10208800/102089AE/1023A0C4/1023A120/1034EF60/10353030/103530E4.
+Param dispatcher10239840 registered at102398D4 through101F2414; executor101F240C
+loads callback+2C and calls it after queue receive. This boundary has no shared
+source lock in its visible body, but upstream/task/lock closure is NOT complete.
+Cached1023D794 callers1023D926/1023E0E6 are parameter-side handlers; forced replay
+1023DDCC also in that family. Source10352E68 callers10434E28/3A/50 enter direct
+application; trace upstream10434E10/1034EB8A/Image display synchronization. Need
+prove existing coordination or add correct native coordination; do not assume
+a global seqlock or callback-only reentry flag fences whole native gate/copy.
+Then rendering/pixels, style/threshold prefs, EVF/portrait, Info mirror, real
+histogram producer, lifecycle, exact installation/recovery. No flash clearance.
+
 ## Native-consumer no-frame plane cleanup - November 20, 2026
 
 Previous0db4314 was PROGRESS (native driver/register binding). This turn connects

@@ -250,8 +250,11 @@ def main():
     raw, packet = (a.build / 'module-host.emulator.main.bin').read_bytes(), (a.module / 'Z7APP.BIN').read_bytes()
     if hashlib.sha256(raw).hexdigest() != host['main_payload_sha256'] or hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         p.error('Exact host/module required')
-    if not host.get('frame_permission_hooks') or module.get('kind') != 'original-Z7-display-highlight-cleanup-diagnostic':
-        p.error('Explicit API56 cleanup pair required')
+    admitted = module.get('kind') in ('original-Z7-display-highlight-cleanup-diagnostic', 'original-Z7-display-highlight-cached-diagnostic')
+    if (not host.get('frame_permission_hooks') or not admitted or
+        module['api_minimum_bytes'] > host.get('api_bytes', 0) or
+        (module['api_minimum_bytes'] == 60 and not host.get('cached_frame_permission_hooks'))):
+        p.error('Explicit compatible cleanup profile and host required')
     result = audit(raw, host, packet, module)
     if a.owned_regression:
         import audit_z7_highlight_owned as owned

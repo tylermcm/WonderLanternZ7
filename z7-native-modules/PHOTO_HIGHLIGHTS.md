@@ -679,6 +679,70 @@ byte-identically with cleanup disabled. Source evidence:
 .venv\Scripts\python.exe tools/audit_z7_highlight_cleanup.py --build .private/builds/20261120-frame-host-01 --module .private/builds/cleanup-profile-new --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --owned-regression --output .private/evidence/highlight-cleanup-new.json
 ```
 
+## Cached primary metadata and state refresh API60
+
+Native cached primary application1023D794 can write state+20 from metadata+30
+and call warning gate1023B76E at1023D890, without traversing primary-frame
+application1023B9D0. It also accepts NULL metadata and refreshes the gate using
+cached state. The earlier API56 hook at1023BAB0 therefore did not cover this path.
+The audit reproduces the old profile re-enabling an owned plane through cached
+metadata after its primary Off filter had cleared the enable register.
+
+The optional API60 host adds `sdk/cached_frame_permission.h`, an init-only
+resident callback, and exact-window bridges at1023D82A and1023D88A. The first
+filters fresh metadata before permission publication; the second rechecks cached
+state immediately before the gate, including NULL refreshes. Metadata begins at
+the native frame+4 substructure; NULL supplies no new original frame policy.
+Native result/register/stack/NZCVQ behavior is retained when the callback delegates.
+Native nonboolean inhibition, invalid field ranges, failed guards, callback
+corruption and recursive entry delegate. API56 profiles do not register this
+interface and keep their earlier behavior.
+
+`display-highlight-cached-probe` composes the full cleanup profile with this new
+interface. Fresh cached metadata records its original permission; a second NULL
+recheck cannot replace that value with the module's filtered permission. A known
+original frame policy is retained across same-context/engine native parameter
+updates, including explicit native inhibit2. A NULL-only refresh cannot create
+an owned plane without known original policy; fresh cached metadata can establish
+that policy without a primary-frame submission. No-frame Off then restores the
+latest native baseline with its original permission. Menu/movie/context changes
+are checked at cached consumption even before another GUI or worker tick.
+
+Reproducible private host `20261120-cached-host-02`:
+MAIN `a905e50c63b6c9de8922cd27a8b09ab29b8012f0ae5dce1c228af7d6233f0eb6`,
+API60/state304/reservation320/hostC5777bytes. The288-byte prefix is preserved;
+cached callback288/running292/guards296,300 are appended. Cold initialization,
+native allocator alignment, registration/reentry/cleanup and API56 rejection
+execute in the focused audit. Final reproducible profile
+`20261120-display-highlight-cached-03`,30340file/30016image/6616BSS/minAPI60,
+SHA `6a5b066b1aa6f9212b01b30e63f44ed715f79d9f297bff298e02cb00d9af4cd4`.
+The61-check audit compares native delegated results/registers/NZCVQ for fresh
+metadata and NULL refreshes, reproduces the old bypass and verifies actual
+native driver register effects on the new path. Both input lifetime and task
+scheduling are supplied; no physical pixel result is claimed.
+
+This is not a native frame/parameter coordination fence. Static inspection found
+seven direct source-call candidates, a separate queued dispatcher registration at
+102398D4/101F2414, and the queue executor's callback dispatch at101F240C. Those
+boundaries do not establish a common task or shared lock with every source
+caller. Upstream caller/lock closure and actual scheduling remain unproven.
+The identified stock direct gate callers are1023BAB8 and1023D890; indirect calls,
+native engine allocation lifetime and whole lifecycle need further validation.
+
+Final private focused result: `20261120-cached-frame-03/result.json` PASS61.
+`20261120-cached-cleanup-regression-01.json` passes the27 cleanup/publication and36
+owned checks on this exact API60 pair. The ownership fixture adds only admitted
+engine setup; native control cases use actual driver writes to emulated MMIO.
+Root tests pass71/no skips. API56 host and cleanup profile rebuild byte-identically
+with cached hooks disabled. Source evidence:
+`evidence/20261120-highlight-cached-primary.json`.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_module_host.py --display-hooks --highlight-hooks --parameter-hooks --frame-permission-hooks --cached-frame-permission-hooks --output .private/builds/cached-host-new
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-highlight-cached-probe --output .private/builds/cached-profile-new
+.venv\Scripts\python.exe tools/audit_z7_cached_frame.py --build .private/builds/cached-host-new --module .private/builds/cached-profile-new --legacy-build .private/builds/20261120-frame-host-01 --legacy-module .private/builds/20261120-display-highlight-cleanup-04 --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/cached-frame-new
+```
+
 ## Remaining implementation work
 
 Complete visible rendering and broader ownership/restoration lifecycle
