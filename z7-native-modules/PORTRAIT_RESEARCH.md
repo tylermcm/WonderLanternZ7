@@ -365,6 +365,38 @@ The previously documented supplied-NULL allocator counterexamples remain open.
 
 ## Remaining integration
 
+### Dial/settings placement and loaded page selection
+
+`portrait_page_message.h` extends the raw-message adapter to DIAL and SETTING;
+an explicitly caller-selected EXTERNAL layout is also available, without a native
+external-app binding. It scales left/right edges separately with 43691/65536.
+Settings retain native height and shift down235; dial scales both axes and shifts
+down254; external layout scales both axes and shifts down394. Each result must
+fit the 480x720 logical canvas. Failure leaves output unchanged. Full native
+screen clears and preview copies pass through. Dial's top tile border and content
+outside its native44..280 strip use the existing grid path.
+
+The loaded diagnostic now accepts native i-menu GRID/DIAL/SETTING and requires
+the same page again before dispatch. It maps those native page values explicitly
+to the draw layout and retains scene/task/output/target/orientation checks. It
+still samples each message's orientation without the pinned transition latch or
+complete cleanup. Dial command19 and nonzero image1A clear fields retain stock
+dispatch until their centre-rotation/clear behavior is ported. This is an explicit
+unfinished path, not final portrait behavior. Text/footer/input/settings controls
+and pending-request/task lifetime policies remain unfinished.
+
+Private `20261121-portrait-page-message-01/result.json` passed649 checks with214
+native draws: edge rounding, all rectangle/image forms, modes0/1, both rotations,
+quarter-turn compositions, full-screen exclusions, invalid page/orientation/box
+inputs, dial/grid overlap and unfinished image fallback. Backend rendering/events
+and page admission are supplied; native normalization and completion execute.
+The standalone probe is2944 bytes. `portrait-page-host-01/result.json` passed48
+loaded-module checks, adding actual dial/settings message reflow, page-change
+rejection and dial19 stock fallback to the preceding grid integration. Loaded
+probe3584 bytes. Both rebuild identically; no native task scheduling or pixels
+are proved. See [page-message evidence](../evidence/20261121-portrait-page-message.json)
+and [updated loaded evidence](../evidence/20261121-portrait-grid-host.json).
+
 ### Native GRID messages and loaded diagnostic callback
 
 `portrait_grid_message.h` now extracts original rectangle13/16/17 bottom-origin
@@ -384,7 +416,7 @@ The reproducible standalone message probe is2304 bytes. Native normalization and
 completion execute; backend renderer/events and page admission are supplied.
 
 `examples/portrait_grid_host_probe.c` is an emulator-only API84 module registering
-an actual grid callback. It checks native scene, i-menu GRID page, observed MENU/
+an actual callback, initially GRID-only and now extended as above. It checks native scene, i-menu page, observed MENU/
 playback states and logical2 exclusive-LCD target, samples original orientation,
 then rechecks page/target/scene before handling a native message. The host loader
 stages registration and its worker binds the resident bridge. The probe does not
@@ -392,7 +424,7 @@ provide a pending-request fence, task lock/lifetime closure, latched transition
 layout, text/footer/dial/input/settings or complete portrait behavior. The
 functional combined display module remains unchanged.
 
-Private `20261121-portrait-grid-host-02/result.json` passed32 loaded-module checks:
+The initial private `20261121-portrait-grid-host-02/result.json` passed32 loaded-module checks:
 actual filesystem wrapper/loader/relocation, SDK registration/worker/bridge,
 native registry prefix, page/state/target/orientation getters and original draw/
 completion instructions execute. It covers rectangle17 and image19/1A/fixed1C,

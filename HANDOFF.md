@@ -1,5 +1,39 @@
 # Laptop handoff — October 20, 2026
 
+## Dial/settings raw-message placement - November 21, 2026
+
+Previous46331d5 loaded GRID-only diagnostic. New portrait_page_message.h maps
+explicit layouts: settings width edges43691/65536, unchanged height,+235;
+dial both axes same scale,+254; caller-selected external both axes,+394.
+Scale each edge before computing extents; bound stock720x480/result480x720.
+No native external-app binding yet. Full-screen clears/preview copies pass.
+Dial top tile-border overlap and content outside44..280 use grid fallback.
+
+Loaded portrait_grid_host_probe.c now admits native GRID/DIAL/SETTING and requires
+the same page again after orientation sampling. Actual rectangle/image messages
+then call the page adapter. Still EMULATOR ONLY; no transition orientation latch,
+full cleanup, footer/text/input/settings controls, pending-request or task/lifetime
+proof. Dial19 and nonzero image1A clear-field cases intentionally retain stock
+until their centre-rotation/clear behavior is ported; this is unfinished work.
+
+Private portrait-page-message-01 PASS649/214 native draws, probe2944/2880image/
+0BSS/0relocs, reproducible SHA9d2cc65787c1e16e3bcd7dd2d750aa1b96be94b8b9928e9e02349c73ec9ae9fa.
+portrait-page-host-01 PASS48 actual loaded GRID/DIAL/SETTING integration cases;
+probe3584/3520image/8BSS/0relocs SHA
+278d257c2730a04a7d22c7cb3e42554da4d5d47d7ff8a049492ff8fdcc1eaeac.
+Includes page changes during lookup and dial19 fallback. Backend renderer/events,
+kernel/fs/allocator/UI/task/registry/orientation inputs supplied. Native dispatch,
+normalization/completion, loader/SDK/bridge/getters execute; no pixels, scheduled
+tasks, full boot/card I/O/update acceptance proved. Root71/no skips; fingerprints
+current; ignored Graphify3519nodes/9560edges with existing warnings. Updated
+evidence/20261121-portrait-grid-host.json and new portrait-page-message.json.
+
+Next dial19/clear/strip adapter and footer, transition latch/cleanup, text/input/
+settings, pending/live/external/magnified binding, native fonts/symbols, Info mirror,
+real histogram, lifetime/writer closure and exact install/recovery. Full original
+goal ACTIVE. Accepted firmware/functional combined display module unchanged.
+No camera/card/staging/flash/push. See z7-native-modules/PORTRAIT_RESEARCH.md.
+
 ## Raw GRID messages and loaded portrait diagnostic - November 21, 2026
 
 Previousa2b3833 reflowed caller-supplied geometry. New portrait_grid_message.h

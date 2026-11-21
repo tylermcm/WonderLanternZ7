@@ -4,7 +4,7 @@
  */
 #include "module.h"
 #include "graphics.h"
-#include "../plugins/portrait_grid_message.h"
+#include "../plugins/portrait_page_message.h"
 #include "../plugins/portrait_page.h"
 #include "../plugins/portrait_target.h"
 #include "../plugins/orientation_sample.h"
@@ -12,12 +12,14 @@ volatile uint32_t z7_portrait_grid_received,z7_portrait_grid_handled;
 static uint32_t portrait_grid_callback(volatile uint32_t *message)
 {
     ++z7_portrait_grid_received;
-    uint32_t orientation;
+    uint32_t orientation,page=z7_portrait_imenu_page();
     volatile const uint8_t *scene=(void *)(uintptr_t)0xa201d4d0u;
-    if (*scene || z7_portrait_imenu_page()!=Z7_PORTRAIT_GRID || !z7_portrait_lcd_target() ||
+    if (*scene || page==Z7_PORTRAIT_OTHER || !z7_portrait_lcd_target() ||
         !z7_orientation_sample(&orientation) || (orientation!=1 && orientation!=2)) return 0;
-    if (*scene || z7_portrait_imenu_page()!=Z7_PORTRAIT_GRID || !z7_portrait_lcd_target()) return 0;
-    uint32_t handled=z7_portrait_grid_message(message,orientation);
+    if (*scene || z7_portrait_imenu_page()!=page || !z7_portrait_lcd_target()) return 0;
+    uint32_t layout_page=page==Z7_PORTRAIT_GRID ? Z7_LAYOUT_GRID :
+        page==Z7_PORTRAIT_DIAL ? Z7_LAYOUT_DIAL : Z7_LAYOUT_SETTING;
+    uint32_t handled=z7_portrait_page_message(message,layout_page,orientation);
     z7_portrait_grid_handled+=handled;
     return handled;
 }

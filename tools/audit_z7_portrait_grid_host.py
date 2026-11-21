@@ -87,7 +87,21 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
             check(f'loaded-native-message-{orientation}-{command}',handled==1 and len(f.rendered)==1 and actual==expected and f.targets==2 and f.orientations==1)
         f.setup(orientation);handled=f.dispatch(box=(480,280,1,73))
         check(f'loaded-split-border-completes-once-{orientation}',handled==1 and len(f.rendered)==2)
-    for p,data in ((0xa1829af4,b'\0'),(0xa20207bc+12,bytes(4)),(0xa18298b8,b'\2'),(0xa201d4d0,b'\1'),
+        for mode,page,commands in ((2,2,(0x17,0x1a,0x1c)),(1,3,(0x17,0x19,0x1a,0x1c))):
+            for command in commands:
+                f.setup(orientation);f.u.mem_write(0xa18298b8,bytes([mode,0]))
+                handled=f.dispatch(command,box=(199,100,201,111))
+                left=199*43691//65536;right=400*43691//65536
+                top=100 if page==3 else 100*43691//65536
+                bottom=211 if page==3 else 211*43691//65536
+                expected=reference_destination((left,top+(235 if page==3 else 254),right-left,bottom-top),orientation)
+                _,data=f.rendered[0]
+                if command==0x17:
+                    x,y,w,h=struct.unpack_from('<4i',data);actual=(x,480-y-h,w,h)
+                else:
+                    start,end=struct.unpack_from('<2I',data,24);x,y=start&65535,start>>16;actual=(x,y,(end&65535)-x,(end>>16)-y)
+                check(f'loaded-page{page}-{orientation}-{command}',handled==1 and len(f.rendered)==1 and actual==expected)
+    for p,data in ((0xa1829af4,b'\0'),(0xa20207bc+12,bytes(4)),(0xa18298b8,b'\4'),(0xa201d4d0,b'\1'),
                    (0xa1821394,struct.pack('<I',2)),(0xa180ad84,b'\xff'),(TABLE+40,bytes(4)),(TABLE+46,struct.pack('<H',640)),
                    (0xa182ed2c,b'\1'),(0xa182ed2c,b'\2'),(0xa182ed2c,b'\3'),(0xa183de04,b'\1'),(0xa183de04,b'\2'),(0xa183de04,b'\3')):
         f.setup();f.u.mem_write(p,data)
@@ -96,6 +110,10 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
         f.setup(orientation);check(f'nonportrait-or-unknown-orientation{orientation}',f.dispatch()==0 and len(f.rendered)==1)
     f.setup();f.mutation=(0xa201d4d0,b'\1')
     check('scene-change-across-native-target-query-rejects-reflow',f.dispatch()==0 and len(f.rendered)==1)
+    f.setup();f.mutation=(0xa18298b8,b'\2')
+    check('page-change-across-native-target-query-rejects-reflow',f.dispatch()==0 and len(f.rendered)==1)
+    f.setup();f.u.mem_write(0xa18298b8,b'\2')
+    check('unported-dial19-strip-retains-stock-dispatch',f.dispatch(0x19,box=(199,100,201,111))==0 and len(f.rendered)==1)
     f.setup();f.write(SLOT,0x12345679);before=f.read(f.variable('received'))
     check('foreign-slot-prefetched-bridge-falls-back-without-module',f.dispatch()==0 and len(f.rendered)==1 and f.read(f.variable('received'))==before)
     old=GridHostFixture(old_raw,old_host,packet,metadata)
@@ -120,6 +138,7 @@ def main():
     names=('tools/audit_z7_portrait_grid_host.py','tools/audit_z7_module_host.py','tools/audit_z7_information_native.py','tools/audit_z7_portrait_draw.py',
            'tools/audit_z7_portrait_grid_message.py','tools/audit_splash_image.py','tools/build_z7_module.py','z7-native-modules/sdk/module.ld',
            'z7-native-modules/examples/portrait_grid_host_probe.c','z7-native-modules/plugins/portrait_grid_message.h',
+           'z7-native-modules/plugins/portrait_page_message.h',
            'z7-native-modules/plugins/portrait_draw.h','z7-native-modules/plugins/portrait_geometry.h','z7-native-modules/plugins/portrait_grid.h',
            'z7-native-modules/plugins/portrait_page.h','z7-native-modules/plugins/portrait_takeover.h','z7-native-modules/plugins/portrait_target.h','z7-native-modules/plugins/orientation_sample.h')
     result.update(host_sha256=host['main_payload_sha256'],probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),
