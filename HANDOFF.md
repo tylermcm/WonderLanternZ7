@@ -1,5 +1,79 @@
 # Laptop handoff — October 20, 2026
 
+## Native-consumer no-frame plane cleanup - November 20, 2026
+
+Previous0db4314 was PROGRESS (native driver/register binding). This turn connects
+qualified no-frame restoration/disable and native update quiescence in a NEW
+opt-in API56 display-highlight-cleanup-probe. Full goal ACTIVE. No camera/card/
+staging/flash/push. Host bytes unchanged. No physical pixels or installation claim.
+
+examples/display_highlight_cleanup_policy.h records original consumed native
+permission/meaningful format, context and engine pointer/id/bank; NO frame pointer
+retained. Publication bounded3, sequence+nonwrapping serial, halt on exhaustion.
+Format4 leaves prior meaningful format. Unknown engine delegates frame permission;
+owned/native application admits cameraRAM8 descriptor/id141or142/bank0or4000 only.
+These descriptors/banks remain supplied, not physical engine construction proof.
+
+Worker queues/reaps only; cleanup runs in serialized native consumer callbacks.
+Before dispatcher, cleanup_prepare snapshots original native input and checks
+engine/context. After native100copy+ack, finish restores raw native permission and
+calls original gate with meaningful format. Disabled native baseline/raw0 closes
+plane; enabled baseline/raw0 remains hidden; enabled baseline/raw1 reprograms
+native baseline WITHOUT a new frame. Mode/output disable inhibits owned plane,
+retains baseline, returns/restores in original context. Native update release
+quiesces old owned plane BEFORE foreign handler/copy and resets frame record;
+old queued cleanup cannot clobber newer native parameters.
+
+Checks actual parameters/nativegen/context/service/engine/id/bank before and
+after gate; verifies active/dirty and actual register enable. If a qualified
+DISABLE still reads enabled due stale active bookkeeping, calls original driver
+bit-preserving disable directly. No success on failed register readback; parks
+and retains diagnostic ownership rather than falsely publishing released lease.
+Unknown/changed engine or busy frame record cancels BEFORE parameter copy.
+Native conversion with unknown engine delegates input unchanged and advances gen.
+No allocation pin/physical scheduler proof: context/native parameter writer lane
+serialization is assumed. Unsupported engine lifetime changes require native
+handoff/restart; hardware that rejects writes is not software-recovered here.
+
+Reproducible final .private/builds/20261120-display-highlight-cleanup-04,
+SHA5d57065372ce66e013176842653f3d68dd868478f75f01f07fdc236dec9d2ad3,
+30148file/29824image/6616BSS/minAPI56. Final54 source inputs verified current.
+Host frame-host-01 unchanged MAINbbda6819e395fce90fa6f4a4f67d307ffddb8d1539c3ac0794274e5e12468968.
+
+.private/evidence/20261120-highlight-cleanup-05.json PASS27 cleanup/publication
+plus36 owned regression on exact FINAL pair. Actual native converter/consumer/
+source/gate/driver/MMIO. Cases: disabled/enabled native baselines/raw0/raw1, no
+frame calls during worker/native cleanup, meaningful-format retention after
+isolated format4 callback/gate (remaining native format4 render path NOT tested),
+mode/menu/output departure, native movie precedence, stale bookkeeping fallback,
+unknown initial engine/changed engine cancellation, busy snapshot, interrupted
+compiled reader/separate publisher stack/repeated seq/serialMAX halt and injected
+stuck MMIO enable failure (no successful-release claim). Kernel/FS/UI/surface/
+colors/engine descriptors/MMIO storage/faults/interleavings supplied. Frame cache
+layout64 bytes (12 prefix +52 record); permission offset52/format56/valid60.
+
+04 audit reached owned regression but hit original30s/10M CRC/init wall cap at
+later fixture.05 retains SAME limits; bootstrap uses original OwnedFixture hooks
+(no frame/plane hooks needed during init). Owned36 uses original OwnedFixture +
+admitted engine constructor ONLY; full cleanup cases enable plane hooks after
+load. Prior01 format4 full native render hit unrelated mutex model; final scope
+explicitly isolates callback/gate4. No production workaround or timeout increase.
+Root71/no skips:20261120-cleanup-root-tests.log. Old frame profile rebuild
+20261120-cleanup-compat56-01 exact3536d86...d476; owned profile
+20261120-cleanup-compat52-01 exactf1f39562...2189. Prior45/24/84/107 results remain
+previous-profile scopes, not reruns on this cleanup build. Source record:
+evidence/20261120-highlight-consumer-cleanup.json. All jobs terminal; refresh
+ignored code graph refreshed3046nodes/8017edges; source manifest refreshed
+when saving source-only checkpoint.
+
+NEXT: bind native source/frame callers to the parameter-consumer lane or add
+concurrency-safe coordination before treating cleanup as camera-ready. Current
+checks supply serialization; no physical frame/parameter fencing proof.
+Full remaining: actual warning rendering/pixels, style/threshold preferences,
+EVF feature/preservation, portrait/rotation, native Info mirror, real histogram
+producer, full lifecycle/engine allocation/unsupported context handoff, exact
+installation/recovery assessment. No flash clearance; no push authorization.
+
 ## Native warning-plane programming and teardown binding - November 20, 2026
 
 Previous644d9c8 was PROGRESS (API56 consumption gate). This turn moves validation

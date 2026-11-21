@@ -26,6 +26,9 @@ static uint32_t highlight_parameters_match(uint32_t state, const uint32_t *param
     for (uint32_t i = 0; i < 25; ++i) if (W(state + 0x28 + i * 4) != parameters[i]) return 0;
     return 1;
 }
+#ifdef Z7_HIGHLIGHT_CLEANUP_PROBE
+#include "display_highlight_cleanup_policy.h"
+#endif
 #ifdef Z7_HIGHLIGHT_FRAME_PROBE
 volatile uint32_t z7_highlight_frame_enabled, z7_highlight_frame_inhibited;
 static uint32_t highlight_frame_permission(const void *frame, uint32_t native_permission)
@@ -42,6 +45,12 @@ static uint32_t highlight_frame_permission(const void *frame, uint32_t native_pe
     if (!lease.record.valid || lease.record.context.state != state ||
         lease.record.native_generation != generation ||
         !highlight_parameters_match(state, lease.record.parameters)) return 0;
+#ifdef Z7_HIGHLIGHT_CLEANUP_PROBE
+    uint32_t note = highlight_frame_native_note(frame, native_permission, &lease.record);
+    if (note != 1) {
+        z7_highlight_owned_parked = 1; return note == 2 ? 0 : 2;
+    }
+#endif
     /* Inhibit stale owned parameters even when native permission was1. Once
      * restoration/new native traffic relinquishes the lease, delegate native. */
     uint32_t enabled = !z7_highlight_owned_parked && !lease.record.disabled &&
@@ -151,6 +160,11 @@ static uint32_t highlight_owned_before(void *packet)
         highlight_owned_next.disabled = operation == HO_DISABLE;
         if (operation == HO_RESTORE) highlight_owned_next.valid = 0;
     }
+#ifdef Z7_HIGHLIGHT_CLEANUP_PROBE
+    if (!highlight_cleanup_prepare(operation, &context)) {
+        z7_highlight_owned_parked = 1; return highlight_owned_cancel();
+    }
+#endif
     highlight_owned_transaction = operation;
     return 1;
 }
@@ -162,6 +176,9 @@ static void highlight_owned_after(uint32_t decision)
         if (highlight_owned_next.native_generation != __atomic_load_n(&z7_highlight_native_parameter_generation, __ATOMIC_ACQUIRE) ||
             !z7_highlight_context_read(&context) || context.state != highlight_owned_next.context.state ||
             !highlight_parameters_match(context.state, highlight_owned_next.parameters) ||
+#ifdef Z7_HIGHLIGHT_CLEANUP_PROBE
+            !highlight_cleanup_finish(&highlight_owned_next) ||
+#endif
             !z7_highlight_lease_publish(&z7_highlight_lease, &highlight_owned_next)) z7_highlight_owned_parked = 1;
         else if (operation == HO_APPLY) ++z7_highlight_owned_applied;
         else if (operation == HO_RESTORE) ++z7_highlight_owned_restored;

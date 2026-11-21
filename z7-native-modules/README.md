@@ -65,6 +65,11 @@ while keeping caller/pending frame data native. See the
 [consumption-time gate record](PHOTO_HIGHLIGHTS.md#consumption-time-primary-frame-permission-api56)
 for stale replay checks and supplied hardware boundaries. It has no physical
 pixel or installation clearance.
+The optional `display-highlight-cleanup-probe` uses the same API56 host and adds
+qualified no-frame restoration in the native parameter consumer. It retains the
+original native frame permission and verifies the native gate's register effects.
+See [consumer plane cleanup](PHOTO_HIGHLIGHTS.md#native-consumer-no-frame-cleanup)
+for engine admission, cancellation, failure parking and supplied boundaries.
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

@@ -15,6 +15,10 @@ static uint32_t highlight_owned_before(void *packet);
 static void highlight_owned_after(uint32_t decision);
 static void highlight_owned_worker(void);
 static void highlight_native_lease_invalidate(void);
+#ifdef Z7_HIGHLIGHT_CLEANUP_PROBE
+static uint32_t highlight_cleanup_native_release(void);
+extern volatile uint32_t z7_highlight_owned_parked;
+#endif
 static uint32_t highlight_native_lease_capture(const struct z7_highlight_snapshot *,
     uint32_t generation, uint32_t palette, const volatile uint32_t *, const uint32_t *);
 #else
@@ -135,6 +139,9 @@ static void highlight_native_parameters(uint32_t command, void *payload100)
 {
     struct z7_highlight_snapshot snapshot, final;
 #ifdef Z7_HIGHLIGHT_OWNED_PROBE
+#ifdef Z7_HIGHLIGHT_CLEANUP_PROBE
+    uint32_t cleanup_ok = highlight_cleanup_native_release();
+#endif
     highlight_native_lease_invalidate();
 #endif
     uint32_t generation = __atomic_load_n(&z7_highlight_native_parameter_generation, __ATOMIC_RELAXED);
@@ -143,6 +150,9 @@ static void highlight_native_parameters(uint32_t command, void *payload100)
     __atomic_store_n(&z7_highlight_native_parameter_generation, generation + 1, __ATOMIC_RELEASE);
 #ifdef Z7_HIGHLIGHT_OWNED_PROBE
     if (generation + 1 == UINT32_MAX) return;
+#endif
+#ifdef Z7_HIGHLIGHT_CLEANUP_PROBE
+    if (!cleanup_ok) { z7_highlight_owned_parked = 1; return; }
 #endif
     if (!payload100) return; /* Ineligible native update, no writable data exposed. */
     if (command != 0x42060007u || !highlight_current(&snapshot)) return;

@@ -623,10 +623,66 @@ Source evidence: `evidence/20261120-highlight-plane-registers.json`.
 .venv\Scripts\python.exe tools/audit_z7_highlight_plane.py --build .private/builds/20261120-frame-host-01 --module .private/builds/20261120-display-highlight-frame-02 --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-plane-new.json
 ```
 
+## Native-consumer no-frame cleanup
+
+The new `display-highlight-cleanup-probe` is an opt-in API56 profile, using the
+unchanged frame-host-01. It adds `display_highlight_cleanup_policy.h` to both the
+incoming native conversion and owned consumer paths. The worker only queues and
+reaps; source observation performs no cleanup. Register control runs in the
+serialized native consumer lane, before a foreign native update takes over or
+after an owned restore/disable has actually copied and acknowledged its payload.
+
+The primary permission callback records original native permission and meaningful
+format, context, engine pointer/identity and register bank. It retains no caller
+or pending frame pointer. Bounded snapshots check sequence and monotonic serial;
+exhaustion halts instead of reusing identity. A format4 bypass retains the previous
+meaningful format. An enabled native baseline with original permission0 stays
+hidden on restoration; original permission1 permits native baseline reprogramming.
+The module's filtered1 is never used as evidence of original native policy.
+
+Both initial application and native conversion require an admitted current engine
+(camera-RAM descriptor, identity141/142, bank0/4000). These are currently admitted
+supplied engine cases, not proven physical output mappings. An engine change or
+unreadable snapshot cancels pending cleanup before parameter copy and parks further
+owned work. An unknown engine delegates incoming native data without conversion
+or plane control. No-frame restore checks context, native generation, actual100
+parameters, engine identity/bank and native gate/register results before releasing
+the lease. Mode/output disable inhibits the old owned plane and retains its native
+baseline. A valid incoming native update quiesces the prior owned plane before its
+original handler copies new parameters; old queued restoration cannot overwrite it.
+
+Gate status and active bookkeeping alone remain insufficient. A qualified disable
+whose register still reads enabled uses the original driver's bit-preserving
+disable directly. Register mismatch or failed verification parks without recording
+successful cleanup. This does not promise recovery from hardware that rejects
+writes. Unsupported engine allocation/context changes still require native
+handoff/restart; no allocation pin or physical scheduling fence is established.
+
+Final reproducible module: `20261120-display-highlight-cleanup-04`,
+30148file/29824image/6616BSS/minAPI56,
+SHA `5d57065372ce66e013176842653f3d68dd868478f75f01f07fdc236dec9d2ad3`.
+Physical warning pixels, hardware application, complete lifecycle and installation
+acceptance remain unverified.
+
+Final private audit `.private/evidence/20261120-highlight-cleanup-05.json` passes
+27 cleanup/publication checks plus all36 existing owned checks, using an admitted
+engine in the ownership fixture. Native source/gate/driver execute against
+emulated MMIO for cleanup cases; publication tests include an interrupted reader,
+independent publisher stack, repeated sequence and serial exhaustion. A supplied
+stuck register bit verifies that failed readback parks without claiming success.
+Root tests pass71/no skips. Earlier API52 owned and API56 frame profiles rebuild
+byte-identically with cleanup disabled. Source evidence:
+`evidence/20261120-highlight-consumer-cleanup.json`.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-highlight-cleanup-probe --output .private/builds/cleanup-profile-new
+.venv\Scripts\python.exe tools/audit_z7_highlight_cleanup.py --build .private/builds/20261120-frame-host-01 --module .private/builds/cleanup-profile-new --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --owned-regression --output .private/evidence/highlight-cleanup-new.json
+```
+
 ## Remaining implementation work
 
 Complete visible rendering and broader ownership/restoration lifecycle
-acceptance, including plane teardown where no subsequent frame is applied.
+acceptance, including native engine allocation and unsupported context handoff.
 Native packet conversion, owned asynchronous requests and consumption-time
 primary permission filtering are connected in the opt-in API56 full profile.
 The pinned photo_zebra implementation changes eligible native100-byte parameter

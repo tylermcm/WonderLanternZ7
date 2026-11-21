@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "passed": true,
+  "cleanup_and_frame_publication_checks": 27,
+  "owned_parameter_regression_checks": 36,
+  "root_tests": 71,
+  "root_tests_skipped": 0,
+  "host_sha256": "bbda6819e395fce90fa6f4a4f67d307ffddb8d1539c3ac0794274e5e12468968",
+  "module_sha256": "5d57065372ce66e013176842653f3d68dd868478f75f01f07fdc236dec9d2ad3",
+  "api_bytes": 56,
+  "consumer_no_frame_restore_disable_and_native_update_quiescence_connected": true,
+  "worker_and_source_observation_never_perform_plane_cleanup": true,
+  "original_native_permission_and_meaningful_format_retained_without_caller_pointer": true,
+  "enabled_and_disabled_baselines_original_permission_zero_and_one_verified": true,
+  "mode_menu_output_departures_without_frame_verified": true,
+  "native_update_precedence_cancels_old_restore": true,
+  "frame_publication_bounded_reader_interleaving_sequence_wrap_and_serial_exhaustion_verified": true,
+  "initial_unknown_engine_and_changed_engine_cancel_before_parameter_copy": true,
+  "unknown_engine_incoming_native_payload_delegated_without_conversion_or_control": true,
+  "original_native_gate_and_driver_register_effects_verified": true,
+  "stale_active_bookkeeping_uses_register_qualified_original_disable_fallback": true,
+  "failed_register_readback_parks_without_successful_cleanup_claim": true,
+  "supplied_boundaries": [
+    "MMIO storage and faulted write readback",
+    "Kernel/filesystem/UI/surface/color services",
+    "Incoming engine descriptors and context",
+    "Explicit task interleaving"
+  ],
+  "native_writer_context_engine_lifetime_serialization_assumed": true,
+  "physical_pixels_hardware_application_allocation_pin_full_lifecycle_or_installation_verified": false,
+  "camera_card_access_staging_flash_or_push": false,
+  "full_goal_complete": false,
+  "older_api52_owned_and_api56_frame_profiles_rebuild_byte_identical": true,
+  "source_sha256": {
+    "tools/audit_z7_highlight_cleanup.py": "c62ef36c9291fd77f2536a30019866fc7848b03ba8179343335b60672c145a60",
+    "tools/audit_z7_highlight_owned.py": "3dd9ef7711d69cac1ab09a1e920dd7014866720fcb56fc83cfbfd143eb24de03",
+    "z7-native-modules/examples/display_highlight_cleanup_policy.h": "be13e0a581758099bc93b0d9e82d9522762ee2821cacbbff4dcb7d24f322a33b",
+    "z7-native-modules/examples/display_highlight_owned_policy.h": "515477ae5a9c885058bb3750f94793ebb7b36a2cbaa821d48407803466a5f9c5",
+    "z7-native-modules/examples/display_highlight_context_policy.h": "26f3bd086cec273416eb4fea36373603f3cca830ade8ca76bcd3d185f10d8652"
+  }
+}
