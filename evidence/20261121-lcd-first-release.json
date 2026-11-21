@@ -9,7 +9,7 @@
     "Not an installation-cleared candidate"
   ],
   "installation_candidate": false,
-  "module_sha256": "e04ab90c84b69b80b0fda51aa70cf72c2d0b6e676f71420d7e71f347908ec859",
+  "module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
   "host_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
   "source_sha256": {
     "z7-native-modules/host/highlight_lane.h": "e94e8f8910281974f73def1dcdc436cade4da5c4b8d4d0c063d1936ba67499c2",
@@ -39,7 +39,7 @@
     "z7-native-modules/plugins/grids_histogram.c": "6f8078131e60482aed1ca42ffbeaf31ad1cafd544f5b0d8c061e0591841335c6",
     "z7-native-modules/plugins/battery_percent.c": "f0f5b970eddc780162971a7a55a583f24b4ef01e9ab22347d55ec94312283885",
     "z7-native-modules/plugins/combined_display.c": "7ab7369e784c65120e33541db2bed8d607fd329be05011052c78918a497fd819",
-    "z7-native-modules/examples/settings_menu_policy.h": "49310cb0f0ed3d84a3d6b324508d652bf054419b9152503b0dbfea970dd5c1de",
+    "z7-native-modules/examples/settings_menu_policy.h": "fa1de14643e9ff441616651f933db04fada66b07e4e9a12c4b44795561a3ef2c",
     "z7-native-modules/plugins/display_settings.c": "fd190e32ff8e61f1e943184b7acc0b6f6ef8795d3d75b6e17212511877628e3c",
     "z7-native-modules/plugins/display_settings.h": "fabab56d6557f04b091bd5a8d7d3288d31b36832e0fa87e56693e56c7291dac1",
     "z7-native-modules/examples/settings_menu_entry.c": "93aeb8ff61fcea7398ee2334065fb1ca2f112a1d9f4c4d7b0ef4c447694c41a7",
@@ -66,7 +66,7 @@
     "z7-native-modules/plugins/settings_files.c": "799c67af2729ac087130a6924c1a1a95f35f16788f1c7933e92fb1378b9de5b9",
     "z7-native-modules/plugins/settings_files.h": "9d8ca054d8b92f0362d206c128f4b70dd1606dabd2cf3a9a28050c200b8fb15e",
     "z7-native-modules/plugins/lcd_release_policy.h": "913d9279b60e954c95b8b724ac6389e67cf38b598b2cd62a8446a2d486f0bf5c",
-    "tools/audit_z7_lcd_release.py": "80a0dbaf8a7dea7363025f74f5ad846ea6936300b60892f1e193df34bb6e7a0b",
+    "tools/audit_z7_lcd_release.py": "262166fe8057f4b0c1db519581d67cd8b13b87265145e48263aaa57199f3a2e7",
     "tools/audit_z7_display_persistence.py": "d571fe11a148748c7807f0e574c1dca64c19fc96ec28ed860a80d5e462707c02",
     "tools/audit_z7_settings_files.py": "e5e48f2686057dcdeb1e34d66cc3fdb892f67f39b39dc053737a92dca2e1278d",
     "tools/audit_z7_settings_storage.py": "87d87d0fbe19e6bb1686ae31c9af170c5be733788b51b28bf9d94e513f034a26",
@@ -74,19 +74,21 @@
     "tools/audit_z7_focal_overlay.py": "4f69a20cb3c639fdf235621e916ce183799f26b4d64e0faf63759572d31c4738",
     "tools/audit_z7_histogram_component.py": "b364f98545398cde3cecc0ae8c779f6bef4ec912951be54a50e7c01577da2e3a",
     "tools/audit_z7_module_host.py": "7250d49095137bc3120330eadfff202213e6a73bc30e1a95cfc92e73b43d87cd",
-    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b",
-    "tools/build_z7_display_module.py": "99416eed1ffb87b420ea51aba163ac1b8bf1774b67c438c8f3601b090aca3945",
-    "tools/build_z7_module.py": "1db3f23b03729dabe490a4b67fc0d6dd93fa386f4cc6e7760b9e063e92ed2689",
-    "tools/build_z7_module_host.py": "a822c1608213202e9493fc682f77d81536fcbb082042534bd9aa47f12d4397de"
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b"
   },
   "date": "2026-11-21",
   "root_tests": 71,
   "root_tests_skipped": 0,
   "source_fingerprints_verified": true,
-  "source_rebuild_of_tested_module_byte_identical": true,
-  "host_byte_identical_to_accepted_api44": true,
-  "prechange_head_legacy_module_byte_identical": true,
-  "legacy_module_sha256": "719c1db3ca5cf1c78d82ebedcdbbb4cc7b67312b34b7982d11a718e4b39af85c",
+  "native_ui_readiness_supplied_in_instruction_fixture": true,
+  "native_ui_gate": "evidence/20261121-lcd-native-menu.json",
+  "full_goal_complete": false,
+  "installation_candidate_cleared": false,
+  "camera_card_access_staging_flash_or_push": false,
+  "module_bytes": 21104,
+  "image_bytes": 20800,
+  "bss_bytes": 5584,
+  "relocations": 60,
   "release_scope": {
     "presets": 4,
     "outputs": "landscape photo LCD",
@@ -108,11 +110,5 @@
     "configuration": "Existing v1 journal; unsupported components/page removed after load and before edits commit",
     "installation_candidate_cleared": false
   },
-  "module_bytes": 21040,
-  "image_bytes": 20736,
-  "bss_bytes": 5584,
-  "relocations": 60,
-  "full_goal_complete": false,
-  "installation_candidate_cleared": false,
-  "camera_card_access_staging_flash_or_push": false
+  "legacy_module_byte_identical": true
 }

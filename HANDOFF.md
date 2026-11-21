@@ -1,5 +1,49 @@
 # Laptop handoff — October 20, 2026
 
+## LCD release native menu gate passed - November 21, 2026
+
+Smaller LCD release scope remains the priority. The first native menu run exposed
+a real issue missed by the instruction fixture: shrinking item count before
+native widget construction left the later seven-item information view without
+a paintable final row. lcd-native-menu-01 and02 remain failed/private evidence;
+the intermediate capacity-only fix did not resolve initialization ordering.
+
+Final policy initializes all seven native widget slots. sm_lcd_rows_ready stays
+false through construction, then sm_before publishes the compact selectable
+count only for the active owned menu. Entry/absence resets construction counts;
+subviews retain seven-slot viewport capacity with6/5/7/3 active items. This uses
+native unused-row backgrounds; no unsupported controls are shown or selectable.
+The pre-paint publication runs in the native guest; instruction tests explicitly
+supply readiness and do not claim to prove that lifecycle themselves.
+
+Private lcd-first-release-04 module21104/image20800/BSS5584 SHA
+aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22,
+reproducible twice. Host lcd-core-host-01 unchanged7d7356e7...49d7f057/API44.
+Focused LCD audit36 passes. Existing full persistence profile independently
+rebuilds byte-identical719c1db3...39af85c. Root71/no skips.
+
+Extended probe_z7_persistence.py supports this profile while preserving the
+existing full-profile path. lcd-native-menu-03 PASS58 across TWO distinct fresh
+guests and19 raw native frames. Only native keys edit settings. Root/preset/extra
+last-row Down wraps to0 within6/5/3 respectively in both guests. Horizon/reset,
+grid/shutter/focal switches, Back, saved headers, worker journal save and fresh
+startup restoration pass. Both journal records stay byte-identical at restart.
+All19 PNG hashes/dimensions independently verified; three fixed native menu
+regions exactly match after restart (no tolerance/masking/pixel edits).
+Root, preset, seven-group and extra rendered menus were visually inspected.
+Both current source maps verified. Ignored Graphify refreshed to3860nodes/
+10676links with existing conditional-C warnings; compiled/native checks pass.
+Module/settings file service is modeled; native kernel/tasks/menu rendering run.
+No real-card, camera, shutdown durability or installation acceptance is claimed.
+
+Next gate: focused LCD shooting lifecycle on THIS exact combined profile—DISP
+cycle/page skipping, grid/native horizon, battery/focal, MENU/playback and
+unsupported-output fallback—then frozen bundle and exact installation/recovery
+assessment. Do not resume deferred portrait/zebra research or expand stress
+suites. No camera/card access, staging, flash or push. First release not cleared
+for installation yet. Current source-only summaries: evidence/20261121-lcd-native-menu.json
+and updated lcd-first-release.json with the same date prefix.
+
 ## Scope changed: smaller LCD first release - November 21, 2026
 
 **User decision supersedes the research next-steps below.** After reporting

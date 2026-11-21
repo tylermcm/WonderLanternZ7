@@ -39,6 +39,14 @@ static const char *sm_persistent_title(const char *base, uint32_t status)
 volatile uint32_t z7_settings_view, z7_settings_preset, z7_settings_actions;
 static uint32_t sm_object[11], sm_meta[7], sm_callbacks[8], sm_controls[7][7], sm_maps[7];
 static uint32_t sm_events[14][4], sm_layout[24], sm_geometry[4];
+#ifdef Z7_LCD_FIRST_RELEASE
+static uint32_t sm_lcd_rows_ready;
+static void sm_lcd_prepare_rows(void)
+{
+    sm_lcd_rows_ready = 0;
+    sm_meta[5] = 7u | (7u << 16);
+}
+#endif
 static const char *sm_text[15];
 static int16_t sm_boxes[7][4], sm_labels[7][4], sm_values[7][4];
 static uint32_t sm_render(uint32_t object);
@@ -68,6 +76,9 @@ static uint32_t sm_owned(uint32_t object)
 static uint32_t sm_open(void)
 {
     if (!sm_owned(0xa1833548u)) return 0;
+#ifdef Z7_LCD_FIRST_RELEASE
+    sm_lcd_prepare_rows();
+#endif
     z7_settings_view = 0;
     return F(0x10404c43u, uint32_t, uint32_t, uint32_t)(2, 0);
 }
@@ -269,7 +280,9 @@ static uint32_t sm_render(uint32_t object)
     }
 #ifdef Z7_LCD_FIRST_RELEASE
     uint32_t rows = z7_lcd_release_rows(z7_settings_view);
-    sm_geometry[0] = rows;sm_meta[5] = rows | (rows << 16);
+    /* Keep seven native widget slots allocated as subviews grow/shrink.
+     * Low halfword is selectable item count; high halfword is viewport capacity. */
+    if (sm_lcd_rows_ready) sm_meta[5] = rows | (7u << 16);
 #endif
     /* Keep the current event's destination stable across its callback. */
     for (uint32_t i = 0; i < 14; ++i) if (sm_events[i][0] == 0x238 || sm_events[i][0] == 0x253) {
@@ -367,8 +380,7 @@ static uint32_t sm_prepare(void)
     sm_meta[1] = (uint32_t)(uintptr_t)sm_geometry; sm_meta[2] = (uint32_t)(uintptr_t)sm_layout; sm_meta[3] = (uint32_t)(uintptr_t)sm_controls;
     sm_meta[4] = (uint32_t)(uintptr_t)sm_maps; sm_meta[5] = 0x00070007;
 #ifdef Z7_LCD_FIRST_RELEASE
-    sm_geometry[0] = z7_lcd_release_rows(0);
-    sm_meta[5] = sm_geometry[0] | (sm_geometry[0] << 16);
+    sm_lcd_prepare_rows();
 #endif
     sm_callbacks[0] = (uint32_t)(uintptr_t)sm_render; sm_callbacks[1] = (uint32_t)(uintptr_t)sm_zero;
     sm_callbacks[2] = 0x1040525f; sm_callbacks[3] = (uint32_t)(uintptr_t)sm_one;
@@ -391,13 +403,29 @@ static void sm_publish(void)
 static void sm_before(void)
 {
     before();
-    if (!sm_owned(0xa1833548u) || !W(0xa1833548u + 12)) return;
+    if (!sm_owned(0xa1833548u) || !W(0xa1833548u + 12)) {
+#ifdef Z7_LCD_FIRST_RELEASE
+        sm_lcd_prepare_rows();
+#endif
+        return;
+    }
     uint32_t pages = W(0xa181f91cu);
     if (!ram(pages, 16)) return;
     uint32_t stride = W(pages), count = W(pages + 8), data = W(pages + 12), active = 0;
     if (stride < 4 || stride > 1024 || count > 20 || count > W(pages + 4) || !ram(data, count * stride)) return;
     for (uint32_t i = 0; i < count; ++i) if (W(data + i * stride) == 0xa1833548u) active = 1;
-    if (!active) return;
+    if (!active) {
+#ifdef Z7_LCD_FIRST_RELEASE
+        sm_lcd_prepare_rows();
+#endif
+        return;
+    }
+#ifdef Z7_LCD_FIRST_RELEASE
+    if (!sm_lcd_rows_ready) {
+        sm_lcd_rows_ready = 1;
+        sm_render(0xa1833548u);
+    }
+#endif
     uint32_t header = F(0x103faebfu, uint32_t, uint32_t, uint32_t)(0x203, W(0xa1833548u + 12));
     uint32_t changed = 0;
 #ifdef Z7_SETTINGS_PERSISTENCE

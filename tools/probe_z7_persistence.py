@@ -36,7 +36,10 @@ def main():
     host = json.loads((a.build / 'module-host.emulator.json').read_text(encoding='utf-8'))
     module = json.loads((a.module / 'module.json').read_text(encoding='utf-8'))
     packet = (a.module / 'Z7APP.BIN').read_bytes()
-    if module['kind'] != 'original-Z7-display-persistence-diagnostic' or hashlib.sha256(packet).hexdigest() != module['module_sha256']:
+    lcd_release = module['kind'] == 'original-Z7-LCD-first-release-candidate'
+    exposure_component = 0 if lcd_release else 10
+    battery_row = 5 if lcd_release else 6
+    if module['kind'] not in ('original-Z7-display-persistence-diagnostic','original-Z7-LCD-first-release-candidate') or hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         p.error('Exact persistent full profile required')
     output.mkdir(parents=True)
     for name in ('probe_z7_persistence.py', 'settings_file_fixture.py', 'module_file_fixture.py'):
@@ -47,7 +50,7 @@ def main():
     ui.validate_firmware = validate_candidate
     result = dict(passed=False, checks=[], phases=[], main_sha256=host['main_payload_sha256'], module_sha256=module['module_sha256'],
                   assisted_qemu=True, modeled_filesystem=True, native_menu_keys=True, model_revision_or_pixel_stores=False,
-                  physical_card=False, camera_access=False, shutdown_flush_verified=False)
+                  physical_card=False, camera_access=False, shutdown_flush_verified=False, lcd_first_release=lcd_release)
 
     def save():
         (output / 'result.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8', newline='\n')
@@ -151,6 +154,16 @@ def main():
                 save()
             raise RuntimeError('Native row limit exceeded')
 
+        def check_row_limit(count, label):
+            row(0, count - 1)
+            wait_native(200)
+            camera.key(checkpoint(), 'down')
+            wait_native(500)
+            observed = pages()[-1]['row']
+            check(name + '-' + label + '-native-focus-stays-in-active-rows', observed < count)
+            phase.setdefault('row_limits', []).append(dict(menu=label, count=count, observed_after_down=observed))
+            save()
+
         def widgets():
             pool = int.from_bytes(camera.remote.memory(0xa1833548 + 36, 4), 'little')
             if not pool: return [], ['pool-unavailable']
@@ -160,7 +173,9 @@ def main():
             # Original103FCF0E uses the pool-wide offset, not menu row count.
             if offset != 1200: raise RuntimeError('Unexpected original-Z7 label-array offset: ' + str(offset))
             rows, pending = [], []
-            for row_number in range(7):
+            row_count = int.from_bytes(camera.remote.memory(base + symbols['sm_meta'] + 20, 2), 'little') if lcd_release else 7
+            if not 1 <= row_count <= 7: raise RuntimeError('Invalid active menu count')
+            for row_number in range(row_count):
                 nodes = []
                 for column, cell in enumerate((labels + (offset + row_number) * 4, values + row_number * 28)):
                     node = int.from_bytes(camera.remote.memory(cell, 4), 'little')
@@ -212,7 +227,13 @@ def main():
                 attempts.append(observation)
                 phase.setdefault('capture_readiness', {})[label] = attempts
                 save()
-                if pending: continue
+                if pending:
+                    if attempt == 29:
+                        camera.refresh()
+                        (directory / (label + '-pending-failure.png')).write_bytes(camera.png)
+                        observation['widget_rows'] = widget_rows
+                        save()
+                    continue
                 camera.refresh()
                 image = Image.open(io.BytesIO(camera.png)).convert('RGB')
                 selected = pages()[-1]['row']
@@ -270,7 +291,7 @@ def main():
                 phase['startup_model'] = settings()
                 check('startup-open-error-keeps-resident-module-with-volatile-defaults',
                     word('z7_persistence_ready') == 0 and word('z7_persistence_result') == 2 and
-                    settings() == [0, 15, 1, 0, 5, 10, 127, 7, 0, 127] and fixture.files == files and not fixture.handles)
+                    settings() == [0, 15, 1, 0, 5, exposure_component, 127, 7, 0, 127] and fixture.files == files and not fixture.handles)
                 fixture.fail_open = False
                 open_owned_menu()
                 capture('blocked-root', ': Restart to save')
@@ -295,15 +316,17 @@ def main():
             phase['startup_model'] = settings()
             phase['process_id'] = camera.proc.pid
             if name == 'first':
-                check('fresh-files-use-defaults-without-creating-journal', settings() == [0, 15, 1, 0, 5, 10, 127, 7, 0, 127] and fixture.files == {})
+                check('fresh-files-use-defaults-without-creating-journal', settings() == [0, 15, 1, 0, 5, exposure_component, 127, 7, 0, 127] and fixture.files == {})
             else:
                 check('fresh-guest-restores-prior-menu-edits-before-navigation', settings() == result['expected_model'] and not word('z7_settings_revision') and not any(e.get('component') == 'settings' and e['operation'] in ('write', 'create') for e in fixture.events))
             open_owned_menu()
             capture('root-initial')
+            if lcd_release: check(name + '-root-compact-count', int.from_bytes(camera.remote.memory(base + symbols['sm_meta'] + 20, 2), 'little') == 6)
+            if lcd_release: check_row_limit(6, 'root'); row(0, 0)
             if name == 'first':
                 row(0, 0); key('right', lambda: settings()[0] == 1); wait_saved()
                 capture('master-saved')
-                row(0, 6)
+                row(0, battery_row)
                 if a.save_error:
                     original_files = dict(fixture.files)
                     fixture.fail_create = True
@@ -321,6 +344,15 @@ def main():
                 wait_saved()
                 check('two-completed-native-menu-saves-create-both-journal-slots', set(fixture.files) == {0, 1} and all(valid(data) for data in fixture.files.values()))
             row(0, 1); key('right', lambda: word('z7_settings_view') == 1)
+            if lcd_release:
+                check(name + '-preset-compact-count', int.from_bytes(camera.remote.memory(base + symbols['sm_meta'] + 20, 2), 'little') == 5)
+                if name == 'first':
+                    row(0, 3); key('right', lambda: settings()[2] == 5)
+                    row(0, 4); key('right', lambda: settings()[2] == 1)
+                    check('native-compact-reset-keeps-unsupported-components-off', all(not x & 10 for x in settings()[2:6]))
+                    wait_saved()
+                capture('compact-preset')
+                check_row_limit(5, 'preset')
             row(0, 2)
             if name == 'first':
                 key('right', lambda: settings()[2] == 0); wait_saved()
@@ -330,10 +362,19 @@ def main():
             if name == 'first':
                 key('right', lambda: settings()[6] == 126); wait_saved()
             capture('information-shutter-off')
+            if lcd_release:
+                row(0, 6); key('right', lambda: word('z7_settings_view') == 3)
+                check(name + '-extra-compact-count', int.from_bytes(camera.remote.memory(base + symbols['sm_meta'] + 20, 2), 'little') == 3)
+                if name == 'first':
+                    row(0, 1); key('right', lambda: settings()[6] == 254); wait_saved()
+                capture('compact-extra')
+                check_row_limit(3, 'extra')
+                row(0, 2); key('right', lambda: word('z7_settings_view') == 2)
+                check(name + '-extra-back-restores-seven-information-rows', int.from_bytes(camera.remote.memory(base + symbols['sm_meta'] + 20, 2), 'little') == 7)
             key('left', lambda: word('z7_settings_view') == 1)
             key('left', lambda: word('z7_settings_view') == 0)
             row(0, 0); capture('root-saved')
-            check(name + '-menu-model-and-battery-setting-consistent', settings() == [3, 15, 0, 0, 5, 10, 126, 7, 0, 127] and word('z7_battery_enabled') == 1)
+            check(name + '-menu-model-and-battery-setting-consistent', settings() == [3, 15, 0, 0, 5, exposure_component, 254 if lcd_release else 126, 7, 0, 127] and word('z7_battery_enabled') == 1)
             if name == 'first': result['expected_model'] = settings()
             # Edited controls retain native selection/activation presentation.
             # Compare both guests after the SAME fresh page entry, final model

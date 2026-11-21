@@ -35,6 +35,9 @@ def audit(raw, host, packet, module):
         f.base = f.words()[12]
         f.setword(40, status)
         check('load-' + str(len(checks)), status == 8)
+        # This instruction fixture supplies native renderer readiness. The live
+        # QEMU probe separately verifies the actual before-paint publication.
+        f.write(f.base + symbols['sm_lcd_rows_ready'], 1)
         return f
 
     def word(f, name):
@@ -53,7 +56,7 @@ def audit(raw, host, packet, module):
         check('menu-action-no-io-' + str(len(checks)), f.file_events == before)
 
     def rows(f, count):
-        return word(f, 'sm_geometry') == count and f.read(f.base + symbols['sm_meta'] + 20) == count | count << 16
+        return word(f, 'sm_geometry') == 7 and f.read(f.base + symbols['sm_meta'] + 20) == (count | 7 << 16)
 
     def labels(f):
         return dict(f.menu_labels)
