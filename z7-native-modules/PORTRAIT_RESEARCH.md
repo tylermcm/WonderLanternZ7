@@ -365,6 +365,32 @@ The previously documented supplied-NULL allocator counterexamples remain open.
 
 ## Remaining integration
 
+### Original i-menu classification
+
+The original app registration prefix `1030CF74..1030D00A` binds index3 to
+`A1829970`. Original indices4/5 bind `A1829B1C`/`A1829B40`, not the same i-menu
+root. Native getters `10385B6A`/`10385B72` read mode/variant at `A18298B8`/+1.
+The actual variant branch at `10386B18` selects the grid-style descriptor path
+for0 and `0x29`, unlike pinned Z7II's `0x31`. The original entry at `10386C72`
+sets mode3 before selecting a variant. These original bindings must replace
+upstream constants rather than applying an address offset.
+
+`plugins/portrait_page.h` classifies that original i-menu root into grid
+(mode3, or mode0/variant0-or29), dial (mode2/variant0-or29), setting (remaining
+modes0..2) or other. It queries the original getters and rechecks app/root and
+mode/variant afterward. It does not admit drawing, exclude physical MENU or
+playback task takeover, classify live/external pages, or establish task lifetime.
+The caller must supply those final policies before the portrait callback uses it.
+
+Private `20261121-portrait-page-01/result.json` passed2552 checks: actual native
+registration prefix, all256 variants through the original routing branch,
+2032 compiled classification cases, other app IDs, foreign roots and observed
+changes during the getter calls. The reproducible probe is256 bytes. Inputs and
+race mutations are supplied; no complete app startup, native transition lifecycle,
+rendering or pixels are proved. The first audit attempt stopped on an uninitialized
+fixture field; after initialization order was corrected the audit completed.
+See [source-only evidence](../evidence/20261121-portrait-page.json).
+
 Bind actual LCD output/target admission, native font-file/bitmap emission and symbols,
 draw-task lifetime and callback ownership before installing a rotation hook.
 Preserve producer completion and payload lifetime: never redirect asynchronous

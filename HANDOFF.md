@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## Original i-menu page binding - November 21, 2026
+
+Previous43b148c established read-only logical2 LCD target lookup. New
+plugins/portrait_page.h binds original i-menu app3/rootA1829970 and queries native
+mode10385B6A/variant10385B72 atA18298B8/+1. Original app4/5 are distinct roots;
+native grid variant branch10386B18 uses0/29, NOT pinned Z7II0/31. Classifier:
+mode3 ormode0+variant0/29 ->grid; mode2+variant0/29 ->dial; remaining0..2 ->setting;
+other modes/apps/roots ->other. Observed app/root/mode/variant changes reject.
+
+Private portrait-page-01 PASS2552,2032 classification cases plus original native
+registration/getters/all256 variant branches/foreign roots/races. Reproducible
+256-byte diagnostic SHA7a3e3ce1bcf4ea225ae112cb3e2389f8cf59326787fe753cee25fee588598630.
+State/races supplied, no full startup/render/task takeover admission or pixels.
+Initial fixture field ordering error fixed before accepted audit. Root71/no skips;
+direct fingerprints verified; ignored Graphify3431nodes/9283edges, parser warnings
+retained. See z7-native-modules/PORTRAIT_RESEARCH.md and
+evidence/20261121-portrait-page.json. Full goal ACTIVE, no stage/flash/push.
+
+Next establish physical MENU/playback task takeover and live/external/magnified
+page exclusions, then wire actual graphics callback to portrait reflow/input/
+settings. Classifier alone is NOT drawing admission. Native font-file/bitmap
+symbols, Info mirror, real histogram producer, lifetime/writer closure and exact
+installation/recovery assessment remain unfinished. Accepted firmware/module
+bytes unchanged; no portrait callback registered by functional module.
+
 ## Native logical2 LCD target lookup - November 21, 2026
 
 Previous4f0aa7d added the API84 resident graphics bridge. New read-only
