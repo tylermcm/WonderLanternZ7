@@ -1,5 +1,44 @@
 # Laptop handoff — October 20, 2026
 
+## Latched menu orientation in loaded diagnostic - November 21, 2026
+
+Previous851168c reflowed footer graphics but sampled a new orientation per message.
+New portrait_layout.h owns atomic state0waiting/1or2portrait/3native-landscape.
+GRID latches on filled/clear backdrop or reserved title clear; DIAL also on strip
+content excluding thin top tile border; SETTING immediately. Nontrigger grid
+messages do not start reflow. Landscape/unknown entry selects3. Chosen layout
+persists across GRID/DIAL/SETTING; explicitly caller-selected EXTERNAL can inherit
+it, but native external-app binding remains unfinished. Invalid state rejects.
+
+Loaded diagnostic chooses this layout after context revalidation. Observed scene/
+OTHER-page/exclusive-LCD exits reset; other drawing targets alone preserve it.
+Direction holds across opposite/landscape/unknown sensor samples and i-menu mode
+changes. This is not full event/task lifecycle coverage and does not clear bands.
+Footer/dial ownership/dirty/cleanup, input/text and settings controls still pending.
+
+Private portrait-layout-01 PASS312 compiled trigger/hold/reset/invalid-state cases;
+caller-owned state and message inputs supplied, atomic access/parser execute.
+Probe4224/4160image/0BSS/0relocs SHA
+bad93d72e18bae1864d9ade265d038e17beac479b56c652924aaa6bd3f1cff94.
+portrait-layout-host-02 PASS84 loaded integration cases; setup primes layout using
+actual admitted backdrop messages, not a supplied chosen orientation. Tests also
+cover fresh BSS, sensor/mode changes, observed exit/reset/opposite re-entry,
+landscape sentinel, direct setting entry, target retention and output reset.
+Probe4928/4864image/12BSS/0relocs SHA
+719b028c7e2985f6741e977f3f20af715be0904cf00e357d6b67dd51d4068740.
+Host01/02 bytes identical after comments-only clarification. UI/task/target/sensor,
+kernel/fs/allocator and rendering remain supplied. No real sensor/task schedule,
+unobserved transition coverage, band cleanup or pixels proved. Root71/no skips;
+direct fingerprints verified. Ignored Graphify3568nodes/9722edges, existing parser
+warnings. New evidence/20261121-portrait-layout.json; loaded summary updated.
+
+Next band ownership/dirty/clear/cleanup and text/input/settings controls, pending
+native screen requests/live/external/magnified binding, font files/symbols, Info
+mirror/real histogram, native lifetime/writer closure and exact installation/
+recovery assessment. Full goal ACTIVE; functional combined display/accepted host
+MAIN unchanged. Emulator-only diagnostic is incomplete, not a release candidate.
+No camera/card access, staging, flash or push.
+
 ## Footer hint graphics in loaded diagnostic - November 21, 2026
 
 Previousc36adb2 ported dial strip images. New portrait_footer.h ports hint bounds

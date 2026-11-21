@@ -31,7 +31,7 @@ class GridHostFixture(HostFixture):
     def write(self,p,v):self.u.mem_write(p,struct.pack('<I',v))
     def read(self,p):return int.from_bytes(self.u.mem_read(p,4),'little')
     def variable(self,name):return self.words()[12]+self.metadata['symbols']['z7_portrait_grid_'+name]
-    def setup(self,orientation=1):
+    def setup(self,orientation=1,prime=True):
         self.u.mem_write(0xa1829af4,b'\3');self.write(0xa20207bc+12,0xa1829970)
         self.u.mem_write(0xa18298b8,b'\3\0');self.u.mem_write(0xa201d4d0,b'\0')
         self.u.mem_write(0xa182ed2c,b'\4');self.u.mem_write(0xa183de04,b'\4')
@@ -41,6 +41,8 @@ class GridHostFixture(HostFixture):
         struct.pack_into('<IBxHHHII',records,40,0xb0000000,12,720,480,0,0,0)
         self.u.mem_write(TABLE,bytes(records));self.write(0xa1809074,0);self.u.mem_write(0xa1d49784,bytes([{0:1,1:3,2:4,3:2,4:0}[orientation]]))
         self.mutation=None
+        self.write(self.variable('layout'),0)
+        if prime:self.dispatch(box=(0,280,720,146))
     def hook(self,u,address,size,context):
         if address==self.stop_at:u.emu_stop();return
         if address==0x10414756:self.targets+=1
@@ -75,7 +77,7 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
     f=GridHostFixture(raw,host,packet,metadata);checks=[]
     def check(name,good):checks.append(dict(name=name,passed=bool(good)));assert good,name
     result=f.call(host['symbols']['z7_module_load_once'],STATE);f.setword(40,result)
-    check('loaded-module-registers-staged-graphics-without-touching-native-slot',result==8 and f.read(SLOT)==0x10372391 and f.read(STATE+364)==1)
+    check('loaded-module-registers-staged-graphics-without-touching-native-slot',result==8 and f.read(SLOT)==0x10372391 and f.read(STATE+364)==1 and f.read(f.variable('layout'))==0)
     f.call(host['symbols']['z7_module_worker_tick']);check('worker-binds-resident-host-bridge',f.read(SLOT)==host['symbols']['z7_graphics_dispatch_bridge'])
     for orientation in (1,2):
         for command in (0x17,0x19,0x1a,0x1c):
@@ -131,6 +133,29 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
     check('page-change-across-native-target-query-rejects-reflow',f.dispatch()==0 and len(f.rendered)==1)
     f.setup();f.u.mem_write(0xa18298b8,b'\2')
     check('dial-image1a-strip-disables-source-clear',f.dispatch(0x1a,box=(199,100,201,111),clear=1)==1 and len(f.rendered)==1 and struct.unpack_from('<I',f.rendered[0][1],36)[0]==0)
+    f.setup(1,prime=False)
+    check('grid-tile-before-entry-trigger-keeps-native-layout',f.dispatch()==0 and f.read(f.variable('layout'))==0)
+    check('backdrop-latches-first-portrait-layout',f.dispatch(box=(0,280,720,146))==1 and f.read(f.variable('layout'))==1)
+    for selector in (4,1,0):
+        f.u.mem_write(0xa1d49784,bytes([selector]))
+        check(f'latched-layout-survives-sensor-selector{selector}',f.dispatch()==1 and f.read(f.variable('layout'))==1 and struct.unpack_from('<4i',f.rendered[0][1])==(217,370,53,100))
+    for mode in (2,1):
+        f.u.mem_write(0xa18298b8,bytes([mode,0]))
+        check(f'latched-layout-survives-imenu-mode{mode}',f.dispatch(box=(199,100,201,111))==1 and f.read(f.variable('layout'))==1)
+    f.u.mem_write(0xa1829af4,b'\0')
+    check('observed-native-page-exit-releases-layout',f.dispatch()==0 and f.read(f.variable('layout'))==0)
+    f.u.mem_write(0xa1829af4,b'\3');f.u.mem_write(0xa18298b8,b'\3\0');f.u.mem_write(0xa1d49784,b'\4')
+    check('new-entry-can-latch-opposite-direction',f.dispatch(box=(0,280,720,146))==1 and f.read(f.variable('layout'))==2)
+    f.setup(0,prime=False)
+    check('landscape-entry-latches-native-sentinel',f.dispatch(box=(0,280,720,146))==0 and f.read(f.variable('layout'))==3)
+    f.u.mem_write(0xa1d49784,b'\4')
+    check('landscape-entry-does-not-flip-mid-menu',f.dispatch()==0 and f.read(f.variable('layout'))==3)
+    f.setup(2,prime=False);f.u.mem_write(0xa18298b8,b'\1\0')
+    check('direct-settings-entry-latches-layout',f.dispatch()==1 and f.read(f.variable('layout'))==2)
+    f.setup(1);f.u.mem_write(0xa180ad84,b'\xff')
+    check('non-lcd-target-does-not-release-menu-layout',f.dispatch()==0 and f.read(f.variable('layout'))==1)
+    f.u.mem_write(0xa180ad84,b'\x0c');f.write(0xa1821394,2)
+    check('leaving-exclusive-lcd-releases-menu-layout',f.dispatch()==0 and f.read(f.variable('layout'))==0)
     f.setup();f.write(SLOT,0x12345679);before=f.read(f.variable('received'))
     check('foreign-slot-prefetched-bridge-falls-back-without-module',f.dispatch()==0 and len(f.rendered)==1 and f.read(f.variable('received'))==before)
     old=GridHostFixture(old_raw,old_host,packet,metadata)
@@ -155,7 +180,7 @@ def main():
     names=('tools/audit_z7_portrait_grid_host.py','tools/audit_z7_module_host.py','tools/audit_z7_information_native.py','tools/audit_z7_portrait_draw.py',
            'tools/audit_z7_portrait_grid_message.py','tools/audit_z7_portrait_page_message.py','tools/audit_splash_image.py','tools/build_z7_module.py','z7-native-modules/sdk/module.ld',
            'z7-native-modules/examples/portrait_grid_host_probe.c','z7-native-modules/plugins/portrait_grid_message.h',
-           'z7-native-modules/plugins/portrait_page_message.h','z7-native-modules/plugins/portrait_footer.h',
+           'z7-native-modules/plugins/portrait_page_message.h','z7-native-modules/plugins/portrait_footer.h','z7-native-modules/plugins/portrait_layout.h',
            'z7-native-modules/plugins/portrait_draw.h','z7-native-modules/plugins/portrait_geometry.h','z7-native-modules/plugins/portrait_grid.h',
            'z7-native-modules/plugins/portrait_page.h','z7-native-modules/plugins/portrait_takeover.h','z7-native-modules/plugins/portrait_target.h','z7-native-modules/plugins/orientation_sample.h')
     result.update(host_sha256=host['main_payload_sha256'],probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),

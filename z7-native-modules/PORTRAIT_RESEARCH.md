@@ -365,6 +365,40 @@ The previously documented supplied-NULL allocator counterexamples remain open.
 
 ## Remaining integration
 
+### Menu orientation latch
+
+`portrait_layout.h` now holds a menu orientation independently of subsequent
+sensor samples. Zero means waiting for entry;1/2 hold opposite portrait layouts;
+3 holds native landscape. GRID latches on its filled/clear backdrop or reserved
+title clear. DIAL also latches on strip content, excluding the two-pixel top grid
+border. SETTING latches immediately. Landscape/unknown entry samples select3.
+Other grid messages leave the latch waiting; they cannot start half of a reflow.
+An already-chosen direction persists through GRID/DIAL/SETTING and can be
+inherited by an explicitly caller-selected external layout; native external-app
+binding remains unfinished. Unknown owned-state values reject reflow.
+
+The loaded diagnostic chooses the latched direction after context revalidation.
+It resets on observed scene/OTHER-page/exclusive-LCD exit. A message for another
+drawing target leaves the menu latch intact, since native surface work can happen
+inside the same menu. Grid/dial/settings page changes preserve the chosen layout.
+This only handles observed transitions; no task/worker event coverage, band
+clearing, deferred cleanup, input mapping or full lifecycle closure is proved.
+
+Private `20261121-portrait-layout-01/result.json` passed312 compiled checks for
+entry triggers, landscape/unknown samples, held directions, page inheritance,
+explicit/observed reset and invalid state. Inputs and state storage are supplied;
+trigger parsing and acquire/release operations execute. Probe4224 bytes.
+`portrait-layout-host-02/result.json` passed84 loaded-module checks: the module
+BSS starts unlatched; actual admitted backdrop messages establish the latch;
+opposite/landscape/unknown sensor samples and mode changes preserve it; observed
+page/output exits release it, and a subsequent entry can choose the opposite
+direction. Existing loaded drawing/footer/context/SDK cleanup checks also pass.
+UI/task/target/orientation/kernel/fs/allocator and renderer services remain
+supplied. The reproducible loaded probe is4928 bytes; host-01/02 bytes match after
+a comments-only clarification. No physical camera pixels or scheduling proved.
+See [latch evidence](../evidence/20261121-portrait-layout.json) and updated
+[loaded evidence](../evidence/20261121-portrait-grid-host.json).
+
 ### Footer hint graphics
 
 `portrait_footer.h` now ports the pinned hint geometry: top>=418, bottom>426,
