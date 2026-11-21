@@ -76,6 +76,16 @@ and NULL cached-state refreshes. Its host additionally requires
 [cached path record](PHOTO_HIGHLIGHTS.md#cached-primary-metadata-and-state-refresh-api60).
 This closes a demonstrated path around the earlier primary-frame filter;
 native frame/parameter scheduling and allocation lifetime remain unproven.
+The experimental `display-highlight-coordinated-probe` requires API64 and
+`--owned-frame-coordination-hooks` in addition to all API60 host flags. It
+excludes the two identified native primary-frame bodies from module-owned
+parameter consumption through cleanup completion. Busy owned work cancels and
+retries; busy frames return native0. Tracking starts after cold-state validity,
+before module activation, so an earlier tracked frame prevents activation.
+Foreign Nikon parameter requests remain uncoordinated: a separate supplied
+schedule reproduces a stale-frame enable after such an update. Generation
+exhaustion refuses admission without shutdown handling. This diagnostic is an
+intermediate integration step; see [owned/frame exclusion](PHOTO_HIGHLIGHTS.md#owned-frame-exclusion-api64).
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

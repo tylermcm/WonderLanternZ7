@@ -15,6 +15,9 @@
 #ifdef Z7_HIGHLIGHT_CACHED_PROBE
 #include "cached_frame_permission.h"
 #endif
+#ifdef Z7_HIGHLIGHT_OWNED_FRAME_COORDINATION_PROBE
+#include "owned_frame_coordination.h"
+#endif
 static void highlight_gui_publish(void);
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
@@ -161,6 +164,10 @@ uint32_t z7_main(const struct z7_module_api *api)
     const struct z7_module_cached_frame_api *cached_api = (const struct z7_module_cached_frame_api *)api;
     if (api->size < sizeof(*cached_api) || !cached_api->register_cached_frame_permission) return 1;
 #endif
+#ifdef Z7_HIGHLIGHT_OWNED_FRAME_COORDINATION_PROBE
+    const struct z7_module_owned_frame_api *owned_frame_api = (const struct z7_module_owned_frame_api *)api;
+    if (api->size < sizeof(*owned_frame_api) || !owned_frame_api->enable_owned_frame_coordination) return 1;
+#endif
 #ifdef Z7_SETTINGS_READOUT_PROBE
     const struct z7_module_update_api *update_api = (const struct z7_module_update_api *)api;
     if (api->size < sizeof(*update_api) || !update_api->register_before_update) return 1;
@@ -216,6 +223,9 @@ uint32_t z7_main(const struct z7_module_api *api)
 #endif
 #ifdef Z7_HIGHLIGHT_CACHED_PROBE
     if (!cached_api->register_cached_frame_permission(highlight_cached_frame_permission)) return 1;
+#endif
+#ifdef Z7_HIGHLIGHT_OWNED_FRAME_COORDINATION_PROBE
+    if (!owned_frame_api->enable_owned_frame_coordination()) return 1;
 #endif
 #else
     if (!worker_api->register_worker(persistence_worker)) return 1;

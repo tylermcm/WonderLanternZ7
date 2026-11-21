@@ -1,5 +1,104 @@
 # Laptop handoff — October 20, 2026
 
+## Owned/frame exclusion API64 - November 20, 2026
+
+Previous6afdbd2 was PROGRESS (counterexample/core primitive). This checkpoint is
+PROGRESS: native owned/frame exclusion integrated and tested; FOREIGN ordering
+still unsafe under a supplied schedule. Full original goal ACTIVE. This is an
+intermediate diagnostic, NOT a deployable/flash-ready profile. No camera/card/
+staging/flash/push. All jobs terminal when saving checkpoint.
+
+NEW sdk/owned_frame_coordination.h API64 adds init-only enable after all cached/
+primary/parameter/highlight callbacks. Host --owned-frame-coordination-hooks
+requires all API60 flags. State324: enabled304/lane.state308/lane.owner312/
+guards316,320; reserve384/cold192. Cold and seeded fixtures support both guards.
+Init activation must acquire idle lane, so an older tracked native frame blocks
+activation. Native frame tracking starts after cold-state validity even before
+opt-in. Failed initialization clears flag/callbacks but NEVER resets lane state;
+old frames retain/release exact generation-qualified token. Pre-cold boot caller
+closure is unproved. Existing API60 host payload/module rebuild byte-identical.
+
+Whole-frame entry wrappers1023B9D0 and1023D794 save AAPCS state, use outer SP as
+owner, acquire frame role before original bodies, retain token through EVERY
+native return and release after original native work. Busy returns native0
+without original body. Original8-byte prologues reconstructed with verified
+literal values and flags (cached MOVS r4,r0). Consumer bridge acquires parameter
+role ONLY for registered owned descriptor before module before-consumer; holds
+through original copy/ack/completion and module after-consumer cleanup. Busy
+owned work still enters helper/claims request, changes accepted decision1 to
+cancel2, calls original completion with ack0 and normal module after/cancel.
+Worker reaps/retries. Park/reentry/fallback release only acquired tokens; busy
+UINT32_MAX is never a release token. Module after-consumer ends request accesses
+before worker reuse; host final leave reads only immutable packet identity.
+No owned path waits for earlier native frame mutex. FOREIGN descriptors retain
+original path and remain uncoordinated. No indirect native gate closure proof.
+Generation exhaustion returns busy forever to frame/owned admission; core never
+wraps, but shutdown handling is UNFINISHED. Must resolve before deployability.
+
+Final host .private/builds/20261120-owned-coordination-host-02,
+MAIN8c12dc12d2466fdb5677e580bea2e28a32a8fb9fa6905d6b7b8f8d46cef438e6,
+C6341/API64/state324/reserve384/reproducible/EGCRCzero.
+Module20261120-display-highlight-coordinated-01,
+SHA4d83e278e41d40f7d2f174c3bd18a1379006919c8782823574b79161eab0380c,
+30340file/30016image/6616BSS/minAPI64;58 source inputs verified current.
+Initial host01 compile failure missing nested api.cached prefix corrected in02;
+no failed artifact was accepted. Existing API60 compatibility host
+20261120-owned-coordination-compat60-host-01 MAINa905e50c63b6c9de8922cd27a8b09ab29b8012f0ae5dce1c228af7d6233f0eb6;
+compat60-module-01 SHA6a5b066b1aa6f9212b01b30e63f44ed715f79d9f297bff298e02cb00d9af4cd4. Payloads checked against prior accepted fingerprints.
+
+.private/evidence/20261120-owned-frame-coordination-02.json PASS34 exact pair:
+cold/all guards/neighbor bounds; SOURCE, cached fresh and cached NULL pause at
+real enable driver with frame lane held; Off cancel/ack0 without copy/lease
+release/cleanup-success; resume native frame/correct SP+callee regs; worker retry
+restores baseline and disables actual register, settled frames stay Off. Reverse:
+owned cleanup paused at real100-copy, all three frame entries return native0
+without input/state/register mutation for three flag patterns; resumed consumer
+copies/restores/disables/retires correctly. Kernel/FS/UI/surfaces/colors/engine/
+context/MMIO/explicit two-stack scheduling supplied. No physical schedule proof.
+Native audit01 reused a cold-reset fixture without boot loader field init; this
+TEST setup was corrected to separate cold reservation from initialized loader.
+
+20261120-owned-coordination-host-03/result.json PASS12: prerequisite/single/init-
+only activation, frame reentry, stale/wrong identity, new guards, foreign helper
+pass-through, generation exhaustion refusal, failed init after activation frees
+and clears, preactivation frame blocks init without token reset, retry succeeds
+after frame returns. Fresh-open file offset0 explicitly supplied for retry.
+01 failed due fixture file position not reset between fresh opens;02 PASS12;
+03 removes assertion of unspecified return value from void leave helper.
+20261120-owned-coordination-cleanup-regression-01.json PASS27 cleanup/publication
+plus36 owned on exact API64 pair. CLI now admits this compatible diagnostic kind
+and requires its explicit host flag. Original30s/10M guards retained.
+20261120-owned-coordination-api60-rejection.json verifies API64 module rejected
+by API60 before feature publication. Root71/no skips:
+20261120-owned-coordination-final-root-tests.log.
+
+CRITICAL .private/evidence/20261120-foreign-frame-interleaving-01.json reproduces
+FOREIGN gap in4 checks on exact new pair. Pause SOURCE at real enable with frame
+token held, turn feature Off, execute original foreign parameter request to
+native copy/ack/completion. Old lease released, parameters disabled and real
+control0; frame token unchanged. Resume old frame: actual enable1/active1 with
+disabled params and invalid lease, correct native SP/callee and token release.
+passed=true means COUNTEREXAMPLE, foreign ordering safe=false. This cannot be
+counted as a completed full native concurrency fix. Source inputs/results hashes
+verified current. Source record:evidence/20261120-owned-frame-coordination.json.
+
+NEXT: coordinate foreign parameters while preserving native ordering, packet
+lifetime, completion and callback reentry. Do NOT merely block consumer behind
+the entire frame before proving its waits cannot require that consumer: native
+frame1023A3DE takes A1D6AB80 via infinite-timeout10170944/kernel100361E8; gate/
+parameter core itself has no observed wait, but complete transitive closure is
+unproved. Consider a safely admitted narrower warning transaction or prove the
+whole wait graph. Parameter handler copies100 at1023E226, sets dirty/ack at
+E22A..E232, calls potentially reentrant completion atE236; any early release
+must retire its token to avoid late release of another owner. Also implement
+lane exhaustion feature shutdown, indirect/native gate caller closure and boot/
+failed-init concurrency coverage before treating the profile as complete.
+Then actual warning rendering/pixels, style/threshold preferences, EVF,
+portrait/rotation, native Info mirror, real histogram producer, full lifecycle/
+engine lifetime and exact-candidate installation/recovery. Full scope unchanged.
+
+Ignored Graphify refreshed3111nodes/8272edges; all6 new code files present.
+
 ## In-flight ordering counterexample and lane primitive - November 20, 2026
 
 Previous3096ba8 was PROGRESS (cached primary API60). This turn is PROGRESS:

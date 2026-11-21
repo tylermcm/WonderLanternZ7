@@ -22,7 +22,12 @@ static uint32_t register_parameters(void (*callback)(uint32_t, void *));
 static uint32_t register_frame_permission(z7_frame_permission_callback callback);
 #ifdef Z7_HOST_CACHED_FRAME
 static uint32_t register_cached_frame_permission(z7_frame_permission_callback callback);
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+static uint32_t enable_owned_frame_coordination(void);
+static const struct z7_module_owned_frame_api api = { { { { { {
+#else
 static const struct z7_module_cached_frame_api api = { { { { {
+#endif
 #else
 static const struct z7_module_frame_permission_api api = { { { {
 #endif
@@ -50,8 +55,13 @@ static const struct z7_module_worker_api api = {
 #ifdef Z7_HOST_CACHED_FRAME
 }, register_cached_frame_permission
 #endif
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+}, enable_owned_frame_coordination
+#endif
 };
-#ifdef Z7_HOST_CACHED_FRAME
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+_Static_assert(sizeof(api) == 64, "Owned frame API prefix layout");
+#elif defined(Z7_HOST_CACHED_FRAME)
 _Static_assert(sizeof(api) == 60, "Cached frame API prefix layout");
 #elif defined(Z7_HOST_FRAME_PERMISSION)
 _Static_assert(sizeof(api) == 56, "Frame permission API prefix layout");
@@ -84,6 +94,9 @@ static uint32_t valid_state(const struct z7_host_state *s)
 #ifdef Z7_HOST_CACHED_FRAME
     for (uint32_t i = 0; i < 2; ++i) if (s->cached_frame_guards[i] != 0xa5a5a5a5u) return 0;
 #endif
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+    for (uint32_t i = 0; i < 2; ++i) if (s->owned_frame_guards[i] != 0xa5a5a5a5u) return 0;
+#endif
     return 1;
 }
 
@@ -113,6 +126,10 @@ static void clear_highlight(struct z7_host_state *s)
 #endif
 #ifdef Z7_HOST_CACHED_FRAME
     s->cached_frame_callback = s->cached_frame_running = 0;
+#endif
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+    s->owned_frame_enabled = 0;
+    /* Never reset a lane: a native frame can still be returning through it. */
 #endif
 }
 static uint32_t register_highlight(const struct z7_highlight_hooks *h)
@@ -145,6 +162,46 @@ static struct z7_host_state *highlight_state(void)
                                          s->resident_image_size, 2)) return 0;
     return s;
 }
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+static uint32_t enable_owned_frame_coordination(void)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->image || s->display_ready ||
+        !s->cached_frame_callback || s->owned_frame_enabled) return 0;
+    uint32_t token = z7_highlight_lane_enter(&s->owned_frame_lane, Z7_LANE_PARAMETERS, s->loading_image);
+    if (!token) return 0; /* No pre-activation frame may straddle activation. */
+    s->owned_frame_enabled = 1;
+    return z7_highlight_lane_leave(&s->owned_frame_lane, token, s->loading_image);
+}
+/* Frame tracking begins as soon as cold state is valid, even before opt-in,
+ * so activation can establish a quiescent boundary. Invalid pre-cold state
+ * delegates; post-cold contention/exhaustion returns UINT32_MAX (native0).
+ */
+uint32_t z7_owned_frame_enter(uint32_t owner)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s)) return 0;
+    uint32_t token = z7_highlight_lane_enter(&s->owned_frame_lane, Z7_LANE_FRAME, owner);
+    return token ? token : UINT32_MAX;
+}
+void z7_owned_frame_leave(uint32_t owner, uint32_t token)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (valid_state(s) && token && token != UINT32_MAX)
+        (void)z7_highlight_lane_leave(&s->owned_frame_lane, token, owner);
+}
+uint32_t z7_owned_parameter_enter(void *packet)
+{
+    struct z7_host_state *s = highlight_state();
+    if (!s || !s->owned_frame_enabled || (uintptr_t)packet != s->highlight_descriptor) return 0;
+    uint32_t token = z7_highlight_lane_enter(&s->owned_frame_lane, Z7_LANE_PARAMETERS, (uint32_t)(uintptr_t)packet);
+    return token ? token : UINT32_MAX;
+}
+void z7_owned_parameter_leave(void *packet, uint32_t token)
+{
+    z7_owned_frame_leave((uint32_t)(uintptr_t)packet, token);
+}
+#endif
 uint64_t z7_highlight_source_enter(uint32_t output, void *frame)
 {
     struct z7_host_state *s = highlight_state();
@@ -576,7 +633,9 @@ __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
 {
     return ((uint32_t (*)(const struct z7_module_api *))
              ((uintptr_t)body + entry + 1))(
-#ifdef Z7_HOST_CACHED_FRAME
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+                &api.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
+#elif defined(Z7_HOST_CACHED_FRAME)
                 &api.frame.parameters.highlight.worker.information.gui.disp.update.base);
 #elif defined(Z7_HOST_FRAME_PERMISSION)
                 &api.parameters.highlight.worker.information.gui.disp.update.base);

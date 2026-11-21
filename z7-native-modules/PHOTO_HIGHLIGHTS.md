@@ -790,3 +790,43 @@ record `evidence/20261120-highlight-ordering-lane.json` and root HANDOFF.md.
 ```powershell
 .venv\Scripts\python.exe tools/audit_z7_highlight_lane.py --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-lane-new
 ```
+
+## Owned/frame exclusion API64
+
+The opt-in `display-highlight-coordinated-probe` adds
+`enable_owned_frame_coordination()` after all callbacks register. The matching
+host flag is `--owned-frame-coordination-hooks`, requiring all API60 flags.
+The two identified primary frame bodies (`1023B9D0` and cached `1023D794`)
+retain an atomic lane token through their entire original return paths. Busy
+frames return native0 before changing frame state. A module-owned descriptor
+acquires the parameter role before the before-consumer callback and retains it
+through native copy/ack/completion and the after-consumer cleanup callback.
+If a frame is active, an otherwise accepted owned operation is cancelled with
+normal completion/ack0, then retried by the existing worker. No owned path waits
+for the native frame's earlier mutex. Foreign Nikon requests retain their
+original dispatch path and are not coordinated by this diagnostic.
+
+Tracking begins once cold host state is valid, even before module activation;
+activation requires an idle lane. Failed initialization clears activation and
+callbacks without resetting an older native frame's token. State is324 bytes,
+reservation384, API64. Native stack/callee registers and busy-frame input flags
+are checked. Native caller closure, boot sequencing before cold-state validity
+and allocation lifetime remain unproven. Generation exhaustion refuses further
+admission; shutdown handling remains unfinished, so this is not a deployable
+profile.
+
+The final pair passes34 explicit native frame/owned-cleanup schedule checks,
+12 host lifecycle checks,27 cleanup/publication and36 owned request regressions.
+The old API60 firmware payload and cached module rebuild byte-for-byte unchanged;
+the API64 module rejects the old API60 host before feature publication.
+These results use supplied kernel/services, engine/context, scheduling and MMIO.
+
+A separate four-check `tools/audit_z7_foreign_frame_interleaving.py` reproduction
+confirms the remaining foreign-update gap on this exact pair: pause an old frame
+at the real enable driver, turn the feature off, complete a foreign native
+parameter request, then resume the old frame. It enables the plane despite
+native disabled parameters and an invalidated lease. `passed=true` in that
+result means the counterexample reproduced. It does not mean ordering is safe.
+Foreign request coordination must preserve completion/reentry and resolve the
+native mutex wait graph; it cannot be inferred from the owned-only tests.
+See `evidence/20261120-owned-frame-coordination.json` and root HANDOFF.md.

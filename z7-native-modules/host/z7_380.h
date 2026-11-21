@@ -20,9 +20,15 @@
 #ifdef Z7_HOST_CACHED_FRAME
 #include "cached_frame_permission.h"
 #endif
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+#include "owned_frame_coordination.h"
+#include "highlight_lane.h"
+#endif
 
 #define Z7_HOST_STATE 0xa9700000u
-#ifdef Z7_HOST_CACHED_FRAME
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+#define Z7_HOST_STATE_BYTES 324u
+#elif defined(Z7_HOST_CACHED_FRAME)
 #define Z7_HOST_STATE_BYTES 304u
 #elif defined(Z7_HOST_FRAME_PERMISSION)
 #define Z7_HOST_STATE_BYTES 288u
@@ -73,6 +79,11 @@ struct z7_host_state {
 #endif
 #ifdef Z7_HOST_CACHED_FRAME
     uint32_t cached_frame_callback, cached_frame_running, cached_frame_guards[2];
+#endif
+#ifdef Z7_HOST_OWNED_FRAME_COORDINATION
+    uint32_t owned_frame_enabled;
+    struct z7_highlight_lane owned_frame_lane;
+    uint32_t owned_frame_guards[2];
 #endif
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");

@@ -43,8 +43,11 @@ class HostFixture(NativePNG):
         if report.get('state_bytes', 0) >= 288:
             for off in (280, 284):
                 self.setword(off, 0xa5a5a5a5)
-        if report.get('state_bytes') == 304:
+        if report.get('state_bytes', 0) >= 304:
             for off in (296, 300):
+                self.setword(off, 0xa5a5a5a5)
+        if report.get('state_bytes', 0) >= 324:
+            for off in (316, 320):
                 self.setword(off, 0xa5a5a5a5)
         self.position = 0
         self.events, self.cache = [], []
