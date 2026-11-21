@@ -69,3 +69,31 @@ Persistence remains required for the actual smaller LCD release.
 Validation: all 95 existing root tests pass; three exact-artifact initialization
 traces satisfy publication-order assertions. These results validate the offline
 audit scope, not a repair. No camera test, firmware image, or card write occurred.
+
+## Late ownership changes reproduced and rejected offline
+
+A synthetic interleaving now demonstrates a concrete defensive gap: after
+`sm_prepare` validates the empty page and stock dispatcher, another task may
+change either during preparation. The old compiled entry overwrites both
+injected owners and returns LOADED. This test does not establish that native
+firmware actually makes such a change during the observed camera startup.
+
+`sm_publication_available` now checks all eleven page words and, when persistence
+is built, the expected dispatcher at both preparation and publication. Failure
+of the final check returns INIT_FAILED before native menu/scalar commits. The
+existing host clears registrations and frees its allocation. The synthetic
+page/dispatcher changes are preserved byte-for-byte; normal initialization
+still succeeds. This recheck is not a lock and does not close the final
+check-to-store window or move publication to the GUI task. It is not a freeze fix.
+
+Validation: before/after compiled regression (normal case plus two competing
+owners), 15 existing native menu-status checks, 95 root tests, and compilation
+of the shared menu variant without persistence. LCD source built identically
+twice; final comment-only source matches the audited bytes. All 47 LCD behavior
+regression checks also pass, including persistence restart and DISP.
+
+Private module SHA-256:
+3430dcbf81d96901c47737e14bb85fe959c45e772f48c2da98bcf3335d1c53df.
+Independent offline hardening build, NOT authorized/staged or installation
+reviewed. Installed camera and disabled card contents remain unchanged.
+Exact reproduction tool: `tools/audit_z7_menu_ownership_race.py`.

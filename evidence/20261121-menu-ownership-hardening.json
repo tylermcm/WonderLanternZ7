@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "scope": "Synthetic late-ownership change regression; offline defensive hardening only",
+  "before": {
+    "results": {
+      "normal": {
+        "status": 8,
+        "injected": false,
+        "conflict_preserved": null,
+        "complete_native_menu_snapshot_preserved": null,
+        "display_ready": 1,
+        "resident_allocations": 1,
+        "native_page_header": "0x2",
+        "native_dispatcher": "0x50109d8d"
+      },
+      "dispatcher": {
+        "status": 8,
+        "injected": true,
+        "conflict_preserved": false,
+        "complete_native_menu_snapshot_preserved": false,
+        "display_ready": 1,
+        "resident_allocations": 1,
+        "native_page_header": "0x2",
+        "native_dispatcher": "0x50109d8d"
+      },
+      "page": {
+        "status": 8,
+        "injected": true,
+        "conflict_preserved": false,
+        "complete_native_menu_snapshot_preserved": false,
+        "display_ready": 1,
+        "resident_allocations": 1,
+        "native_page_header": "0x2",
+        "native_dispatcher": "0x50109d8d"
+      }
+    },
+    "expected": "overwrites",
+    "module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+    "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+    "synthetic_interleaving": true,
+    "hardware_cause_established": false,
+    "card_written": false,
+    "limits": [
+      "Conflict is an explicit synthetic owner mutation after prepare",
+      "No actual kernel scheduling, task locks or physical startup modeled",
+      "No claim that native firmware performs the injected change",
+      "No protection against changes inside the final publication window is tested"
+    ]
+  },
+  "after": {
+    "results": {
+      "normal": {
+        "status": 8,
+        "injected": false,
+        "conflict_preserved": null,
+        "complete_native_menu_snapshot_preserved": null,
+        "display_ready": 1,
+        "resident_allocations": 1,
+        "native_page_header": "0x2",
+        "native_dispatcher": "0x50109e09"
+      },
+      "dispatcher": {
+        "status": 7,
+        "injected": true,
+        "conflict_preserved": true,
+        "complete_native_menu_snapshot_preserved": true,
+        "display_ready": 0,
+        "resident_allocations": 0,
+        "native_page_header": "0x0",
+        "native_dispatcher": "0x1040525f"
+      },
+      "page": {
+        "status": 7,
+        "injected": true,
+        "conflict_preserved": true,
+        "complete_native_menu_snapshot_preserved": true,
+        "display_ready": 0,
+        "resident_allocations": 0,
+        "native_page_header": "0x12340002",
+        "native_dispatcher": "0x1048bffd"
+      }
+    },
+    "expected": "rejects",
+    "module_sha256": "3430dcbf81d96901c47737e14bb85fe959c45e772f48c2da98bcf3335d1c53df",
+    "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+    "synthetic_interleaving": true,
+    "hardware_cause_established": false,
+    "card_written": false,
+    "limits": [
+      "Conflict is an explicit synthetic owner mutation after prepare",
+      "No actual kernel scheduling, task locks or physical startup modeled",
+      "No claim that native firmware performs the injected change",
+      "No protection against changes inside the final publication window is tested"
+    ]
+  },
+  "menu_status_checks": 15,
+  "menu_status_passed": true,
+  "repository_tests": 95,
+  "non_persistence_variant_compiles": true,
+  "hardware_freeze_fixed": false,
+  "hardware_trial_authorized": false,
+  "card_written": false,
+  "firmware_image_generated": false,
+  "remaining_risks": [
+    "Final check-to-store interval is not atomic",
+    "Loader still publishes menu before host readiness",
+    "Actual native startup mutation and failing instruction unknown",
+    "Application/card readiness and kernel scheduling remain unmodeled"
+  ],
+  "lcd_checks": 47,
+  "lcd_passed": true,
+  "lcd_scope": "Actual API44 load, compact menu callbacks/count metadata, supported defaults, battery/focal switches, reset, worker save/restart, v1 legacy normalization and native DISP cycling/page skipping/context fallback"
+}

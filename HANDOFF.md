@@ -1,5 +1,26 @@
 # Laptop handoff — October 20, 2026
 
+## Late native-menu ownership hardening - November 21, 2026
+
+Synthetic compiled regression now reproduces a preparation/publication ownership
+gap: mutate dispatcher or page at persistence_prepare entry, after original
+ownership checks; old module overwrites both and reports status8. Added shared
+sm_publication_available check at prepare AND immediately before publication.
+sm_publish returns failure on changed ownership; combined entry propagates this
+before native menu/scalar commits. New module rejects both with status7, preserves
+entire native page/dispatcher snapshot, ready=0, no resident allocations. Normal
+load succeeds. This is defensive hardening, NOT a proven camera-freeze repair;
+final check/store window still not atomic and worker-side publication/readiness
+concerns remain. No host firmware change or card write, no trial authorized.
+
+Private experimental module in .private/builds/20261121-menu-ownership-hardening-01,
+SHA3430dcbf...1c53df; independent do_not_stage build reproduced twice. Shared
+non-persistence menu variant also compiles.95 root tests and15 existing native
+menu-status checks pass. Full LCD regression47 checks also pass (menu defaults/
+callbacks, persistence restart, battery/focal, reset, DISP). No live process
+remains. Exact synthetic audit tool and public
+scoped evidence added; see STARTUP_FAILURE_REVIEW.md. No automatic new camera test.
+
 ## Offline startup publication audit - November 21, 2026
 
 Read STARTUP_FAILURE_REVIEW.md and evidence/20261121-startup-publication-audit.json.
