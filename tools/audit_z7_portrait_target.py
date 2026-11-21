@@ -68,6 +68,16 @@ def audit(raw,packet,metadata):
         f.setup();f.mutation=(TABLE+40+offset,struct.pack('<I',0x12345678));check(f'descriptor-changed-across-native-query{offset}',0,1)
     for p,value in ((REG,13),(REG+4,TABLE+4),(OUTPUT,2)):
         f.setup();f.mutation=(p,struct.pack('<I',value));check(f'registry-or-output-changed-across-query{p}',0,1)
+    match=CODE+metadata['symbols']['z7_portrait_target_match_probe']
+    for logical in (0,1,2,3,32):
+        f.setup(index=logical);before=bytes(f.u.mem_read(TABLE,660))
+        good=f.call(match,logical)==1 and f.getters==1 and bytes(f.u.mem_read(TABLE,660))==before
+        checks.append(dict(name=f'generic-native-logical-match{logical}',passed=good));assert good
+        f.getters=0;good=f.call(match,(logical+1)%33)==0 and not f.getters
+        checks.append(dict(name=f'generic-wrong-logical-match{logical}',passed=good));assert good
+    for logical in (33,0xffffffff):
+        f.getters=0;good=f.call(match,logical)==0 and not f.getters
+        checks.append(dict(name=f'generic-out-of-range{logical}',passed=good));assert good
     return dict(passed=True,checks=checks,original_target_getter_executes=True,registry_and_output_state_supplied=True,
                 task_exclusion_allocation_lifetime_aba_page_policy_or_pixels_proven=False,camera_card_access=False)
 

@@ -10,7 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 import struct
-from unicorn.arm_const import UC_ARM_REG_R0,UC_ARM_REG_R1
+from unicorn.arm_const import UC_ARM_REG_R0,UC_ARM_REG_R1,UC_ARM_REG_LR
 from audit_z7_module_host import HostFixture
 from audit_z7_information_native import InformationFixture
 from audit_z7_portrait_draw import BACKENDS,WORDS,reference_destination
@@ -25,7 +25,7 @@ class GridHostFixture(HostFixture):
     def __init__(self,raw,report,packet,metadata):
         super().__init__(raw,report,packet);self.metadata=metadata;self.native_call_timeout_us=0
         self.u.mem_map(0xa1d75000,0x1000);self.u.mem_map(0xa2010000,0x20000);self.u.mem_map(0xa1d40000,0x10000)
-        self.stop_at=None;self.rendered=[];self.acks=[];self.flags=[];self.mutation=None;self.targets=0;self.orientations=0
+        self.stop_at=None;self.rendered=[];self.band_clears=[];self.acks=[];self.flags=[];self.mutation=None;self.targets=0;self.orientations=0
         InformationFixture.prefix(self,0x1030cf74,0x1030d00a,MEM+0x60001)
         self.write(SLOT,0x10372391)
     def write(self,p,v):self.u.mem_write(p,struct.pack('<I',v))
@@ -42,6 +42,7 @@ class GridHostFixture(HostFixture):
         self.u.mem_write(TABLE,bytes(records));self.write(0xa1809074,0);self.u.mem_write(0xa1d49784,bytes([{0:1,1:3,2:4,3:2,4:0}[orientation]]))
         self.mutation=None
         self.write(self.variable('layout'),0)
+        self.u.mem_write(self.variable('bands'),bytes(12))
         if prime:self.dispatch(box=(0,280,720,146))
     def hook(self,u,address,size,context):
         if address==self.stop_at:u.emu_stop();return
@@ -52,7 +53,11 @@ class GridHostFixture(HostFixture):
         if address in BACKENDS.values():
             # This integration fixture uses rect17 and image19/1A/1C backends.
             length=28 if address==BACKENDS[0x17] else 88 if address==BACKENDS[0x1a] else 68
-            self.rendered.append((address,bytes(u.mem_read(u.reg_read(UC_ARM_REG_R0),length))));self.ret(0);return
+            record=(address,bytes(u.mem_read(u.reg_read(UC_ARM_REG_R0),length)))
+            lr=u.reg_read(UC_ARM_REG_LR)&~1;body=self.words()[12]
+            if address==BACKENDS[0x17] and body<=lr<body+self.metadata['image_bytes']:self.band_clears.append(record)
+            else:self.rendered.append(record)
+            self.ret(0);return
         if address==0x1042eade:self.acks.append((u.reg_read(UC_ARM_REG_R0),u.reg_read(UC_ARM_REG_R1)))
         if address==0x10170be8:
             self.flags.append((u.reg_read(UC_ARM_REG_R0),u.reg_read(UC_ARM_REG_R1)));self.ret(0);return
@@ -66,7 +71,7 @@ class GridHostFixture(HostFixture):
             else:s[9]=clear
         data=struct.pack('<%dI'%len(s),*s);self.u.mem_write(PAYLOAD,data)
         msg=struct.pack('<7I',1,2,3,0x1042eadf,0x42010000+command,PAYLOAD,123);self.u.mem_write(MESSAGE,msg)
-        self.rendered.clear();self.acks.clear();self.flags.clear();self.targets=0;self.orientations=0
+        self.rendered.clear();self.band_clears.clear();self.acks.clear();self.flags.clear();self.targets=0;self.orientations=0
         before=self.read(self.variable('handled'))
         self.call(self.report['symbols']['z7_graphics_dispatch_bridge'],MESSAGE)
         assert bytes(self.u.mem_read(PAYLOAD,len(data)))==data and bytes(self.u.mem_read(MESSAGE,24))==msg[:24]
@@ -156,6 +161,19 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
     check('non-lcd-target-does-not-release-menu-layout',f.dispatch()==0 and f.read(f.variable('layout'))==1)
     f.u.mem_write(0xa180ad84,b'\x0c');f.write(0xa1821394,2)
     check('leaving-exclusive-lcd-releases-menu-layout',f.dispatch()==0 and f.read(f.variable('layout'))==0)
+    f.setup(1)
+    check('first-footer-paint-clears-owned-band-once',f.dispatch(box=(300,430,80,24))==1 and len(f.band_clears)==1 and f.read(f.variable('bands'))==1)
+    check('unchanged-footer-does-not-repeat-band-clear',f.dispatch(box=(300,430,80,24))==1 and not f.band_clears)
+    f.u.mem_write(TABLE+20,struct.pack('<IBxHHHII',0xb00c0000,7,720,480,0,0,0));f.write(0xa180ad84,7)
+    check('logical1-full-clear-observation-marks-footer-dirty',f.dispatch(box=(0,0,720,480))==0 and not f.band_clears and f.read(f.variable('bands')+4)==1)
+    f.write(0xa180ad84,12)
+    check('dirty-footer-clears-before-next-hint',f.dispatch(box=(300,430,80,24))==1 and len(f.band_clears)==1 and f.read(f.variable('bands')+4)==0)
+    f.u.mem_write(0xa18298b8,b'\2\0')
+    check('entering-dial-clears-dial-band',f.dispatch(box=(199,100,201,111))==1 and len(f.band_clears)==1 and f.read(f.variable('bands')+8)==1)
+    f.u.mem_write(0xa18298b8,b'\1\0')
+    check('settings-entry-clears-both-reserved-bands',f.dispatch()==1 and len(f.band_clears)==2 and not any(f.read(f.variable('bands')+off) for off in (0,4,8)))
+    f.setup(1);f.dispatch(box=(300,430,80,24));f.u.mem_write(0xa182ed2c,b'\1')
+    check('native-menu-takeover-forgets-bands-without-erasing',f.dispatch()==0 and not f.band_clears and not any(f.read(f.variable('bands')+off) for off in (0,4,8)))
     f.setup();f.write(SLOT,0x12345679);before=f.read(f.variable('received'))
     check('foreign-slot-prefetched-bridge-falls-back-without-module',f.dispatch()==0 and len(f.rendered)==1 and f.read(f.variable('received'))==before)
     old=GridHostFixture(old_raw,old_host,packet,metadata)
@@ -180,7 +198,7 @@ def main():
     names=('tools/audit_z7_portrait_grid_host.py','tools/audit_z7_module_host.py','tools/audit_z7_information_native.py','tools/audit_z7_portrait_draw.py',
            'tools/audit_z7_portrait_grid_message.py','tools/audit_z7_portrait_page_message.py','tools/audit_splash_image.py','tools/build_z7_module.py','z7-native-modules/sdk/module.ld',
            'z7-native-modules/examples/portrait_grid_host_probe.c','z7-native-modules/plugins/portrait_grid_message.h',
-           'z7-native-modules/plugins/portrait_page_message.h','z7-native-modules/plugins/portrait_footer.h','z7-native-modules/plugins/portrait_layout.h',
+           'z7-native-modules/plugins/portrait_page_message.h','z7-native-modules/plugins/portrait_footer.h','z7-native-modules/plugins/portrait_layout.h','z7-native-modules/plugins/portrait_bands.h',
            'z7-native-modules/plugins/portrait_draw.h','z7-native-modules/plugins/portrait_geometry.h','z7-native-modules/plugins/portrait_grid.h',
            'z7-native-modules/plugins/portrait_page.h','z7-native-modules/plugins/portrait_takeover.h','z7-native-modules/plugins/portrait_target.h','z7-native-modules/plugins/orientation_sample.h')
     result.update(host_sha256=host['main_payload_sha256'],probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),

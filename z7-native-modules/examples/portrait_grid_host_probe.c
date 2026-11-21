@@ -1,15 +1,17 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 API84 portrait diagnostic.
- * Incomplete port: no footer lifecycle/text/input, pending-request fence or live
+ * Incomplete port: observed band lifecycle only; no text/input, pending-request fence or live
  * task/lifetime proof. Emulator only; not a release or installation candidate.
  */
 #include "module.h"
 #include "graphics.h"
 #include "../plugins/portrait_layout.h"
+#include "../plugins/portrait_bands.h"
 #include "../plugins/portrait_page.h"
 #include "../plugins/portrait_target.h"
 #include "../plugins/orientation_sample.h"
 volatile uint32_t z7_portrait_grid_received,z7_portrait_grid_handled;
 struct z7_portrait_layout z7_portrait_grid_layout;
+struct z7_portrait_bands z7_portrait_grid_bands;
 static uint32_t portrait_grid_callback(volatile uint32_t *message)
 {
     ++z7_portrait_grid_received;
@@ -17,20 +19,27 @@ static uint32_t portrait_grid_callback(volatile uint32_t *message)
     volatile const uint8_t *scene=(void *)(uintptr_t)0xa201d4d0u;
     volatile const uint32_t *outputs=(void *)(uintptr_t)0xa1821394u;
     if (*scene || page==Z7_PORTRAIT_OTHER || (*outputs&7u)!=1) {
-        z7_portrait_layout_reset(&z7_portrait_grid_layout);return 0;
+        z7_portrait_layout_reset(&z7_portrait_grid_layout);
+        z7_portrait_bands_forget(&z7_portrait_grid_bands);return 0;
     }
-    if (!z7_portrait_lcd_target()) return 0;
+    if (!z7_portrait_lcd_target()) {
+        if (z7_portrait_lcd_target_index(1)) z7_portrait_bands_observe_clear(&z7_portrait_grid_bands,message);
+        return 0;
+    }
     z7_orientation_sample(&orientation); /* Unknown leaves the entry in landscape. */
     uint32_t after=z7_portrait_imenu_page();
     if (*scene || after!=page || (*outputs&7u)!=1) {
-        if (*scene || after==Z7_PORTRAIT_OTHER || (*outputs&7u)!=1)
+        if (*scene || after==Z7_PORTRAIT_OTHER || (*outputs&7u)!=1) {
             z7_portrait_layout_reset(&z7_portrait_grid_layout);
+            z7_portrait_bands_forget(&z7_portrait_grid_bands);
+        }
         return 0;
     }
     if (!z7_portrait_lcd_target()) return 0;
     uint32_t layout_page=page==Z7_PORTRAIT_GRID ? Z7_LAYOUT_GRID :
         page==Z7_PORTRAIT_DIAL ? Z7_LAYOUT_DIAL : Z7_LAYOUT_SETTING;
     uint32_t layout=z7_portrait_layout_choose(&z7_portrait_grid_layout,message,layout_page,orientation);
+    z7_portrait_bands_before(&z7_portrait_grid_bands,message,layout_page,layout);
     if (layout!=1 && layout!=2) return 0;
     uint32_t handled=z7_portrait_page_message(message,layout_page,layout);
     z7_portrait_grid_handled+=handled;

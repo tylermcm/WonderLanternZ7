@@ -1,5 +1,46 @@
 # Laptop handoff — October 20, 2026
 
+## Observed reserved-band lifecycle and native clears - November 21, 2026
+
+Previous85e4b8c latched orientation. New portrait_bands.h tracks footer orientation/
+dirty state and dial orientation. First use clears the reserved footer660..720
+or dial283..440; repeats skip clears; caller orientation replacement clears old/
+new positions. Settings releases both. Observed foreign scene/page/output drops
+bookkeeping with NO internal band clear. Other targets preserve ownership.
+State is orientation bookkeeping, not an allocation identity or lifetime pin.
+
+Internal clears call original1042F5A8 directly with bounded bottom-origin geometry
+and zero flags; original instructions save clear color1121, set four zero floats,
+call1045081E, restore color. No message completion/event is emitted internally;
+the actual producer completes once afterward. GPU success boundaries supplied.
+Full grid clears/preview copies mark dirty. Target helper now accepts bounded
+logical indices; logical2 wrapper remains. Logical1 full-clear observation uses
+the same active/unique720x480 registry/native getter checks, then marks dirty.
+Physical cross-surface relationship/native writer/lifetime closure still unproved.
+
+Private portrait-bands-01 PASS52 native transparent-clear/image/bookkeeping cases,
+nonzero supplied clear color restored exactly, clear-before-producer ordering,
+single acknowledgement. Probe4800/4736image/0BSS/0relocs SHA
+886cd2a0b9dfe456f6a89cd0b13d1787c505587914bdbb60dbe50de82105abcb.
+bands-host-01 PASS91 loaded cases, including first/repeated/dirty footer, logical1
+observation, dial entry/settings cleanup and native MENU forgetting without band
+erasure. Probe5888/5824image/24BSS/0relocs SHA
+30aa3c3320de7292333ea00de9fe16fc9684e889f75d0e5bf09ecdf2940b2ab2.
+bands-target-01 PASS56 generic lookup/bounds cases, probe384 SHA
+e405db08a6845c48cb565367cf048be45cf639b844ae29bf8262a902427ec635.
+GPU state/creation/draw, page/target/scene/task/sensor/kernel/fs/allocator inputs
+remain supplied; no pixels, full boot, unobserved exits, task exclusion, native
+failure recovery or buffer lifetime proved. Root71/no skips; three direct source
+maps verified. Ignored Graphify3594nodes/9800edges, existing parser warnings.
+See evidence/20261121-portrait-bands.json and updated loaded/target summaries,
+plus z7-native-modules/PORTRAIT_RESEARCH.md.
+
+Next text/input/settings controls and fuller lifecycle coverage, pending native
+requests/live/external/magnified admission, font files/inline symbols, Info mirror,
+real histogram, native lifetime/writer closure, exact installation/recovery.
+Full goal ACTIVE. Accepted host MAIN/functional combined display module unchanged.
+Incomplete emulator-only diagnostic; no camera/card/staging/flash/push.
+
 ## Latched menu orientation in loaded diagnostic - November 21, 2026
 
 Previous851168c reflowed footer graphics but sampled a new orientation per message.

@@ -365,6 +365,45 @@ The previously documented supplied-NULL allocator counterexamples remain open.
 
 ## Remaining integration
 
+### Observed reserved-band lifecycle
+
+`portrait_bands.h` tracks footer orientation/dirty state and dial orientation.
+It clears the logical footer(0,660,480,60) or dial(0,283,480,157) before first
+admitted use, avoids repeated clears for an unchanged band, and clears both old
+and new positions when its caller replaces orientation. Leaving DIAL for GRID
+releases the dial band; an admitted settings/external layout releases both.
+Observed foreign-page/scene/output takeover drops bookkeeping without issuing
+an internal band clear. State records orientation, not an allocation identity:
+buffer pinning, descriptor ABA and unobserved transition coverage remain open.
+
+Clears call original synchronous body1042F5A8 directly with bounded bottom-origin
+geometry and zero sampler flags. Original instructions save clear color1121,
+set four zero floats, call native clear1045081E, and restore the saved color.
+No message completion or producer event is emitted by this internal operation.
+The admitted producer's original dispatch/strip adapter completes separately once.
+GPU calls in the fixture succeed; native failure recovery is not established.
+
+Full grid clears and large preview copies mark the footer dirty. The readonly
+target helper now accepts a bounded logical index, retaining the logical2 wrapper.
+The loaded diagnostic uses the same unique/active720x480 registry/native getter
+checks for logical1 before observing its full-screen clear and marking dirty.
+This identifies the supplied native logical index; it does not prove the physical
+relationship between surfaces or close native writer/lifetime behavior.
+
+Private `20261121-portrait-bands-01/result.json` passed52 checks: first/repeated/
+dirty footer, dial entry, settings release, orientation replacement, foreign
+takeover, full clears and explicit forget. Original clear/image bodies execute;
+GPU state/creation/draw and page/orientation admission are supplied. Nonzero
+supplied clear color restores exactly; each producer acknowledges once, after
+internal clears. Probe4800 bytes. Bands-host-01 passed91 loaded integration
+checks, including logical1 observation, dirty repaint and native MENU takeover
+without internal clearing. Loaded probe5888 bytes. Bands-target-01 passed56
+native getter/registry checks including generic index bounds. No pixels, actual
+buffer lifetime, full boot or native task exclusion is proved. See
+[band evidence](../evidence/20261121-portrait-bands.json), updated
+[target evidence](../evidence/20261121-portrait-target.json) and
+[loaded evidence](../evidence/20261121-portrait-grid-host.json).
+
 ### Menu orientation latch
 
 `portrait_layout.h` now holds a menu orientation independently of subsequent
