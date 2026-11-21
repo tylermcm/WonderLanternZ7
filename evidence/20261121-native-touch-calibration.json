@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": 5855,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "dimension_table": [
+    720,
+    480,
+    1024,
+    682,
+    720,
+    480,
+    1024,
+    682
+  ],
+  "native_packets": 2926,
+  "distinct_axis_samples": 2926,
+  "scope": "Original forward/inverse wrappers; every in-range integer on both axes in all six point fields; signed sentinels; zero gesture distance; packet guards and ABI preservation",
+  "limits": [
+    "Synthetic packets; no physical touch calibration",
+    "No driver registration or queue copy/lifetime proof",
+    "No nonzero gesture-distance or sqrt-path proof",
+    "No input task, camera boot, installation or recovery proof"
+  ],
+  "installation_candidate": false,
+  "source_sha256": {
+    "tools/audit_z7_native_touch_calibration.py": "a6fba441934ddacd4a290ffbbcf5b3fe6790846861c2283c2ae8793f6caa7626",
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b"
+  },
+  "date": "2026-11-21",
+  "root_tests": 71,
+  "root_tests_skipped": 0,
+  "source_fingerprints_verified": true,
+  "full_goal_complete": false,
+  "host_or_module_firmware_changed": false,
+  "camera_card_access_staging_flash_or_push": false
+}

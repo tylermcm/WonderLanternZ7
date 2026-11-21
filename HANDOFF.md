@@ -1,5 +1,41 @@
 # Laptop handoff — October 20, 2026
 
+## Native touch calibration and queue copy - November 21, 2026
+
+HEAD2d31415 installed navigation in an emulator-only host. This checkpoint adds
+stock-instruction touch evidence, without changing host/module firmware code.
+Original conversion wrappers103332AA/10333294 use immutable table10649BE8:
+720x480,1024x682 repeated. Their integer implementation103330D0 matches the
+pinned helper's forward/inverse rounding at every in-range integer on each axis
+in all six event point fields, plus signed sentinels. Calibration audit PASS5855
+over2926 synthetic packets; distance is zero, nonzero-distance/sqrt untested.
+This verifies native coordinate math, not physical sensor calibration.
+
+Original shared touch producer103319D8 copies60 bytes synchronously into one of
+16 native0x154-byte ring entries atA200FE24 and overwrites entry word0 with1.
+Queue audit PASS3450:256 admitted cases across16 empty ring indices, kinds1..8
+and press/release, exact copy/clearing/wrap/count, stack and caller independence,
+ABI preservation;16 failed admissions and2 native filter rejections. Failed
+queue admission still returns1 and replaces current/previous entries with
+kind9 cancellations without advancing head. A future bridge must preserve this
+native return/side-effect behavior rather than interpret1 as event admission.
+Native memory/profile-copy and filtering instructions execute; OS locks, wake,
+time, profile data and queue admission are supplied. Full/nonempty rings,
+consumer/task concurrency and actual driver integration remain unproved.
+
+Tools: audit_z7_native_touch_calibration.py and audit_z7_native_touch_queue.py.
+Source-only evidence: evidence/20261121-native-touch-calibration.json and
+evidence/20261121-native-touch-queue.json. Private raw MAIN identity is the exact
+original e6df1764...fecbff; no modified firmware artifact is produced here.
+Both audit source maps verified; root71/no skips. Ignored Graphify refreshed to
+3756nodes/10328links, retaining existing conditional-C extraction warnings.
+Next: native registration/dispatch-chain audit, then resident touch bridge and
+loaded portrait admission/lifetime checks. Remaining rotation preferences,
+pending/live/external/magnified screens, font/assets and render/task closure,
+Info mirror/histogram, integrated release and installation/recovery remain open.
+User is ready for a flash if ready; this checkpoint does not satisfy that
+condition. No card/camera access, staging, flash or push. Full goal ACTIVE.
+
 ## Resident API88 portrait navigation - November 21, 2026
 
 Previous131f974 mapped controls without an installed input path. New opt-in

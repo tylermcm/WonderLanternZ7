@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": 3450,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "empty_ring_indices": 16,
+  "admitted_packet_cases": 256,
+  "failed_queue_admission_cases": 16,
+  "native_filter_rejections": 2,
+  "scope": "Original touch producer 103319D8 and native memcpy; kinds1..8 with press/release in each empty ring index and supplied active state; exact 60-byte copy, entry clearing, ready marker, wrap/count, caller/stack independence and ABI preservation",
+  "supplied_boundaries": [
+    "OS locks",
+    "wake services",
+    "time",
+    "auxiliary profile data",
+    "queue admission result"
+  ],
+  "failed_admission_returns1_and_copies_two_cancellation_entries": true,
+  "limits": [
+    "No full/nonempty ring or kinds outside1..8 coverage",
+    "No native consumer, concurrency or task lifetime proof",
+    "No driver registration, physical touch, boot, flash or recovery proof"
+  ],
+  "installation_candidate": false,
+  "source_sha256": {
+    "tools/audit_z7_native_touch_queue.py": "d256055247786cfd54354ffae29a66e44d0888166282853cbc84914d3f3edcb0",
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b"
+  },
+  "date": "2026-11-21",
+  "root_tests": 71,
+  "root_tests_skipped": 0,
+  "source_fingerprints_verified": true,
+  "full_goal_complete": false,
+  "host_or_module_firmware_changed": false,
+  "camera_card_access_staging_flash_or_push": false
+}

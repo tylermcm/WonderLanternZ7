@@ -7,6 +7,34 @@ current display module. The accepted LCD/EVF highlight pair is unchanged.
 
 ## Resident navigation API88
 
+### Original touch prerequisites (no installed touch bridge)
+
+The exact original Z7 C3.80 MAIN supplies table10649BE8 containing
+720x480/1024x682 twice. Original wrappers103332AA (raw to LCD) and10333294
+(LCD to raw) execute integer converter103330D0. The independent
+`tools/audit_z7_native_touch_calibration.py` checks every in-range integer on
+each axis in all six point fields, signed sentinels and untouched packet bytes.
+PASS5855 across2926 packets confirms the helper's coordinate rounding. Gesture
+distance is zero in these packets; nonzero distance/sqrt and physical sensor
+calibration are outside scope.
+
+Original shared producer103319D8 copies the60-byte packet synchronously into
+one of16 entries atA200FE24 (stride0x154), clears the rest and sets word0=1.
+`tools/audit_z7_native_touch_queue.py` executes this producer, its native memory
+helpers, ring count and profile copy wrappers. PASS3450 covers256 admitted
+kind1..8 press/release packets across all empty ring positions,16 failed queue
+admissions and2 filter rejections. Destroying caller and stack storage after
+return leaves queued data unchanged. Failed queue admission still returns1:
+the native path writes kind9 cancellations to current/previous slots and does
+not advance head. Preserve the native return and these side effects in any
+future resident bridge. Locks, wake, time, profile data and queue admission are
+supplied. No full/nonempty ring, consumer/task concurrency, native registration
+or installed touch callback is proved. See source-only evidence
+`evidence/20261121-native-touch-calibration.json` and
+`evidence/20261121-native-touch-queue.json`.
+
+### Installed navigation bridge
+
 `sdk/navigation.h` extends the API84 prefix with init-only navigation registration.
 `--navigation-hooks` requires the graphics profile. The permanent host bridge
 replaces the14-byte central dispatcher104389B0, keeping all17 native RAM mode
