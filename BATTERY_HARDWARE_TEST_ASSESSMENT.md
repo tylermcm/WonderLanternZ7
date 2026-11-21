@@ -1,9 +1,17 @@
 # Battery-only SD hardware test assessment
 
+**Owner-reported PASS for the scoped startup/control test.** Numeric percentage
+visible; MENU, touch and normal power-off confirmed working. This demonstrates
+module/GUI execution for this exact candidate. It does not clear the full LCD
+release, establish battery accuracy, or identify the previous freeze cause.
+Current working battery-only card file stays active; no further change authorized.
+See evidence/20261121-battery-hardware-result.json. Preapproval material below
+and frozen bundle remain historical; this result supersedes pending status.
+
 Owner subsequently approved "yes". Exact candidate is now staged as Z7APP.BIN,
 readback/hash verified and safely ejected. All four disabled originals, existing
 settings/file metadata and Nikon catalog are preserved. No firmware update.
-Awaiting ONE owner startup/control/percentage/power-off observation. The frozen
+The owner observation is now recorded above. The frozen
 preapproval bundle stays unchanged; this note supersedes its approval status.
 
 November 21, 2026. Prepared for owner review; NOT staged or authorized to run.

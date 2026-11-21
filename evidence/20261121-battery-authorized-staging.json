@@ -27,6 +27,7 @@
     "Z7CFG1.DAT": false
   },
   "private_staging_record_sha256": "bf283fe9ce796a63db581683c75023756d34ce249ccaace7a81398cea4346269",
-  "hardware_result": "pending",
-  "hardware_test_authorized": true
+  "hardware_result": "PASS by owner report: percentage visible; MENU/touch and normal power-off work",
+  "hardware_test_authorized": true,
+  "hardware_result_evidence": "evidence/20261121-battery-hardware-result.json"
 }

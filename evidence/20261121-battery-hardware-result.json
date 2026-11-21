@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "module_sha256": "89358992419867380781bafae7a1624f4d51955b3920127718f6daba9318ea23",
+  "module_bytes": 2824,
+  "scope": "One ordinary rear-LCD photo startup, visible battery percentage, MENU/touch and normal power-off",
+  "result": "PASS by owner report",
+  "owner_quotes": [
+    "yep i see it",
+    "yeah it all works like it should"
+  ],
+  "percentage_visible": true,
+  "menu_and_touch_normal": true,
+  "normal_power_off_confirmed": true,
+  "module_gui_execution_demonstrated": true,
+  "source": "Owner conversation observations; no camera trace or screen recording",
+  "firmware_flashed_for_this_test": false,
+  "full_lcd_release_cleared": false,
+  "earlier_freeze_cause_established": false,
+  "card_changed_after_result": false,
+  "limits": [
+    "Battery accuracy and refresh behavior across discharge not verified",
+    "Repeated cold starts, capture/movie/output transitions and extended lifecycle not verified",
+    "Pass for this smaller module does not rule out timing-dependent loader faults",
+    "Installed host has no physical image readback; full module remains withdrawn"
+  ]
+}

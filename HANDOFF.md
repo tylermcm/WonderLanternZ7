@@ -1,5 +1,25 @@
 # Laptop handoff — October 20, 2026
 
+## Battery-only hardware startup/control checkpoint PASSED - November 21, 2026
+
+Owner saw percentage: "yep i see it". Asked specifically whether MENU/touch and
+normal power-off work; owner confirmed "yeah it all works like it should".
+Record PASS for this exact battery-only ordinary-startup/control/power-off test,
+not full firmware acceptance. Visible percentage demonstrates module/GUI callback
+execution on hardware. Exact staged module2824bytes SHA89358992...18ea23.
+Evidence: evidence/20261121-battery-hardware-result.json. No further card writes,
+firmware updates or camera tests performed/authorized by this observation.
+
+Current card retains active working battery-only Z7APP.BIN; all four prior files
+remain disabled per last verified staging. Do NOT overwrite/quarantine this
+working candidate automatically. Installed host remains modified. Full LCD and
+ownership-hardening builds remain withdrawn. Earlier freeze cause unresolved;
+pass does not exonerate loader timing for larger module. Battery accuracy/long
+runs/capture/movie/output transitions not validated. No new test authorized.
+Requested hardware-testable checkpoint is reached and owner tested its narrow
+scope successfully. Next incremental feature needs separate offline assessment
+and fresh authorization. Docs/evidence-only update; no tests rerun or live process.
+
 ## Battery-only SD diagnostic staged and safely ejected - November 21, 2026
 
 Owner explicitly approved "yes" to staging exact reviewed battery-only diagnostic,
