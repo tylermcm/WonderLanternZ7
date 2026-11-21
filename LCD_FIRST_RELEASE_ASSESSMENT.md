@@ -1,181 +1,125 @@
-# Original Z7 LCD first release assessment
+# Original Z7 LCD first-release installation assessment
 
-November 21, 2026. **Installation remains on hold.** This assessment identifies
-the software under test; it does not clear a camera update.
+November 21, 2026. **Scoped software gates have passed for a controlled first
+hardware trial. Card staging and camera programming await explicit owner
+authorization.** This is independent WonderLanternZ7 work for original Z7 C 3.80,
+with private Nikon inputs and preserved component licenses. Hardware acceptance
+and emergency recovery are unverified.
 
-The owner confirms normal boot and the most recent Z7 firmware. Nikon currently
-lists C 3.80 on its [Z7 download page](https://downloadcenter.nikonimglib.com/en/products/492/Z_7.html),
-matching this lab's target. This interprets the owner's report; no firmware-screen
-reading or installed-image readback was obtained. The owner has now connected
-the card. Read-only inventory identifies E: as a Sony QD-G120F XQD card, exFAT,
-with volume label "NIKON Z 9". That label does not identify the current camera
-or its installed firmware; any later write approval must identify this exact
-card as intended for the original Z7.
+The smaller release includes the SD loader, six grids, four custom DISP presets,
+native horizon, supported information controls, battery percentage, landscape
+photo LCD focal text and settings persistence. Portrait, zebras, custom Info/
+histogram and output extensions remain deferred. The broader port is unfinished.
 
-Private `card-backups/20261121-sony-qd-g120f-01/inspection.json` records stable
-disk/volume identity and a complete read-only inspection. None of the five named
-root update/module/configuration files is present; a root BIN/DAT filename check
-also finds none. Zero existing files were backed up; only the private inspection
-report was created. Photos and other card files were untouched. This is NOT a
-backup of the currently installed camera firmware or calibration.
+## Exact candidate and recovery inputs
 
-The selected scope is the SD loader, six native grid choices, four custom DISP
-presets, native horizon, supported information controls, battery percentage,
-supported LCD focal text and two-slot settings persistence. Portrait, zebras,
-custom Info/histogram and output extensions are deferred.
+The API44 display-only host and release04 module are unchanged by the latest
+harness work. Both were independently rebuilt twice; explicit updater review
+reconstructs host AND module and rejects mixed/modified profiles. The frozen
+owner-review bundle is private 20261121-lcd-trial-01.
 
-The exact host is private `20261121-lcd-core-host-01`, API44, display hooks only.
-Its MAIN is 33,058,860 bytes, SHA-256
-`7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057`.
-The exact module is private `20261121-lcd-first-release-04/Z7APP.BIN`,
-21,104 bytes, SHA-256
-`aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22`.
-Both were independently rebuilt twice. The explicit LCD updater review now
-independently reconstructs this display-only host and the first-release module,
-requiring exact packet/report agreement. Mixed profiles, advanced hosts and
-modified artifacts are rejected. MAIN alone is not an update file.
+| File | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Candidate full EG161080.BIN | 33,058,862 | fa709dba7eb7a9addc8bd5b90f839edd578cfb6d4bb0df87a1cd8cb4a7beaa4d |
+| Candidate Z7APP.BIN | 21,104 | aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22 |
+| Untouched stock EG161080.BIN | 33,052,090 | 7f59d8993080203a12692cf6927a0a8218786d3f72230c04174f1563c506a6f6 |
+| Untouched stock Z_7_0380.bin | See private manifest | 07cf19513ada5b770caec4cfc3531a6734c48aede28dcec037f0f8374ef441a2 |
 
-Native settings navigation, compact rows, reset, save and fresh-guest reload
-passed 58 checks across two guests and 19 frames. Exact menu regions match
-after restart. The combined focal rendering test passed 20 checks across 13
-frames, including fractional/whole values, lens absence, independent Other,
-component off and master off with native background restoration. Lens values
-and module/settings filesystem services are supplied. This proves neither
-physical lens telemetry nor card durability. The combined instruction audit
-passes 47 checks including native DISP cycling, disabled-page skipping and
-movie/EVF/menu fallback. The focal instruction lifecycle audit passes 45 checks.
-These supply incoming context and OS/render services and are not physical-output
-tests. The exact combined profile also passes 67 native base-page instruction
-checks covering horizon selection, master-off restoration, conflicting state,
-failed setter/restore retry and unsupported menu/movie/output fallback.
-The exact six-choice native grid menu passes 19 checks across seven frames,
-selecting Fourths, Thirds, Golden, Center, Dense and Off with the expected native
-stored values. This is selection/menu evidence, not a new shooting pixel test.
-The existing battery instruction audit now also passes 38 checks on this exact
-combined profile, enabled through its compact native menu callback. Sampling,
-palette preservation, ownership, retirement and unsupported contexts execute
-compiled module/native helpers with supplied icon/telemetry/mutex/render
-services. This does not clear native visual MENU/PLAY integration or hardware.
+Candidate MAIN is 33,058,860 bytes, SHA-256
+7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057.
+It matches the full EG prefix; MAIN alone is not an update file. Both EG CRC
+residues are zero. Candidate size is below the original 43,253,760-byte descriptor
+capacity. The stock-based host does not retain every earlier experiment. Displayed
+version remains 3.80; that display alone cannot prove this host is installed.
 
-Battery drawing, its native icon-region restoration and adapter exclusion pass
-before the native MENU call stops QEMU on an unmodeled write to `0x10000aaa`
-(guest PC `0xa2a40652`). Preserve private `lcd-shooting-battery-01` as failed;
-PLAY was not reached. This does not establish a release defect or clear MENU.
-The battery-only control on the SAME host passes 15 checks/12 frames, including
-native MENU and no-card PLAY return. It does not prove the combined profile.
-Measured-ready run01 failed because no eligible percentage appeared. Run02's
-saved baseline visibly contains the adapter glyph; it was intentionally stopped
-after identifying an invalid request baseline, not counted as a lifecycle pass.
-Battery-auto had checkpointed AFTER supplying its icon request, allowing native
-tasks to overwrite it. The existing settings-battery integration explicitly
-avoids that ordering. The current run03 reuses that ordering and qualifies the
-actual native battery glyph (up to three labeled requests, all frames retained).
-It also pumps the persistent file-service observation point during free runs
-using the established persistence-probe wait. Pipeline readiness is measured.
-Run03 fails its six-attempt measured pipeline-readiness gate before rendering
-or MENU tests; it cannot validate the corrected icon request path. Do not rerun
-blindly or count this as a feature failure/pass. Inspect its RAW/ISP/scanout
-observations first. No successful device response or framebuffer is supplied.
+## Scoped checks
 
-Inspection confirms RAW advances while ISP remains at one frame and processed
-scanout is absent in run03. Battery's compiled context guard instead depends on
-native LCD/photo/menu/pool/font/icon ownership. The isolated `lcd-battery-ui-01`
-therefore records sensor health without claiming a pipeline pass and qualifies
-those UI dependencies. It FAILS native battery-glyph qualification after three
-labeled requests; MENU/PLAY are not reached. Preserve that failure. Original
-snapshot conversion at 10368564..103685AA rebuilds the bar from an incoming
-cache type/value, with default bar6; the run starts at bar6 (adapter). One-time
-snapshot/icon requests are not yet a stable native battery-input fixture. Do not
-patch native objects/pixels or describe this failure as hardware telemetry proof.
+| Check | Result |
+| --- | --- |
+| Native settings/save/restart | 58 checks, two fresh guests, 19 frames; compact navigation, edits, journal save and exact menu-region restoration |
+| Native six-grid menu | 19 checks, seven frames; all selections/stored values, not a new shooting pixel test |
+| Native focal rendering | 20 checks, 13 frames; values, absence, Other independence and background restoration |
+| Combined settings/DISP | 47 instruction checks; filtering, skipping, save/restart and context fallback |
+| Native base/horizon policy | 67 instruction checks; selection, restoration, conflicts and retry |
+| Focal/battery policy | 45 and 38 instruction checks with scoped supplied services |
+| Combined battery MENU/PLAY | 17 checks, 12 frames; display, restoration, adapter exclusion, MENU and no-card PLAY hiding/no sampling/return |
+| Native bar converter | Three original-instruction cases; destination canaries and unchanged source cache |
+| Updater header/filename | 12 selected original-instruction checks with supplied file/runtime properties |
+| Repository suite | 86 tests pass, no skips |
 
-A private held snapshot `20261121-lcd-first-release-01` preserves the full EG,
-MAIN, module and build reports with readback hashes. Full EG is 33,058,862 bytes,
-SHA-256 `fa709dba7eb7a9addc8bd5b90f839edd578cfb6d4bb0df87a1cd8cb4a7beaa4d`;
-MAIN matches its prefix and full EG CRC residue is zero. This is an artifact
-freeze with explicit holds, not an installation-approved review bundle.
+All 12 battery-frame hashes/dimensions and captured probe/helper sources were
+independently verified. The icon region restores exactly; this run also records
+complete RGB restoration for the disabled-overlay comparison. Active and returned
+battery frames were visually inspected.
 
-Private `20261121-lcd-updater-review-02` independently reconstructs the full EG
-and module and verifies six private bundle files by readback. Twelve selected
-original-updater instruction checks pass: stock/candidate headers under both
-modeled version-property values, invalid size/version rejection and exact
-filename acceptance/rejection. Use `EG161080.BIN` for the full EG and
-`Z7APP.BIN` for the SD module. The candidate is below the original descriptor's
-43,253,760-byte capacity. These checks supply file I/O and runtime properties;
-they do not execute full updater admission, erase/program/readback or real boot.
-Same-version acceptance on the camera and emergency recovery remain unverified.
-The report records its review-source hash, retains emulator-only identities and
-`installation_cleared=false`. Review01 is an earlier preserved snapshot.
+The bar fixture supplies only two already-read typed inputs at the original
+converter compare. Original conversion/stores, renderer, percentage getter and
+module callbacks execute. No percentage, object, pixel or peripheral-completion
+response is supplied. There were 98 input stops, all at the expected shooting
+snapshot. Module/settings files, sensor inputs and focal lens properties remain
+modeled. Earlier failed runs remain preserved; the later scoped UI pass does not
+prove real telemetry, image playback or a complete physical sensor pipeline.
 
-Untouched stock EG in the review is 33,052,090 bytes, SHA-256
-`7f59d8993080203a12692cf6927a0a8218786d3f72230c04174f1563c506a6f6`.
-It is a specific normal-updater rollback input if boot and updater access
-survive; it does not establish emergency recovery or preserve prior experiments.
+Hardware gaps remain: update acceptance/programming/boot, card I/O/cache coherence,
+shutdown durability, lens/battery telemetry, capture, real image playback, output
+switching, sleep/wake, simultaneous combinations and prolonged use. Emulator
+success does not establish camera recovery.
 
-## Requirements before staging
+## Camera and card evidence
 
-Read-only inspection is prepared in `tools/inspect_z7_card.py`. After positively
-identifying the connected card, supply its explicit drive letter and a new
-`.private/` backup directory. The helper rejects system/internal disks and writes
-only the private destination. It backs up the five named root update/module/
-journal files when present, verifies each copy against the source and rechecks
-volume/disk identity. Missing files and incomplete inspections are recorded;
-existing backup directories are never overwritten. Unrelated card files are
-untouched. This does not read the camera's installed image or clear installation.
+The owner reports normal boot and most recent Z7 firmware. Nikon's
+[current listing](https://downloadcenter.nikonimglib.com/en/products/492/Z_7.html)
+is C 3.80, matching target. This interprets that report; no screen reading or
+installed-image readback was obtained.
 
-Eight synthetic cases and the full 81-test repository suite pass. Actual Windows
-lookup of C: is rejected before creating output. The real-card inspection above
-has now completed; it exercises identity and missing-file handling, not copying
-an existing update or journal. No update was staged and no card writes occurred.
+Read-only inspection identifies E: as Sony QD-G120F XQD, exFAT, label "NIKON Z 9".
+Confirm this is the intended card for the ORIGINAL Z7 before any write. Its label
+does not identify the installed camera firmware. Private inspection report
+card-backups/20261121-sony-qd-g120f-01/inspection.json records stable identity.
+None of EG161080.BIN, Z_7_0380.bin, Z7APP.BIN, Z7CFG0.DAT or Z7CFG1.DAT exists;
+the root BIN/DAT filename check also finds none. Zero files were backed up; only
+the private report was created. Photos were untouched. This is not an installed
+firmware or calibration backup.
 
-After inspection, the private candidate full EG/module, stock EG and stock
-container were rehashed successfully against the exact review; both EG CRCs
-remain zero and the current host/module compiler-source fingerprints agree.
-The untouched stock rollback inputs remain available privately. No current-card
-update image exists to compare with an owner-tested modified release.
+## Proposed owner-operated trial, only after authorization
 
-1. Finish the focused combined-profile shooting gate and retain failed results.
-2. The explicit independent reconstruction and selected updater checks above
-   are complete. Preserve their limits when reviewing the remaining hardware
-   acceptance questions; do not relabel emulator artifacts as hardware-tested.
-3. Freeze full EG, module, reports and hashes together. Review loader startup
-   timing, native file/cache operations and missing/bad-module fallback with
-   their remaining physical limitations. A stock-based host changes installed
-   firmware and must not be represented as retaining all previous experiments.
-4. Card identity/inspection is complete as above; existing named files are
-   absent, so no current update image or preferences could be backed up.
-   The specific private stock rollback EG is identified above. Earlier
-   owner-tested images are historical options, not a verified current backup.
-   Preserve unrelated card files and explicitly confirm the intended target
-   card before any separately authorized staging.
-5. Present that exact bundle and recovery limits for explicit user authorization.
-   No staging or camera update has been authorized by passing these checks.
+1. Recheck this same intended card and its contents. Preserve unrelated files.
+   If new update/configuration files appeared, privately back them up and review
+   the changed state before replacing anything. Fresh preferences are required
+   so custom pages/battery start OFF. Use a charged camera battery.
+2. Stage ONLY the exact candidate EG161080.BIN and Z7APP.BIN at the card root.
+   Verify complete readback hashes, flush and safely eject. Keep rollback files
+   off the trial card; do not put stock and candidate EGs there together.
+3. The owner inserts it into the ORIGINAL Z7 C 3.80 and operates Setup > Firmware
+   version > Update. If no update is offered or accepted, report it; do not guess
+   filenames/headers or bypass admission. During programming, do not interrupt
+   power, remove the card or operate it. Follow completion/restart instructions.
+4. With custom pages/battery OFF, confirm rear-LCD menus and ordinary capture.
+   Open Framing grid display > Display settings. Enable one feature at a time:
+   grids/presets, horizon/information, battery, then focal. Check DISP, MENU and
+   playback return after each. Compare readings with native camera information.
+   Stop on unexpected behavior and preserve observations.
+5. Check preferences after normal power-off/restart, then real image playback,
+   native EVF/movie fallback and sleep/wake. Report results before prolonged use.
+   These are hardware tests to perform, not established results.
 
-## Installation and recovery limits
+## Recovery limits and authorization
 
-Any later authorized trial requires a charged battery, the reviewed full EG
-under the original updater's verified filename, and the module under its exact
-loader filename. Stage only the selected update EG, verify its full readback
-hash and safely eject. The owner operates the camera updater. The current
-candidate's actual updater acceptance and boot behavior are unverified.
-Before a first trial, back up any existing `Z7CFG0.DAT`/`Z7CFG1.DAT` off the card
-and use fresh defaults, so old preferences cannot enable overlays on first boot.
-Preserve those originals; do not silently replace or discard them.
+Removing Z7APP.BIN before a later cold boot can prevent module initialization;
+it does not unload a resident module or undo installed host firmware. Do not
+interrupt programming to try this. Journals are preferences, not camera backups.
+Physical loader/card timing and fallback remain unverified.
 
-If the camera still boots and its updater works, a reviewed previous full EG
-may allow normal-updater rollback. Removing the module/card does not undo
-installed host firmware. The two settings journals are preferences, not a
-firmware or calibration backup. **No emergency recovery is verified for an
-unbootable camera; professional service may be required.**
-Nikon's [official update page](https://downloadcenter.nikonimglib.com/en/download/fw/558.html)
-describes its stock container and firmware versions through 3.70 as update
-inputs. It does not establish acceptance of this lab's extracted EG or a
-same-version rollback from C 3.80. Prior lab trials and selected instruction
-checks must not be presented as an official recovery procedure.
+If boot and updater access survive, the exact private stock inputs above are
+potential normal-updater rollback inputs. Nikon's
+[official update page](https://downloadcenter.nikonimglib.com/en/download/fw/558.html)
+describes its stock container and firmware through 3.70 as update inputs. It does
+not establish acceptance of this extracted EG or same-version rollback from 3.80.
+Selected instruction checks and prior trials are not an official recovery
+procedure. **No emergency recovery is verified for an unbootable camera;
+professional service may be required.**
 
-After a separately authorized installation, start with custom pages and battery
-off. Confirm ordinary rear-LCD shooting/menu operation, then enable one feature
-at a time. Check DISP, grid/horizon, MENU/PLAY return, save/restart and normal
-capture. EVF/movie transitions should retain native behavior with unsupported
-overlays withheld; successful emulator fallback does not prove physical output
-switching. Stop testing on unexpected behavior and preserve observations before
-choosing any rollback. No automated camera programming is part of this review.
+The bundle retains emulator-only identities, offline review limits and
+installation_cleared=false. No card staging or camera update has occurred.
+[AGENTS.md](AGENTS.md) requires explicit user authorization and this concrete
+installation/recovery assessment before flashing.

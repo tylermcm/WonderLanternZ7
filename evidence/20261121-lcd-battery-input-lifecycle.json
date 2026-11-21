@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": [
+    {
+      "name": "module-loaded-and-callbacks-committed",
+      "passed": true
+    },
+    {
+      "name": "no-native-battery-icon-means-no-overlay",
+      "passed": true
+    },
+    {
+      "name": "baseline-retains-eligible-native-battery-glyph",
+      "passed": true
+    },
+    {
+      "name": "battery-baseline-is-photo-lcd-with-no-native-menu",
+      "passed": true
+    },
+    {
+      "name": "supplied-request-reaches-native-icon",
+      "passed": true
+    },
+    {
+      "name": "eligible-native-icon-automatically-shows-percentage",
+      "passed": true
+    },
+    {
+      "name": "automatic-percent-changes-native-icon-region",
+      "passed": true
+    },
+    {
+      "name": "automatic-disable-restores-stock-icon-region",
+      "passed": true
+    },
+    {
+      "name": "adapter-glyph-never-enables-percentage",
+      "passed": true
+    },
+    {
+      "name": "automatic-percentage-active-before-native-menu",
+      "passed": true
+    },
+    {
+      "name": "native-menu-hides-owned-percentage",
+      "passed": true
+    },
+    {
+      "name": "native-menu-performs-no-battery-sampling",
+      "passed": true
+    },
+    {
+      "name": "native-menu-return-recovers-owned-percentage-when-eligible",
+      "passed": true
+    },
+    {
+      "name": "native-empty-card-playback-hides-owned-percentage",
+      "passed": true
+    },
+    {
+      "name": "native-empty-card-playback-performs-no-battery-sampling",
+      "passed": true
+    },
+    {
+      "name": "native-playback-return-recovers-owned-percentage-when-eligible",
+      "passed": true
+    },
+    {
+      "name": "same-live-module-retained",
+      "passed": true
+    }
+  ],
+  "frames": 12,
+  "all_frame_hashes_dimensions_verified": true,
+  "probe_helper_source_copies_verified": true,
+  "main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+  "typed_bar_inputs_supplied": true,
+  "input_stops": 98,
+  "all_input_targets": "original shooting snapshot",
+  "native_converter_and_renderers_execute": true,
+  "percentage_or_pixels_supplied": false,
+  "native_percentage_sample": 0,
+  "real_telemetry_verified": false,
+  "complete_rgb_disable_comparison_restored": true,
+  "playback_scope": "No emulated memory card; native PLAY error path, not image playback",
+  "native_bar_converter_cases": 3,
+  "repository_tests": 86,
+  "source_sha256": {
+    "tools/probe_z7_display_module.py": "1ba271160804489067dad7dc01f8b0635c3650fcbf919d2aeb07b6c3037b2e5d",
+    "tools/battery_bar_fixture.py": "97f448510dfa13263b63a349440757e3190dc270f325d344603c4becfe65601a",
+    "tools/audit_z7_battery_bar.py": "79c0e285387e3692e94edfb1af1e4224a508d8a6e98f853decd139d61fcb995f",
+    "tests/test_battery_bar_fixture.py": "90ae45a8f0b72d88eb1fe612be4880f48c42af637eda721537262e3fa446290b"
+  },
+  "software_milestone": "Scoped LCD owner-trial validation gates passed",
+  "camera_update_acceptance_or_recovery_proven": false,
+  "owner_flash_authorized": false,
+  "card_written": false
+}

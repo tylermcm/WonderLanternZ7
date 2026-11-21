@@ -48,6 +48,7 @@ def main():
     parser.add_argument('--module', type=Path, required=True)
     parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
+    parser.add_argument('--battery-source-fixture', action='store_true', help='Supply typed bar inputs at the native converter; LCD candidate battery-auto only, not physical telemetry')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
     parser.add_argument('--grid-components', action='store_true', help='For the base-page DISP probe, set a native golden grid and verify component suppression and same-page edits')
     parser.add_argument('--information-horizon', action='store_true', help='For information-groups, verify selected native information on the horizon base')
@@ -98,6 +99,8 @@ def main():
         parser.error('Battery text trial requires inspect view')
     if args.battery_icon_fixture and args.view not in ('battery-auto', 'settings-battery'):
         parser.error('Battery icon fixture requires battery-auto or settings-battery view')
+    if args.battery_source_fixture and not (args.view == 'battery-auto' and args.battery_icon_fixture):
+        parser.error('Battery source fixture requires battery-auto and explicit icon fixture')
     if args.view == 'settings-battery' and not args.battery_icon_fixture:
         parser.error('Settings-battery requires its explicit icon fixture')
     if args.settings_battery_control and args.view != 'settings-battery':
@@ -125,6 +128,17 @@ def main():
         raise ValueError('Module fingerprint mismatch')
     lcd_release = module['kind'] == 'original-Z7-LCD-first-release-candidate'
     fixture = bind_module_fixture(output, packet, host, settings=lcd_release)
+    bar_fixture = None
+    if args.battery_source_fixture:
+        if not lcd_release:
+            raise ValueError('Battery source fixture requires the persistent LCD candidate')
+        from battery_bar_fixture import BatteryBarFixture, battery_bar_remote, POINT
+        source = Path(__file__).with_name('battery_bar_fixture.py').read_bytes()
+        (output / 'battery-bar-fixture-source.py').write_bytes(source)
+        with ui.FIRMWARE.open('rb') as incoming:
+            incoming.seek(POINT - 0x10020000)
+            bar_fixture = BatteryBarFixture(incoming.read(2))
+        ui.Remote = battery_bar_remote(ui.Remote, bar_fixture)
     if args.graphics_api_trace:
         from graphics_api_observer import observing_remote
         source = Path(__file__).with_name('graphics_api_observer.py').read_bytes()
@@ -1160,6 +1174,7 @@ def main():
             camera.refresh_device_evidence()
             result['battery_scope'] = dict(native_ui_overlay_only=True,
                 sensor_pipeline_verified=False,
+                incoming_bar_inputs_supplied=bar_fixture is not None,
                 device_observation=dict(camera.device_evidence or {}),
                 health=ui.capture_health(camera.remote, camera.device_evidence or {}))
             def automatic_word(name):
@@ -1182,7 +1197,10 @@ def main():
             def request_icon(label, bar=1):
                 packet = checkpoint()
                 result['battery_icon_fixture'].setdefault('requests', []).append(dict(label=label, bar=bar))
-                camera.remote.write_memory(0xa201d4d0 + 0x1aa, bytes([bar]))
+                if bar_fixture:
+                    camera.remote.enable_battery_bar(bar)
+                else:
+                    camera.remote.write_memory(0xa201d4d0 + 0x1aa, bytes([bar]))
                 for i in (0, 1): camera.remote.write_memory(0xa1824a14 + i * 48, b'\1\1')
                 # Match settings-battery: no checkpoint after supplying a
                 # paused request, since native tasks may overwrite it.
@@ -1508,6 +1526,11 @@ def main():
         raise
     finally:
         watchdog.cancel()
+        if bar_fixture:
+            result['battery_bar_inputs'] = dict(events=bar_fixture.events, stops=bar_fixture.stops,
+                source_sha256=hashlib.sha256((output / 'battery-bar-fixture-source.py').read_bytes()).hexdigest(),
+                original_conversion_and_renderer_execute=True, percentage_or_pixels_supplied=False,
+                physical_telemetry_verified=False)
         if sample_fixture:
             result['histogram_sample_fixture'] = dict(sample_sha256=sample_fixture.sha256,
                 events=sample_fixture.events, scope='Exact owned module buffer/caller only; getter return and bins supplied; no event completion')

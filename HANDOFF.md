@@ -1,5 +1,51 @@
 # Laptop handoff — October 20, 2026
 
+## Smaller LCD release software gates passed; owner trial awaits authorization - November 21, 2026
+
+User: "ok lets build until the flash is ready". This authorizes continued work,
+not card staging/flash. Same API44 host and release04 module; NO firmware C edits
+or binary changes. Do not resume portrait/zebra/Info research before this trial.
+
+Resolved the missing battery test input at its actual boundary: new private-QEMU
+battery_bar_fixture supplies ONLY already-read kind/level registers at native
+10368572 compare, original conversion/store/rendering/percentage getter/callbacks
+continue. No guessed cache pointer, object/percentage/pixel or device return
+supplied. Destination ownership guard and bounded stops; serialized persistent
+file-service pump reused. Five unit cases preserve all registers except those
+two inputs. audit_z7_battery_bar executes original converter: default6/full1/
+adapter0, canary destination only one byte changes, source cache unchanged.
+
+Exact combined guest lcd-battery-input-lifecycle-01 PASS17/12 frames! First
+baseline qualifies. Draw, exact stock icon-region restore, adapter exclusion,
+native MENU/no-card PLAY hide and stop sampling, returns recover with eligible
+icon. Same live module retained. 98 inputs, ALL at expected shooting snapshot.
+Native sample0 is emulated getter result, not supplied percentage/real telemetry.
+All12 raw PNG hashes/dimensions(1024x682) and archived probe/helper sources
+independently verified. Disabled comparison also exactly restores complete RGB.
+Active and after-PLAY-return frames visually inspected. Actual image playback,
+MCU/telemetry/sensor/card/cache/power/long-use remain hardware gaps. Earlier
+failures retained; do not relabel them or keep rerunning passing suites.
+
+Root86/no skips; ignored Graphify3928nodes/10838links, existing warnings. Full
+assessment rewritten around exact owner-trial scope/artifact hashes, validation,
+card state, proposed installation and recovery limits. Prepared private frozen
+20261121-lcd-trial-01 with exact candidate+stock rollback inputs, reports, current
+assessment/evidence/source manifest and readback hashes. All15 files readback-
+verified; notices preserved and exact candidate/stock hashes/EG CRCs checked.
+Header/updater review02
+remains offline/emulator-only; not camera acceptance or emergency recovery proof.
+
+All software gates for the agreed SMALLER LCD milestone now passed within their
+documented scope. Broader goal/port is NOT complete. Next: present final exact
+assessment and request explicit owner authorization for intended Sony QD-G120F
+E: card(labelNIKON Z9) staging and owner-operated ORIGINAL Z7 trial. Root AGENTS
+requires explicit authorization plus assessment. No emergency recovery verified;
+stock normal-updater rollback requires surviving boot/updater and same-version
+acceptance remains unverified. Current card had no five named files; zero backups
+of installed firmware. Do not stage/flash until user explicitly authorizes this
+candidate/card/trial. No live process, camera programming, card writes or push.
+
+
 ## Connected XQD inspected without writes - November 21, 2026
 
 User replied to card-connection question: "I've connected the card". This
