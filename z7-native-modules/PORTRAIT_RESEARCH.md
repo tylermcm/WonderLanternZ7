@@ -5,6 +5,35 @@ Independent work against original Z7 C3.80, following the MIT-licensed
 This is an incomplete port. No orientation drawing hook is installed by the
 current display module. The accepted LCD/EVF highlight pair is unchanged.
 
+## Callback-time menu text placement
+
+`plugins/portrait_text_layout.h` extends the text adapter with a callback-time
+planner. It uses the original descriptor's measured width/height (or fallback
+dimensions), actual native origin and diagonal matrix. Grid tile/title anchors,
+dial scaling, settings width scaling, explicit external-page scaling and footer
+placement/suppression follow the pinned menu implementation. Queries remain
+stock. Position arithmetic uses bounded int64 calculations rather than emulating
+native32 overflow. Planner state publishes after busy acquisition and clears
+before acknowledgement. The original fixed-transform probe remains byte-identical.
+
+The API84 loaded diagnostic routes admitted text34/37/38 through this adapter.
+Text shares footer/dial ownership with graphics, including transparent clears
+before first text emission. Private portrait-text-layout-02 passes398 checks,
+including108 explicit layout cases, metric fallback, fractional origins and
+busy-owner context retention. native-text-layout-02 passes96 checks over24 paired
+original-descriptor/glyph executions for settings placement. Native context,
+options, descriptors and glyph paths execute; font face/cache/metrics/shaping,
+allocation and final GPU/emission are supplied. Other page layout cases supply
+descriptor processing and glyph rendering. Loaded text-host-02 passes109 checks,
+including18 new text cases and clear/glyph/ack ordering with supplied backends.
+Original fixed text273, band52 and root71 checks pass. Source-only summaries are
+in `evidence/20261121-portrait-text-layout.json` and `native-text-layout.json`.
+
+Inline bitmap symbols, native34 background suppression, font-file loading and
+real pixels remain unproved. This is partial menu text integration, not visual
+parity, input support, native task/lifetime closure or installation clearance.
+Functional combined display module and accepted host MAIN remain unchanged.
+
 ## Opt-in resident graphics bridge (API84)
 
 The independent host now offers `sdk/graphics.h`, preserving the API80 prefix.

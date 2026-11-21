@@ -1,5 +1,47 @@
 # Laptop handoff — October 20, 2026
 
+## Menu text placement in loaded diagnostic - November 21, 2026
+
+Previous ed4ff36 handled graphics/bands but text stayed in stock positions.
+New portrait_text_layout.h plans at the actual native glyph callback using the
+descriptor's measured/fallback dimensions, native matrix and final origin.
+Grid tile/title anchors, dial fit, settings width fit, explicit external-page
+fit and footer relocation/suppression follow pinned source. Measurement queries
+remain stock. int64 positions reject out-of-screen/overflowing inputs rather
+than reproducing native32 wrap. No live widget/battery label path is supplied.
+
+Planner descriptor/context publish only after acquiring the existing busy guard,
+and clear before producer acknowledgement. The non-planned adapter is byte-identical
+to its prior1216-byte probe SHA82fbd88cfa691acd3d65f022e8bb5dcaa306d82b186bd95dfc3508c8a9d10fa8.
+Shared bands_begin handles text and graphics. Loaded API84 diagnostic now routes
+admitted text34/37/38 through the planner; text can begin footer/dial bands and
+settings can release them. Inline bitmap symbols and native34 background
+suppression remain unfinished, so this is NOT complete text visual parity.
+
+Private portrait-text-layout-02 PASS398, including108 explicit menu cases plus
+fixed-transform regression, queries, metric fallback/fractional origin and busy
+owner planner-context retention. Probe7168/image7104/BSS36/0relocs SHA
+6e48d8b8bac8a54dc6840a7ac7043e37f9a511c29a232559f1ea0ef888e50180.
+native-text-layout-02 PASS96 over24 baseline/portrait pairs executes original
+context/options, descriptors34/37/38, glyph layout/contours and destruction for
+SETTINGS only. Font face/cache/shaping/metrics/allocator/GPU/emission supplied.
+Other pages use supplied descriptors/glyph render in the explicit layout fixture.
+portrait-text-host-02 PASS109 loaded tests, including18 added text cases and
+clear-before-glyph-before-once-ack ordering; descriptors/render backend supplied.
+Loaded probe8128/image8064/BSS60/0relocs SHA
+d4c30cc2ab54372473a48cd5321f57f2547a2fb55c6f3f5eef1ba1103f73f4c3.
+text-compat-01 PASS273; text-bands-01 PASS52 original clear-body regressions.
+All five direct source maps verified; root71/no skips. Ignored Graphify refreshed
+to3616nodes/9903links; existing conditional-C parser warnings remain.
+See evidence/20261121-portrait-text-layout.json, native-text-layout.json,
+updated portrait-grid-host.json/portrait-bands.json and PORTRAIT_RESEARCH.md.
+
+Next inline symbols/background suppression, input/settings controls, pending
+native requests/live/external/magnified bindings, fuller band/task/allocation
+lifecycle, font files, Info mirror/real histogram, integrated release and exact
+installation/recovery assessment. Full goal ACTIVE; accepted host MAIN/functional
+combined display module unchanged. No camera/card/staging/flash/push.
+
 ## Observed reserved-band lifecycle and native clears - November 21, 2026
 
 Previous85e4b8c latched orientation. New portrait_bands.h tracks footer orientation/

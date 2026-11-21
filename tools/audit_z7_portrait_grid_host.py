@@ -10,7 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 import struct
-from unicorn.arm_const import UC_ARM_REG_R0,UC_ARM_REG_R1,UC_ARM_REG_LR
+from unicorn.arm_const import UC_ARM_REG_R0,UC_ARM_REG_R1,UC_ARM_REG_LR,UC_ARM_REG_PC
 from audit_z7_module_host import HostFixture
 from audit_z7_information_native import InformationFixture
 from audit_z7_portrait_draw import BACKENDS,WORDS,reference_destination
@@ -19,13 +19,20 @@ from audit_z7_portrait_page_message import strip19_reference
 from build_z7_module import build
 from build_z7_module_host import ROOT,STATE,ZIG
 from audit_splash_image import MEM
+from audit_z7_portrait_text import reference as text_reference,UNIT
+from z30_extensions.assembly import assemble,constant
 SLOT,MESSAGE,PAYLOAD,TABLE=0xa1d75d60,0xa1d75000,0xa1d75100,0xa1d75200
+TEXT_DESCRIPTOR,TEXT_CONTEXT,TEXT_ORIGIN,TEXT_STUB=0xa1d75400,0xa1850000,MEM+0xc0000,MEM+0xc0100
 
 class GridHostFixture(HostFixture):
     def __init__(self,raw,report,packet,metadata):
         super().__init__(raw,report,packet);self.metadata=metadata;self.native_call_timeout_us=0
         self.u.mem_map(0xa1d75000,0x1000);self.u.mem_map(0xa2010000,0x20000);self.u.mem_map(0xa1d40000,0x10000)
         self.stop_at=None;self.rendered=[];self.band_clears=[];self.acks=[];self.flags=[];self.mutation=None;self.targets=0;self.orientations=0
+        self.text_matrices=[];self.text_order=[]
+        stub='push {r4,lr}; sub sp,#8; ldr r0,[r0,#0x94]; movs r1,#0; movs r3,#0; str r3,[sp];'
+        stub+=constant('r2',TEXT_ORIGIN)+'movw r4,#0x45b4; ldr r4,[r0,r4]; ldr r4,[r4,#0x1c]; blx r4; add sp,#8; pop {r4,pc};'
+        self.u.mem_write(TEXT_STUB,assemble(stub,TEXT_STUB,128))
         InformationFixture.prefix(self,0x1030cf74,0x1030d00a,MEM+0x60001)
         self.write(SLOT,0x10372391)
     def write(self,p,v):self.u.mem_write(p,struct.pack('<I',v))
@@ -46,6 +53,13 @@ class GridHostFixture(HostFixture):
         if prime:self.dispatch(box=(0,280,720,146))
     def hook(self,u,address,size,context):
         if address==self.stop_at:u.emu_stop();return
+        if address in (0x104baa5e,0x104bb130,0x104bb248):
+            assert u.reg_read(UC_ARM_REG_R0)==TEXT_DESCRIPTOR
+            u.reg_write(UC_ARM_REG_PC,TEXT_STUB|1);return
+        if address==0x10539574:
+            self.text_order.append('glyph');self.text_matrices.append(struct.unpack('<7I',u.mem_read(TEXT_CONTEXT+0x34,28)));self.ret(0);return
+        if address==0x104ba382:
+            self.text_order.append('ack');self.acks.append((u.reg_read(UC_ARM_REG_R0),u.reg_read(UC_ARM_REG_R1)))
         if address==0x10414756:self.targets+=1
         if address==0x101b331a:self.orientations+=1
         if address==0x1041477a and self.mutation:
@@ -55,7 +69,8 @@ class GridHostFixture(HostFixture):
             length=28 if address==BACKENDS[0x17] else 88 if address==BACKENDS[0x1a] else 68
             record=(address,bytes(u.mem_read(u.reg_read(UC_ARM_REG_R0),length)))
             lr=u.reg_read(UC_ARM_REG_LR)&~1;body=self.words()[12]
-            if address==BACKENDS[0x17] and body<=lr<body+self.metadata['image_bytes']:self.band_clears.append(record)
+            if address==BACKENDS[0x17] and body<=lr<body+self.metadata['image_bytes']:
+                self.band_clears.append(record);self.text_order.append('clear')
             else:self.rendered.append(record)
             self.ret(0);return
         if address==0x1042eade:self.acks.append((u.reg_read(UC_ARM_REG_R0),u.reg_read(UC_ARM_REG_R1)))
@@ -76,6 +91,24 @@ class GridHostFixture(HostFixture):
         self.call(self.report['symbols']['z7_graphics_dispatch_bridge'],MESSAGE)
         assert bytes(self.u.mem_read(PAYLOAD,len(data)))==data and bytes(self.u.mem_read(MESSAGE,24))==msg[:24]
         assert self.read(MESSAGE+24)==0 and self.acks==[(0x42010062,0)] and self.flags==[(0xa1d75e3c,1)]
+        return self.read(self.variable('handled'))-before
+    def dispatch_text(self,command=0x37,x=10,y=320,footer=False):
+        matrix=(UNIT,0,0,0,UNIT,0,1)
+        self.write(0xa180ad98,TEXT_CONTEXT);self.u.mem_write(TEXT_DESCRIPTOR,bytes(0xc8))
+        self.write(TEXT_DESCRIPTOR+0x94,TEXT_CONTEXT);self.write(TEXT_CONTEXT+0x45b4,0x11b6e120)
+        self.u.mem_write(TEXT_CONTEXT+0x34,struct.pack('<7I',*matrix));self.write(TEXT_CONTEXT+0x45d8,0xa1860000)
+        for field,buffer in zip((0x1ac,0x18c,0x19c,0x178),(0xa1861000,0xa1862000,0xa1863000,0xa1864000)):
+            self.write(0xa1860000+field,buffer)
+        for off,v in ((0xac,80),(0xae,20),(0x64,50 if footer else 480),(0x60,26 if footer else 380)):
+            self.u.mem_write(TEXT_DESCRIPTOR+off,struct.pack('<H',v))
+        self.u.mem_write(TEXT_ORIGIN,struct.pack('<2i',x*UNIT,(480-y)*UNIT))
+        payload=struct.pack('<3I',TEXT_DESCRIPTOR,0,0);self.u.mem_write(PAYLOAD,payload)
+        msg=struct.pack('<7I',1,2,3,0x104ba383,0x42010000+command,PAYLOAD,123);self.u.mem_write(MESSAGE,msg)
+        self.rendered.clear();self.band_clears.clear();self.acks.clear();self.flags.clear();self.text_matrices.clear();self.text_order.clear()
+        before=self.read(self.variable('handled'));self.call(self.report['symbols']['z7_graphics_dispatch_bridge'],MESSAGE)
+        assert bytes(self.u.mem_read(PAYLOAD,12))==payload and bytes(self.u.mem_read(MESSAGE,24))==msg[:24]
+        assert self.read(MESSAGE+24)==0 and self.acks==[(0x42010063,0)] and self.flags==[(0xa1d75e48,2)]
+        assert struct.unpack('<7I',self.u.mem_read(TEXT_CONTEXT+0x34,28))==matrix and self.read(TEXT_CONTEXT+0x45b4)==0x11b6e120
         return self.read(self.variable('handled'))-before
 
 def audit(raw,host,packet,metadata,old_raw,old_host):
@@ -174,6 +207,27 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
     check('settings-entry-clears-both-reserved-bands',f.dispatch()==1 and len(f.band_clears)==2 and not any(f.read(f.variable('bands')+off) for off in (0,4,8)))
     f.setup(1);f.dispatch(box=(300,430,80,24));f.u.mem_write(0xa182ed2c,b'\1')
     check('native-menu-takeover-forgets-bands-without-erasing',f.dispatch()==0 and not f.band_clears and not any(f.read(f.variable('bands')+off) for off in (0,4,8)))
+    identity=(UNIT,0,0,0,UNIT,0,1)
+    for orientation in (1,2):
+        for command in (0x34,0x37,0x38):
+            f.setup(orientation)
+            check(f'loaded-text-tile-command{command:x}-orientation{orientation}',f.dispatch_text(command)==1 and
+                  f.text_matrices==[text_reference(identity,(orientation,UNIT,UNIT,0,160*UNIT))] and not f.band_clears)
+        f.setup(orientation)
+        check(f'loaded-text-footer-first-clears-before-glyph-{orientation}',f.dispatch_text(x=300,y=450,footer=True)==1 and
+              f.text_order==['clear','glyph','ack'] and len(f.band_clears)==1 and f.text_matrices==[text_reference(identity,(orientation,57344,57344,-211*UNIT,295*UNIT))])
+        check(f'loaded-text-footer-repeat-skips-clear-{orientation}',f.dispatch_text(x=300,y=450,footer=True)==1 and not f.band_clears)
+        check(f'loaded-text-left-footer-suppressed-{orientation}',f.dispatch_text(x=100,y=450,footer=True)==1 and not f.text_matrices and not f.band_clears)
+        f.setup(orientation);f.u.mem_write(0xa18298b8,b'\2\0')
+        check(f'loaded-text-dial-begins-band-{orientation}',f.dispatch_text(x=100,y=200)==1 and len(f.band_clears)==1 and
+              f.text_matrices==[text_reference(identity,(orientation,43691,43691,66*UNIT-100*43691,374*UNIT-180*43691))])
+        f.u.mem_write(0xa18298b8,b'\1\0')
+        check(f'loaded-text-settings-releases-dial-{orientation}',f.dispatch_text(x=100,y=200)==1 and len(f.band_clears)==1 and
+              f.text_matrices==[text_reference(identity,(orientation,43691,UNIT,66*UNIT-100*43691,235*UNIT))])
+    f.setup(1,prime=False)
+    check('text-before-grid-latch-stays-stock',f.dispatch_text()==0 and f.text_matrices==[identity])
+    f.setup(1);f.u.mem_write(0xa182ed2c,b'\1')
+    check('native-menu-takeover-text-stays-stock',f.dispatch_text()==0 and f.text_matrices==[identity])
     f.setup();f.write(SLOT,0x12345679);before=f.read(f.variable('received'))
     check('foreign-slot-prefetched-bridge-falls-back-without-module',f.dispatch()==0 and len(f.rendered)==1 and f.read(f.variable('received'))==before)
     old=GridHostFixture(old_raw,old_host,packet,metadata)
@@ -181,6 +235,7 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
     check('api80-runtime-rejection-frees-module-before-graphics-publication',result==7 and not old.live and old.read(STATE+48)==0 and old.read(SLOT)==0x10372391)
     return dict(passed=True,checks=checks,actual_loaded_sdk_module_bridge_page_target_orientation_dispatch_and_completion_execute=True,
                 kernel_filesystem_allocator_backend_and_ui_task_registry_orientation_state_supplied=True,
+                text_descriptor_processing_and_glyph_emission_supplied=True,
                 full_portrait_pending_request_fence_boot_task_schedule_or_pixels_proven=False,camera_card_access=False)
 
 def main():
@@ -199,6 +254,7 @@ def main():
            'tools/audit_z7_portrait_grid_message.py','tools/audit_z7_portrait_page_message.py','tools/audit_splash_image.py','tools/build_z7_module.py','z7-native-modules/sdk/module.ld',
            'z7-native-modules/examples/portrait_grid_host_probe.c','z7-native-modules/plugins/portrait_grid_message.h',
            'z7-native-modules/plugins/portrait_page_message.h','z7-native-modules/plugins/portrait_footer.h','z7-native-modules/plugins/portrait_layout.h','z7-native-modules/plugins/portrait_bands.h',
+           'tools/audit_z7_portrait_text.py','z7-native-modules/plugins/portrait_text.h','z7-native-modules/plugins/portrait_text_layout.h',
            'z7-native-modules/plugins/portrait_draw.h','z7-native-modules/plugins/portrait_geometry.h','z7-native-modules/plugins/portrait_grid.h',
            'z7-native-modules/plugins/portrait_page.h','z7-native-modules/plugins/portrait_takeover.h','z7-native-modules/plugins/portrait_target.h','z7-native-modules/plugins/orientation_sample.h')
     result.update(host_sha256=host['main_payload_sha256'],probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),

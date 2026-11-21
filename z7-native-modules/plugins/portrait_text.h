@@ -14,6 +14,10 @@ struct z7_portrait_text_transform {
 struct z7_portrait_text_state {
     uint32_t busy, context;
     struct z7_portrait_text_transform transform;
+#ifdef Z7_PORTRAIT_TEXT_PLAN
+    uint32_t descriptor;
+    void *plan_argument;
+#endif
 };
 static struct z7_portrait_text_state z7_portrait_text_state;
 static uint32_t z7_portrait_text_span(uint32_t address, uint32_t bytes)
@@ -32,9 +36,18 @@ static uint32_t z7_portrait_text_render(uint32_t *context,void *options,
         (uint32_t)(uintptr_t)context!=z7_portrait_text_state.context)
         return render(context,options,origin,metrics,bounds);
     uint32_t *matrix=context+0x34/4;
+#ifdef Z7_PORTRAIT_TEXT_PLAN
+    struct z7_portrait_text_transform selected=z7_portrait_text_state.transform;
+    uint32_t action=Z7_PORTRAIT_TEXT_PLAN(matrix,origin,z7_portrait_text_state.descriptor,
+                                        z7_portrait_text_state.plan_argument,&selected);
+    if (action==2) return 0;
+    if (!action) return render(context,options,origin,metrics,bounds);
+    const struct z7_portrait_text_transform *t=&selected;
+#else
+    const struct z7_portrait_text_transform *t=&z7_portrait_text_state.transform;
+#endif
     if (!matrix[0] || !matrix[4] || matrix[0]>0x20000u || matrix[4]>0x20000u || matrix[1] || matrix[3])
         return render(context,options,origin,metrics,bounds);
-    const struct z7_portrait_text_transform *t=&z7_portrait_text_state.transform;
     int64_t ax=z7_portrait_text_product((int32_t)matrix[0],t->sx);
     int64_t ay=z7_portrait_text_product((int32_t)matrix[4],t->sy);
     int64_t tx=(int64_t)t->dx+z7_portrait_text_product((int32_t)matrix[2],t->sx);
@@ -56,8 +69,13 @@ static uint32_t z7_portrait_text_render(uint32_t *context,void *options,
 }
 static void z7_portrait_text_defer(uint32_t code,uint32_t result)
 { (void)code; (void)result; }
+#ifdef Z7_PORTRAIT_TEXT_PLAN
+static uint32_t z7_portrait_text_draw_planned(volatile uint32_t *message,
+                                    const struct z7_portrait_text_transform *transform,void *argument)
+#else
 static uint32_t z7_portrait_text_draw(volatile uint32_t *message,
                                     const struct z7_portrait_text_transform *transform)
+#endif
 {
     if (!transform || (transform->orientation!=1 && transform->orientation!=2) ||
         transform->sx<=0 || transform->sx>0x20000 || transform->sy<=0 || transform->sy>0x20000 ||
@@ -86,6 +104,10 @@ static uint32_t z7_portrait_text_draw(volatile uint32_t *message,
     for (uint32_t i=0;i<7;++i) local[i]=message[i];
     z7_portrait_text_state.context=context;
     z7_portrait_text_state.transform=*transform;
+#ifdef Z7_PORTRAIT_TEXT_PLAN
+    z7_portrait_text_state.descriptor=descriptor;
+    z7_portrait_text_state.plan_argument=argument;
+#endif
     table[7]=(uint32_t)(uintptr_t)z7_portrait_text_render;
     local[3]=(uint32_t)(uintptr_t)z7_portrait_text_defer;
     volatile uint32_t *provider=(volatile uint32_t *)(uintptr_t)(context+0x45b4);
@@ -94,6 +116,10 @@ static uint32_t z7_portrait_text_draw(volatile uint32_t *message,
     /* Do not overwrite a replacement published by another owner. */
     if (*provider==(uint32_t)(uintptr_t)table) *provider=0x11b6e120u;
     z7_portrait_text_state.context=0;
+#ifdef Z7_PORTRAIT_TEXT_PLAN
+    z7_portrait_text_state.descriptor=0;
+    z7_portrait_text_state.plan_argument=0;
+#endif
     __atomic_store_n(&z7_portrait_text_state.busy,0,__ATOMIC_RELEASE);
     message[6]=local[6];
     ((void (*)(uint32_t,uint32_t))(uintptr_t)0x104ba383u)(0x42010063u,local[6]);

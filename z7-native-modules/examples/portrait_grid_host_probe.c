@@ -1,11 +1,12 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 API84 portrait diagnostic.
- * Incomplete port: observed band lifecycle only; no text/input, pending-request fence or live
+ * Incomplete port: menu text placement; no inline symbols/input, pending-request fence or live
  * task/lifetime proof. Emulator only; not a release or installation candidate.
  */
 #include "module.h"
 #include "graphics.h"
 #include "../plugins/portrait_layout.h"
 #include "../plugins/portrait_bands.h"
+#include "../plugins/portrait_text_layout.h"
 #include "../plugins/portrait_page.h"
 #include "../plugins/portrait_target.h"
 #include "../plugins/orientation_sample.h"
@@ -41,7 +42,8 @@ static uint32_t portrait_grid_callback(volatile uint32_t *message)
     uint32_t layout=z7_portrait_layout_choose(&z7_portrait_grid_layout,message,layout_page,orientation);
     z7_portrait_bands_before(&z7_portrait_grid_bands,message,layout_page,layout);
     if (layout!=1 && layout!=2) return 0;
-    uint32_t handled=z7_portrait_page_message(message,layout_page,layout);
+    uint32_t handled=z7_portrait_text_page_draw(message,layout_page,layout,&z7_portrait_grid_bands);
+    if (!handled) handled=z7_portrait_page_message(message,layout_page,layout);
     z7_portrait_grid_handled+=handled;
     return handled;
 }
