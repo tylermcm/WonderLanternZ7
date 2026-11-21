@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "date": "2026-11-20",
+  "status": "PROGRESS; native request-cache binding and torn-read counterexample; automatic handoff unfinished",
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "checks": 60,
+  "request_bytes": 36,
+  "cache_bank_stride": 3716,
+  "request_offset": 88,
+  "all_output_masks_zero_through_seven_checked": true,
+  "cache_update_without_display_submission_verified": true,
+  "native_getter_writer_and_memcpy_execute": true,
+  "paused_native_copy_bytes": 16,
+  "equal_double_read_is_insufficient": true,
+  "mutable_and_aliased_output_bank_mapping_checked": true,
+  "writer_exclusion_or_complete_producer_publication_required": true,
+  "incoming_bank_indices_requests_palette_and_task_schedule_supplied": true,
+  "all_writer_closure_native_bank_count_engine_lifetime_or_physical_mapping_proven": false,
+  "automatic_no_native_update_handoff_implemented": false,
+  "firmware_module_host_or_sdk_modified": false,
+  "camera_card_access_staging_flash_or_push": false,
+  "full_goal_complete": false,
+  "source_sha256": {
+    "tools/audit_z7_highlight_native_cache.py": "6a208bbf23c262c9a97f5781af656dccb0b436eb0cf5046c2ca60023e58cee9c",
+    "tools/audit_z7_highlight_converter.py": "be858eb0fa8d6cfc0c63d589a7e3f50329a9f98f7648874a68885717769450ee",
+    "tools/audit_z7_highlight_submission.py": "5fd3d0292b9965b379e730f033fcd4da938c554c4c8647ce0929b8293d6e23b0",
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b",
+    "tools/audit_z7_display_parameters.py": "fda444d996ba3cf84d22020d5ee58d6283e3c2e5257fa496d74035793df960a9",
+    "z7-native-modules/Z7_HIGHLIGHT_CACHE_RESEARCH.md": "8f292c7ad20e979e4e2e28cd60d33a296382956f3b65fb668f231a409ba524ff"
+  },
+  "root_tests": 71,
+  "root_tests_skipped": 0
+}

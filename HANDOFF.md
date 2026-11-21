@@ -1,5 +1,44 @@
 # Laptop handoff — October 20, 2026
 
+## Native highlight cache binding and torn-read proof - November 20, 2026
+
+Previous3362f4f was PROGRESS (native-update-driven EVF). This is PROGRESS toward
+full automatic output handoff, not a new narrowed goal. No firmware/module/host/
+SDK change this checkpoint. No camera/card/staging/flash/push.
+
+Original getter10434CEE(kind0,output1/2/4) returns native request36 at bank+58.
+Helper10433B80 uses INDEXA180F274[output], CACHEA1F18FC0, strideE84. Writer
+104348E4(outputmask,kind0,request,submit0) performs native36-byte memcpy for
+selected bits1/2/4 and clears bank+40 only if request enabled. All masks0..7,
+patterns0/1/2, nonzero-kind rejection, mutable indices and aliasing checked.
+Getter(output0,kind0) returns58 rather thanNULL: restrict supported outputs.
+Physical bank count/index writers/allocation bounds/lifetime remain unproved.
+
+CRITICAL: actual native memcpy paused after16/36 stores yields TWO EQUAL reads
+that are neither complete old nor complete new request. Writer resumes in its
+saved ARM state and returns with original stack/callee-saves. Thus repeated
+stable byte reads are NOT a coherent baseline snapshot. Cache-only writes also
+occur without display-queue submission. Do not implement automatic handoff by
+merely polling the getter or double-reading its returned pointer.
+
+.private/evidence/20261120-highlight-native-cache-03.json PASS60 native checks;
+source hashes verified current.01 reached resumable native memcpy but the test
+incorrectly forced Thumb on ARM resume;02 fixed saved-state resume/PASS40;03
+adds all output masks/nonzero kind/output0 boundary/PASS60. Guards remain10s/10M.
+Kernel queue/mutex boundaries must NOT be reached for submit0. Native getter,
+writer and memcpy instructions execute; incoming indices/requests/palette and
+explicit task schedule supplied. No physical coherence/caller closure claim.
+
+Root71/no skips:20261120-native-cache-root-tests.log. Ignored Graphify refreshed
+3199nodes/8560edges; new audit present.
+Details:z7-native-modules/Z7_HIGHLIGHT_CACHE_RESEARCH.md. Sanitized source-only
+summary:evidence/20261120-highlight-native-cache.json. Existing EVF/API72 pair
+and baseline-restoration behavior remain unchanged. Next: close native cache
+writers and bank-index transitions, then establish writer exclusion or complete
+producer publication before consuming per-output requests for automatic handoff.
+Avoid synchronous native queue waits in the parameter consumer. Full original
+remaining ports, native lifecycle and installation/recovery requirements ACTIVE.
+
 ## Native-update-driven EVF highlight path - November 20, 2026
 
 Previous e47e58e was PROGRESS (persistent LCD highlight preferences). This
