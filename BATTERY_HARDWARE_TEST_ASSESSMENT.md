@@ -1,5 +1,11 @@
 # Battery-only SD hardware test assessment
 
+Owner subsequently approved "yes". Exact candidate is now staged as Z7APP.BIN,
+readback/hash verified and safely ejected. All four disabled originals, existing
+settings/file metadata and Nikon catalog are preserved. No firmware update.
+Awaiting ONE owner startup/control/percentage/power-off observation. The frozen
+preapproval bundle stays unchanged; this note supersedes its approval status.
+
 November 21, 2026. Prepared for owner review; NOT staged or authorized to run.
 Independent WonderLanternZ7 work for original Nikon Z7 C 3.80. Component MIT
 licenses/notices retained. This is a diagnostic checkpoint, not the LCD release.

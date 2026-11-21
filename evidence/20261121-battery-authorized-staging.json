@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "timestamp": "2026-11-21T22:51:24.319341+00:00",
+  "authorization": "yes",
+  "scope": "Exact reviewed battery-only SD diagnostic; one ordinary startup test; no firmware update",
+  "source_checkpoint": "256905dcc06c8aa9b94ee366ca1bf4da7519a6c4",
+  "review_manifest_sha256": "43af892d3ffeab1f1128da3fbecf1d719d0aa14d86e78f1852f1cc3877ef5a58",
+  "module_sha256": "89358992419867380781bafae7a1624f4d51955b3920127718f6daba9318ea23",
+  "module_bytes": 2824,
+  "private_backups_readback_verified": true,
+  "complete": true,
+  "safe_eject_verified": true,
+  "firmware_flashed": false,
+  "repair_claimed": false,
+  "file_flushed": true,
+  "full_readback_verified": true,
+  "only_candidate_added": true,
+  "existing_file_count": 221,
+  "existing_metadata_unchanged": true,
+  "catalog_hash_unchanged": true,
+  "four_disabled_originals_preserved": true,
+  "existing_settings_preserved": true,
+  "updater_disabled": true,
+  "eject_evidence": "No mounted card partition, no media bytes and inaccessible root",
+  "settings_files_present": {
+    "Z7CFG0.DAT": false,
+    "Z7CFG1.DAT": false
+  },
+  "private_staging_record_sha256": "bf283fe9ce796a63db581683c75023756d34ce249ccaace7a81398cea4346269",
+  "hardware_result": "pending",
+  "hardware_test_authorized": true
+}

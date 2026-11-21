@@ -1,5 +1,27 @@
 # Laptop handoff — October 20, 2026
 
+## Battery-only SD diagnostic staged and safely ejected - November 21, 2026
+
+Owner explicitly approved "yes" to staging exact reviewed battery-only diagnostic,
+then confirmed card connected. Same external card identity verified. Frozen review
+files rehashed; exact2824-byte module SHA89358992...18ea23 added ONLY as Z7APP.BIN
+with exclusive creation, flush/fsync and complete readback. All four prior trial
+files remain disabled/hash-intact. Named trial/configuration files privately
+backed up/readback verified; settings presence recorded privately.221 existing
+file metadata records and Nikon catalog SHA unchanged. No photos read/deleted,
+no format, EG reenable, new firmware image or flash. Safe eject VERIFIED: no
+mounted card partition, no media bytes and inaccessible root. Private record:
+.private/card-staging/20261121-battery-only-test-01/staging.json.
+
+Ready for ONE ordinary OFF/insert/ON rear-LCD photo check: controls, numeric
+percentage with battery HUD visible (up to30s), MENU/touch and normal power-off.
+Do NOT run Update or loop restarts. If frozen, stop and follow assessment's
+card-removal/prior battery-pull recovery boundary; exact-candidate recovery not
+verified. Return card for preservation-only quarantine if failed. No percentage
+with normal controls is inconclusive. Hardware result pending; full release and
+ownership-hardening build withdrawn, installed host remains modified.
+No code edits/tests rerun for card staging/docs-only checkpoint. No live process.
+
 ## Hardware-test review checkpoint reached - November 21, 2026
 
 Battery-only SD review FROZEN and independently readback/hash verified8 files in
