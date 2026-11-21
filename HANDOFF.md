@@ -1,5 +1,76 @@
 # Laptop handoff — October 20, 2026
 
+## Native request cache bridges and SDK API80 - November 20, 2026
+
+Previouse5114eb was PROGRESS (unwired observation core). This checkpoint is
+PROGRESS: opt-in native copy bridges, API80 snapshots and actual loaded SDK probe.
+Full original goal ACTIVE. Automatic no-native-update display handoff is NOT yet
+wired into the functional display module. No camera/card/staging/flash/push.
+
+NEW --native-cache-copy-hooks requires all API72 native warning transaction flags.
+API80 extends72 with native_cache_snapshot(output,out44) and snapshot_valid.
+Only output1/LCD and4/EVF, fixed native indices0/2. Requests remain36 bytes;
+snapshot adds serial/bank. Capture uses staged local result, actual native getter
+and volatile word copies, then generation validation. Failure never changes caller
+output. Caller keeps snapshot unchanged. Validation is not payload authentication,
+writer exclusion, allocation pin or atomic later parameter application.
+
+State360: observation active336/serial340/halted344, completed-bank mask348,
+guards352/356. Existing336 prefix preserved. Cold bridge224-byte slot; same384
+reservation. Only TRACKED completed kind0 request copies make a bank ready; raw
+unobserved initial cache data is rejected. Bridge spans constructor10433CEE and
+setter10434910/1043494A/1043497E. Aligned LCD window8 bytes; others10 bytes,
+reconstructing native loads/branches and extra constructor load/peaking stores.
+Input registers/flags survive helper calls. Actual ARM memcpy executes even if
+observation token0, halted or state invalid. Retire token then original post-copy
+instructions; native caller request buffers stay immutable until copy returns.
+
+Accepted host20261120-native-cache-host-04:
+MAINe694ad92067a9c9d1233f2a71418c6093500d28d0586afede9840c97a8cee3b6,
+33065480main/8333host/360state/384reserve/cold224slot/API80/reproducible/EGCRCzero.
+20 current host source inputs. SDK probe192file/128image/16BSS, actual loader,
+header/CRC/BSS/cache-maintenance and z7_main execute. API function pointers and
+min80 gate verified. API80 probe rejects API72 cleanly with host status7/image0.
+Flag-OFF API72 rebuild20261120-cache-compat72-host-01 byte-identical previous
+MAINef6f1f703b87978336465452ee572f0b464fedfc37b90d4afb36c1ede6aaec1a.
+
+.private/evidence/20261120-native-cache-host-06/result.json PASS97. All24 native
+mask/pattern combinations match original full-bank bytes, return, NZCVQ andr1/r2/r3/r12;
+normal callee-save/stack guards retained. Constructors include nonzero first/
+zero second field to exercise displaced-load branch. Tests actual bridge busy
+count across partial copy and overlapping HDMI writer, completed snapshots,
+stale/tampered metadata, unsupported mapping/output/alignment, a complete writer
+running between snapshot copy and validation, immutable failure output, exhausted
+active/serial counters, halted/bad-state native fallback and actual cold hook
+reservation/continuation. Kernel/FS/bank indices/task schedules supplied.
+
+Build01 missing nested API base fixed;02 jump8 unaligned error fixed with native
+10-byte windows;03 wrong saved begin destination (APSR inr0) found by snapshot
+readiness, corrected explicit [sp+8]/[sp+16] reload in04. Audit01 overbroad write
+logger affected loader stack observation; restricted to cache address range.
+Audit02 exposed begin argument bug;03 overlap fixture overwrote paused source
+buffer, corrected distinct immutable caller buffers;04 PASS91;05 PASS97 with
+snapshot-in-progress and exhaustion additions;06 PASS97 also compares all caller-
+scratch registers. No failed candidate is accepted.
+
+FINAL new host + unchanged EVF module regressions:
+20261120-cache-host-transactions-01.json PASS41;cache-host-evf-01.json PASS37;
+cache-host-cleanup-01.json PASS28 +36owned;cache-host-preferences-01/result.json
+PASS609 codec +95native preferences. This tests that exact supplied pair, not
+arbitrary cross-profile compatibility. Root71/no skips:cache-host-root-tests.log.
+Independent exact payload/report rebuild PASS:cache-host-independent-rebuild.json.
+All audit fingerprints and20 host source inputs current, code frozen during runs.
+Ignored Graphify refreshed 3244nodes/8711edges; new3 code files present.
+Source-only evidence:evidence/20261120-native-cache-host.json. All jobs terminal.
+
+NEXT: close pre-cold constructor/writer ordering, other writers and index ABA/
+bank lifetime; integrate snapshots into native baseline acquisition and automatic
+LCD/EVF handoff, including invalidation on cache-only updates and observation halt.
+Do not treat snapshot validation as atomic commit. Existing native-update-driven
+EVF module remains unchanged. Preserve all native baseline restoration and lane
+contracts. Orientation/portrait, native Info mirror, real histogram producer,
+full lifecycle and integrated installation/recovery assessment still required.
+
 ## Compiled cache write observation core - November 20, 2026
 
 Previousac58cb1 was PROGRESS (native cache/torn-read proof). This checkpoint is

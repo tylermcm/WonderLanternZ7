@@ -96,3 +96,48 @@ exhaustion and continued native writes after observation halt are checked.
 Probe execution includes compiled atomic instructions; begin/end boundaries and
 task scheduling remain supplied by the test. There are no installed firmware
 bridges, module-host loader checks, physical lifetime or automatic handoff claims.
+
+## Experimental native-copy host and API80
+
+The opt-in host flag `--native-cache-copy-hooks` requires the full API72 warning
+transaction profile. Its API80 prefix appends two functions: capture a44-byte
+snapshot (36-byte request, serial and bank), and validate that snapshot's serial
+and bank. Output1/LCD and output4/EVF are supported. Callers retain snapshots
+unchanged; validation checks identity/generation rather than authenticating the
+payload bytes. It does not exclude a writer that starts after validation.
+
+Four native copy sites are patched: constructor10433CEE and setter10434910,
+1043494A,1043497E. Each bridge preserves original registers/flags around helper
+calls, executes the actual ARM memcpy, retires observation and reconstructs the
+displaced load/conditional branch. Unaligned sites need ten-byte jump windows;
+constructor also reconstructs a second load, HDMI/EVF the peaking-clear store.
+The aligned LCD site uses eight bytes. Native copy and original post-copy effects
+run even when observation is unavailable, halted or state guards are invalid.
+
+Cold host state grows from336 to360 bytes, within the same384-byte reservation.
+Observation active/serial/halted occupy336/340/344; completed-bank ready bits348;
+guards352/356. The224-byte cold bridge slot initializes them before publishing magic.
+Only tracked complete kind0 copies set ready bits. Unobserved initial cache bytes
+are not accepted as baselines. Snapshot captures a ticket, calls the native getter,
+copies volatile words into a local record, validates, then publishes the output.
+Failure leaves caller output unchanged. Fixed native indices0/LCD and2/EVF are
+required; unexpected mappings fail. Global generation conservatively invalidates
+snapshots even after a write to another bank.
+
+The loaded SDK probe and installed bridges pass97 checks. All24 mask/pattern
+combinations match original full-bank bytes, return, flags andr1/r2/r3/r12
+effects. Native constructor paths, tracked readiness, stale/tampered metadata,
+partial and overlapping copies, a writer completing during snapshot capture,
+exhaustion, native fallback on halt/bad guards and actual cold reservation execute.
+Input request buffers remain caller-owned and immutable until native copy return.
+The write observer is restricted to cache addresses; loader/filesystem execution
+retains the ordinary HostFixture path. SDK probe is independently loaded by the
+host; it is not a full display-feature module.
+
+These hooks establish the four scoped copy spans. They do not prove all writers,
+index ABA exclusion, physical bank lifetime, native initialization ordering before
+cold activation or atomic later parameter application. In particular, a write
+started before cold state initialization cannot be assumed covered by idle
+counters afterward. Close that ordering before using this as an automatic
+handoff baseline source. Earlier API72 host bytes remain identical with the new
+flag disabled. No camera/card/update/recovery clearance follows.

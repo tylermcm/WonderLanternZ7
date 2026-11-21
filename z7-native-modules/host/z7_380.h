@@ -27,9 +27,15 @@
 #ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
 #include "native_warning_transaction.h"
 #endif
+#ifdef Z7_HOST_NATIVE_CACHE_COPY
+#include "native_cache.h"
+#include "../plugins/cache_observation.h"
+#endif
 
 #define Z7_HOST_STATE 0xa9700000u
-#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+#ifdef Z7_HOST_NATIVE_CACHE_COPY
+#define Z7_HOST_STATE_BYTES 360u
+#elif defined(Z7_HOST_NATIVE_WARNING_TRANSACTION)
 #define Z7_HOST_STATE_BYTES 336u
 #elif defined(Z7_HOST_OWNED_FRAME_COORDINATION)
 #define Z7_HOST_STATE_BYTES 324u
@@ -92,6 +98,10 @@ struct z7_host_state {
 #endif
 #ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
     uint32_t native_warning_enabled, native_warning_guards[2];
+#endif
+#ifdef Z7_HOST_NATIVE_CACHE_COPY
+    struct z7_cache_observation native_cache;
+    uint32_t native_cache_ready, native_cache_guards[2];
 #endif
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");

@@ -349,7 +349,35 @@ def add_native_warning_transaction_hooks(plan, symbols):
     return helpers
 
 
-def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False):
+def add_native_cache_copy_hooks(plan, symbols):
+    """Observe complete audited request memcpy spans, retaining native effects."""
+    tail = lambda p: f'.balign 4; ldr.w pc,[pc,#0]; .word {p | 1};'
+    save = 'push.w {r0-r3,r12,lr}; mrs r0,apsr; push {r0,r1};'
+    restore = 'pop {r0,r1}; msr APSR_nzcvq,r0; pop.w {r0-r3,r12,lr};'
+    helpers = {}
+    for name, site, expected, offset, zero, extra in (
+            ('constructor',0x10433cee,'3cf596ee206a90b1606a',0x20,0x10433d1c,'ldr r0,[r4,#0x24];'),
+            ('lcd',0x10434910,'3cf584e8a06d00b1',0x58,0x1043491a,''),
+            ('hdmi',0x1043494a,'3cf568e8a06d00b12764',0x58,0x10434954,'str r7,[r4,#0x40];'),
+            ('evf',0x1043497e,'3cf54ee8a06d00b12764',0x58,0x10434988,'str r7,[r4,#0x40];')):
+        bridge = plan.alloc(bytes(256))
+        code = f'''
+            push {{r4,lr}};
+            {save} ldr r0,[sp,#8]; ldr r1,[sp,#16]; {invoke(symbols['z7_native_cache_copy_begin'])} mov r4,r0; {restore}
+            {constant('lr',0x10170a1c)} blx lr;
+            {save} mov r0,r4; {invoke(symbols['z7_native_cache_copy_end'])} {restore}
+            pop {{r4,lr}}; {constant('lr',(site+4)|1)}
+            ldr r0,[r4,#{offset}]; cbz r0,zero;
+            {extra} {tail(site+len(bytes.fromhex(expected)))} zero: {tail(zero)}
+        '''
+        plan.put(bridge, assemble(code,bridge,256))
+        plan.edit(site,jump(site,bridge,len(bytes.fromhex(expected))),'Observe complete native request cache copy: '+name,
+                  expected=bytes.fromhex(expected))
+        helpers[name] = dict(site=hex(site),bridge=hex(bridge),window_bytes=len(bytes.fromhex(expected)))
+    return helpers
+
+
+def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False):
     """Fixed-address, BSS-free host; all writable state is explicitly reserved."""
     temporary = ROOT / '.private/tmp'
     temporary.mkdir(parents=True, exist_ok=True)
@@ -371,6 +399,7 @@ def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, fr
                 *(['-DZ7_HOST_CACHED_FRAME=1'] if cached_frame_permission_hooks else []),
                 *(['-DZ7_HOST_OWNED_FRAME_COORDINATION=1'] if owned_frame_coordination_hooks else []),
                 *(['-DZ7_HOST_NATIVE_WARNING_TRANSACTION=1'] if native_warning_transaction_hooks else []),
+                *(['-DZ7_HOST_NATIVE_CACHE_COPY=1'] if native_cache_copy_hooks else []),
                 '-c', str(COMPONENT / 'host' / source), '-o', str(obj)], check=True, env=environment)
             objects.append(str(obj))
         linker = folder / 'host.ld'
@@ -415,7 +444,7 @@ ASSERT(SIZEOF(.bss) == 0, "Host must not contain unreserved BSS");
     return code, symbols
 
 
-def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False):
+def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False):
     if highlight_hooks and not display_hooks:
         raise ValueError('Highlight host requires the display host profile')
     if parameter_hooks and not highlight_hooks:
@@ -428,7 +457,9 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Owned frame coordination requires cached frame hooks')
     if native_warning_transaction_hooks and not owned_frame_coordination_hooks:
         raise ValueError('Native warning transactions require owned coordination hooks')
-    state_bytes = 336 if native_warning_transaction_hooks else 324 if owned_frame_coordination_hooks else 304 if cached_frame_permission_hooks else 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
+    if native_cache_copy_hooks and not native_warning_transaction_hooks:
+        raise ValueError('Native cache copies require native warning transactions')
+    state_bytes = 360 if native_cache_copy_hooks else 336 if native_warning_transaction_hooks else 324 if owned_frame_coordination_hooks else 304 if cached_frame_permission_hooks else 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
     workspace_bytes = (state_bytes + 63) & ~63
     if sha(container) != Z7_CONTAINER_SHA256:
         raise ValueError('Requires exact original Z7 C 3.80 container')
@@ -441,9 +472,9 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Unexpected native task descriptor')
     if plan.image.words(0x101e3ee4, 1) != (CURSOR,) or plan.image.words(0x101e3e70, 1) != (STATE,):
         raise ValueError('Unexpected native workspace')
-    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks, cached_frame_permission_hooks, owned_frame_coordination_hooks, native_warning_transaction_hooks)
+    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks, cached_frame_permission_hooks, owned_frame_coordination_hooks, native_warning_transaction_hooks, native_cache_copy_hooks)
     host_address = plan.alloc(code)
-    cold_size = 192 if owned_frame_coordination_hooks else 160
+    cold_size = 224 if native_cache_copy_hooks else 192 if owned_frame_coordination_hooks else 160
     cold_address = plan.alloc(bytes(cold_size))
     # Preserve original initializer's stack unwind and tail continuation. R0
     # still reports the original workspace base; only the monotonic cursor moves.
@@ -457,6 +488,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         {(constant('r2', STATE + 296) + ' str r3,[r2]; str r3,[r2,#4];') if cached_frame_permission_hooks else ''}
         {(constant('r2', STATE + 316) + ' str r3,[r2]; str r3,[r2,#4];') if owned_frame_coordination_hooks else ''}
         {(constant('r2', STATE + 328) + ' str r3,[r2]; str r3,[r2,#4];') if native_warning_transaction_hooks else ''}
+        {(constant('r2', STATE + 352) + ' str r3,[r2]; str r3,[r2,#4];') if native_cache_copy_hooks else ''}
         {constant('r2', STATE + 32)} {constant('r3', MAGIC)} str r3,[r2];
         dmb sy; pop {{r2,r3}}; msr APSR_nzcvq,r2; pop {{r2,r3}};
         {constant('r1', CURSOR)} {constant('r0', STATE + workspace_bytes)} str r0,[r1];
@@ -475,6 +507,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
     cached_frame_bridges = add_cached_frame_hooks(plan, symbols) if cached_frame_permission_hooks and not native_warning_transaction_hooks else {}
     owned_frame_bridges = add_owned_frame_coordination_hooks(plan, symbols) if owned_frame_coordination_hooks and not native_warning_transaction_hooks else {}
     native_warning_bridges = add_native_warning_transaction_hooks(plan, symbols) if native_warning_transaction_hooks else {}
+    native_cache_bridges = add_native_cache_copy_hooks(plan, symbols) if native_cache_copy_hooks else {}
     output, report = plan.finish()
     report.update(preset=DISPLAY_PRESET if display_hooks else PRESET, emulator_only=True, candidate_cleared=False,
         container_sha256=Z7_CONTAINER_SHA256, main_payload_size=len(output) - 2,
@@ -503,6 +536,14 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         report.update(native_warning_transaction_hooks=True, api_bytes=72, native_warning_bridges=native_warning_bridges)
         report['limitations'] = [v for v in report['limitations'] if not v.startswith(('Owned-frame exclusion only;', 'Lane generation exhaustion refuses'))]
         report['limitations'] += ['Warning-gate transaction only: earlier frame geometry and indirect native writer/caller closure remain open.', 'Terminal token reuse relies on closed bridge token lifetimes; native task/math-service scheduling needs validation.']
+    if native_cache_copy_hooks:
+        report.update(native_cache_copy_hooks=True, api_bytes=80, native_cache_bridges=native_cache_bridges,
+                      native_cache_observation_bytes=12, native_cache_snapshot_bytes=44,
+                      native_cache_requires_tracked_completion=True, native_cache_fixed_indices={'lcd':0,'evf':2})
+        report['source_files']['z7-native-modules/plugins/cache_observation.h'] = sha((COMPONENT/'plugins/cache_observation.h').read_bytes())
+        report['limitations'] += ['Cache observation covers four kind0 request copy sites, not all indirect writers or index ABA.',
+                                  'Pre-cold writer closure, native startup ordering and fixed bank allocation/lifetime remain open.',
+                                  'Snapshots establish copied request coherence; later parameter application is not atomic with cache writers.']
     return output, report
 
 
@@ -513,7 +554,8 @@ def validate_candidate(path, report_path, stock_path, zig=ZIG):
     expected, report = build_image(Path(stock_path).read_bytes(), zig, actual['preset'] == DISPLAY_PRESET,
                                    actual.get('highlight_hooks', False), actual.get('parameter_hooks', False),
                                    actual.get('frame_permission_hooks', False), actual.get('cached_frame_permission_hooks', False),
-                                   actual.get('owned_frame_coordination_hooks', False), actual.get('native_warning_transaction_hooks', False))
+                                   actual.get('owned_frame_coordination_hooks', False), actual.get('native_warning_transaction_hooks', False),
+                                   actual.get('native_cache_copy_hooks', False))
     if (Path(path).read_bytes() != expected[:-2] or actual != report or binascii.crc_hqx(expected, 0)):
         raise ValueError('Module host candidate or report differs from independent rebuild')
     return dict(modified=True, independently_rebuilt=True, sha256=sha(expected[:-2]),
@@ -532,6 +574,7 @@ def main():
     parser.add_argument('--cached-frame-permission-hooks', action='store_true', help='Opt in to API60 cached primary permission filter; requires --frame-permission-hooks')
     parser.add_argument('--owned-frame-coordination-hooks', action='store_true', help='Opt in to diagnostic API64 owned parameter / primary frame exclusion; requires cached frame hooks')
     parser.add_argument('--native-warning-transaction-hooks', action='store_true', help='Opt in to API72 native warning gate / parameter transactions; requires owned coordination flags')
+    parser.add_argument('--native-cache-copy-hooks', action='store_true', help='Opt in to API80 native request cache-copy observation; requires native warning transactions')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
@@ -548,8 +591,10 @@ def main():
         parser.error('--owned-frame-coordination-hooks requires --cached-frame-permission-hooks')
     if args.native_warning_transaction_hooks and not args.owned_frame_coordination_hooks:
         parser.error('--native-warning-transaction-hooks requires --owned-frame-coordination-hooks')
-    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks)
-    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks)
+    if args.native_cache_copy_hooks and not args.native_warning_transaction_hooks:
+        parser.error('--native-cache-copy-hooks requires --native-warning-transaction-hooks')
+    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks)
+    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks)
     if eg != repeated or report != second or binascii.crc_hqx(eg, 0):
         raise RuntimeError('Host build is not deterministic or CRC failed')
     output.mkdir(parents=True)

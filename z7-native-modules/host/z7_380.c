@@ -29,7 +29,13 @@ uint32_t z7_primary_frame_permission(const void *, uint32_t);
 uint32_t z7_cached_frame_permission(const void *, uint32_t);
 static uint32_t enable_native_warning_transactions(void);
 static uint32_t owned_warning_available(void);
+#ifdef Z7_HOST_NATIVE_CACHE_COPY
+uint32_t z7_native_cache_snapshot(uint32_t, struct z7_native_cache_snapshot *);
+uint32_t z7_native_cache_snapshot_valid(uint32_t, const struct z7_native_cache_snapshot *);
+static const struct z7_module_native_cache_api api = { { { { { { { {
+#else
 static const struct z7_module_native_warning_api api = { { { { { { {
+#endif
 #else
 static const struct z7_module_owned_frame_api api = { { { { { {
 #endif
@@ -69,8 +75,13 @@ static const struct z7_module_worker_api api = {
 #ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
 }, enable_native_warning_transactions, owned_warning_available
 #endif
+#ifdef Z7_HOST_NATIVE_CACHE_COPY
+}, z7_native_cache_snapshot, z7_native_cache_snapshot_valid
+#endif
 };
-#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+#ifdef Z7_HOST_NATIVE_CACHE_COPY
+_Static_assert(sizeof(api) == 80, "Native cache API prefix layout");
+#elif defined(Z7_HOST_NATIVE_WARNING_TRANSACTION)
 _Static_assert(sizeof(api) == 72, "Native warning API prefix layout");
 #elif defined(Z7_HOST_OWNED_FRAME_COORDINATION)
 _Static_assert(sizeof(api) == 64, "Owned frame API prefix layout");
@@ -113,8 +124,65 @@ static uint32_t valid_state(const struct z7_host_state *s)
 #ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
     for (uint32_t i = 0; i < 2; ++i) if (s->native_warning_guards[i] != 0xa5a5a5a5u) return 0;
 #endif
+#ifdef Z7_HOST_NATIVE_CACHE_COPY
+    for (uint32_t i = 0; i < 2; ++i) if (s->native_cache_guards[i] != 0xa5a5a5a5u) return 0;
+#endif
     return 1;
 }
+
+#ifdef Z7_HOST_NATIVE_CACHE_COPY
+/* These four native copy sites cover the audited kind0 constructor/setter
+ * spans. Other writers, pre-cold startup and bank-index ABA require closure.
+ * Tokens carry bank+1 and never authorize skipping the original native copy.
+ */
+uint32_t z7_native_cache_copy_begin(uint32_t destination, uint32_t bytes)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || bytes != 36) return 0;
+    for (uint32_t bank = 0; bank < 3; ++bank)
+        if (destination == 0xa1f18fc0u + bank * 0xe84u + 0x58u)
+            return z7_cache_observation_begin(&s->native_cache) ? bank + 1 : 0;
+    return 0;
+}
+void z7_native_cache_copy_end(uint32_t token)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !token) return;
+    if (token > 3) { z7_cache_observation_halt(&s->native_cache); return; }
+    z7_cache_observation_end(&s->native_cache, 1);
+    if (!__atomic_load_n(&s->native_cache.halted, __ATOMIC_ACQUIRE))
+        __atomic_fetch_or(&s->native_cache_ready, 1u << (token - 1), __ATOMIC_RELEASE);
+}
+static uint32_t native_cache_bank(uint32_t output, uint32_t *bank)
+{
+    if (output != 1 && output != 4) return 0;
+    uint32_t expected = output == 1 ? 0 : 2;
+    if (*(const volatile uint8_t *)(uintptr_t)(0xa180f274u + output) != expected) return 0;
+    *bank = expected; return 1;
+}
+uint32_t z7_native_cache_snapshot_valid(uint32_t output, const struct z7_native_cache_snapshot *snapshot)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    uint32_t bank;
+    return snapshot && !((uintptr_t)snapshot & 3) && valid_state(s) && native_cache_bank(output, &bank) &&
+        bank == snapshot->bank && (__atomic_load_n(&s->native_cache_ready, __ATOMIC_ACQUIRE) & (1u << bank)) &&
+        z7_cache_observation_valid(&s->native_cache, snapshot->serial);
+}
+uint32_t z7_native_cache_snapshot(uint32_t output, struct z7_native_cache_snapshot *out)
+{
+    struct z7_host_state *s = (void *)(uintptr_t)Z7_HOST_STATE;
+    struct z7_native_cache_snapshot result;
+    if (!out || ((uintptr_t)out & 3) || !valid_state(s) || !native_cache_bank(output, &result.bank) ||
+        !(__atomic_load_n(&s->native_cache_ready, __ATOMIC_ACQUIRE) & (1u << result.bank)) ||
+        !z7_cache_observation_ticket(&s->native_cache, &result.serial)) return 0;
+    const volatile uint32_t *source = FN(0x10434cefu, const volatile uint32_t *, uint32_t, uint32_t, uint32_t)(output, 0, 0);
+    if ((uintptr_t)source != 0xa1f18fc0u + result.bank * 0xe84u + 0x58u) return 0;
+    for (uint32_t i = 0; i < 9; ++i) result.request[i] = source[i];
+    if (!z7_native_cache_snapshot_valid(output, &result)) return 0;
+    for (uint32_t i = 0; i < sizeof(result) / 4; ++i) ((uint32_t *)out)[i] = ((const uint32_t *)&result)[i];
+    return 1;
+}
+#endif
 
 static uint32_t within(uintptr_t p, uint32_t base, uint32_t bytes, uint32_t n)
 {
@@ -772,7 +840,9 @@ __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
 {
     return ((uint32_t (*)(const struct z7_module_api *))
              ((uintptr_t)body + entry + 1))(
-#ifdef Z7_HOST_NATIVE_WARNING_TRANSACTION
+#ifdef Z7_HOST_NATIVE_CACHE_COPY
+                &api.warning.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
+#elif defined(Z7_HOST_NATIVE_WARNING_TRANSACTION)
                 &api.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
 #elif defined(Z7_HOST_OWNED_FRAME_COORDINATION)
                 &api.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
