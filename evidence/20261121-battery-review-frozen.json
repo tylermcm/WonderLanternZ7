@@ -1,0 +1,19 @@
+{
+  "source_checkpoint": "256905dcc06c8aa9b94ee366ca1bf4da7519a6c4",
+  "module_sha256": "89358992419867380781bafae7a1624f4d51955b3920127718f6daba9318ea23",
+  "module_bytes": 2824,
+  "bundle_file_count": 8,
+  "bundle_readback_verified": true,
+  "review_manifest_sha256": "43af892d3ffeab1f1128da3fbecf1d719d0aa14d86e78f1852f1cc3877ef5a58",
+  "policy_checks": 39,
+  "root_tests": 95,
+  "source_graph_nodes": 4005,
+  "source_graph_edges": 11058,
+  "hardware_test_scope": "One battery-only SD cold startup on existing host",
+  "stage_authorized": false,
+  "hardware_test_authorized": false,
+  "card_written": false,
+  "firmware_generated": false,
+  "full_lcd_release_withdrawn": true,
+  "physical_recovery_verified": false
+}

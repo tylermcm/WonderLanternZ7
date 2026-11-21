@@ -1,5 +1,26 @@
 # Laptop handoff — October 20, 2026
 
+## Hardware-test review checkpoint reached - November 21, 2026
+
+Battery-only SD review FROZEN and independently readback/hash verified8 files in
+.private/review/20261121-battery-only-test-01. Exact source checkpoint
+256905dcc06c8aa9b94ee366ca1bf4da7519a6c4. Module2824bytes SHA89358992...18ea23.
+See BATTERY_HARDWARE_TEST_ASSESSMENT.md; immutable bundle contains that assessment,
+module+metadata,39-check policy, startup-boundary report, root checks and source
+manifest.95 root tests pass; graph4005nodes/11058edges refreshed with existing
+conditional-C limitations. Source-only public freeze record under evidence/.
+
+READY FOR OWNER REVIEW of ONE battery-only test; not full-release acceptance.
+NO card staging or hardware-test authorization yet, NO firmware flash proposed.
+Need fresh explicit approval before any copy/test. Card state unchanged since
+verified quarantine: all four trials disabled. Preflight must reverify same card,
+all four hashes, absence of active root BIN/name collisions; add ONLY exact new
+Z7APP.BIN if approved. Keep EG disabled. Follow one-startup/control/percentage/
+normal-power-off check and preservation-only quarantine plan in assessment.
+Percentage would demonstrate module GUI execution; no marker is inconclusive.
+Physical freeze/recovery, telemetry accuracy and full lifecycle remain unknown.
+No live process. Stop offline preparation here for owner review/approval.
+
 ## Battery-only hardware review in preparation - November 21, 2026
 
 User requested continuing until a hardware-testable checkpoint; NO staging/test
