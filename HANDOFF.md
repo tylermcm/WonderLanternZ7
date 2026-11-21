@@ -1,5 +1,62 @@
 # Laptop handoff — October 20, 2026
 
+## HARDWARE FAILURE HOLD: post-update card/control freeze - November 21, 2026
+
+WITHDRAW the LCD flash-ready recommendation. Owner reports update finished,
+then all buttons/touch stopped responding. Controls recovered immediately when
+the card was removed, WITHOUT a restart. Owner confirms MENU/touch both work;
+reinserting the same card without restarting also works. Owner now confirms a
+normal COLD boot without card, with MENU and touch responding. Exact initial
+freeze timing relative to the first post-update restart is still being asked;
+do not assume the module actually loaded or that this was a post-boot freeze.
+No permanent brick is
+established, but the installed build has FAILED hardware acceptance. Do not
+reuse previous software-gates-passed language as hardware clearance.
+
+No more flashes, staging or automatic rollback. Prior approval was for the now-
+failed trial, not another candidate. Preserve frozen host/module/review/staging
+files and all card contents. No risky recovery button sequences or guessed
+firmware filenames. Existing emergency recovery remains unverified.
+
+Post-failure card is back in reader, same Sony identity confirmed. Read-only
+backup .private/card-backups/20261121-post-control-freeze-01 COMPLETE: both EG
+and module present and exactly match staged hashes; no two settings journals.
+Journal absence alone does NOT establish how far initialization got.
+
+User explicitly approved "Rename both trial files". Native PowerShell Move-Item
+renamed ONLY Z7APP.BIN -> Z7APP.BIN.disabled and EG161080.BIN ->
+EG161080.BIN.disabled. Bytes/SHA unchanged;217 existing user-file metadata and
+Nikon catalog hash unchanged. Private quarantine report under .private/card-staging/
+20261121-lcd-quarantine-01.json. Safe eject VERIFIED. No deletes/format/new flash.
+Installed host remains modified. Do not treat quarantine as a firmware rollback
+or promise it fixes cold startup.
+
+Working hypothesis only: startup loader/file-service or module initialization
+blocks and card removal releases it. Code starts one loader task with a bounded
+NO_FILE retry phase; reinsertion does not create a new loader task. The module
+may or may not have initialized; recovery on card removal does NOT identify the
+exact failing stage or prove a module-code versus host/filesystem cause.
+
+Specific code difference found offline: pinned .private/research/z7ii-50a22b2/
+host/host.c worker checks app state plus slot/ready query before load. Original-
+Z7 worker currently calls file open directly, with only bounded unavailable-open
+retries. No equivalent explicit readiness gate. This is a concrete difference
+and investigation lead, NOT established freeze cause or verified repair. Do not
+copy Z7II addresses/app bytes or add an arbitrary delay and call that fixed.
+
+Next: owner was asked for ONE normal startup with DISABLED card (no update) to
+separate card-presence from enabled-module effects, plus exact initial restart
+timing. Await observations; no duplicate flash or new binary. Investigate native
+startup task/file readiness and initialization boundaries offline. No production
+change/new binary until a specific supported cause is found. QEMU file-service
+HLE bypasses physical card/mount/locking behavior: its prior passes did NOT prove
+those contracts. First priority is keeping the owner's camera usable and files
+intact, not completing deferred display features. All previous records below
+are historical; this hold takes precedence. No live emulator/process from this
+investigation, no firmware writes or push. Only authorized filename quarantine
+changed card metadata; file contents and photos preserved.
+
+
 ## Owner-authorized pair staged additively; card safely ejected - November 21, 2026
 
 After exact assessment/candidate/card question, user explicitly authorized:

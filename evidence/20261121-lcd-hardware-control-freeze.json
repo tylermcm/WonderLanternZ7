@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "hardware_acceptance": "failed",
+  "recommendation": "withdrawn",
+  "owner_observations": [
+    "Update finished, then all buttons and touch stopped responding",
+    "Removing card immediately restored MENU and touch without restarting",
+    "Reinserting same card without restarting also worked"
+  ],
+  "camera_image_readback": false,
+  "cold_boot_without_card_observed": true,
+  "cause_established": false,
+  "working_hypothesis": "Startup loader/file service or module initialization; card removal releases blocked operation",
+  "prior_trial_source_checkpoint": "d34b963b52de4ab28131486a6f52b56659eff71c",
+  "candidate_eg_sha256": "fa709dba7eb7a9addc8bd5b90f839edd578cfb6d4bb0df87a1cd8cb4a7beaa4d",
+  "module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+  "new_card_writes": true,
+  "new_flash_authorized": false,
+  "automatic_rollback": false,
+  "artifacts_preserved": true,
+  "emergency_recovery_verified": false,
+  "initial_freeze_post_restart_confirmed": false,
+  "initial_timing_question_pending": true,
+  "post_failure_files_match_staged": true,
+  "post_failure_backups": 2,
+  "journals_present": false,
+  "quarantine_owner_authorization": "Rename both trial files",
+  "quarantined_names": [
+    "Z7APP.BIN.disabled",
+    "EG161080.BIN.disabled"
+  ],
+  "quarantined_contents_unchanged": true,
+  "existing_user_file_metadata_unchanged": 217,
+  "nikon_catalog_hash_unchanged": true,
+  "quarantine_safe_eject_verified": true,
+  "new_card_content_writes": false,
+  "firmware_reflashed": false,
+  "disabled_card_cold_boot_result": "pending",
+  "readiness_gate_difference": "Pinned upstream checks app/card readiness before load; original-Z7 worker has no equivalent explicit gate; cause not established"
+}

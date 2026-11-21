@@ -1,5 +1,25 @@
 # Original Z7 LCD first-release installation assessment
 
+**WITHDRAWN: hardware acceptance failed.** After the owner-reported completed
+update, all controls/touch froze. Removing the card immediately restored MENU
+and touch without restarting; reinserting it without restarting also worked.
+The cause is not established. Startup loading/card-file service or initialization
+is suspected, not proven. Owner confirms a normal cold boot without the card.
+The initial freeze's timing relative to the post-update restart is unconfirmed.
+Do not assume the module was running when controls stopped.
+
+Both post-failure card files were preserved privately and match the staged
+hashes. With explicit owner approval, ONLY their names were changed to
+Z7APP.BIN.disabled and EG161080.BIN.disabled. Contents/hashes, 217 existing
+user-file metadata records and Nikon catalog hash are unchanged. Card safely
+ejected; installed host NOT removed or reflashed. A normal startup with this
+disabled card is the pending isolation check, not another firmware trial.
+
+Do not perform another update or automatic rollback. Preserve all files and
+frozen evidence. The previous software-ready recommendation below is historical
+and is superseded by this hold. Removing the card does not undo the installed
+host. Further work is offline diagnosis and controlled recovery assessment.
+
 November 21, 2026. **Scoped software gates have passed for a controlled first
 hardware trial. Owner authorization is recorded; the reviewed pair is staged
 and the card safely ejected. Camera programming awaits the owner's operation.**
