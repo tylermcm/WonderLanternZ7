@@ -54,19 +54,24 @@ class AutomaticFixture(NativeBatteryDisplayFixture):
 def audit(raw, host, packet, module):
     if hashlib.sha256(raw).hexdigest() != host['main_payload_sha256'] or hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Host/module fingerprint mismatch')
-    settings_activation = module['kind'] == 'original-Z7-display-settings-module'
+    lcd_release = module['kind'] == 'original-Z7-LCD-first-release-candidate'
+    settings_activation = module['kind'] == 'original-Z7-display-settings-module' or lcd_release
     if not settings_activation and not module['configuration']['battery_percent_enabled']: raise ValueError('Audit requires enabled module')
     checks = []
     def check(name, good):
         checks.append(dict(name=name, passed=bool(good)))
         if not good: raise AssertionError(name)
     def load():
-        f = AutomaticFixture(raw, host, packet)
+        if lcd_release:
+            from audit_z7_display_persistence import PersistenceFixture
+            f = PersistenceFixture(raw, host, packet)
+        else:
+            f = AutomaticFixture(raw, host, packet)
         if f.call(host['symbols']['z7_module_load_once'], STATE) != 8: raise AssertionError('Module load failed')
         if settings_activation:
             loaded = f.words()[12]
             f.settings_callback_fixture = True
-            f.u.mem_write(0xa1833548 + 22, struct.pack('<2H', 0, 6))
+            f.u.mem_write(0xa1833548 + 22, struct.pack('<2H', 0, 5 if lcd_release else 6))
             f.call(loaded + module['symbols']['sm_activate'])
             if int.from_bytes(f.u.mem_read(loaded + module['symbols']['z7_battery_enabled'], 4), 'little') != 1:
                 raise AssertionError('Native settings callback did not enable renderer')

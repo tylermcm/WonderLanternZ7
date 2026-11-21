@@ -1,5 +1,52 @@
 # Laptop handoff — October 20, 2026
 
+## LCD native grid selection passed; battery fixture boundary isolated - November 21, 2026
+
+Previous goal turn c60fcf7 was progress. Same release04 module/API44 host; NO
+production C/firmware edits. lcd-six-grid-menu-01 PASS19/7 native frames selects
+all six native choices and verifies stored values. Not shooting-grid pixel proof.
+
+Inspected ready03: RAW increments20..23 each sample, ISP remains1, processed
+scanout false, application stage0/ready3. That is a sensor-pipeline fixture
+failure, not a demonstrated battery module failure. context_visible() reads
+native UI/output/font/menu/pool/icon state, not ISP data. battery-auto now records
+sensor health as observation with sensor_pipeline_verified=false and asserts its
+actual native photo-LCD/no-menu/foreground-glyph requirements. Sensor gates on
+focal and other views remain. This is explicitly isolated UI scope, not a
+sensor readiness claim or replacement for camera capture tests.
+
+lcd-battery-ui-01 FAILS eligible native foreground baseline after THREE labeled
+requests; no MENU/PLAY reached. Do not rerun blindly. Original bar06 and adapter
+glyph are present. Static original snapshot conversion10368564..103685AA reads
+incoming cache kind/value, defaults bar6 and rewrites snapshot +1AA. No guessed
+source pointer or native object/pixel writes introduced. Future captures now
+retain actual bar, both control records, foreground object and module counters;
+requests retain immediate post-render state. Existing failed runs predate this
+extra diagnostic logging and must not be described as containing it.
+
+Extended existing audit_z7_battery_percent to exact persistent LCD fixture and
+actual compact battery menu callback(row5). First attempt fails fixture mutex
+identity: HistogramFixture intercepts native battery mutex as histogram mutex.
+It now delegates ONLY known battery mutexa235ae4c to existing native battery
+fixture, preserving other strict histogram checks. Final battery-policy-02
+PASS38 on exact module04/hostAPI44, activation through compact native menu
+callback. session_id29581 is terminal success. Supplied native icon/telemetry/
+services, no pixel/hardware claim; native MENU/PLAY remains unproven for combined
+profile. No processes remain live; do not restart passing audits by default.
+
+Owner confirms normal boot and most recent Z7 firmware. Official Nikon product
+page currently lists C3.80, matching target; owner report is interpreted, not a
+camera-screen reading/image readback. Disk+volume inventory shows ONLY internal
+C: disk; no USB/card disk, no card contents accessed. Asked asynchronously to
+connect card for read-only identity and private backup of existing update/config
+files. This is NOT staging/flash authorization. Question pending; do not assume
+the default option was submitted. Assessment updated with official stock updater
+scope and fresh-preference first-boot preparation. Installation remains held.
+Root73 pass, graph3873nodes/10710links with existing extractor warnings. Keep
+broad goal ACTIVE; no portrait,
+card writes, staging, camera programming or push.
+
+
 ## Explicit LCD updater review and shooting fixture correction - November 21, 2026
 
 Previous turn e29b393 was progress. Same module04 and API44 host; no firmware

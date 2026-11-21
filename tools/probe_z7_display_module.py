@@ -235,6 +235,13 @@ def main():
         (output / (name + '.png')).write_bytes(camera.png)
         stored = int.from_bytes(camera.remote.memory(0xa24f182c, 4), 'little')
         step = dict(name=name, stored_grid=stored, frame_sha256=hashlib.sha256(camera.png).hexdigest(), pages=pages())
+        if args.view == 'battery-auto':
+            step['battery'] = {field: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_battery_' + field], 4), 'little')
+                               for field in ('enabled', 'object', 'percent', 'samples', 'paints')}
+            step['native_battery_bar'] = camera.remote.memory(0xa201d4d0 + 0x1aa, 1).hex()
+            step['native_battery_controls'] = camera.remote.memory(0xa1824a14, 96).hex()
+            pointer = int.from_bytes(camera.remote.memory(0xa1824a14 + 48 + 36, 4), 'little')
+            step['native_foreground_icon'] = camera.remote.memory(pointer, 100).hex() if pointer else None
         if args.view == 'histogram':
             step['histogram'] = {name: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_histogram_' + name], 4), 'little')
                 for name in ('result', 'attempts', 'draws', 'paints', 'presents', 'last_end', 'context_bits')}
@@ -380,7 +387,7 @@ def main():
     try:
         camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry') else camera.boot_shooting()
         checkpoint()
-        if args.view in ('battery-auto', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
+        if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
             # StartLV acknowledgement and a fixed delay are insufficient. This
             # diagnostic gate observes native pipeline progress without writing
             # readiness flags or inventing peripheral completion responses.
@@ -1146,6 +1153,15 @@ def main():
             check('clean-diagnostic-restores-all-owned-masks', all(camera.remote.memory(p + 4, 36) == saved
                   for p, saved in zip(descriptors, original_masks)))
         elif args.view == 'battery-auto':
+            # Battery context_visible() depends on native UI ownership, font,
+            # output and glyph visibility, not RAW/ISP buffers. Preserve sensor
+            # health as an observation; this isolated overlay fixture does not
+            # establish sensor/ISP functionality or real capture readiness.
+            camera.refresh_device_evidence()
+            result['battery_scope'] = dict(native_ui_overlay_only=True,
+                sensor_pipeline_verified=False,
+                device_observation=dict(camera.device_evidence or {}),
+                health=ui.capture_health(camera.remote, camera.device_evidence or {}))
             def automatic_word(name):
                 return int.from_bytes(camera.remote.memory(base + module['symbols']['z7_battery_' + name], 4), 'little')
             def automatic_visible():
@@ -1171,6 +1187,9 @@ def main():
                 # Match settings-battery: no checkpoint after supplying a
                 # paused request, since native tasks may overwrite it.
                 camera.call(packet, 'Native battery renderer, labeled GUI request: ' + label, 0x102f40a0, bytes(32), [])
+                result['battery_icon_fixture'].setdefault('request_observations', []).append(dict(
+                    label=label, snapshot_bar=camera.remote.memory(0xa201d4d0 + 0x1aa, 1).hex(),
+                    eligible_foreground=foreground_glyph()))
             capture('automatic-native-context')
             check('no-native-battery-icon-means-no-overlay', automatic_word('object') == 0 and automatic_word('samples') == 0)
             if args.battery_icon_fixture:
@@ -1185,6 +1204,9 @@ def main():
                     capture(baseline_name)
                     if foreground_glyph() is not None: break
                 check('baseline-retains-eligible-native-battery-glyph', foreground_glyph() is not None)
+                check('battery-baseline-is-photo-lcd-with-no-native-menu',
+                      camera.remote.memory(0xa18237c6, 1) == b'\0' and
+                      camera.remote.memory(0xa201d4d0 + 0x40, 1) == b'\0' and not pages())
                 result['battery_icon_fixture']['baseline_glyph'] = foreground_glyph()
                 stock_icon = Image.open(io.BytesIO(camera.png)).convert('RGB')
                 check('supplied-request-reaches-native-icon', camera.remote.memory(0xa1824a14 + 49, 1) == b'\1')

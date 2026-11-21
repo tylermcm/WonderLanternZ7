@@ -52,6 +52,12 @@ class HistogramFixture(BaseFixture):
         self.u.mem_write(address, struct.pack('<I', value))
 
     def hook(self, u, address, size, context):
+        if address in (0x10170944, 0x1017093e) and u.reg_read(UC_ARM_REG_R0) == 0xa235ae4c:
+            # The composed display module also samples the native battery.
+            # Its distinct mutex belongs to NativeBatteryDisplayFixture, not
+            # this histogram fixture's stricter mutex/event boundary.
+            super().hook(u, address, size, context)
+            return
         if self.active_histogram:
             if address == self.painter_return: self.inside_painter = False
             if address == self.painter_entry:

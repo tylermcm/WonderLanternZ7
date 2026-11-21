@@ -3,6 +3,13 @@
 November 21, 2026. **Installation remains on hold.** This assessment identifies
 the software under test; it does not clear a camera update.
 
+The owner confirms normal boot and the most recent Z7 firmware. Nikon currently
+lists C 3.80 on its [Z7 download page](https://downloadcenter.nikonimglib.com/en/products/492/Z_7.html),
+matching this lab's target. This interprets the owner's report; no firmware-screen
+reading or installed-image readback was obtained. Windows disk/volume inventory
+shows only the internal C: disk, so current card files and rollback backups cannot
+yet be checked. No card contents were read or written.
+
 The selected scope is the SD loader, six native grid choices, four custom DISP
 presets, native horizon, supported information controls, battery percentage,
 supported LCD focal text and two-slot settings persistence. Portrait, zebras,
@@ -32,6 +39,14 @@ These supply incoming context and OS/render services and are not physical-output
 tests. The exact combined profile also passes 67 native base-page instruction
 checks covering horizon selection, master-off restoration, conflicting state,
 failed setter/restore retry and unsupported menu/movie/output fallback.
+The exact six-choice native grid menu passes 19 checks across seven frames,
+selecting Fourths, Thirds, Golden, Center, Dense and Off with the expected native
+stored values. This is selection/menu evidence, not a new shooting pixel test.
+The existing battery instruction audit now also passes 38 checks on this exact
+combined profile, enabled through its compact native menu callback. Sampling,
+palette preservation, ownership, retirement and unsupported contexts execute
+compiled module/native helpers with supplied icon/telemetry/mutex/render
+services. This does not clear native visual MENU/PLAY integration or hardware.
 
 Battery drawing, its native icon-region restoration and adapter exclusion pass
 before the native MENU call stops QEMU on an unmodeled write to `0x10000aaa`
@@ -52,6 +67,17 @@ Run03 fails its six-attempt measured pipeline-readiness gate before rendering
 or MENU tests; it cannot validate the corrected icon request path. Do not rerun
 blindly or count this as a feature failure/pass. Inspect its RAW/ISP/scanout
 observations first. No successful device response or framebuffer is supplied.
+
+Inspection confirms RAW advances while ISP remains at one frame and processed
+scanout is absent in run03. Battery's compiled context guard instead depends on
+native LCD/photo/menu/pool/font/icon ownership. The isolated `lcd-battery-ui-01`
+therefore records sensor health without claiming a pipeline pass and qualifies
+those UI dependencies. It FAILS native battery-glyph qualification after three
+labeled requests; MENU/PLAY are not reached. Preserve that failure. Original
+snapshot conversion at 10368564..103685AA rebuilds the bar from an incoming
+cache type/value, with default bar6; the run starts at bar6 (adapter). One-time
+snapshot/icon requests are not yet a stable native battery-input fixture. Do not
+patch native objects/pixels or describe this failure as hardware telemetry proof.
 
 A private held snapshot `20261121-lcd-first-release-01` preserves the full EG,
 MAIN, module and build reports with readback hashes. Full EG is 33,058,862 bytes,
@@ -100,12 +126,20 @@ under the original updater's verified filename, and the module under its exact
 loader filename. Stage only the selected update EG, verify its full readback
 hash and safely eject. The owner operates the camera updater. The current
 candidate's actual updater acceptance and boot behavior are unverified.
+Before a first trial, back up any existing `Z7CFG0.DAT`/`Z7CFG1.DAT` off the card
+and use fresh defaults, so old preferences cannot enable overlays on first boot.
+Preserve those originals; do not silently replace or discard them.
 
 If the camera still boots and its updater works, a reviewed previous full EG
 may allow normal-updater rollback. Removing the module/card does not undo
 installed host firmware. The two settings journals are preferences, not a
 firmware or calibration backup. **No emergency recovery is verified for an
 unbootable camera; professional service may be required.**
+Nikon's [official update page](https://downloadcenter.nikonimglib.com/en/download/fw/558.html)
+describes its stock container and firmware versions through 3.70 as update
+inputs. It does not establish acceptance of this lab's extracted EG or a
+same-version rollback from C 3.80. Prior lab trials and selected instruction
+checks must not be presented as an official recovery procedure.
 
 After a separately authorized installation, start with custom pages and battery
 off. Confirm ordinary rear-LCD shooting/menu operation, then enable one feature

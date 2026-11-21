@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "native_grid_menu": {
+    "passed": true,
+    "checks": 19,
+    "frames": 7,
+    "frame_hashes_verified": true,
+    "shooting_pixels": false
+  },
+  "battery_ui": {
+    "passed": false,
+    "error": "AssertionError('baseline-retains-eligible-native-battery-glyph')",
+    "baseline_requests": 3,
+    "menu_play_reached": false,
+    "sensor_pipeline_verified": false
+  },
+  "battery_instruction_audit": {
+    "passed": true,
+    "checks": 38,
+    "activation": "Compiled native settings callback with supplied GUI refresh/paint",
+    "supplied_boundaries": [
+      "GUI/control instance and transitions",
+      "Native incoming telemetry and mutex",
+      "Font/label/list/pixel services",
+      "File/kernel/heap"
+    ],
+    "visual_validation": false,
+    "physical_camera": false
+  },
+  "owner_report": "Camera boots normally and uses most recent Z7 firmware; interpreted as C3.80 from current Nikon listing, no screen/readback verification",
+  "nikon_firmware_reference": "https://downloadcenter.nikonimglib.com/en/products/492/Z_7.html",
+  "card_inventory": "Only internal C disk observed; no card contents accessed",
+  "card_backup_request": "Pending user connection; no card-write or flash authorization",
+  "source_sha256": {
+    "tools/audit_z7_battery_percent.py": "9e0b669bf80c006146e1fd46b548c3eaad5e4bb5d17965cd35d7f99ba20c729c",
+    "tools/audit_z7_histogram_component.py": "e00a383e8a7bfd67133a6f9568ff8a21c7b8d5017be17937d9db3254aabf75ad",
+    "tools/probe_z7_display_module.py": "35ef946ae457f806ff9a0ee2a54334f28c734f65f932ae910679f68ae64cecde"
+  },
+  "root_tests": 73,
+  "installation_cleared": false,
+  "camera_access": false,
+  "staging": false
+}
