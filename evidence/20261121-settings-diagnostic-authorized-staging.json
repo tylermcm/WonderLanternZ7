@@ -16,6 +16,12 @@
   "safe_eject_verified": true,
   "eject_note": "Shell eject completed: reader letter remains with zero media bytes, no mounted partition and inaccessible root",
   "private_staging_record_sha256": "9232923fe42a1573c4da7b2132afb8f2a920571e96e579097587219aa8b4eb4d",
-  "hardware_result": "pending",
-  "repair_claimed": false
+  "hardware_result": "FAILED: owner reports same input freeze; no input until card removal; power switch unresponsive until battery pull",
+  "repair_claimed": false,
+  "owner_quote": "that caused it to freeze like it did the first time. no input ability until i removed the card, same with the power swith not working either until i pull the battery",
+  "root_cause_established": false,
+  "settings_io_suppression_prevented_freeze": false,
+  "menu_row_observed": null,
+  "menu_row_observation_status": "not reported",
+  "quarantine_status": "pending card connection"
 }

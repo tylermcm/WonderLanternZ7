@@ -1,5 +1,26 @@
 # Laptop handoff — October 20, 2026
 
+## Settings diagnostic FAILED on camera - November 21, 2026
+
+Owner reports same freeze with settings-I/O-disabled diagnostic: no input until
+card removal; power switch unresponsive until battery pull. Preserve these
+reported recovery details without inferring their exact sequence. Additional
+Display settings menu row was not reported; initialization completion unproven.
+Skipping persistence_prepare and persistence_worker did NOT prevent failure.
+This weakens settings I/O as the sole explanation; does not exonerate all file
+services, establish the failing instruction, or prove a UI/callback root cause.
+Original update EG remained disabled during staged comparison: presence of an
+active EG update file is not necessary for this recurrence, assuming card state
+remained as staged. Existing emulator pass is contradicted by hardware failure.
+No hardware acceptance or repair claim. No new flash or next diagnostic proposed.
+
+Asked owner to leave failed card out and connect reader, also whether camera
+responds normally without card. Await response; quarantine pending. Planned
+preservation-only action: verify exact card/hash then rename failed Z7APP.BIN to
+Z7APP.SETTINGS-IO.disabled (destination must not exist); keep no-init and both
+original .disabled files intact, with NO active Z7APP.BIN. No automatic restore
+or new test. Do not call the card safe until quarantine/eject actually verified.
+
 ## Settings diagnostic authorized, staged and ejected - November 21, 2026
 
 Owner approved "yes" to the explained SD-only settings diagnostic and confirmed

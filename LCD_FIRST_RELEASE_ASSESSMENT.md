@@ -1,5 +1,13 @@
 # Original Z7 LCD first-release installation assessment
 
+**Latest diagnostic also FAILED on hardware.** Owner reports the same input
+freeze and unresponsive power switch with settings initialization/worker skipped.
+Card removal restored inputs; battery pull reported for power switch recovery.
+This is not a settings-I/O fix. Menu-row presence/init completion not established.
+Active EG update file was not needed for this recurrence if staged card state
+was unchanged. No further trial proposed. Preserve/disable failed diagnostic
+when card is connected; status is pending until verified. No firmware rollback.
+
 **WITHDRAWN: hardware acceptance failed.** After the owner-reported completed
 update, all controls/touch froze. Removing the card immediately restored MENU
 and touch without restarting; reinserting it without restarting also worked.
