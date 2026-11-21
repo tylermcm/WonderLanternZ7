@@ -15,6 +15,10 @@
 #include "../plugins/portrait_navigation.h"
 volatile uint32_t z7_portrait_nav_received,z7_portrait_nav_handled;
 #endif
+#ifdef Z7_PORTRAIT_TOUCH_DIAGNOSTIC
+#include "touch.h"
+volatile uint32_t z7_portrait_touch_received,z7_portrait_touch_handled;
+#endif
 volatile uint32_t z7_portrait_grid_received,z7_portrait_grid_handled;
 struct z7_portrait_layout z7_portrait_grid_layout;
 struct z7_portrait_bands z7_portrait_grid_bands;
@@ -33,6 +37,24 @@ static uint32_t portrait_navigation_callback(uint32_t direction,uint32_t *result
         __atomic_load_n(&z7_portrait_grid_layout.orientation,__ATOMIC_ACQUIRE)!=layout) return 0;
     *result=z7_portrait_navigation(direction,page==Z7_PORTRAIT_GRID ? Z7_CONTROL_GRID : Z7_CONTROL_SETTING,layout);
     ++z7_portrait_nav_handled;return 1;
+}
+#endif
+#ifdef Z7_PORTRAIT_TOUCH_DIAGNOSTIC
+static uint32_t portrait_touch_callback(const uint32_t *event,uint32_t *copy)
+{
+    ++z7_portrait_touch_received;
+    uint32_t page=z7_portrait_imenu_page();
+    volatile const uint8_t *scene=(void *)(uintptr_t)0xa201d4d0u;
+    volatile const uint32_t *outputs=(void *)(uintptr_t)0xa1821394u;
+    uint32_t layout=__atomic_load_n(&z7_portrait_grid_layout.orientation,__ATOMIC_ACQUIRE);
+    if (*scene || (*outputs&7u)!=1 || (layout!=1 && layout!=2) ||
+        (page!=Z7_PORTRAIT_GRID && page!=Z7_PORTRAIT_DIAL && page!=Z7_PORTRAIT_SETTING)) return 0;
+    uint32_t control=page==Z7_PORTRAIT_GRID ? Z7_CONTROL_GRID :
+        page==Z7_PORTRAIT_DIAL ? Z7_CONTROL_DIAL : Z7_CONTROL_SETTING;
+    if (!z7_portrait_input_event(event,copy,control,layout)) return 0;
+    if (z7_portrait_imenu_page()!=page || *scene || (*outputs&7u)!=1 ||
+        __atomic_load_n(&z7_portrait_grid_layout.orientation,__ATOMIC_ACQUIRE)!=layout) return 0;
+    ++z7_portrait_touch_handled;return 1;
 }
 #endif
 static uint32_t portrait_grid_callback(volatile uint32_t *message)
@@ -72,7 +94,9 @@ static uint32_t portrait_grid_callback(volatile uint32_t *message)
 uint32_t z7_main(const struct z7_module_api *api)
 {
     if (!api || api->abi!=Z7_MODULE_ABI || api->target!=Z7_MODULE_TARGET ||
-#ifdef Z7_PORTRAIT_NAVIGATION_DIAGNOSTIC
+#ifdef Z7_PORTRAIT_TOUCH_DIAGNOSTIC
+        api->size<92
+#elif defined(Z7_PORTRAIT_NAVIGATION_DIAGNOSTIC)
         api->size<88
 #else
         api->size<84
@@ -82,7 +106,13 @@ uint32_t z7_main(const struct z7_module_api *api)
 #ifdef Z7_PORTRAIT_NAVIGATION_DIAGNOSTIC
     const struct z7_module_navigation_api *nav=(const void *)api;
     if (!graphics->register_graphics || !graphics->register_graphics(portrait_grid_callback)) return 1;
+#ifdef Z7_PORTRAIT_TOUCH_DIAGNOSTIC
+    if (!nav->register_navigation || !nav->register_navigation(portrait_navigation_callback)) return 1;
+    const struct z7_module_touch_api *touch=(const void *)api;
+    return !touch->register_touch || !touch->register_touch(portrait_touch_callback);
+#else
     return !nav->register_navigation || !nav->register_navigation(portrait_navigation_callback);
+#endif
 #else
     return !graphics->register_graphics || !graphics->register_graphics(portrait_grid_callback);
 #endif

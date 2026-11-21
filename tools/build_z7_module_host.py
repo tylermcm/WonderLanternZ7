@@ -386,7 +386,7 @@ def add_navigation_hook(plan,symbols):
                 mode='0xa182df80',slots='0xa182df88',original_functions='0x11eca19c')
 
 
-def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False):
+def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False,touch_hooks=False,touch_original=0):
     """Fixed-address, BSS-free host; all writable state is explicitly reserved."""
     temporary = ROOT / '.private/tmp'
     temporary.mkdir(parents=True, exist_ok=True)
@@ -411,6 +411,7 @@ def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, fr
                 *(['-DZ7_HOST_NATIVE_CACHE_COPY=1'] if native_cache_copy_hooks else []),
                 *(['-DZ7_HOST_GRAPHICS=1'] if graphics_queue_hooks else []),
                 *(['-DZ7_HOST_NAVIGATION=1'] if navigation_hooks else []),
+                *(['-DZ7_HOST_TOUCH=1',f'-DZ7_TOUCH_ORIGINAL={touch_original | 1}u'] if touch_hooks else []),
                 '-c', str(COMPONENT / 'host' / source), '-o', str(obj)], check=True, env=environment)
             objects.append(str(obj))
         linker = folder / 'host.ld'
@@ -455,7 +456,7 @@ ASSERT(SIZEOF(.bss) == 0, "Host must not contain unreserved BSS");
     return code, symbols
 
 
-def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False):
+def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False,touch_hooks=False):
     if highlight_hooks and not display_hooks:
         raise ValueError('Highlight host requires the display host profile')
     if parameter_hooks and not highlight_hooks:
@@ -474,7 +475,9 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Graphics queue requires the native cache API prefix')
     if navigation_hooks and not graphics_queue_hooks:
         raise ValueError('Navigation requires the graphics API prefix')
-    state_bytes = 404 if navigation_hooks else 384 if graphics_queue_hooks else 360 if native_cache_copy_hooks else 336 if native_warning_transaction_hooks else 324 if owned_frame_coordination_hooks else 304 if cached_frame_permission_hooks else 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
+    if touch_hooks and not navigation_hooks:
+        raise ValueError('Touch requires the navigation API prefix')
+    state_bytes = 424 if touch_hooks else 404 if navigation_hooks else 384 if graphics_queue_hooks else 360 if native_cache_copy_hooks else 336 if native_warning_transaction_hooks else 324 if owned_frame_coordination_hooks else 304 if cached_frame_permission_hooks else 288 if frame_permission_hooks else 272 if parameter_hooks else STATE_BYTES
     workspace_bytes = (state_bytes + 63) & ~63
     if sha(container) != Z7_CONTAINER_SHA256:
         raise ValueError('Requires exact original Z7 C 3.80 container')
@@ -487,9 +490,18 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         raise ValueError('Unexpected native task descriptor')
     if plan.image.words(0x101e3ee4, 1) != (CURSOR,) or plan.image.words(0x101e3e70, 1) != (STATE,):
         raise ValueError('Unexpected native workspace')
-    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks, cached_frame_permission_hooks, owned_frame_coordination_hooks, native_warning_transaction_hooks, native_cache_copy_hooks, graphics_queue_hooks,navigation_hooks)
+    touch_original = 0
+    touch_expected = bytes.fromhex('2de9f04f90f90970a3b00546')
+    if touch_hooks:
+        if plan.image.read(0x103319d8,12) != touch_expected:
+            raise ValueError('Unexpected original touch producer prologue')
+        # All12 stolen bytes are PC-independent instructions. Keep their native
+        # stack/argument effects and continue at the original comparison.
+        touch_original = plan.alloc(bytes(24))
+        plan.put(touch_original,touch_expected+jump(touch_original+12,0x103319e5,12))
+    code, symbols = compile_host(plan.address, zig, highlight_hooks, parameter_hooks, frame_permission_hooks, cached_frame_permission_hooks, owned_frame_coordination_hooks, native_warning_transaction_hooks, native_cache_copy_hooks, graphics_queue_hooks,navigation_hooks,touch_hooks,touch_original)
     host_address = plan.alloc(code)
-    cold_size = 288 if navigation_hooks else 256 if graphics_queue_hooks else 224 if native_cache_copy_hooks else 192 if owned_frame_coordination_hooks else 160
+    cold_size = 320 if touch_hooks else 288 if navigation_hooks else 256 if graphics_queue_hooks else 224 if native_cache_copy_hooks else 192 if owned_frame_coordination_hooks else 160
     cold_address = plan.alloc(bytes(cold_size))
     # Preserve original initializer's stack unwind and tail continuation. R0
     # still reports the original workspace base; only the monotonic cursor moves.
@@ -506,6 +518,7 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         {(constant('r2', STATE + 352) + ' str r3,[r2]; str r3,[r2,#4];') if native_cache_copy_hooks else ''}
         {(constant('r2', STATE + 376) + ' str r3,[r2]; str r3,[r2,#4];') if graphics_queue_hooks else ''}
         {(constant('r2', STATE + 396) + ' str r3,[r2]; str r3,[r2,#4];') if navigation_hooks else ''}
+        {(constant('r2', STATE + 416) + ' str r3,[r2]; str r3,[r2,#4];') if touch_hooks else ''}
         {constant('r2', STATE + 32)} {constant('r3', MAGIC)} str r3,[r2];
         dmb sy; pop {{r2,r3}}; msr APSR_nzcvq,r2; pop {{r2,r3}};
         {constant('r1', CURSOR)} {constant('r0', STATE + workspace_bytes)} str r0,[r1];
@@ -526,6 +539,10 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
     native_warning_bridges = add_native_warning_transaction_hooks(plan, symbols) if native_warning_transaction_hooks else {}
     native_cache_bridges = add_native_cache_copy_hooks(plan, symbols) if native_cache_copy_hooks else {}
     navigation_bridge = add_navigation_hook(plan,symbols) if navigation_hooks else {}
+    if touch_hooks:
+        plan.edit(0x103319d8,jump(0x103319d8,symbols['z7_touch_bridge'],12),
+                  'Resident touch transform; preserve original producer return and synchronous copy',
+                  expected=touch_expected)
     output, report = plan.finish()
     report.update(preset=DISPLAY_PRESET if display_hooks else PRESET, emulator_only=True, candidate_cleared=False,
         container_sha256=Z7_CONTAINER_SHA256, main_payload_size=len(output) - 2,
@@ -572,6 +589,13 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         report.update(navigation_hooks=True,api_bytes=88,navigation_bridge=navigation_bridge,navigation_cold_bytes=cold_size)
         report['limitations'] += ['Navigation bridge preserves RAM mode slots; module admission requires the original slot value.',
                                   'Navigation task/page/output ownership and native selection completion remain unproved.']
+    if touch_hooks:
+        report.update(touch_hooks=True,api_bytes=92,touch_cold_bytes=cold_size,
+                      touch_bridge=dict(entry='0x103319d8',bridge=hex(symbols['z7_touch_bridge']),
+                                        original=hex(touch_original|1),continuation='0x103319e5',
+                                        stolen_bytes=touch_expected.hex(),event_bytes=60))
+        report['limitations'] += ['Touch transforms only kinds1..8 in bounded RAM spans; original producer always executes.',
+                                  'Driver/task/consumer lifetime and page/output admission remain unproved.']
     return output, report
 
 
@@ -583,7 +607,7 @@ def validate_candidate(path, report_path, stock_path, zig=ZIG):
                                    actual.get('highlight_hooks', False), actual.get('parameter_hooks', False),
                                    actual.get('frame_permission_hooks', False), actual.get('cached_frame_permission_hooks', False),
                                    actual.get('owned_frame_coordination_hooks', False), actual.get('native_warning_transaction_hooks', False),
-                                   actual.get('native_cache_copy_hooks', False),actual.get('graphics_queue_hooks',False),actual.get('navigation_hooks',False))
+                                   actual.get('native_cache_copy_hooks', False),actual.get('graphics_queue_hooks',False),actual.get('navigation_hooks',False),actual.get('touch_hooks',False))
     if (Path(path).read_bytes() != expected[:-2] or actual != report or binascii.crc_hqx(expected, 0)):
         raise ValueError('Module host candidate or report differs from independent rebuild')
     return dict(modified=True, independently_rebuilt=True, sha256=sha(expected[:-2]),
@@ -605,6 +629,7 @@ def main():
     parser.add_argument('--native-cache-copy-hooks', action='store_true', help='Opt in to API80 native request cache-copy observation; requires native warning transactions')
     parser.add_argument('--graphics-queue-hooks',action='store_true',help='Opt in to API84 resident graphics dispatch; requires native cache API prefix')
     parser.add_argument('--navigation-hooks',action='store_true',help='Opt in to API88 resident central navigation dispatch; requires graphics API prefix')
+    parser.add_argument('--touch-hooks',action='store_true',help='Opt in to API92 resident native touch producer bridge; requires navigation API prefix')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
@@ -627,8 +652,10 @@ def main():
         parser.error('--graphics-queue-hooks requires --native-cache-copy-hooks')
     if args.navigation_hooks and not args.graphics_queue_hooks:
         parser.error('--navigation-hooks requires --graphics-queue-hooks')
-    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks)
-    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks)
+    if args.touch_hooks and not args.navigation_hooks:
+        parser.error('--touch-hooks requires --navigation-hooks')
+    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks,args.touch_hooks)
+    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks,args.touch_hooks)
     if eg != repeated or report != second or binascii.crc_hqx(eg, 0):
         raise RuntimeError('Host build is not deterministic or CRC failed')
     output.mkdir(parents=True)

@@ -244,7 +244,7 @@ def main():
     a=p.parse_args();out=a.output.resolve()
     if not out.is_relative_to(ROOT/'.private') or out.exists():p.error('Choose a new private directory')
     host=json.loads(a.report.read_text(encoding='utf-8'));raw=a.host.read_bytes()
-    assert hashlib.sha256(raw).hexdigest()==host['main_payload_sha256'] and host.get('api_bytes') in (84,88)
+    assert hashlib.sha256(raw).hexdigest()==host['main_payload_sha256'] and host.get('api_bytes') in (84,88,92)
     old_host=json.loads(a.old_report.read_text(encoding='utf-8'));old_raw=a.old_host.read_bytes()
     assert hashlib.sha256(old_raw).hexdigest()==old_host['main_payload_sha256'] and old_host.get('api_bytes')==80
     packet,metadata=build(ROOT/'z7-native-modules/examples/portrait_grid_host_probe.c',zig=ZIG)

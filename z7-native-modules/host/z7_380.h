@@ -43,9 +43,17 @@
 #endif
 #include "navigation.h"
 #endif
+#ifdef Z7_HOST_TOUCH
+#ifndef Z7_HOST_NAVIGATION
+#error Touch API requires the navigation API prefix
+#endif
+#include "touch.h"
+#endif
 
 #define Z7_HOST_STATE 0xa9700000u
-#ifdef Z7_HOST_NAVIGATION
+#ifdef Z7_HOST_TOUCH
+#define Z7_HOST_STATE_BYTES 424u
+#elif defined(Z7_HOST_NAVIGATION)
 #define Z7_HOST_STATE_BYTES 404u
 #elif defined(Z7_HOST_GRAPHICS)
 #define Z7_HOST_STATE_BYTES 384u
@@ -127,6 +135,9 @@ struct z7_host_state {
     uint32_t navigation_callback,navigation_registered,navigation_running;
     uint32_t navigation_guards[2];
 #endif
+#ifdef Z7_HOST_TOUCH
+    uint32_t touch_callback,touch_registered,touch_running,touch_guards[2];
+#endif
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");
 #ifdef Z7_HOST_GRAPHICS
@@ -136,6 +147,10 @@ _Static_assert(__builtin_offsetof(struct z7_host_state,graphics_guards)==376, "G
 #ifdef Z7_HOST_NAVIGATION
 _Static_assert(__builtin_offsetof(struct z7_host_state,navigation_callback)==384, "Navigation state prefix");
 _Static_assert(__builtin_offsetof(struct z7_host_state,navigation_guards)==396, "Navigation guards");
+#endif
+#ifdef Z7_HOST_TOUCH
+_Static_assert(__builtin_offsetof(struct z7_host_state,touch_callback)==404, "Touch state prefix");
+_Static_assert(__builtin_offsetof(struct z7_host_state,touch_guards)==416, "Touch guards");
 #endif
 uint32_t z7_module_load_once(struct z7_host_state *state);
 void z7_module_worker(struct z7_host_state *state);

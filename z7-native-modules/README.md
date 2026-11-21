@@ -22,6 +22,14 @@ The opt-in API84 `sdk/graphics.h` adds staged resident graphics dispatch. Its
 [scope and checks](PORTRAIT_RESEARCH.md#opt-in-resident-graphics-bridge-api84)
 cover registration and stock fallback; the functional portrait module is unfinished.
 
+The opt-in API92 `sdk/touch.h` adds an init-only resident touch transform after
+the navigation API prefix. It preserves the original producer and driver slots;
+the host synchronously submits a transformed copy or the original packet and
+returns the native result. The loaded portrait diagnostic composes graphics,
+button navigation and touch mapping for grid/dial/settings pages. See the
+[touch scope and checks](PORTRAIT_RESEARCH.md#resident-touch-api92). Native task/
+pending-screen exclusion and physical installation/recovery remain unfinished.
+
 The opt-in API88 `sdk/navigation.h` adds a resident central navigation bridge,
 preserving all17 native RAM mode slots. `--navigation-hooks` requires the full
 API84 graphics profile. Its [scoped navigation checks](PORTRAIT_RESEARCH.md#resident-navigation-api88)

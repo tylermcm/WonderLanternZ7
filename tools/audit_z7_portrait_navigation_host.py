@@ -95,7 +95,7 @@ def main():
     for name in ('host','report','output'):p.add_argument('--'+name,type=Path,required=True)
     a=p.parse_args();out=a.output.resolve()
     if not out.is_relative_to(ROOT/'.private') or out.exists():p.error('Choose a new private directory')
-    host=json.loads(a.report.read_text());raw=a.host.read_bytes();assert hashlib.sha256(raw).hexdigest()==host['main_payload_sha256'] and host['api_bytes']==88
+    host=json.loads(a.report.read_text());raw=a.host.read_bytes();assert hashlib.sha256(raw).hexdigest()==host['main_payload_sha256'] and host['api_bytes'] in (88,92)
     source=ROOT/'z7-native-modules/examples/portrait_navigation_host_probe.c';packet,metadata=build(source,zig=ZIG);again,other=build(source,zig=ZIG)
     assert packet==again and metadata==other
     result=audit(raw,host,packet,metadata)

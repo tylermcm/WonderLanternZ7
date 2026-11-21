@@ -61,6 +61,9 @@ class HostFixture(NativePNG):
         if report.get('navigation_hooks'):
             for off in (396,400):
                 self.setword(off,0xa5a5a5a5)
+        if report.get('touch_hooks'):
+            for off in (416,420):
+                self.setword(off,0xa5a5a5a5)
         self.position = 0
         self.events, self.cache = [], []
         self.open_count = self.close_count = self.read_count = self.create_count = self.start_count = 0

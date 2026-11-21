@@ -1,5 +1,25 @@
 # Original-Z7 module host probe
 
+## Optional resident touch API92 - November 21, 2026
+
+`--touch-hooks` requires the complete navigation profile and adds `sdk/touch.h`.
+The permanent bridge at original touch producer103319D8 invokes a committed
+resident transform for bounded/aligned60-byte events of kinds1..8. It supplies
+host-owned replacement storage, then calls the original producer once, retaining
+its exact return and side effects. A24-byte trampoline executes the12 displaced
+PC-independent bytes and returns to103319E4. Driver callback slots are preserved.
+Init-only registration, state/code guards and recursion fencing match the
+resident host lifecycle. State424 reserves448 bytes; cold code320 bytes. No
+unloading, task exclusion or complete input lifetime is established.
+
+The host audit passes3880 checks, loaded portrait touch1740 (576 packet cases),
+native registration/dispatch160, navigation regression441 and graphics/text109.
+The opt-out API88 MAIN remains byte-identical and its contract152 passes. The
+[portrait touch record](z7-native-modules/PORTRAIT_RESEARCH.md#resident-touch-api92)
+separates native instruction execution from supplied OS/UI/render state. This
+is an emulator-only diagnostic, without an integrated installation candidate
+or recovery clearance.
+
 ## Optional resident navigation API88 - November 21, 2026
 
 The opt-in `--navigation-hooks` profile extends the full API84 graphics profile

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": 160,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "fanout_masks": 8,
+  "native_application_paths": 5,
+  "application_admission_cases": 10,
+  "scope": "Native registration and both veneers, slot occupancy/clear/range/ready rejection, locked ordered three-slot fanout, original device/state/program dispatch through five original handlers into stock touch producer and queue",
+  "supplied_boundaries": [
+    "OS locks and wake/time services",
+    "queue admission",
+    "native active state/program selection",
+    "profile data",
+    "program3 maintenance service"
+  ],
+  "limits": [
+    "No physical driver initialization or event acquisition",
+    "No native task scheduling, consumer concurrency or lifetime proof",
+    "No installed module touch bridge, camera boot, installation or recovery proof"
+  ],
+  "installation_candidate": false,
+  "source_sha256": {
+    "tools/audit_z7_native_touch_driver.py": "c5e1bec4256ec5203f5ae3ccc270faca3d4a651e3c106985a0b1f9056119ed18",
+    "tools/audit_z7_native_touch_queue.py": "d256055247786cfd54354ffae29a66e44d0888166282853cbc84914d3f3edcb0",
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b"
+  },
+  "date": "2026-11-21",
+  "root_tests": 71,
+  "root_tests_skipped": 0,
+  "source_fingerprints_verified": true,
+  "full_goal_complete": false,
+  "installation_candidate_cleared": false,
+  "camera_card_access_staging_flash_or_push": false
+}

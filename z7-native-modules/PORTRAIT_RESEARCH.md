@@ -5,9 +5,7 @@ Independent work against original Z7 C3.80, following the MIT-licensed
 This is an incomplete port. No orientation drawing hook is installed by the
 current display module. The accepted LCD/EVF highlight pair is unchanged.
 
-## Resident navigation API88
-
-### Original touch prerequisites (no installed touch bridge)
+## Original touch prerequisites
 
 The exact original Z7 C3.80 MAIN supplies table10649BE8 containing
 720x480/1024x682 twice. Original wrappers103332AA (raw to LCD) and10333294
@@ -28,12 +26,63 @@ return leaves queued data unchanged. Failed queue admission still returns1:
 the native path writes kind9 cancellations to current/previous slots and does
 not advance head. Preserve the native return and these side effects in any
 future resident bridge. Locks, wake, time, profile data and queue admission are
-supplied. No full/nonempty ring, consumer/task concurrency, native registration
-or installed touch callback is proved. See source-only evidence
+supplied. These two prerequisite audits do not prove full/nonempty rings,
+consumer/task concurrency, native registration or an installed touch callback.
+See source-only evidence
 `evidence/20261121-native-touch-calibration.json` and
 `evidence/20261121-native-touch-queue.json`.
 
-### Installed navigation bridge
+## Resident touch API92
+
+`tools/audit_z7_native_touch_driver.py` independently verifies original driver
+registration1020D3D4, veneers1015B85A/10407846, three callback slotsA1F910AC/B0/B4
+and locked fanout1020C2D4. PASS160 covers all8 fanout masks, ready/range/occupied/
+clear behavior and admitted/rejected input through all5 native application
+handlers. Slot0's initialized callback10058B23 dispatches through objectA1819748
+active state+134, state handler10090641,1009003C, active program registryA1815C64
+and1020BA9A to the program's touch handler and shared producer103319D8. State/
+program selection, locks, wake/time and program3 maintenance are supplied. No
+actual driver initialization or event acquisition is established.
+
+`sdk/touch.h` extends the API88 prefix to92 with init-only `register_touch`.
+`--touch-hooks` patches only the12-byte prologue of103319D8 to resident host code.
+The displaced PC-independent instructions execute in a24-byte trampoline before
+continuing at103319E4. All native driver and program callback slots stay intact.
+Host state appends20 bytes at404, with callback/registered/running404/408/412 and
+guards416/420, size424 and workspace448. Cold code is320 bytes.
+
+The bridge accepts only aligned60-byte RAM spans, kinds1..8, valid committed
+host state and bounded resident code. A recursion CAS remains held through the
+native producer return. Callback1 selects the host-owned packet;0/invalid uses
+the original. The original producer executes once per bridge invocation, with
+its exact return preserved. Unsupported kinds bypass the module, including the
+native kind10-release mutation to9. Failed init clears callbacks before free;
+there is no hot unload contract. PASS3880 includes768 native queue cases,
+delegation, invalid state/results, recursion, rejection/cancellation, failed
+initialization, older API rejection and cold registers/flags/reservation.
+Invalid pointer spans delegate to a supplied original-return boundary only;
+these fixtures do not claim native acceptance of invalid caller pointers.
+
+`portrait_touch_host_probe.c` combines graphics, navigation and touch. It admits
+native grid/dial/settings pages only with scene0, exclusive LCD and a graphics-
+latched portrait orientation. A second native page/layout/output check after
+mapping can discard the replacement. PASS1740 covers576 packets across all8
+supported kinds, press/release, both orientations and three pages, with optional
+zero point fields and native queue copy independence from host/caller storage.
+Pre-latch, landscape, native menu/play takeover, foreign apps/scenes/output and
+observed context changes delegate. Native renderer/OS/UI states are supplied.
+Full input task/pending-screen exclusion, physical touch, consumer concurrency,
+pixels and complete boot remain unproved. The final combined display module
+does not yet include this diagnostic.
+
+Private API92 host MAIN SHA3464949a3f7f030b3c4faba683adf3c8752de7762fab5bf9076dc006e6aa1ed0
+is reproducible/CRC zero. Opt-out API88 MAIN remains707d0716...52beaf byte-for-byte.
+Its contract152, API92 navigation441 and graphics/text109 regressions pass.
+See evidence/20261121-native-touch-driver.json, touch-host.json and
+portrait-touch-host.json (same date prefix), plus compatibility/regression
+summaries. No camera/card access, staging, installation or recovery clearance.
+
+## Resident navigation API88
 
 `sdk/navigation.h` extends the API84 prefix with init-only navigation registration.
 `--navigation-hooks` requires the graphics profile. The permanent host bridge

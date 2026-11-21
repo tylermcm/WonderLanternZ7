@@ -1,5 +1,63 @@
 # Laptop handoff — October 20, 2026
 
+## Resident API92 touch and loaded portrait controls - November 21, 2026
+
+Previousce031cf proved native calibration and synchronous queue copying. New
+audit_z7_native_touch_driver.py PASS160 executes registration1020D3D4 and both
+veneers, ready/range/occupied/clear behavior and all8 three-slot fanout masks at
+1020C2D4. Original slot0 callback10058B23 -> objectA1819748 active state+134 ->
+handler10090641 ->1009003C -> active program ->1020BA9A -> program touch handler
+->103319D8 executes for all5 native programs, with admission/rejection. Driver
+and queue locks, wake/time, active state/program selection, profile data and
+program3 maintenance are supplied; driver initialization/tasks are not proved.
+
+New --touch-hooks requires --navigation-hooks and extends API88 to92 with
+sdk/touch.h init-only register_touch. Host state keeps404-byte prefix, appends
+callback/registered/running404/408/412 and guards416/420: size424/reserve448,
+cold320. The12 PC-independent original bytes at103319D8 execute in a24-byte
+resident trampoline, then continue at103319E4. All driver callback slots remain
+untouched. Only aligned60-byte RAM spans/kinds1..8 and committed guarded resident
+callbacks admit; recursion delegates. Host-owned copy is passed synchronously to
+the native producer exactly once per bridge invocation; original return and
+native cancellation/unsupported-kind side effects are preserved. Running CAS
+holds through producer return. Failed init clears callback before module free.
+No hot unload or native task exclusion is established.
+
+Private touch-host-01 MAIN33066948 SHA
+3464949a3f7f030b3c4faba683adf3c8752de7762fab5bf9076dc006e6aa1ed0,
+host9681 bytes, deterministic twice/CRC zero. touch-host-02 PASS3880 includes768
+native queue cases, callback handling/delegation/invalid result/recursion, guards,
+native rejection/cancellation, failed init/API88 rejection and cold reservation.
+Probe320/image256/BSS28/0relocs SHA
+a411ca7675134c48f005f33df43cc993ddbff5c2ecb45f839115e0f6f01be7fb.
+
+portrait_touch_host_probe.c composes graphics/navigation/touch in the loaded
+diagnostic, using the graphics-entry orientation latch, original page getters,
+scene0/exclusive LCD and a second page/layout/output check after mapping.
+Grid/dial/settings map using portrait_input.h; pre-latch/landscape/foreign contexts
+delegate the original packet. portrait-touch-host-02 PASS1740 includes576 packet
+cases, optional zero point fields, context changes and native copy independence
+from caller/host stack. Probe10944/image10880/BSS80/0relocs SHA
+1e34357e10e809238ef9559a3da0c44065954319a3de79b8522756f8b5b18b6d.
+Native renderer/OS/state boundaries remain supplied. This is not real touch,
+full task/pending-screen exclusion, pixels or complete boot.
+
+API92 portrait navigation regression441 and graphics/text109 pass; old portrait
+navigation and graphics modules remain byte-identical. Fresh opt-out API88 MAIN
+is byte-identical to707d0716...52beaf; existing navigation contract152 passes.
+Root71/no skips. Source-only summaries are evidence/20261121-native-touch-driver,
+touch-host,portrait-touch-host,touch-api88-compat,touch-navigation-regression and
+touch-graphics-regression.json. No final functional display release was rebuilt.
+All6 source maps and both fresh host build maps verified. Ignored Graphify is
+3798nodes/10475links, retaining existing conditional-C extraction warnings.
+Next exercise the loaded portrait touch bridge through all5 original driver/
+application paths (the stock chain and API92 producer were audited separately),
+then full native input-task/pending-screen fencing and rotation preferences,
+pending/live/external/magnified bindings, real font/assets and bitmap/task/render
+closure, Info mirror/histogram, integrated release and exact installation/recovery.
+Full goal ACTIVE. User's conditional flash readiness is not satisfied; no card/
+camera access, staging, flash or push. API92 remains private and emulator-only.
+
 ## Native touch calibration and queue copy - November 21, 2026
 
 HEAD2d31415 installed navigation in an emulator-only host. This checkpoint adds

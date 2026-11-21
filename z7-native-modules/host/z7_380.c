@@ -20,6 +20,9 @@ static uint32_t register_graphics(uint32_t (*callback)(volatile uint32_t *));
 #ifdef Z7_HOST_NAVIGATION
 static uint32_t register_navigation(z7_navigation_callback callback);
 #endif
+#ifdef Z7_HOST_TOUCH
+static uint32_t register_touch(z7_touch_callback callback);
+#endif
 #ifdef Z7_HOST_HIGHLIGHTS
 static uint32_t register_highlight(const struct z7_highlight_hooks *hooks);
 #ifdef Z7_HOST_PARAMETERS
@@ -38,7 +41,9 @@ static uint32_t owned_warning_available(void);
 #ifdef Z7_HOST_NATIVE_CACHE_COPY
 uint32_t z7_native_cache_snapshot(uint32_t, struct z7_native_cache_snapshot *);
 uint32_t z7_native_cache_snapshot_valid(uint32_t, const struct z7_native_cache_snapshot *);
-#ifdef Z7_HOST_NAVIGATION
+#ifdef Z7_HOST_TOUCH
+static const struct z7_module_touch_api api = { { { { { { { { { { {
+#elif defined(Z7_HOST_NAVIGATION)
 static const struct z7_module_navigation_api api = { { { { { { { { { {
 #elif defined(Z7_HOST_GRAPHICS)
 static const struct z7_module_graphics_api api = { { { { { { { { {
@@ -96,8 +101,13 @@ static const struct z7_module_worker_api api = {
 #ifdef Z7_HOST_NAVIGATION
 }, register_navigation
 #endif
+#ifdef Z7_HOST_TOUCH
+}, register_touch
+#endif
 };
-#ifdef Z7_HOST_NAVIGATION
+#ifdef Z7_HOST_TOUCH
+_Static_assert(sizeof(api) == 92, "Touch API prefix layout");
+#elif defined(Z7_HOST_NAVIGATION)
 _Static_assert(sizeof(api) == 88, "Navigation API prefix layout");
 #elif defined(Z7_HOST_GRAPHICS)
 _Static_assert(sizeof(api) == 84, "Graphics API prefix layout");
@@ -154,6 +164,9 @@ static uint32_t valid_state(const struct z7_host_state *s)
 #endif
 #ifdef Z7_HOST_NAVIGATION
     for (uint32_t i = 0; i < 2; ++i) if (s->navigation_guards[i] != 0xa5a5a5a5u) return 0;
+#endif
+#ifdef Z7_HOST_TOUCH
+    for (uint32_t i = 0; i < 2; ++i) if (s->touch_guards[i] != 0xa5a5a5a5u) return 0;
 #endif
     return 1;
 }
@@ -653,6 +666,40 @@ static uint32_t register_navigation(z7_navigation_callback callback)
     s->navigation_callback=(uint32_t)(uintptr_t)callback;s->navigation_registered=1;return 1;
 }
 #endif
+#ifdef Z7_HOST_TOUCH
+#ifndef Z7_TOUCH_ORIGINAL
+#error Touch bridge requires a verified original producer trampoline
+#endif
+uint32_t z7_touch_bridge(uint32_t *event)
+{
+    struct z7_host_state *s=(void *)(uintptr_t)Z7_HOST_STATE;
+    uintptr_t p=(uintptr_t)event;
+    if (!(p&3u) && p>=0xa1800000u && p<=0xc0000000u-60u &&
+        ((const uint8_t *)event)[9]>=1 && ((const uint8_t *)event)[9]<=8 &&
+        valid_state(s) && s->status==Z7_HOST_LOADED && s->image && s->allocation &&
+        !s->loading_image && __atomic_load_n(&s->display_ready,__ATOMIC_ACQUIRE) && s->touch_registered &&
+        (s->touch_callback&1) && s->resident_image_size<=s->memory_size &&
+        within(s->touch_callback&~1u,s->image,s->resident_image_size,2)) {
+        uint32_t expected=0;
+        if (__atomic_compare_exchange_n(&s->touch_running,&expected,1,0,__ATOMIC_ACQUIRE,__ATOMIC_RELAXED)) {
+            uint32_t copy[15];
+            for (uint32_t i=0;i<15;++i) copy[i]=event[i];
+            uint32_t handled=FN(s->touch_callback,uint32_t,const uint32_t *,uint32_t *)(event,copy);
+            uint32_t result=FN(Z7_TOUCH_ORIGINAL,uint32_t,uint32_t *)(handled==1 ? copy : event);
+            __atomic_store_n(&s->touch_running,0,__ATOMIC_RELEASE);
+            return result;
+        }
+    }
+    return FN(Z7_TOUCH_ORIGINAL,uint32_t,uint32_t *)(event);
+}
+static uint32_t register_touch(z7_touch_callback callback)
+{
+    struct z7_host_state *s=(void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->image || s->display_ready || s->touch_registered ||
+        !loading_code(s,(uint32_t)(uintptr_t)callback)) return 0;
+    s->touch_callback=(uint32_t)(uintptr_t)callback;s->touch_registered=1;return 1;
+}
+#endif
 static uint32_t register_worker(void (*callback)(void))
 {
     struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
@@ -965,7 +1012,9 @@ __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
     return ((uint32_t (*)(const struct z7_module_api *))
              ((uintptr_t)body + entry + 1))(
 #ifdef Z7_HOST_NATIVE_CACHE_COPY
-#ifdef Z7_HOST_NAVIGATION
+#ifdef Z7_HOST_TOUCH
+                &api.navigation.graphics.cache.warning.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
+#elif defined(Z7_HOST_NAVIGATION)
                 &api.graphics.cache.warning.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
 #elif defined(Z7_HOST_GRAPHICS)
                 &api.cache.warning.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
@@ -1081,6 +1130,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
 #ifdef Z7_HOST_NAVIGATION
     s->navigation_callback=s->navigation_registered=s->navigation_running=0;
 #endif
+#ifdef Z7_HOST_TOUCH
+    s->touch_callback=s->touch_registered=s->touch_running=0;
+#endif
 #ifdef Z7_HOST_HIGHLIGHTS
     clear_highlight(s);
 #endif
@@ -1103,6 +1155,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
 #endif
 #ifdef Z7_HOST_NAVIGATION
         s->navigation_callback=s->navigation_registered=s->navigation_running=0;
+#endif
+#ifdef Z7_HOST_TOUCH
+        s->touch_callback=s->touch_registered=s->touch_running=0;
 #endif
 #ifdef Z7_HOST_HIGHLIGHTS
         clear_highlight(s);
@@ -1129,6 +1184,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
 #endif
 #ifdef Z7_HOST_NAVIGATION
         || s->navigation_registered
+#endif
+#ifdef Z7_HOST_TOUCH
+        || s->touch_registered
 #endif
         )
         __atomic_store_n(&s->display_ready, 1, __ATOMIC_RELEASE);
