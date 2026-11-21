@@ -65,7 +65,7 @@ static uint32_t z7_highlight_request_submit_internal(struct z7_highlight_request
 }
 /* Retained preconverted research entry; production work should use deferred
  * submission and validate current epoch/context/palette at the consumer. */
-static uint32_t z7_highlight_request_submit(struct z7_highlight_request *r,
+static inline uint32_t z7_highlight_request_submit(struct z7_highlight_request *r,
     const void *gui_request36, uint32_t output_flag, uint32_t epoch)
 {
     return gui_request36 ? z7_highlight_request_submit_internal(r, gui_request36, output_flag, epoch) : 0;
@@ -111,6 +111,12 @@ static inline uint32_t z7_highlight_request_convert_deferred(struct z7_highlight
     Z7_HR_FN(0x1034fe23u, void, void *, const void *, uint32_t)
         (r->payload, gui_request36, r->command == 0x42060007u ? 1 : 4);
     return 1;
+}
+static inline void z7_highlight_request_cancel_claim(struct z7_highlight_request *r)
+{
+    uint32_t expected = Z7_HR_CONSUMING;
+    (void)__atomic_compare_exchange_n(&r->state, &expected, Z7_HR_CANCELLING, 0,
+                                     __ATOMIC_RELEASE, __ATOMIC_RELAXED);
 }
 
 static void z7_highlight_request_end(struct z7_highlight_request *r)

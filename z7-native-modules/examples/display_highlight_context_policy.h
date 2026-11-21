@@ -1,13 +1,25 @@
-/* SPDX-License-Identifier: MIT. Full-profile epoch wiring; no warning writes.
- * Preserves current LCD DISP eligibility. EVF/movie contexts remain delegated.
- * Packet conversion/restoration and visible warnings are subsequent integration.
+/* SPDX-License-Identifier: MIT. Full-profile epoch and optional parameter wiring.
+ * Preserves current LCD DISP eligibility. Owned builds add parameter restoration;
+ * source-frame permissions and visible warning rendering remain native.
  */
 #include "../plugins/highlight_epoch.h"
 struct z7_highlight_publication z7_highlight_publication;
 volatile uint32_t z7_highlight_gui_epoch, z7_highlight_source_epoch;
 volatile uint32_t z7_highlight_worker_epoch, z7_highlight_worker_eligible;
 volatile uint32_t z7_highlight_source_observations, z7_highlight_publish_errors;
+#ifdef Z7_HIGHLIGHT_OWNED_PROBE
+#include "../plugins/highlight_request.h"
+static struct z7_highlight_request z7_highlight_owned_request;
+#define highlight_descriptor z7_highlight_owned_request.descriptor
+static uint32_t highlight_owned_before(void *packet);
+static void highlight_owned_after(uint32_t decision);
+static void highlight_owned_worker(void);
+static void highlight_native_lease_invalidate(void);
+static uint32_t highlight_native_lease_capture(const struct z7_highlight_snapshot *,
+    uint32_t generation, uint32_t palette, const volatile uint32_t *, const uint32_t *);
+#else
 static uint32_t highlight_descriptor[7];
+#endif
 static uint32_t highlight_ui_ready(void)
 {
     return z7_base_active && !base_blocked && !base_releasing &&
@@ -70,11 +82,22 @@ static void highlight_source_after(uint32_t output, void *frame, uint32_t epoch)
 }
 static uint32_t highlight_consumer_before(void *packet)
 {
+#ifdef Z7_HIGHLIGHT_OWNED_PROBE
+    return highlight_owned_before(packet);
+#else
     (void)packet;
     return 3; /* No requests submitted by this context-integration milestone. */
+#endif
 }
 static void highlight_consumer_after(void *packet, uint32_t decision)
-{ (void)packet; (void)decision; }
+{
+    (void)packet;
+#ifdef Z7_HIGHLIGHT_OWNED_PROBE
+    highlight_owned_after(decision);
+#else
+    (void)decision;
+#endif
+}
 static const struct z7_highlight_hooks highlight_hooks = { Z7_MODULE_ABI,
     sizeof(highlight_hooks), highlight_descriptor, highlight_source_before,
     highlight_source_after, highlight_consumer_before, highlight_consumer_after };
@@ -84,13 +107,15 @@ static void highlight_combined_worker(void)
     uint32_t eligible = highlight_current(&snapshot);
     z7_highlight_worker_epoch = eligible ? snapshot.epoch : 0;
     z7_highlight_worker_eligible = eligible;
+#ifdef Z7_HIGHLIGHT_OWNED_PROBE
+    highlight_owned_worker();
+#endif
     persistence_worker();
 }
 #ifdef Z7_HIGHLIGHT_PARAMETERS_PROBE
 #include <stddef.h>
 /* Initial pattern1/threshold248 match the independently audited native request.
- * Style/threshold menu configuration and owned state restoration are not added
- * by this parameter-path milestone. Native input request/descriptor/ack stay
+ * Style/threshold menu configuration remains open. Native request/descriptor/ack stay
  * with their original caller; conversion finishes BEFORE original dispatch. */
 volatile uint32_t z7_highlight_parameter_epoch, z7_highlight_parameter_count;
 volatile uint32_t z7_highlight_parameter_input_enabled;
@@ -109,10 +134,16 @@ _Static_assert(sizeof(struct highlight_native_request) == 36 &&
 static void highlight_native_parameters(uint32_t command, void *payload100)
 {
     struct z7_highlight_snapshot snapshot, final;
+#ifdef Z7_HIGHLIGHT_OWNED_PROBE
+    highlight_native_lease_invalidate();
+#endif
     uint32_t generation = __atomic_load_n(&z7_highlight_native_parameter_generation, __ATOMIC_RELAXED);
     z7_highlight_parameter_epoch = 0;
     if (generation == UINT32_MAX) return; /* Never recycle native-update identity. */
     __atomic_store_n(&z7_highlight_native_parameter_generation, generation + 1, __ATOMIC_RELEASE);
+#ifdef Z7_HIGHLIGHT_OWNED_PROBE
+    if (generation + 1 == UINT32_MAX) return;
+#endif
     if (!payload100) return; /* Ineligible native update, no writable data exposed. */
     if (command != 0x42060007u || !highlight_current(&snapshot)) return;
     uint32_t palette = W(0xa1f18facu);
@@ -132,6 +163,9 @@ static void highlight_native_parameters(uint32_t command, void *payload100)
     F(0x1034fe23u, void, void *, const void *, uint32_t)(converted, &request, 1);
     if (!highlight_current(&final) || final.epoch != snapshot.epoch || W(0xa1f18facu) != palette) return;
     volatile uint32_t *data = payload100;
+#ifdef Z7_HIGHLIGHT_OWNED_PROBE
+    if (!highlight_native_lease_capture(&snapshot, generation + 1, palette, data, converted)) return;
+#endif
     z7_highlight_parameter_input_enabled = data[0];
     for (uint32_t i = 1; i < 25; ++i) data[i] = converted[i];
     __atomic_thread_fence(__ATOMIC_RELEASE);
@@ -139,4 +173,7 @@ static void highlight_native_parameters(uint32_t command, void *payload100)
     z7_highlight_parameter_epoch = snapshot.epoch; /* Prepared, not yet copied/acknowledged. */
     ++z7_highlight_parameter_count;
 }
+#endif
+#ifdef Z7_HIGHLIGHT_OWNED_PROBE
+#include "display_highlight_owned_policy.h"
 #endif

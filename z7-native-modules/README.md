@@ -52,6 +52,12 @@ separates real caller/copy/ack/completion instructions from supplied kernel/UI
 boundaries. It does not yet enable frame permissions, submit owned requests,
 restore parameters or establish warning pixels. API44/API48 profiles remain
 byte-identical when this extension is disabled.
+The optional `display-highlight-owned-probe` composes that API52 path with a
+resident asynchronous request and parameter lease. It converts at consumption,
+conditionally restores the captured native baseline, and cancels stale work
+after native updates. See [owned parameter integration](PHOTO_HIGHLIGHTS.md#owned-parameter-integration).
+Its source-frame permissions remain native; immediate pending-frame cleanup,
+visible warning pixels and camera installation/recovery are still open.
 The optional `display-histogram-probe` combines custom DISP/base/grid/readouts
 with a guarded native extra histogram pass. Its [validation record](DISPLAY_SETTINGS.md#native-histogram-component-prototype)
 distinguishes compiled native drawing primitives, real sample failures and

@@ -488,10 +488,59 @@ currently include this header. Private final result:
 `.private/evidence/20261120-highlight-request-deferred-02/result.json`.
 Source evidence: `evidence/20261120-owned-highlight-deferred.json`.
 
+## Owned parameter integration
+
+`display-highlight-owned-probe` is a further opt-in API52 development profile.
+It includes both eligible incoming native conversion and worker-submitted owned
+requests. The worker publishes operation/context/native-generation metadata
+before queueing a resident descriptor and a zero104-byte source. Only the claimed
+consumer converts using the current palette. The original dispatcher copies100
+bytes and acknowledges/completes before the lease is considered applied. The
+request remains unavailable for reuse until both dispatch and submission return.
+
+The lease records the native baseline, expected applied parameters, context,
+settings epoch, palette and monotonic native generation. Off restores a baseline
+only when the context, generation and current parameters still match. A mode or
+output departure disables owned parameters while retaining the original baseline;
+returning to its context can reapply or restore. Eligible incoming native updates
+capture their original baseline before conversion. Every valid native update,
+including an ineligible notice or same-byte update, invalidates the previous
+lease. Pending old restore/disable requests therefore cannot overwrite newer
+native settings merely because the bytes happen to match.
+
+Disabled native input defines only its enable word. Its remaining96 bytes are
+normalized to zero rather than treated as meaningful baseline fields. Enabled
+baselines retain all100 bytes. Module publication uses bounded reads and a
+monotonic serial; serial exhaustion parks instead of recycling ownership.
+
+This policy assumes native parameter writers are serialized through the
+DisplayService consumer lane. It does not establish a physical frame fence,
+allocation lifetime, concurrent foreign-writer safety, or a native scheduling
+guarantee. Source/frame permissions remain untouched. Worker cleanup alone is
+insufficient for pending frame replay: immediate cleanup is required before
+enabling the source flag override. No warning pixels or camera readiness are
+claimed. Reproducible module SHA:
+`f1f39562292a2cd5a112aa397862db4dd96ae417dfd5d1190ea4b3610ae42189`.
+
+The final integration audit passes36 checks, including native baseline replacement,
+same-byte invalidation, stale cleanup, early consumption on a separate stack,
+menu changes before GUI publication, and logical LCD/EVF round-trip restoration.
+The focused compiled lease audit passes9 checks; the request lifetime audit
+passes107; persistence passes84 on these same host/module bytes; root tests pass71
+with no skips. Kernel/filesystem/UI/palette inputs and explicit interleavings are
+supplied. Source evidence: `evidence/20261120-owned-highlight-integration.json`.
+
+```powershell
+.venv\Scripts\python.exe tools/build_z7_display_module.py --variant display-highlight-owned-probe --output .private/builds/owned-profile-new
+.venv\Scripts\python.exe tools/audit_z7_highlight_owned.py --build .private/builds/20261120-parameter-host-03 --module .private/builds/owned-profile-new --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/owned-profile-new.json
+.venv\Scripts\python.exe tools/audit_z7_highlight_lease.py --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/lease-new
+```
+
 ## Remaining implementation work
 
-Complete parameter ownership, owned asynchronous requests and conditional
-restoration in the full profile. Eligible native packet conversion is now bound.
+Complete immediate pending-frame cleanup, source permissions, and broader
+ownership/restoration lifecycle acceptance. Both native packet conversion and
+owned asynchronous requests are now connected in the opt-in full profile.
 The pinned photo_zebra implementation changes eligible native100-byte parameter
 payloads before dispatch, preserving the descriptor/callback, and also submits
 owned requests for output switches that generate no native packet. Both paths
@@ -503,9 +552,9 @@ Original source-submit
 boundary1034866E, frame+34 permission, rear/EVF source routing and mode property's
 RAM backing execute in diagnostics. Physical output/timing acceptance and the foreign
 context/image chain remains unbound. Do not reuse Z7II callback
-addresses or assume its context/image offsets. Then integrate owned
-packet interception, cancellation/restoration, preset visibility, and native
-LCD/EVF/movie preservation with the full resident profile. Pixels and output/
+addresses or assume its context/image offsets. Extend the current parameter
+interception and cancellation/restoration with frame cleanup, preset visibility,
+and native LCD/EVF/movie preservation across the full resident lifecycle. Pixels and output/
 capture/menu/lens transitions require separate acceptance evidence.
 
 The Photo highlights preference drives native parameter conversion; its frame

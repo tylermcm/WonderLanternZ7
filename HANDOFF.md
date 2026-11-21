@@ -1,5 +1,68 @@
 # Laptop handoff — October 20, 2026
 
+## Full-profile owned highlight parameter lease - November 20, 2026
+
+Previous70ec7ad was PROGRESS (deferred helper). Latest status-only turn made no
+source changes; this continuation completes owned parameter integration and adds
+focused lease tests. Full goal ACTIVE. No camera/card/staging/flash/push.
+Source permissions remain native; no immediate pending-frame cleanup or pixels.
+
+NEW display-highlight-owned-probe composes both eligible incoming API52 native
+conversion and deferred worker submission with a consumer-written parameter lease.
+Worker operation/context/native-generation metadata precedes queue publication.
+Current consumer converts with the current palette, native dispatcher copies100,
+acks/completes, and after-consumer checks actual parameters before publishing the
+lease. Request reuse still requires BOTH dispatcher and submitter return. New
+cancel_claim handles policy failures after claim; old preconverted submit inline.
+
+Lease records original baseline/expected100, context, epoch, palette, nativegen,
+and disabled state. All valid native updates invalidate old ownership, including
+same-byte/ineligible notices. Eligible rewrite captures the ORIGINAL incoming
+native baseline first. Disabled input defines ONLY word0; normalize other96 to0.
+Off restores only matched nativegen/currentdata/context. Mode/output exit disables
+owned params and retains baseline; return to original identity reapply/restore.
+Newer native updates cancel pending restore/disable. Settled work does not queue
+again. Menu entry rechecks live UI even before a new GUI publication.
+
+Lease reader bounded3, sequence+monotonic serial, no partial failed output; serial
+MAX parks. Native parameter writers ASSUMED SERIALIZED in DisplayService consumer
+lane; no native allocation pin, physical frame fence, or concurrent-writer proof.
+Do not enable frame+34 yet. Deferred4B8 frame copy needs immediate cleanup; worker
+cleanup alone leaves a replay interval. Next implement/test pending cleanup and
+source gate using matched applied ownership, then broader lifecycle/pixels.
+
+Reproducible private module:20261120-display-highlight-owned-02,
+SHA f1f39562292a2cd5a112aa397862db4dd96ae417dfd5d1190ea4b3610ae42189,
+28356file/28032image/6484BSS/minAPI52. Final50 source inputs verified current.
+Host unchanged:20261120-parameter-host-03,
+MAIN da7cfc45631e9545f7d8da6def184d2007496ef9ae2f26757b7b25df52c7e6f9.
+Owned01 and02 are identical bytes;02 updates reviewed input fingerprints.
+
+.private/evidence/20261120-highlight-owned-03.json PASS36 on exact final bytes:
+worker send/current palette/actual native dispatch/copy/ack/completion, enabled
+and normalized-disabled baseline restoration, stale cleanup cancellation, same-byte
+native update, native movie precedence, early consumer while submit paused on
+separate stack, new eligible native baseline replacement, menu changes before GUI,
+LCD/EVF selector round-trip disable/reapply/restore. Kernel/FS/UI/palette and
+explicit task handoffs supplied. Owned02 audit attempt TERMINAL wall-time failure
+at module init while other heavy jobs ran;03 ran alone with SAME30s/10M guards.
+No relaxed timeout or failed-run evidence substituted for success.
+Lease:20261120-highlight-lease-01/result.json PASS9 compiled Thumb; interrupted
+reader/independent writer stack/repeated sequence/serialMAX halt/unchanged failed
+output. Request:20261120-highlight-request-owned-01/result.json PASS107; same
+probe SHAa95e400a31877a1921f40c0b693c1b464178534beeaf4431989c75ca34e26b9a.
+Persistence:20261120-owned-persistence-01.json PASS84 on final host/owned bytes
+(module01 bundle byte-identical02), including actual menu/worker interleavings.
+Root:20261120-owned-root-tests.log PASS71/no skips. Default API44 module rebuild
+20261120-owned-compat44-01 byte-identical SHA719c1db3ca5cf1c78d82ebedcdbbb4cc7b67312b34b7982d11a718e4b39af85c.
+Source evidence:evidence/20261120-owned-highlight-integration.json.
+
+Remaining full goal: immediate frame cleanup/gating and pixels, style/threshold
+preferences, EVF feature/preservation, portrait/rotation, native Info mirror,
+real histogram producer, full lifecycle and exact installation/recovery assessment.
+No flash clearance. All jobs terminal. Final graph refreshed2985nodes/7827edges;
+source manifest refreshed when saving checkpoint. Generated/private files stay ignored.
+
 ## Deferred owned request helper - November 20, 2026
 
 Previousc9242e5 was PROGRESS (API52 incoming parameter path). This turn adapts
