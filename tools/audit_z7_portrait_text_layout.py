@@ -16,10 +16,20 @@ from audit_splash_image import STOCK_SHA
 from build_z7_module import build
 from build_z7_module_host import ROOT,ZIG
 
+class LayoutFixture(TextFixture):
+    def __init__(self,*args):
+        super().__init__(*args);self.descriptor_colors=[];self.expected_color=None
+    def hook(self,u,address,size,context):
+        if address in (0x104baa5e,0x104bb130,0x104bb248):
+            self.descriptor_colors.append(self.read(DESCRIPTOR+0x2c))
+        if address==0x104ba382 and self.expected_color is not None:
+            assert self.read(DESCRIPTOR+0x2c)==self.expected_color
+        super().hook(u,address,size,context)
+
 
 def audit(raw,packet,metadata):
     result=fixed_audit(raw,packet,metadata)
-    f=TextFixture(raw,packet,metadata);checks=result['checks']
+    f=LayoutFixture(raw,packet,metadata);checks=result['checks']
     entry=f.entry+(metadata['symbols']['z7_portrait_text_page_probe']-metadata['symbols']['z7_portrait_text_probe'])
     def check(name,good):
         checks.append(dict(name=name,passed=bool(good)))
@@ -46,6 +56,8 @@ def audit(raw,packet,metadata):
         ('unmapped-grid-header',1,100,100,80,20,(0,0,720,100),'stock'),
         ('outside-right',1,720,320,80,20,(0,0,720,100),'stock'),
         ('outside-footer-right',1,720,450,80,20,(300,430,380,454),None),
+        ('empty-descriptor-bounds-tile',1,10,320,80,20,(0,480,720,480),(U,U,0,160*U)),
+        ('inverted-descriptor-bounds-tile',1,10,320,80,20,(0,450,720,430),(U,U,0,160*U)),
     ]
     count=0
     for command,orientation,case in itertools.product((0x34,0x37,0x38),(1,2),cases):
@@ -88,6 +100,20 @@ def audit(raw,packet,metadata):
     check('busy-owner-keeps-descriptor-and-planner-context',f.call(entry,MESSAGE,1,1)==0 and
           bytes(f.u.mem_read(f.state,36))==state and not f.events)
     f.word(f.state,0);f.word(f.state+28,0);f.word(f.state+32,0)
+    color=0x123456ff
+    for command,page,top,bottom in itertools.product((0x34,0x37,0x38),(1,2,3,4),(430,100),(454,124)):
+        f.reset(command,(U,0,0,0,U,0,1),(1,U,U,0,0))
+        f.word(DESCRIPTOR+0x2c,color);f.expected_color=color;f.descriptor_colors.clear()
+        f.u.mem_write(DESCRIPTOR+0x64,struct.pack('<H',480-top));f.u.mem_write(DESCRIPTOR+0x60,struct.pack('<H',480-bottom))
+        suppress=command==0x34 and bottom>top and ((top>=418 and bottom>426 and bottom<=484) or
+                                                 (page==2 and top>=44 and bottom<=280))
+        check(f'background-command{command:x}-page{page}-bounds{top}-{bottom}',f.call(entry,MESSAGE,page,1)==1 and
+              f.descriptor_colors==[0 if suppress else color] and f.read(DESCRIPTOR+0x2c)==color)
+    f.reset(0x34,(U,0,0,0,U,0,1),(1,U,U,0,0));f.word(f.state,1)
+    f.u.mem_write(DESCRIPTOR+0x64,struct.pack('<H',50));f.u.mem_write(DESCRIPTOR+0x60,struct.pack('<H',26))
+    f.word(DESCRIPTOR+0x2c,color)
+    check('busy-owner-background-not-cleared',f.call(entry,MESSAGE,1,1)==0 and f.read(DESCRIPTOR+0x2c)==color and not f.events)
+    f.word(f.state,0);f.expected_color=None
     # Invalid axis matrix is stock for ordinary text but suppresses footer text.
     for footer in (False,True):
         invalid=(U,1,0,0,U,0,1);f.reset(0x34,invalid,(1,U,U,0,0))

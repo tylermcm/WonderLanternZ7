@@ -5,6 +5,31 @@ Independent work against original Z7 C3.80, following the MIT-licensed
 This is an incomplete port. No orientation drawing hook is installed by the
 current display module. The accepted LCD/EVF highlight pair is unchanged.
 
+## Native34 backing rectangles
+
+The original Z7 descriptor34 reads background color at descriptor+2C. Its alpha
+branch104BAD76 reaches rectangle backend1042F066 via104BADFC before glyph drawing.
+The layout adapter now zeros that color during synchronous dispatch for footer
+and dial descriptors, restoring it before producer completion. Command37/38,
+ordinary backgrounds and fixed-transform calls retain stock color behavior.
+Mutation happens after busy acquisition. Descriptor footer/dial classification
+now requires positive height, matching the pinned stock_hint/stock_dial helpers;
+empty/reversed descriptor bounds no longer classify as footer by themselves.
+
+Private native-text-background-02 passes254 checks:24 paired settings cases plus
+72 native background cases covering four pages, two orientations, three descriptor
+regions and three alpha/color variants. Original descriptor alpha branches execute;
+the rectangle backend is supplied. Retained rectangles preserve their color and
+precede glyph emission; suppressed rectangles never reach that backend. Descriptor
+color is restored at actual completion. Font/cache/shaping/metrics/allocator/GPU
+and final glyph emission remain supplied. Adapter/layout459, loaded109, fixed
+text273 and root71 checks pass. Public source-only summaries are updated in
+`evidence/20261121-native-text-layout.json` and `portrait-text-layout.json`.
+
+This closes descriptor34 background suppression for the admitted menu paths;
+inline symbols, general background relocation and actual pixels remain open.
+No native task exclusion, failure recovery or camera installation is established.
+
 ## Callback-time menu text placement
 
 `plugins/portrait_text_layout.h` extends the text adapter with a callback-time
@@ -29,7 +54,7 @@ including18 new text cases and clear/glyph/ack ordering with supplied backends.
 Original fixed text273, band52 and root71 checks pass. Source-only summaries are
 in `evidence/20261121-portrait-text-layout.json` and `native-text-layout.json`.
 
-Inline bitmap symbols, native34 background suppression, font-file loading and
+At that checkpoint inline bitmap symbols, native34 background suppression, font-file loading and
 real pixels remain unproved. This is partial menu text integration, not visual
 parity, input support, native task/lifetime closure or installation clearance.
 Functional combined display module and accepted host MAIN remain unchanged.

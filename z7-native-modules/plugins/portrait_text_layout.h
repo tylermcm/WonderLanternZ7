@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 C3.80 menu text reflow.
  * Derived from JKWTCN portrait_menu.c at50a22b24c50619cffa646dac386e8334659f475a,
  * copyright (c) 2026 JKWTCN. Caller owns page/target/execution admission.
- * No inline symbols, native34 background suppression, live widgets or input.
+ * No inline symbols, live widgets or input.
  */
 #ifndef Z7_PORTRAIT_TEXT_LAYOUT_H
 #define Z7_PORTRAIT_TEXT_LAYOUT_H
@@ -9,13 +9,28 @@
 struct z7_portrait_text_transform;
 static uint32_t z7_portrait_text_plan(const uint32_t *,const int32_t *,uint32_t,
                                      void *,struct z7_portrait_text_transform *);
+static uint32_t z7_portrait_text_background(uint32_t,void *);
 #define Z7_PORTRAIT_TEXT_PLAN z7_portrait_text_plan
+#define Z7_PORTRAIT_TEXT_BACKGROUND z7_portrait_text_background
 #include "portrait_text.h"
 #undef Z7_PORTRAIT_TEXT_PLAN
+#undef Z7_PORTRAIT_TEXT_BACKGROUND
 struct z7_portrait_text_page {
     uint32_t page,orientation;
     struct z7_portrait_bands *bands;
 };
+/* Native34 paints its backing rectangle before the glyph callback. Suppress
+ * this stock-position rectangle for footer/dial descriptors only, then restore
+ * the producer's color word before acknowledgement (synchronous owner only). */
+static uint32_t z7_portrait_text_background(uint32_t descriptor,void *argument)
+{
+    if (!argument) return 0;
+    const struct z7_portrait_text_page *p=argument;
+    const volatile uint16_t *d=(void *)(uintptr_t)descriptor;
+    int32_t top=480-d[0x64/2],bottom=480-d[0x60/2];
+    return bottom>top && ((top>=418 && bottom>426 && bottom<=484) ||
+        (p->page==Z7_LAYOUT_DIAL && top>=44 && bottom<=280));
+}
 /* Returns stock0, transform1, or suppress2. Query callbacks bypass this planner.
  * Compute in int64 before bounds checks; overflowing native32 positions are
  * rejected rather than treated as wrapped screen coordinates. */
@@ -29,7 +44,7 @@ static uint32_t z7_portrait_text_plan(const uint32_t *m,const int32_t *origin,
     const volatile uint16_t *d=(void *)(uintptr_t)descriptor;
     uint32_t grid=p->page==Z7_LAYOUT_GRID || p->page==Z7_LAYOUT_DIAL;
     int32_t top=480-d[0x64/2],bottom=480-d[0x60/2];
-    uint32_t hint=top>=418 && bottom>426 && bottom<=484;
+    uint32_t hint=top>=418 && bottom>top && bottom>426 && bottom<=484;
     uint32_t child_hint=!grid && hint;
     hint=grid && hint;
     if (!m[0] || !m[4] || m[0]>0x20000u || m[4]>0x20000u || m[1] || m[3])

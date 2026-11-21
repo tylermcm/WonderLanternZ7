@@ -1,5 +1,47 @@
 # Laptop handoff — October 20, 2026
 
+## Native34 text background suppression - November 21, 2026
+
+Previous43fffd4 reflowed glyphs but left native34 backing rectangles at their
+stock positions. Original104BABB2 reads descriptor+2C; alpha byte is tested at
+104BABB4 and again104BAD76. Nonzero alpha reaches original rectangle backend
+1042F066 via104BADFC before glyph rendering. This has now been executed in the
+native descriptor fixture with a supplied rectangle backend, not inferred from
+Z7II addresses. No actual GPU pixels are established.
+
+portrait_text_layout.h now classifies descriptor footer/dial bounds before
+dispatch; command34 temporarily zeros the background color only for those
+regions, then restores it before producer completion. Commands37/38 and the
+fixed-transform entry do not alter the color. Mutation occurs after acquiring
+the busy guard. Matching pinned stock_hint/stock_dial also requires bottom>top;
+this fixes the prior missing positive-height guard in descriptor hint detection.
+Ordinary backgrounds retain stock behavior, as in pinned source. No inline
+symbol provider or general background relocation is supplied by this change.
+
+Private portrait-text-background-01 PASS459 includes120 layout cases, command/
+page/bounds suppression checks, empty/reversed bounds and busy-owner preservation.
+native-text-background-02 PASS254: prior24 native settings baseline/portrait pairs
+plus72 native34 background cases across four pages, two orientations, footer/
+dial/ordinary regions and transparent/opaque/zero-alpha colors. Color restoration
+is asserted at actual text completion, native branch omits or retains rectangle
+as expected, retained rectangle color is exact and precedes bitmap emission.
+Font face/cache/shaping/metrics/allocator/GPU/final emission remain supplied.
+Probe7232/image7168/BSS36/0relocs SHA
+dd21991b543dfefedf6e1781c3d2104e8f749cd5d112387cd11c6324b0cb5168.
+text-background-host-01 PASS109, loaded probe8192/image8128/BSS60/0relocs SHA
+3670c3a00d5571bf5edc34e9391fd0655baee0476d2b20f7fd09c3c60b7aa9f3.
+text-background-compat-01 PASS273; old1216-byte adapter remains byte-identical.
+Four current source maps verified; root71/no skips; ignored Graphify refreshed
+to3625nodes/9920links with existing conditional-C parser warnings.
+Updated evidence/20261121-portrait-text-layout.json, native-text-layout.json,
+portrait-grid-host.json and PORTRAIT_RESEARCH.md record scope.
+
+Next inline symbols, input/settings controls, pending native requests/live/
+external/magnified bindings, full band/task/allocation lifetime and writer closure,
+native font files, Info mirror/real histogram, integrated release and exact
+installation/recovery. Full goal ACTIVE. Accepted host MAIN and functional combined
+display module unchanged; no camera/card/staging/flash/push.
+
 ## Menu text placement in loaded diagnostic - November 21, 2026
 
 Previous ed4ff36 handled graphics/bands but text stayed in stock positions.

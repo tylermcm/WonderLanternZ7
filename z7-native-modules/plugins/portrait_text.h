@@ -110,11 +110,19 @@ static uint32_t z7_portrait_text_draw(volatile uint32_t *message,
 #endif
     table[7]=(uint32_t)(uintptr_t)z7_portrait_text_render;
     local[3]=(uint32_t)(uintptr_t)z7_portrait_text_defer;
+#ifdef Z7_PORTRAIT_TEXT_BACKGROUND
+    volatile uint32_t *background=(void *)(uintptr_t)(descriptor+0x2c);
+    uint32_t saved_background=command==0x34 && Z7_PORTRAIT_TEXT_BACKGROUND(descriptor,argument) ? *background : 0;
+    if (saved_background) *background=0;
+#endif
     volatile uint32_t *provider=(volatile uint32_t *)(uintptr_t)(context+0x45b4);
     *provider=(uint32_t)(uintptr_t)table;
     ((void (*)(const uint32_t *))(uintptr_t)0x10372391u)(local);
     /* Do not overwrite a replacement published by another owner. */
     if (*provider==(uint32_t)(uintptr_t)table) *provider=0x11b6e120u;
+#ifdef Z7_PORTRAIT_TEXT_BACKGROUND
+    if (saved_background) *background=saved_background;
+#endif
     z7_portrait_text_state.context=0;
 #ifdef Z7_PORTRAIT_TEXT_PLAN
     z7_portrait_text_state.descriptor=0;
