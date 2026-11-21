@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": 74,
+  "scenarios": [
+    {
+      "kernel_event_set_result": 0,
+      "core_checks": 33,
+      "native_stop_callbacks": 5,
+      "native_start_signals": 5,
+      "manager_enters_pending_states_without_checking_event_set_result": true
+    },
+    {
+      "kernel_event_set_result": 2147483649,
+      "core_checks": 33,
+      "native_stop_callbacks": 5,
+      "native_start_signals": 5,
+      "manager_enters_pending_states_without_checking_event_set_result": true
+    }
+  ],
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "original_manager_stop_callbacks_wake_wrappers_and_start_signals_execute": true,
+  "supplied_boundaries": [
+    "active program objects and supplied opaque event handle",
+    "kernel event-set result",
+    "external start/stop acknowledgements"
+  ],
+  "findings": [
+    "Native stop callbacks signal shared wake bit1; they do not themselves run task polls",
+    "Native task-start wrapper stores parameter at object+30 and signals object+20 bit1",
+    "Program manager enters pending states with either supplied event-set return; external acknowledgements are still required"
+  ],
+  "limits": [
+    "No task poll, actual acknowledgement, scheduling or lifetime proof",
+    "No real kernel handles or kernel-failure recovery proof",
+    "No physical camera, flash or recovery clearance"
+  ],
+  "installation_candidate": false,
+  "source_sha256": {
+    "tools/audit_z7_native_app_task_signals.py": "e4ef2dfad34342eac6a47aa0346ad8c2c19ac147b106b6dda18c6b2ad7036275",
+    "tools/audit_z7_native_app_transition.py": "87e51e5a96cd20b4ff45761c32d66fe340a406556c41c2bb21b67190d6b10411",
+    "tools/audit_z7_native_touch_driver.py": "c5e1bec4256ec5203f5ae3ccc270faca3d4a651e3c106985a0b1f9056119ed18",
+    "tools/audit_z7_native_touch_queue.py": "d256055247786cfd54354ffae29a66e44d0888166282853cbc84914d3f3edcb0",
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b"
+  },
+  "date": "2026-11-21",
+  "root_tests": 71,
+  "root_tests_skipped": 0,
+  "source_fingerprints_verified": true,
+  "full_goal_complete": false,
+  "host_or_module_firmware_changed": false,
+  "installation_candidate_cleared": false,
+  "camera_card_access_staging_flash_or_push": false
+}

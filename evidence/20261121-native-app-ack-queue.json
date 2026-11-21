@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": 112,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "native_programs": 5,
+  "request_ack_packets": 15,
+  "message_bytes": 68,
+  "native_pool_nodes": 32,
+  "native_registration_encoding_pool_copy_send_wrappers_state_handler_manager_and_recycle_execute": true,
+  "supplied_boundaries": [
+    "initial native device/program state and opaque handles",
+    "mapped fixed pool backing memory",
+    "kernel event-set and queue-send",
+    "kernel mutex initialization/locks",
+    "dequeue and state-handler selection",
+    "task acknowledgement timing"
+  ],
+  "limits": [
+    "No actual device queue consumer, native task poll, scheduler or task lifetime proof",
+    "No allocation exhaustion, queue-send failure or producer concurrency coverage",
+    "No camera boot, real kernel handle, flash or recovery clearance"
+  ],
+  "installation_candidate": false,
+  "source_sha256": {
+    "tools/audit_z7_native_app_ack_queue.py": "933685c74ce25462221f496567e01b310c657974e9019b03b2e8dcdfd3383417",
+    "tools/audit_z7_native_app_task_signals.py": "e4ef2dfad34342eac6a47aa0346ad8c2c19ac147b106b6dda18c6b2ad7036275",
+    "tools/audit_z7_native_app_transition.py": "87e51e5a96cd20b4ff45761c32d66fe340a406556c41c2bb21b67190d6b10411",
+    "tools/audit_z7_native_touch_driver.py": "c5e1bec4256ec5203f5ae3ccc270faca3d4a651e3c106985a0b1f9056119ed18",
+    "tools/audit_z7_native_touch_queue.py": "d256055247786cfd54354ffae29a66e44d0888166282853cbc84914d3f3edcb0",
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b"
+  },
+  "date": "2026-11-21",
+  "root_tests": 71,
+  "root_tests_skipped": 0,
+  "source_fingerprints_verified": true,
+  "full_goal_complete": false,
+  "host_or_module_firmware_changed": false,
+  "installation_candidate_cleared": false,
+  "camera_card_access_staging_flash_or_push": false
+}

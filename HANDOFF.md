@@ -1,5 +1,59 @@
 # Laptop handoff — October 20, 2026
 
+## Native task signals and queued acknowledgement lifetime - November 21, 2026
+
+Previous024084a guards observed manager states1/3. New evidence closes the
+modeled stop/start veneers down to the kernel event-set boundary, then traces
+native request/acknowledgement packets through their real fixed message pool.
+No host or module firmware code changed in this checkpoint.
+
+audit_z7_native_app_task_signals.py PASS74 runs the original manager,1015B862/
+1015B866 veneers,1020BA86 start wrapper, all5 native stop callbacks,10406474/
+104064CC wake helpers and103FF902 no-op trace. Stops signal shared wake bit1;
+start stores argument at object+30 and signals object+20 bit1. Kernel event-set
+is supplied at10170BE8 (two results0/80000001); manager enters pending states
+without inspecting that result. Returning to idle still needs supplied external
+acknowledgements. No real kernel error semantics or failure recovery is proved.
+Original transition audit33 rerun with fixture injection refactor only.
+
+audit_z7_native_app_ack_queue.py PASS112 executes native1008FC98 registration
+of device callback10058B2B into all5 objects via1020BA80; native generic task
+ack dispatcher1020B9F8; device callback ->1005D456 ->1005CBD8 ->100905DC ->
+native pool allocator100D96CA/copy; send wrappers10104CC6/10112446; original
+state handler10090647 ->1008FFCC -> manager; and100905E6/100D975C recycling.
+Kernel queue-send100363CC, mutex init/locks, event-set and explicit dequeue/
+state-handler selection are supplied. Actual task polls and device consumer
+dispatch are not run.15 packets cover request4/stop-ack3/start-ack2 for all5
+target programs, exact68-byte data and survival after caller stack destruction.
+
+**Next fix:** a request4 packet can be queued while manager state is STILL2.
+Only handler delivery moves it to3; ack packet send likewise does not complete
+the pending transition. The current portrait_program.h guard therefore misses
+this queued-request interval. Implement a bounded original-pool observation in
+the API92 combined diagnostic before claiming pending program-request coverage.
+Do not reject all live pool entries: ordinary input/ack packets use this pool too.
+
+Exact pool: objectA181971C; native initializer100905D0 calls100D9668 with count32
+and size0x44. Original object word0 is node arrayA1F954F8 (32*12), buffers start
+A1F95678 (32*68), native mutex objectA1F95EF8. Free list sentinel=pool+4,
+used list sentinel=pool+10(hex); node words are next/previous/buffer pointer.
+Initializer, intrusive list operations, memcpy and recycling execute in audit.
+Send wrappers replace packet word1 with2 and word2 with its own buffer pointer.
+Packet+10(hex) is0x01000000+kind-1, +1C kind, +20 payload0, +24 payload1 for
+kind4. Thus queued program request has ID01000003/kind4, target and argument.
+Use validated fixed node/buffer bounds and observed list consistency; malformed
+or racing observations must reject. ABA/task exclusion remains a separate gap.
+
+Source-only evidence: evidence/20261121-native-app-task-signals.json,
+native-app-ack-queue.json and updated native-app-transition.json (same date).
+Root71/no skips. Current host and combined portrait probe remain unchanged.
+All3 current source maps verified. Ignored Graphify refreshed to3839nodes/
+10616links with existing conditional-C extraction warnings.
+After queued requests: actual consumer/task ownership, rotation preferences,
+pending/live/external/magnified bindings, fonts/assets/render lifetime, Info
+mirror/histogram, integrated release and exact installation/recovery. Full goal
+ACTIVE. No camera/card access, staging, flash or push; no installation clearance.
+
 ## Combined native touch path and observed program transitions - November 21, 2026
 
 Previous60faf29 tested the stock driver chain and API92 producer separately.

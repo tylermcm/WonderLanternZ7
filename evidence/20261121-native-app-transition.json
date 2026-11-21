@@ -58,7 +58,7 @@
   ],
   "installation_candidate": false,
   "source_sha256": {
-    "tools/audit_z7_native_app_transition.py": "51464fdc83c62cba224bd0c418580214b386754a7697df16e7b6fab955394d20",
+    "tools/audit_z7_native_app_transition.py": "87e51e5a96cd20b4ff45761c32d66fe340a406556c41c2bb21b67190d6b10411",
     "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b",
     "tools/audit_z7_native_touch_driver.py": "c5e1bec4256ec5203f5ae3ccc270faca3d4a651e3c106985a0b1f9056119ed18",
     "tools/audit_z7_native_touch_queue.py": "d256055247786cfd54354ffae29a66e44d0888166282853cbc84914d3f3edcb0"
@@ -68,6 +68,7 @@
   "root_tests_skipped": 0,
   "source_fingerprints_verified": true,
   "full_goal_complete": false,
+  "host_or_module_firmware_changed": false,
   "installation_candidate_cleared": false,
   "camera_card_access_staging_flash_or_push": false
 }

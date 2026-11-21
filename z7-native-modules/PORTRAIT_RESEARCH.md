@@ -36,6 +36,31 @@ See source-only evidence
 
 ### Combined driver path and observed program transitions
 
+The later task-signal audit74 executes all5 native stop callbacks and the
+native start wrapper down to kernel event-set10170BE8. Stop callbacks set shared
+wake bit1; start stores the request argument at object+30 and signals object+20.
+The manager does not inspect the supplied event-set return values; external
+acknowledgements are still needed. This does not establish real kernel error
+semantics, task poll execution or recovery.
+
+The acknowledgement queue audit112 executes native object registration and
+generic acknowledgement dispatch,10058B2B/1005D456 packet encoding,1005CBD8/
+100905DC native pool allocation/copy, send wrappers, state handler10090647,
+program manager and pool recycling. Original initializer100905D0 creates32 nodes
+atA1F954F8 and68-byte buffers atA1F95678; poolA181971C used-list sentinel is+10
+(hex), free sentinel+4, mutexA1F95EF8. All15 request4/stop-ack3/start-ack2 packets
+across5 target programs survive sender stack destruction. Kernel send/locks,
+dequeue/handler selection and task completion timing remain supplied.
+
+This proves an additional admission gap: a program request4 can remain queued
+while manager state is still2. Its packet ID at+10(hex) is01000003; kind at+1C
+is4 and payload starts+20. The current program-state observation does not detect
+that interval. A bounded, type-specific observation of live native pool entries
+is still required. Ordinary input/ack entries must remain admissible. Full
+consumer dispatch, queued-request closure, concurrent task/ABA exclusion and
+physical camera behavior remain unproved. See evidence/20261121-native-app-task-signals.json
+and native-app-ack-queue.json with the same date prefix.
+
 The later `audit_z7_portrait_touch_driver.py` executes the whole original driver/
 device/program path through the loaded portrait transform and native producer.
 PASS963 covers120 cases across all5 programs,3 pages,2 orientations and mapped,

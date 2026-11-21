@@ -37,10 +37,10 @@ class AppTransition(NativePNG):
         super().hook(u, address, size, context)
 
 
-def audit(raw):
+def audit(raw, fixture=AppTransition):
     if hashlib.sha256(raw).hexdigest() != STOCK_SHA:
         raise ValueError('Requires exact original Z7 C3.80 MAIN')
-    f = AppTransition(raw)
+    f = fixture(raw)
     checks = []
 
     def check(name, good):
