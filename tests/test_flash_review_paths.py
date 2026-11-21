@@ -47,6 +47,48 @@ class ReviewOutputTests(unittest.TestCase):
             self.assertEqual(sentinel.read_text(), 'keep')
 
 
+class LCDReviewAdmissionTests(unittest.TestCase):
+    def test_display_only_host_requires_exact_report_and_all_bytes(self):
+        payload = b'LCD display-only host fixture'
+        eg = payload + binascii.crc_hqx(payload, 0).to_bytes(2, 'big')
+        report = {'preset': 'sd-display-host-emulator-only', 'display_hooks': True}
+        with tempfile.TemporaryDirectory(dir=TEMP_PARENT) as temporary:
+            root = Path(temporary)
+            with patch('build_z7_module_host.build_image', return_value=(eg, report)) as builder:
+                for corruption in (None, 'eg', 'main', 'advanced-host'):
+                    (root/'module-host.emulator.eg.bin').write_bytes(eg if corruption != 'eg' else eg[:-1])
+                    (root/'module-host.emulator.main.bin').write_bytes(payload if corruption != 'main' else payload[:-1])
+                    recorded = {**report, **({'api_bytes': 92} if corruption == 'advanced-host' else {})}
+                    (root/'module-host.emulator.json').write_text(json.dumps(recorded))
+                    with self.subTest(corruption=corruption):
+                        if corruption is None:
+                            self.assertEqual(prepare_flash_review.reviewed_candidate(root, 'lcd-first-release', b'container', b'stock'), (eg, report))
+                            builder.assert_called_once_with(b'container', display_hooks=True)
+                        else:
+                            with self.assertRaises(ValueError):
+                                prepare_flash_review.reviewed_candidate(root, 'lcd-first-release', b'container', b'stock')
+
+    def test_lcd_module_rejects_changed_bytes_or_report_and_wrong_profile(self):
+        packet = b'LCD module fixture'
+        report = dict(kind='original-Z7-LCD-first-release-candidate', api_minimum_bytes=44,
+                      target=0x03800007, module_sha256=prepare_flash_review.sha256(packet))
+        with tempfile.TemporaryDirectory(dir=TEMP_PARENT) as temporary:
+            root = Path(temporary)
+            for corruption in (None, 'packet', 'report', 'profile', 'api', 'target'):
+                rebuilt_report = dict(report)
+                if corruption == 'profile': rebuilt_report['kind'] = 'original-Z7-display-information-module'
+                if corruption == 'api': rebuilt_report['api_minimum_bytes'] = 92
+                if corruption == 'target': rebuilt_report['target'] = 0x03800008
+                recorded = {**rebuilt_report, **({'modified': True} if corruption == 'report' else {})}
+                (root/'Z7APP.BIN').write_bytes(packet if corruption != 'packet' else packet + b'X')
+                (root/'module.json').write_text(json.dumps(recorded))
+                with self.subTest(corruption=corruption), patch.object(prepare_flash_review, 'rebuild_lcd_module', return_value=(packet, rebuilt_report)):
+                    if corruption is None:
+                        self.assertEqual(prepare_flash_review.reviewed_lcd_module(root), (packet, report))
+                    else:
+                        with self.assertRaises(ValueError): prepare_flash_review.reviewed_lcd_module(root)
+
+
 class GridReviewAdmissionTests(unittest.TestCase):
     def test_gray_display_review_is_explicit_and_rejects_legacy_or_modified_files(self):
         payload = b'gray native LCD EVF spiral fixture'

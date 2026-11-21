@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "installation_cleared": false,
+  "candidate": {
+    "filename": "EG161080.BIN",
+    "size": 33058862,
+    "sha256": "fa709dba7eb7a9addc8bd5b90f839edd578cfb6d4bb0df87a1cd8cb4a7beaa4d",
+    "main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+    "crc_zero": true,
+    "independently_rebuilt": true
+  },
+  "module": {
+    "filename": "Z7APP.BIN",
+    "sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+    "size": 21104,
+    "independently_rebuilt": true,
+    "api_minimum_bytes": 44,
+    "release_scope": {
+      "presets": 4,
+      "outputs": "landscape photo LCD",
+      "included": [
+        "grids",
+        "native horizon",
+        "information groups",
+        "battery percentage",
+        "focal display",
+        "settings persistence"
+      ],
+      "deferred": [
+        "custom Info page",
+        "custom histogram",
+        "photo highlights",
+        "portrait",
+        "EVF/external extensions"
+      ],
+      "configuration": "Existing v1 journal; unsupported components/page removed after load and before edits commit",
+      "installation_candidate_cleared": false
+    }
+  },
+  "native_updater_checks": [
+    {
+      "name": "stock_native_header_property_0",
+      "passed": true
+    },
+    {
+      "name": "stock_native_header_property_1",
+      "passed": true
+    },
+    {
+      "name": "lcd-first-release_native_header_property_0",
+      "passed": true
+    },
+    {
+      "name": "lcd-first-release_native_header_property_1",
+      "passed": true
+    },
+    {
+      "name": "native_header_rejects_oversize",
+      "passed": true
+    },
+    {
+      "name": "native_header_rejects_short_version",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG161080.BIN",
+      "passed": true
+    },
+    {
+      "name": "native_name_eg161080.bin",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG16100380.BIN",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG162080.BIN",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG161080.BIN.extra",
+      "passed": true
+    },
+    {
+      "name": "native_name_EG1610.BIN",
+      "passed": true
+    }
+  ],
+  "review_source_sha256": "09fb7841b843caba5ab4047c4fff04b3d0eb11ddfeb7483cf2d4bf18e20435ca",
+  "source_sha256": {
+    "tools/prepare_flash_review.py": "09fb7841b843caba5ab4047c4fff04b3d0eb11ddfeb7483cf2d4bf18e20435ca",
+    "tools/probe_z7_display_module.py": "feb172ca7f9f95fa185236037b41825d699d69c6ad4b5a47849a1c1b7e5e5c8c",
+    "tests/test_flash_review_paths.py": "a28bbb119ac99d8015b0717743b6c80e862f9bcacfb46120741801a00c2fdf38"
+  },
+  "control": {
+    "profile": "battery-only diagnostic on same host",
+    "passed": true,
+    "checks": 15,
+    "frames": 12,
+    "raw_frame_hashes_verified": true,
+    "scope": "Native MENU and no-card PLAY; does not prove combined LCD release"
+  },
+  "combined_runs": {
+    "ready01": "Failed: no eligible percentage appeared",
+    "ready02": "Intentionally stopped after saved baseline showed adapter glyph; request ordering invalid",
+    "ready03": "Failed six-attempt measured pipeline-readiness gate before battery baseline; corrected request path not runtime-validated"
+  },
+  "root_tests": 73,
+  "limits": [
+    "Selected header and single-name instructions only; file I/O and runtime property mocked.",
+    "No directory enumeration, complete updater admission, erase/program/readback or real boot.",
+    "Same-version camera acceptance and emergency boot recovery remain unverified.",
+    "Stock copies are rollback inputs, not a proven recovery mechanism.",
+    "No full-container header digest was recomputed or validated.",
+    "Module/settings file, cache and physical-card lifecycle still require hardware validation.",
+    "Native shooting lifecycle evidence must be reviewed separately from updater checks."
+  ],
+  "staging": false,
+  "camera_access": false
+}

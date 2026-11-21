@@ -1,5 +1,47 @@
 # Laptop handoff — October 20, 2026
 
+## Explicit LCD updater review and shooting fixture correction - November 21, 2026
+
+Previous turn e29b393 was progress. Same module04 and API44 host; no firmware
+edits. prepare_flash_review --preset lcd-first-release --module now independently
+reconstructs display-only host AND exact LCD module/reports, requires API44 and
+original-Z7 target, rejects mixed/modified/advanced profiles. Review02 under
+.private/review/20261121-lcd-updater-review-02 passes12 original header/filename
+checks and six private file readbacks. Full EGfa709dba...beaa4d and moduleaafb4b39...
+unchanged. Original descriptor capacity43253760; candidate33058862. Review tool
+source hash recorded. Header/file/runtime boundaries modeled; no full updater,
+same-version acceptance, programming or recovery proven. Installation stays held.
+Root73 passes, including two admission rejection tests (13 review tests total).
+
+Bounded battery-only control SAME host, old diagnostic battery-percent-off-04,
+lcd-menu-battery-control-01 PASS15/12frames including native MENU and no-card
+PLAY return. Does not prove combined profile or identify original flash stop.
+Added existing measured RAW/ISP/processed scanout gate to battery-auto, omitted
+there previously. lcd-shooting-battery-ready-01 naturally FAILS missing overlay;
+an attempted stop found it had already exited (no termination). Ready02 saved
+baseline visibly shows ADAPTER glyph. Intentionally stopped its identified guest
+after diagnosing invalid fixture ordering; ConnectionReset is intentional stop,
+not a production failure. Do not count it as a pass or conceal either run.
+
+Concrete fixture bug: battery-auto supplied native icon request then native()
+performed another checkpoint before rendering; native task overwrites request.
+Existing settings-battery explicitly avoids that. Reused exact paused request
+ordering, bounded native foreground glyph qualification and labeled requests.
+Also reused persistence wait service-pumping + serialized stop so a persistent
+filesystem breakpoint cannot strand free-run observation. No peripheral response,
+native object/pixels or percent invented; original native widget renderer runs.
+
+FINAL native run .private/evidence/20261121-lcd-shooting-battery-ready-03
+session_id90893 terminal FAIL: six-attempt measured RAW/ISP/processed scanout
+readiness gate, before any battery baseline or MENU. Its diagnostic observations
+are retained. Corrected icon request path is NOT yet runtime-validated by it.
+All processes finished. Next: inspect run03 readiness observations and existing
+sensor readiness control; avoid blind reruns or portrait research. Review73
+tests pass; graph3873nodes/10705links, existing extraction warnings. Explicit
+installation assessment updated, still held. No
+camera/card access, staging, flash or push. Keep broad goal active.
+
+
 ## LCD shooting gate narrowed to MENU device stop - November 21, 2026
 
 Committed release module04/API44 host unchanged. Existing live display harness

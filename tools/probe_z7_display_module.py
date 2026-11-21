@@ -28,6 +28,10 @@ class DisplayCamera(HostCamera):
         active = getattr(getattr(self, 'remote', None), 'histogram_enabled', False)
         if active: self.remote.histogram_pause_requested = True
         try:
+            if self.running and getattr(self.remote, 'fixture_enabled', False):
+                self.remote.request_fixture_stop()
+                self.receive_stop()
+                return
             return super().pause()
         finally:
             if active: self.remote.histogram_pause_requested = False
@@ -143,7 +147,7 @@ def main():
         camera.gpu_draw_dump = output / 'graphics-draws'
         camera.gpu_draw_dump.mkdir()
         camera.gpu_draw_gate = output / 'graphics-capture.enabled'
-    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
+    if args.view in ('battery-auto', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
         # Retain the base fixture's native StartLV settling delay before MENU.
         # Acknowledgement alone can precede the first completed native draw.
         camera.native_display_wait_ms = 5000
@@ -157,7 +161,7 @@ def main():
         geometry_source = Path(__file__).with_name('display_pixel_geometry.py').read_bytes()
         (output / 'geometry-source.py').write_bytes(geometry_source)
         result['information_geometry_source_sha256'] = hashlib.sha256(geometry_source).hexdigest()
-    if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
+    if args.view in ('battery-auto', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'): result['native_start_lv_display_wait_ms'] = camera.native_display_wait_ms
     def save():
         (output / 'result.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     def check(name, passed):
@@ -170,6 +174,22 @@ def main():
             camera.pause()
         return camera.run_to(0x100531bc)
     def advance(seconds=.3):
+        if getattr(camera.remote, 'fixture_enabled', False):
+            # Persistent settings keep the filesystem observation point live.
+            # Pump it while running; a sleep with no receive can strand the
+            # guest at DISPATCH. Match the proven persistence-probe wait.
+            if camera.running: camera.pause()
+            camera.remote.fixture_stop_requested = False
+            timer = threading.Timer(seconds, camera.remote.request_fixture_stop)
+            timer.daemon = True
+            camera.remote.send('c'); camera.running = True
+            timer.start()
+            try:
+                camera.receive_stop()
+            finally:
+                timer.cancel(); timer.join(1)
+                camera.remote.fixture_stop_requested = False
+            return checkpoint()
         if not camera.running:
             camera.continue_guest()
         time.sleep(seconds)
@@ -360,7 +380,7 @@ def main():
     try:
         camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry') else camera.boot_shooting()
         checkpoint()
-        if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
+        if args.view in ('battery-auto', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
             # StartLV acknowledgement and a fixed delay are insufficient. This
             # diagnostic gate observes native pipeline progress without writing
             # readiness flags or inventing peripheral completion responses.
@@ -1133,18 +1153,39 @@ def main():
                 return bool(object_pointer and int.from_bytes(camera.remote.memory(object_pointer + 40, 4), 'little'))
             def enable(value):
                 camera.remote.write_memory(base + module['symbols']['z7_battery_enabled'], struct.pack('<I', value))
+            def foreground_glyph():
+                control = 0xa1824a14 + 48
+                pointer = int.from_bytes(camera.remote.memory(control + 36, 4), 'little')
+                if not pointer: return None
+                words = struct.unpack('<25I', camera.remote.memory(pointer, 100))
+                return words[2] if (camera.remote.memory(control + 1, 1) == b'\1' and
+                    words[1] == 4 and words[3] == 0 and words[10] == 1 and
+                    words[4:6] == (2 | 396 << 16, 62 | 428 << 16) and
+                    words[18:20] == (0xa201e3b4, 0x10384969) and
+                    words[2] in (0x1120, 0x1122, 0x1124, 0x1126, 0x1128)) else None
+            def request_icon(label, bar=1):
+                packet = checkpoint()
+                result['battery_icon_fixture'].setdefault('requests', []).append(dict(label=label, bar=bar))
+                camera.remote.write_memory(0xa201d4d0 + 0x1aa, bytes([bar]))
+                for i in (0, 1): camera.remote.write_memory(0xa1824a14 + i * 48, b'\1\1')
+                # Match settings-battery: no checkpoint after supplying a
+                # paused request, since native tasks may overwrite it.
+                camera.call(packet, 'Native battery renderer, labeled GUI request: ' + label, 0x102f40a0, bytes(32), [])
             capture('automatic-native-context')
             check('no-native-battery-icon-means-no-overlay', automatic_word('object') == 0 and automatic_word('samples') == 0)
             if args.battery_icon_fixture:
                 enable(0)
-                result['battery_icon_fixture'] = dict(scope='One supplied native control visibility request; native widget renderer initializes icon',
+                result['battery_icon_fixture'] = dict(scope='Labeled supplied native control visibility requests; native widget renderer initializes icon',
                     original_controls=[camera.remote.memory(0xa1824a14 + i * 48, 2).hex() for i in (0, 1)],
                     original_bar=camera.remote.memory(0xa201d4d0 + 0x1aa, 1).hex(), supplied_bar=1,
                     percentage_supplied=False)
-                camera.remote.write_memory(0xa201d4d0 + 0x1aa, b'\1')
-                for i in (0, 1): camera.remote.write_memory(0xa1824a14 + i * 48, b'\1\1')
-                native('Native stock battery widget renderer after supplied visibility request', 0x102f40a0, [])
-                capture('automatic-stock-icon-baseline')
+                for attempt in range(3):
+                    request_icon('stock baseline ' + str(attempt + 1))
+                    baseline_name = 'automatic-stock-icon-baseline' + ('-' + str(attempt) if attempt else '')
+                    capture(baseline_name)
+                    if foreground_glyph() is not None: break
+                check('baseline-retains-eligible-native-battery-glyph', foreground_glyph() is not None)
+                result['battery_icon_fixture']['baseline_glyph'] = foreground_glyph()
                 stock_icon = Image.open(io.BytesIO(camera.png)).convert('RGB')
                 check('supplied-request-reaches-native-icon', camera.remote.memory(0xa1824a14 + 49, 1) == b'\1')
                 enable(1)
@@ -1183,18 +1224,12 @@ def main():
                 result['battery_icon_fixture']['active_objects'] = [dict(
                     pointer=hex(int.from_bytes(camera.remote.memory(0xa1824a14 + i * 48 + 36, 4), 'little')),
                     record=camera.remote.memory(int.from_bytes(camera.remote.memory(0xa1824a14 + i * 48 + 36, 4), 'little'), 96).hex()) for i in (0, 1)]
-                camera.remote.write_memory(0xa201d4d0 + 0x1aa, b'\0')
-                native('Native adapter glyph for exclusion check', 0x102f40a0, [])
+                request_icon('adapter exclusion', bar=0)
                 count = automatic_word('samples'); enable(1)
                 capture('automatic-adapter-excluded')
                 check('adapter-glyph-never-enables-percentage', automatic_word('samples') == count and
                       camera.remote.memory(automatic_word('object') + 40, 4) == bytes(4))
                 if args.battery_lifecycle:
-                    def request_icon(label):
-                        result['battery_icon_fixture'].setdefault('additional_requests', []).append(label)
-                        camera.remote.write_memory(0xa201d4d0 + 0x1aa, b'\1')
-                        for i in (0, 1): camera.remote.write_memory(0xa1824a14 + i * 48, b'\1\1')
-                        native('Native battery renderer, one GUI request: ' + label, 0x102f40a0, [])
                     request_icon('before native MENU')
                     for _ in range(30):
                         advance(.3)
