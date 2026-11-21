@@ -1,5 +1,27 @@
 # Laptop handoff — October 20, 2026
 
+## Battery-only hardware review in preparation - November 21, 2026
+
+User requested continuing until a hardware-testable checkpoint; NO staging/test
+approval inferred. Narrow candidate: existing standalone battery_percent.c,
+no custom menu/grid/DISP/settings/worker.2824bytes,2752image,56BSS,2relocations.
+SHA89358992419867380781bafae7a1624f4d51955b3920127718f6daba9318ea23.
+Enabled and disabled controls each built twice identically.39 existing battery
+policy checks pass; new exact-host boundary audit verifies zero native GUI RAM
+stores/getter/render calls in init, only before/after paint hooks, no early-ready
+or missing-pool work, and percentage output on eligible modeled GUI state.
+95 root tests also pass. Actual battery value, physical cold startup/recovery
+still unverified.
+
+IMPORTANT: prior ownership-hardening patch94f00b3 WITHDRAWN/reverted in source.
+Combined close-failure + late foreign owner test proves hardening frees module
+allocation despite one open uncertain settings handle. Original full build keeps
+allocation/handle resident. Preserve both immutable artifacts and evidence;
+neither is cleared for hardware. No production ownership fix is claimed.
+Battery candidate links none of that source or settings I/O. Full release hold
+continues. See BATTERY_HARDWARE_TEST_ASSESSMENT.md for exact proposal, frozen
+review preparation tool and authorization boundary. Card remains unchanged.
+
 ## Late native-menu ownership hardening - November 21, 2026
 
 Synthetic compiled regression now reproduces a preparation/publication ownership

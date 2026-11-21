@@ -1,5 +1,10 @@
 # Original Z7 LCD first-release installation assessment
 
+Separate next checkpoint under review: battery-only SD diagnostic described in
+BATTERY_HARDWARE_TEST_ASSESSMENT.md. This does not clear the full LCD release,
+require a firmware flash, or authorize card staging/testing. The prior ownership
+hardening is withdrawn/reverted after a retained-close lifetime regression.
+
 Quarantine COMPLETE after owner confirmed camera responds normally without card:
 failed diagnostic renamed to Z7APP.SETTINGS-IO.disabled; all four trial files
 backed up/hash-verified and preserved. No active root .BIN remains. Existing file

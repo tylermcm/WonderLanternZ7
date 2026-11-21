@@ -70,6 +70,20 @@ Validation: all 95 existing root tests pass; three exact-artifact initialization
 traces satisfy publication-order assertions. These results validate the offline
 audit scope, not a repair. No camera test, firmware image, or card write occurred.
 
+## Ownership hardening withdrawn after retained-close fault test
+
+The late-rejection patch in checkpoint94f00b3 is WITHDRAWN and its two runtime
+source changes have been reverted. A new combined-fault test supplies an existing
+journal, a failed native close, and a changed menu owner. The old module retains
+one allocation and one uncertain handle; the hardening build frees its allocation
+while the handle remains open. This violates the existing persistence lifetime
+contract. Neither artifact is cleared for hardware. Immutable evidence/builds
+are preserved; see evidence/20261121-ownership-retained-close.json.
+
+This does not repair the original freeze or establish its cause. The next review
+is a separate battery-only SD diagnostic, with no settings/menu implementation
+linked. See BATTERY_HARDWARE_TEST_ASSESSMENT.md. All prior card files stay disabled.
+
 ## Late ownership changes reproduced and rejected offline
 
 A synthetic interleaving now demonstrates a concrete defensive gap: after

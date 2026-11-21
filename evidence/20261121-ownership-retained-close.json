@@ -1,0 +1,29 @@
+{
+  "results": {
+    "original": {
+      "status": 8,
+      "injected": true,
+      "conflict_preserved": false,
+      "complete_native_menu_snapshot_preserved": false,
+      "display_ready": 1,
+      "resident_allocations": 1,
+      "open_settings_handles": 1,
+      "native_page_header": "0x2",
+      "native_dispatcher": "0x50109d8d"
+    },
+    "hardening": {
+      "status": 7,
+      "injected": true,
+      "conflict_preserved": true,
+      "complete_native_menu_snapshot_preserved": true,
+      "display_ready": 0,
+      "resident_allocations": 0,
+      "open_settings_handles": 1,
+      "native_page_header": "0x12340002",
+      "native_dispatcher": "0x1048bffd"
+    }
+  },
+  "synthetic_faults": true,
+  "hardening_withdrawn": true,
+  "hardware_cause_established": false
+}

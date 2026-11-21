@@ -109,5 +109,8 @@
   ],
   "lcd_checks": 47,
   "lcd_passed": true,
-  "lcd_scope": "Actual API44 load, compact menu callbacks/count metadata, supported defaults, battery/focal switches, reset, worker save/restart, v1 legacy normalization and native DISP cycling/page skipping/context fallback"
+  "lcd_scope": "Actual API44 load, compact menu callbacks/count metadata, supported defaults, battery/focal switches, reset, worker save/restart, v1 legacy normalization and native DISP cycling/page skipping/context fallback",
+  "status": "WITHDRAWN: late rejection can free allocation after uncertain settings-file close",
+  "source_change_reverted": true,
+  "superseding_evidence": "evidence/20261121-ownership-retained-close.json"
 }

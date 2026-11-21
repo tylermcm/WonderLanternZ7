@@ -254,17 +254,14 @@ uint32_t z7_main(const struct z7_module_api *api)
 #endif
     persistence_prepare();
 #endif
-    /* Recheck native menu ownership after potentially yielding preparation,
-     * before committing any native menu or scalar stores.
-     */
-#ifdef Z7_SETTINGS_MENU_PROBE
-    if (!sm_publish()) return 1;
-#endif
     /* No failing operation follows these native scalar stores. Host readiness
-     * and host-managed grid-menu publication follow successful return.
+     * and native menu pointer publication still follow successful return.
      */
 #ifndef Z7_HISTOGRAM_EXTRA_PROBE
     Z7_GRID_COMMIT_MASKS();
+#endif
+#ifdef Z7_SETTINGS_MENU_PROBE
+    sm_publish();
 #endif
 #ifdef Z7_DISP_KEY_PROBE
     __asm__ volatile("dmb sy" ::: "memory");

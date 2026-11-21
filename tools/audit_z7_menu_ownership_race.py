@@ -18,7 +18,7 @@ PAGE, SLOT = 0xa1833548, 0xa182ed34
 CONFLICTS = {'dispatcher': (SLOT, 0x1040525f), 'page': (PAGE, 0x12340002)}
 
 
-def exercise(raw, host, packet, module, conflict):
+def exercise(raw, host, packet, module, conflict, files=None, faults=None):
     if hashlib.sha256(raw).hexdigest() != host['main_payload_sha256']:
         raise ValueError('Host fingerprint mismatch')
     if hashlib.sha256(packet).hexdigest() != module['module_sha256']:
@@ -39,7 +39,7 @@ def exercise(raw, host, packet, module, conflict):
                 self.snapshot_at_injection=(bytes(u.mem_read(PAGE,44)),bytes(u.mem_read(SLOT,4)))
             super().hook(u,pc,size,context)
 
-    f=RaceFixture(raw,host,packet)
+    f=RaceFixture(raw,host,packet,files=files,faults=faults)
     status=f.call(host['symbols']['z7_module_load_once'],STATE)
     if conflict:
         assert f.injected
@@ -50,6 +50,7 @@ def exercise(raw, host, packet, module, conflict):
     return dict(status=status,injected=bool(f.injected),conflict_preserved=conflict_preserved,
                 complete_native_menu_snapshot_preserved=untouched,
                 display_ready=f.words()[23],resident_allocations=len(f.live),
+                open_settings_handles=len(f.handles),
                 native_page_header=hex(int.from_bytes(f.u.mem_read(PAGE,4),'little')),
                 native_dispatcher=hex(int.from_bytes(f.u.mem_read(SLOT,4),'little')))
 

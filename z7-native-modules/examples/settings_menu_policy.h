@@ -347,17 +347,12 @@ static void persistence_menu_notify(void)
     }
 }
 #endif
-static uint32_t sm_publication_available(void)
+static uint32_t sm_prepare(void)
 {
 #ifdef Z7_SETTINGS_PERSISTENCE
     if (W(0xa182ed34u) != 0x1048bffdu) return 0;
 #endif
     for (uint32_t i = 0; i < 11; ++i) if (W(0xa1833548u + i * 4)) return 0;
-    return 1;
-}
-static uint32_t sm_prepare(void)
-{
-    if (!sm_publication_available()) return 0;
     const uint32_t *leaf = (const uint32_t *)(uintptr_t)(0xa1833548u + 42 * 44);
     if (leaf[0] != 0x002a0002u || leaf[1] != 0xa1833574u || !readable(leaf[10], 28)) return 0;
     const uint32_t *meta = (const uint32_t *)(uintptr_t)leaf[10];
@@ -395,13 +390,8 @@ static uint32_t sm_prepare(void)
     z7_battery_enabled = 0;
     return 1;
 }
-static uint32_t sm_publish(void)
+static void sm_publish(void)
 {
-    /* Preparation may yield in native services. Do not overwrite an owner
-     * that appeared meanwhile. This recheck is not a task lock: publication
-     * still requires lifecycle/scheduling review before hardware clearance.
-     */
-    if (!sm_publication_available()) return 0;
     for (uint32_t i = 1; i < 11; ++i) W(0xa1833548u + i * 4) = sm_object[i];
     __asm__ volatile("dmb sy" ::: "memory");
     W(0xa1833548u) = sm_object[0];
@@ -409,7 +399,6 @@ static uint32_t sm_publish(void)
     __asm__ volatile("dmb sy" ::: "memory");
     W(0xa182ed34u) = (uint32_t)(uintptr_t)sm_menu_dispatch;
 #endif
-    return 1;
 }
 static void sm_before(void)
 {
