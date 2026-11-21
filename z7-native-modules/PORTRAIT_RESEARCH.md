@@ -267,9 +267,50 @@ call shows the portrait adapter rejects each resulting incomplete state without
 publication or acknowledgement; it does not unwind or recover the native fault.
 Do not claim camera OOM safety from this audit.
 
+## Original descriptor and font-context integration
+
+`tools/audit_z7_native_text_descriptor.py` removes the descriptor stub for
+commands34/37/38. The operational font context now comes from original
+constructor10476904 with maximum-glyph-size and identity-matrix invariants,
+followed by four original provider registrations through10476ACA. The allocator
+descriptor and memory addresses remain supplied; camera allocator behavior is
+not modeled. The parent fixture's earlier supplied context is discarded first.
+
+Original option constructor104774AC establishes measurement-cache flags and
+ownership. Geometry setter1047762A and text setter10477526 run; the latter accepts
+a pointer/count/encoding descriptor, not a raw string pointer. UTF-16 input is
+copied into owned option storage. The audit also executes native alignment
+wrapper1044F85E, context/option destruction10476A70/10477502 and text completion.
+
+Private `20261121-native-descriptor-01/result.json` passes240 checks over48 paired
+native paths: three commands, both orientations, A/ABC input, unit/three-quarter
+portrait scale and alignment modes0/2. The same native descriptor processing runs
+with stock and intercepted providers. Measurement/bounds queries retain their
+stock entry matrix and origin values; actual drawing entries receive the exact
+reference portrait matrix. Widget metric fields remain equal, source messages/
+payloads are preserved except native result0, provider/state cleanup precedes
+acknowledgement, and native destructors release every tracked allocation.
+
+Command34 selects the native bitmap target and reaches the supplied bitmap
+emitter104AA7FE once per glyph. Commands37/38 reach the native contour path and
+the supplied final contour sink. Per-glyph bounds, font metrics/outlines, an
+already cached synthetic font face, shaping, allocator callbacks and selected
+GPU APIs remain explicit supplied boundaries. The fixture uses a matching
+synthetic outline/advance unit and does not load Nikon font files. It does not
+establish final bitmap rasterization, inline symbols, GPU pixels or camera boot.
+
+Early private traces exposed missing measurement-cache flags, the setter's
+structured input ABI, native identity flag1 after reset and the required native
+maximum-glyph-size/graphics state. These were fixture deficiencies corrected by
+using original constructors rather than weakening the matrix or cleanup checks.
+The admitted probe remains byte-identical to portrait-text-03/native-glyph-09:
+1216 file/1152 image/28 BSS, SHA256
+`82fbd88cfa691acd3d65f022e8bb5dcaa306d82b186bd95dfc3508c8a9d10fa8`.
+The previously documented supplied-NULL allocator counterexamples remain open.
+
 ## Remaining integration
 
-Bind actual LCD output/target admission, live native text behavior and bitmap symbols,
+Bind actual LCD output/target admission, native font-file/bitmap emission and symbols,
 draw-task lifetime and callback ownership before installing a rotation hook.
 Preserve producer completion and payload lifetime: never redirect asynchronous
 native work to a temporary stack copy. Then port portrait reflow, navigation and

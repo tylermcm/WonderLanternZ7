@@ -1,5 +1,45 @@
 # Laptop handoff — October 20, 2026
 
+## Original text descriptors and full font-context fixture - November 21, 2026
+
+Previouseb5d8c7 exercised native glyph layout with a descriptor stub. This is
+PROGRESS: original34/37/38 descriptor functions now execute, with operational
+font context from original10476904 and all4 native provider registrations.
+No persistent graphics hook/page integration, no camera/card/stage/flash/push.
+Full original goal ACTIVE.
+
+Native options104774AC, setters1047762A/10477526, alignment1044F85E and
+destructors10477502/10476A70 execute. Text setter takes{pointer,count,encoding};
+factory establishes measurement-cache flags. Native maximum glyph size and
+graphics state are initialized by constructor rather than manually guessed.
+The parent fixture's preliminary supplied context is discarded before this path.
+
+native-descriptor-01/result.json PASS240 across48 stock/portrait pairs:34/37/38,
+both directions,A/ABC,unit/.75 scale,alignment0/2. Queries preserve native entry
+matrix/origin; draws get exact reference matrix; widget metrics match stock;
+message/payload preserved except result0; native cleanup precedes acknowledgement;
+native destruction releases all tracked allocations.34 reaches supplied bitmap
+emitter104AA7FE,37/38 native contours with final sink. Font face/cache, metrics/
+outline/shaping, allocator and GPU APIs still supplied. No Nikon font-file load,
+bitmap rasterization/inline symbols/GPU pixels/live task lifetime or boot proof.
+
+Probe byte-identical to portrait-text-03/native-glyph-09:1216file/1152image/28BSS/
+0relocs/reproducible, SHA82fbd88cfa691acd3d65f022e8bb5dcaa306d82b186bd95dfc3508c8a9d10fa8.
+Prior four supplied-NULL native allocator counterexamples remain unresolved.
+Early private traces corrected fixture option flags, structured text input,
+identity flag1 and missing context invariants; no failed trace is acceptance proof.
+
+See PORTRAIT_RESEARCH.md and evidence/20261121-native-text-descriptor.json.
+Next: native font files/bitmap symbols and live graphics output/target/page/task
+admission, then portrait reflow/input/settings. Original accepted highlight
+host/module unchanged. Native lifecycle/writer/bank/engine closure, Info mirror,
+real histogram source and integrated release/install/recovery remain unfinished.
+
+Final root71/no skips:20261121-native-descriptor-root-tests.log. All direct
+fingerprints current and probe bytes identical to the accepted text adapter.
+Ignored Graphify refreshed3379nodes/9147edges; existing parser warnings retained.
+Source-only checkpoint, no integrated firmware release rebuild or flash clearance.
+
 ## Native glyph contours and incomplete-font admission - November 21, 2026
 
 Previouse0bc399 added text interception against supplied glyph renderer. This
