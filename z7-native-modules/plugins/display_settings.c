@@ -2,7 +2,11 @@
  * Wire format Z7C1, version1, exact64 bytes. CRC detects damage, not authenticity.
  */
 #include "display_settings.h"
+#ifdef Z7_LCD_FIRST_RELEASE
+static const uint32_t default_components[4] = {1, 0, 5, 0};
+#else
 static const uint32_t default_components[4] = {1, 0, 5, 10};
+#endif
 static const uint32_t default_information[4] = {127, 7, 0, 127};
 static uint32_t get32(const uint8_t *p)
 {

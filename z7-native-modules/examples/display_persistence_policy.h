@@ -32,6 +32,12 @@ static const struct z7_settings_storage_io persistence_io = {
 };
 static void persistence_commit(const struct z7_display_settings *staged)
 {
+#ifdef Z7_LCD_FIRST_RELEASE
+    if (!staged) return;
+    struct z7_display_settings filtered = *staged;
+    if (!z7_lcd_release_filter(&filtered)) return;
+    staged = &filtered;
+#endif
     if (!z7_settings_valid(staged)) return;
     const uint32_t *source = (const uint32_t *)staged;
     uint32_t *destination = (uint32_t *)&z7_menu_settings;
@@ -72,6 +78,9 @@ static void persistence_prepare(void)
     }
     z7_persistence_result = z7_storage_load(&persistence_io, &z7_menu_settings, &z7_persistence_info);
     z7_persistence_ready = z7_persistence_result == Z7_STORAGE_LOADED || z7_persistence_result == Z7_STORAGE_DEFAULTS;
+#ifdef Z7_LCD_FIRST_RELEASE
+    if (z7_persistence_ready) persistence_commit(&z7_menu_settings);
+#endif
     if (!z7_persistence_ready) ++z7_persistence_errors;
     persistence_set_state(!z7_persistence_ready ? PS_BLOCKED :
         z7_persistence_result == Z7_STORAGE_DEFAULTS ? PS_DEFAULTS : PS_CLEAN);

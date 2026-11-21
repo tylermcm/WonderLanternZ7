@@ -1,5 +1,56 @@
 # Laptop handoff — October 20, 2026
 
+## Scope changed: smaller LCD first release - November 21, 2026
+
+**User decision supersedes the research next-steps below.** After reporting
+usage cost, the user requested an assessment and explicitly selected "Smaller
+LCD first release (recommended)". Prioritize a concrete release from implemented
+LCD features. Defer portrait (including the queued-pool guard), photo zebras,
+custom Info/histogram and unsupported output modes. Do not resume open-ended
+portrait/native task research as the default next action. Original broader work
+is retained for later; this is a first-release milestone, not proof it is all done.
+
+New builder --variant lcd-first-release uses plugins/lcd_release.c, composing the
+existing focal/Other/readout/grid/battery profile with settings persistence.
+It does NOT define Z7_INFORMATION_APP_PROBE or any highlight/portrait hooks.
+Minimum host API44, display-only --display-hooks host, no API48..92 extensions.
+Deferred features can require a later host flash; no one-flash promise is made.
+
+The release has four presets, six native grid choices, native horizon, supported
+information groups, independent battery percentage/focal display and the existing
+two-slot journal. Menus compact to6 root/5 preset/7 info/3 extra rows and omit
+custom Info/histogram/highlight choices. Policy filters unsupported components
+and page16 on startup and before commits. A valid legacy Info-only v1 model
+falls back to Standard; normalization marks dirty and writes only the other
+journal slot through the existing worker. Exposure defaults to readouts without
+unfinished histogram/zebras. The v1 format is unchanged; no v2 compatibility is
+newly claimed. Defaults leave custom pages and battery off as before.
+
+Private lcd-first-release-02 module21040/image20736/BSS5584 SHA
+e04ab90c84b69b80b0fda51aa70cf72c2d0b6e676f71420d7e71f347908ec859,
+reproducible twice. lcd-core-host-01 MAIN33058860/host4593 SHA
+7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057,
+reproducible twice/CRC zero and byte-identical to accepted display-host-09.
+Focused audit_z7_lcd_release.py PASS36 executes loader/menu/count metadata,
+supported defaults, battery/focal controls/reset, worker save/restart and legacy
+normalization with modeled file/UI/kernel services. No Info hooks are registered.
+The final source rebuild is byte-identical to the audited module. Root71 passes.
+Current build/audit source maps verified; source-only evidence is
+evidence/20261121-lcd-first-release.json. Ignored Graphify is3857nodes/10664links,
+with existing conditional-C extraction warnings; native compiler checks pass.
+Legacy full persistence profile independently rebuilt from pre-change HEAD in
+private source copy: byte-identical719c1db3...39af85c (old persistence-02 is an
+earlier baseline, bb24e23b...64390, and is not the current HEAD comparison).
+
+**Next release gates, in order:** (1) native visual/menu navigation smoke for the
+compact counts and Back/reset; (2) focused existing LCD lifecycle checks on THIS
+combined profile (DISP/page skipping, overlays, MENU/playback, save/restart and
+unsupported-output fallback); (3) one frozen host/module bundle and concrete
+exact installation/recovery assessment, separating hardware-only unknowns from
+software failures. Avoid expanding into new features or redundant stress suites.
+Existing emulator-only admission remains intact; the current build is NOT a
+flash-cleared release. No card/camera access, staging, flash or push.
+
 ## Native task signals and queued acknowledgement lifetime - November 21, 2026
 
 Previous024084a guards observed manager states1/3. New evidence closes the

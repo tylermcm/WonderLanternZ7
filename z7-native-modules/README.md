@@ -1,5 +1,13 @@
 # Original-Z7 native module foundation
 
+The owner-selected first-release target is now `--variant lcd-first-release`:
+four LCD presets, grids/native horizon, information groups, battery percentage,
+supported focal display and settings persistence on the existing API44 host.
+Custom Info/histogram, zebras, portrait and unsupported-output extensions are
+deferred. Unsupported v1 preferences are filtered on load/edit; compact menus
+omit their controls. The candidate still needs native visual/lifecycle checks
+and an exact installation/recovery review. See the latest root HANDOFF.md.
+
 This component implements [the SD-module port](../SD_MODULE_PORT.md).
 The intended installation has two parts: an installed original-Z7 firmware
 host, followed by `Z7APP.BIN` on the SD card. The host reads and initializes the

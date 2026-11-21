@@ -3,6 +3,9 @@
  * bytes or foreign component source are embedded. No card writes.
  */
 #include "../plugins/display_settings.c"
+#ifdef Z7_LCD_FIRST_RELEASE
+#include "../plugins/lcd_release_policy.h"
+#endif
 struct z7_display_settings z7_menu_settings;
 #ifdef Z7_SETTINGS_PERSISTENCE
 static void persistence_commit(const struct z7_display_settings *);
@@ -137,6 +140,9 @@ static uint32_t sm_action(uint32_t object)
 {
     if (!sm_owned(object) || !z7_settings_valid(&z7_menu_settings)) return 0;
     uint32_t row = *(volatile uint16_t *)(uintptr_t)(object + 22) + *(volatile uint16_t *)(uintptr_t)(object + 24);
+#ifdef Z7_LCD_FIRST_RELEASE
+    row = z7_lcd_release_row(z7_settings_view,row);
+#endif
     if (row >= 7 || z7_settings_preset >= 4) return 0;
     uint32_t view = z7_settings_view, p = z7_settings_preset;
 #ifdef Z7_SETTINGS_PERSISTENCE
@@ -225,7 +231,17 @@ static uint32_t sm_render(uint32_t object)
 #ifdef Z7_SETTINGS_PERSISTENCE
     __atomic_store_n(&sm_save_status, save_status, __ATOMIC_RELEASE);
 #endif
+#ifdef Z7_LCD_FIRST_RELEASE
+    for (uint32_t physical_row = 0; physical_row < 7; ++physical_row) {
+        uint32_t row = physical_row;
+        row = z7_lcd_release_row(z7_settings_view,physical_row);
+        if (row==UINT32_MAX) {
+            sm_text_put(231+physical_row,"");sm_text_put(238+physical_row,"");
+            continue;
+        }
+#else
     for (uint32_t row = 0; row < 7; ++row) {
+#endif
         const char *value = "--";
         uint32_t bits = 0, mask = 0;
         if (!z7_settings_view && (row == 0 || row >= 5)) {
@@ -245,8 +261,16 @@ static uint32_t sm_render(uint32_t object)
 #endif
         if (mask) value = bits & mask ? "ON" : "OFF";
         if (!names[row][0] || (z7_settings_view && row == 6 && z7_settings_view != 2)) value = "";
+#ifdef Z7_LCD_FIRST_RELEASE
+        sm_text_put(231 + physical_row, names[row]); sm_text_put(238 + physical_row, value);
+#else
         sm_text_put(231 + row, names[row]); sm_text_put(238 + row, value);
+#endif
     }
+#ifdef Z7_LCD_FIRST_RELEASE
+    uint32_t rows = z7_lcd_release_rows(z7_settings_view);
+    sm_geometry[0] = rows;sm_meta[5] = rows | (rows << 16);
+#endif
     /* Keep the current event's destination stable across its callback. */
     for (uint32_t i = 0; i < 14; ++i) if (sm_events[i][0] == 0x238 || sm_events[i][0] == 0x253) {
         sm_events[i][1] = (uint32_t)(uintptr_t)sm_back_event;
@@ -342,6 +366,10 @@ static uint32_t sm_prepare(void)
     for (uint32_t i = 0; i < 7; ++i) sm_meta[i] = meta[i];
     sm_meta[1] = (uint32_t)(uintptr_t)sm_geometry; sm_meta[2] = (uint32_t)(uintptr_t)sm_layout; sm_meta[3] = (uint32_t)(uintptr_t)sm_controls;
     sm_meta[4] = (uint32_t)(uintptr_t)sm_maps; sm_meta[5] = 0x00070007;
+#ifdef Z7_LCD_FIRST_RELEASE
+    sm_geometry[0] = z7_lcd_release_rows(0);
+    sm_meta[5] = sm_geometry[0] | (sm_geometry[0] << 16);
+#endif
     sm_callbacks[0] = (uint32_t)(uintptr_t)sm_render; sm_callbacks[1] = (uint32_t)(uintptr_t)sm_zero;
     sm_callbacks[2] = 0x1040525f; sm_callbacks[3] = (uint32_t)(uintptr_t)sm_one;
     sm_callbacks[4] = sm_callbacks[5] = sm_callbacks[6] = (uint32_t)(uintptr_t)sm_zero; sm_callbacks[7] = 0x1040525f;

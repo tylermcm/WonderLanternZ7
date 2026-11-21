@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe', 'settings-files-probe', 'display-persistence-probe', 'display-highlight-context-probe', 'display-highlight-parameters-probe', 'display-highlight-owned-probe', 'display-highlight-frame-probe', 'display-highlight-cleanup-probe', 'display-highlight-cached-probe', 'display-highlight-coordinated-probe', 'display-highlight-native-transaction-probe', 'display-highlight-preferences-probe', 'display-highlight-evf-probe', 'display-highlight-handoff-probe'), default='grids')
+    parser.add_argument('--variant', choices=('lcd-first-release', 'grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe', 'settings-files-probe', 'display-persistence-probe', 'display-highlight-context-probe', 'display-highlight-parameters-probe', 'display-highlight-owned-probe', 'display-highlight-frame-probe', 'display-highlight-cleanup-probe', 'display-highlight-cached-probe', 'display-highlight-coordinated-probe', 'display-highlight-native-transaction-probe', 'display-highlight-preferences-probe', 'display-highlight-evf-probe', 'display-highlight-handoff-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -29,6 +29,7 @@ def main():
     if args.battery_percent is not None and args.variant not in ('battery-percent', 'combined'):
         parser.error('--battery-percent applies only to battery-percent or combined modules')
     relative, kind, minimum_api = {
+        'lcd-first-release': ('plugins/lcd_release.c', 'original-Z7-LCD-first-release-candidate', 44),
         'grids': ('plugins/grids_histogram.c', 'original-Z7-grids-histogram-module', 20),
         'battery-probe': ('examples/battery_display_probe.c', 'original-Z7-battery-text-diagnostic', 16),
         'battery-sample': ('examples/battery_sample_probe.c', 'original-Z7-battery-sample-diagnostic', 12),
@@ -89,7 +90,7 @@ def main():
         source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
         camera_verified=False, physical_card_verified=False, api_minimum_bytes=minimum_api)
     requested_variant = args.variant
-    dependency_variant = 'display-persistence-probe' if requested_variant in ('display-highlight-context-probe', 'display-highlight-parameters-probe', 'display-highlight-owned-probe', 'display-highlight-frame-probe', 'display-highlight-cleanup-probe', 'display-highlight-cached-probe', 'display-highlight-coordinated-probe', 'display-highlight-native-transaction-probe', 'display-highlight-preferences-probe', 'display-highlight-evf-probe', 'display-highlight-handoff-probe') else requested_variant
+    dependency_variant = 'display-persistence-probe' if requested_variant in ('lcd-first-release', 'display-highlight-context-probe', 'display-highlight-parameters-probe', 'display-highlight-owned-probe', 'display-highlight-frame-probe', 'display-highlight-cleanup-probe', 'display-highlight-cached-probe', 'display-highlight-coordinated-probe', 'display-highlight-native-transaction-probe', 'display-highlight-preferences-probe', 'display-highlight-evf-probe', 'display-highlight-handoff-probe') else requested_variant
     if dependency_variant in ('display-groups-probe', 'display-other-probe', 'display-focal-probe', 'display-information-probe', 'display-persistence-probe'):
         # The six-group adapter includes the complete histogram/base stack.
         args.variant = 'display-histogram-probe'
@@ -193,6 +194,14 @@ def main():
         report['highlight_cache_handoff'] = True
         report['highlight_evf_native_update_required'] = False
         report['highlight_scope'] = 'API80 cache-driven logical LCD/EVF handoff with separate native origins; native boot/writer/index/lifetime closure and physical pixels unproven'
+    if requested_variant == 'lcd-first-release':
+        inputs.append(ROOT / 'z7-native-modules/plugins/lcd_release_policy.h')
+        report.pop('information_app_index', None)
+        report['release_scope'] = dict(presets=4, outputs='landscape photo LCD',
+            included=['grids', 'native horizon', 'information groups', 'battery percentage', 'focal display', 'settings persistence'],
+            deferred=['custom Info page', 'custom histogram', 'photo highlights', 'portrait', 'EVF/external extensions'],
+            configuration='Existing v1 journal; unsupported components/page removed after load and before edits commit',
+            installation_candidate_cleared=False)
     report['source_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
     output.mkdir(parents=True)
     (output / 'Z7APP.BIN').write_bytes(packet)
