@@ -94,7 +94,7 @@ accepted evidence.
 
 `plugins/portrait_draw.h` now connects a caller-selected portrait box to original
 Z7 message dispatch. It supports native rectangle commands13/16/17 and image
-commands19/1A. This is callable software, not an installed graphics hook: the
+commands19/1A plus fixed-point1C conversion. This is callable software, not an installed graphics hook: the
 caller must own the graphics task and admit the intended LCD output/page.
 
 The Z7 payloads differ from the pinned Z7II layouts:
@@ -106,6 +106,7 @@ The Z7 payloads differ from the pinned Z7II layouts:
 | 17 | 6 | 1042F5A8,28-byte normalized shape |
 | 19 | 18 | 104303E6,68-byte normalized image |
 | 1A | 24 | 1042F894,88-byte normalized image |
+| 1C | 18 | 10430BCA,68-byte fixed-point image; converted to1A for portrait |
 
 Image angles are the low half of source word15. Source words16/17 become
 two flag bytes, while1A skips source word18 and copies words19..23 into its
@@ -119,8 +120,7 @@ The local message defers completion until original dispatch returns, then copies
 its result and invokes the original producer completion exactly once. Admission
 checks reject foreign callbacks, unknown commands, malformed RAM spans, invalid
 angles/modes, unsupported orientations and invalid boxes without dispatch or
-acknowledgement. Fixed-point image1C is deliberately pending its original-Z7
-format conversion; text and page policy are also unfinished.
+acknowledgement. Text and page policy are unfinished.
 
 Private `20261120-portrait-draw-02/result.json` passes155 checks:138 draw cases
 covering all five commands, both portrait directions, three boxes, both image
@@ -134,9 +134,49 @@ loading does not prove module-loader admission or actual renderer lifetime.
 Draw01 failed compilation because the original shared header emitted an unused
 direction helper under `-Werror`; reusable inline helpers corrected02.
 
+## Fixed-point images and dedicated font provider
+
+The current compiled adapter converts1C to the rotatable1A format. Original
+Z7 fixed-point1C has no clear-field word, unlike the pinned Z7II format. It
+copies source0..5, sets an untinted white color, leaves clear fields zero and
+maps source10 to1A blend11, source11/12 to1A flags16/17 and source13..15 to
+1A extra fields19..21. Its original fractional destination is replaced by the
+caller-selected integer portrait box. Nonzero trailing source16/17 controls are
+rejected, matching the pinned exclusion. Source bytes are preserved; message
+command and payload remain unchanged except the final result word.
+
+`20261120-portrait-draw-08/result.json` passes186 checks:150 compiled draw cases,
+12 independent original1C normalizations,18 rejected inputs and6 font-binding
+checks. Fixed-image cases supply a24x32 crop with positive pitch/height. Both
+the original fixed adapter and converted image adapter execute, but their GPU
+backends remain supplied sinks. No physical image equivalence is established.
+Probe768 file/704 image/0 BSS/0 relocations, reproducible, SHA256
+`a1e21d1a8957ab1282d9d5a3917facf45b7fc29484dfe4245c8b93acea29381c`.
+Run03 passed180 before font tracing;04 failed an incorrect five-argument font
+trampoline assumption;05 passed185;06 removes unused stack-argument tracing;
+07 adds the original initialized font-provider path;08 uses neutral names for
+the rejected trailing controls, whose native meaning remains unestablished.
+
+Original font provider initializer10477C30 stores table11B6E120 at
+context+45B4; the native literal at10477F74 identifies that table. Its slot+1C
+contains the dedicated renderer10539575 (Thumb). This agrees with the pinned
+provider offset45B4, while the actual addresses differ. Renderer entry copies
+the context matrix at+34. Original text descriptor functions104BAA5E,
+104BB130 and104BB248 are the34/37/38 dispatcher branches. Live descriptor,
+context, provider initialization and interception lifetime still need binding.
+The initializer's already-initialized branch executes with a supplied nonzero
+context+45D8 state: it returns0 and changes only the provider pointer at45B4.
+This does not prove its allocation path or real boot-time font state.
+
+Do not substitute10476CFC: that trampoline reads provider0 at context+454C,
+overwrites r2 with its callback and forwards two meaningful arguments. Three
+supplied option values and the null-provider return execute in the audit, with
+matrix/provider preservation. This test distinguishes the wrong layer; it does
+not exercise the dedicated glyph renderer or establish a live font context.
+
 ## Remaining integration
 
-Bind actual LCD output/target admission, fixed-point image and text payloads,
+Bind actual LCD output/target admission and text payloads,
 draw-task lifetime and callback ownership before installing a rotation hook.
 Preserve producer completion and payload lifetime: never redirect asynchronous
 native work to a temporary stack copy. Then port portrait reflow, navigation and

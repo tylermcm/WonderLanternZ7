@@ -1,5 +1,46 @@
 # Laptop handoff — October 20, 2026
 
+## Fixed-point portrait images and font-provider binding - November 20, 2026
+
+Previous67450bd added caller-admitted portrait rectangles/images. This checkpoint
+is PROGRESS: native1C fixed-point image conversion to rotatable1A now compiled
+and checked. No graphics hook, live LCD admission or text rotation installed.
+Full original goal ACTIVE. No camera/card/stage/flash/push.
+
+Z7 fixed1C is18 source words with NO Z7II clear word: first6 copied, white tint,
+zero clear fields, blend10->1A11, flags11/12->16/17, extra13..15->19..21.
+Original source16/17 trailing controls rejected; their meaning is unestablished. Caller portrait box replaces fixed
+destination; original native1C and converted1A normalization execute. Producer
+completion remains deferred until dispatch return and acknowledged exactly once.
+
+Private portrait-draw-08/result.json PASS186:150 draw cases+12 native fixed-image
+normalizations+18 rejected inputs+6 font-binding checks. Probe768file/704image/
+0BSS/0relocs/reproducible, SHAa1e21d1a8957ab1282d9d5a3917facf45b7fc29484dfe4245c8b93acea29381c.
+Backend renderers/kernel event/caller LCD admission supplied; no pixels, live
+task concurrency, full renderer lifetime or module-loader admission proof.
+
+Font initializer10477C30 binds table11B6E120 at context+45B4; table+1C is
+dedicated glyph renderer10539575. DO NOT use10476CFC as five-arg renderer:
+actual provider0 trampoline uses context+454C and clobbersr2 selecting a two-arg
+callback.03 PASS180;04 failed that five-argument assumption;05/06 PASS185 after
+correcting fixture/model.07 adds original initialized-provider branch: supplied
+context+45D8 nonzero, returns0 and changes only table pointer45B4. No allocation/
+boot initialization or dedicated renderer execution is proved by this audit.
+08 uses neutral labels for the unestablished trailing-control meaning.
+Native text descriptor paths34/37/38 reach104BAA5E/104BB130/104BB248.
+
+See PORTRAIT_RESEARCH.md and evidence/20261120-portrait-fixed-image.json.
+Next bind live text descriptor/context/provider, implement bounded matrix
+interception/restoration; then real LCD target/page/task admission and portrait
+reflow/input/settings integration. Original highlight host/module unchanged.
+Native startup/writer/bank/engine closure, Info mirror, real histogram source,
+integrated release and installation/recovery assessment remain unfinished.
+
+Final root71/no skips:20261120-portrait-fixed-root-tests.log. Current audit source
+fingerprints verified; ignored Graphify refreshed after code edits. Firmware,
+probes and generated graphs remain private/ignored. Functional full-module host
+pair remains the previously accepted highlight build; no new release implied.
+
 ## Synchronous portrait rectangle/image adapter - November 20, 2026
 
 Previous94c65c4 is the geometry/queue foundation. This checkpoint is PROGRESS:

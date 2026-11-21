@@ -36,16 +36,29 @@ static uint32_t z7_portrait_draw_box(volatile uint32_t *message,
     case 0x17: words=6; break;
     case 0x19: words=18; break;
     case 0x1a: words=24; break;
+    case 0x1c: words=18; break;
     default: return 0;
     }
     if (!z7_portrait_native_words(message[5],words)) return 0;
     const volatile uint32_t *source=(const volatile uint32_t *)(uintptr_t)message[5];
-    uint32_t payload[24], local[7], image=command==0x19 || command==0x1a;
+    uint32_t payload[24], local[7], image=command==0x19 || command==0x1a || command==0x1c;
     if (image) {
-        uint32_t angle=source[15]&0xffffu;
+        uint32_t angle=command==0x1c ? 0 : source[15]&0xffffu;
         if (source[0]>1 || angle>360 || angle%90) return 0;
+        if (command==0x1c && (source[16] || source[17])) return 0;
     }
-    for (uint32_t i=0;i<words;++i) payload[i]=source[i];
+    if (command==0x1c) {
+        /* Native fixed-point1C has no angle or clear field. Adapt its
+         * original-Z7 flags/pitch fields to the rotatable1A layout. */
+        for (uint32_t i=0;i<24;++i) payload[i]=0;
+        for (uint32_t i=0;i<6;++i) payload[i]=source[i];
+        payload[8]=0xffffffffu;
+        payload[11]=source[10];
+        payload[16]=source[11]; payload[17]=source[12];
+        payload[19]=source[13]; payload[20]=source[14]; payload[21]=source[15];
+    } else {
+        for (uint32_t i=0;i<words;++i) payload[i]=source[i];
+    }
     if (image) {
         uint32_t angle=(payload[15]&0xffffu)+(orientation==2 ? 90u : 270u);
         angle%=360u;
@@ -60,6 +73,7 @@ static uint32_t z7_portrait_draw_box(volatile uint32_t *message,
         payload[3]=(uint32_t)dest.h;
     }
     for (uint32_t i=0;i<7;++i) local[i]=message[i];
+    if (command==0x1c) local[4]=0x4201001au;
     local[3]=(uint32_t)(uintptr_t)z7_portrait_defer_completion;
     local[5]=(uint32_t)(uintptr_t)payload;
     ((void (*)(const uint32_t *))(uintptr_t)0x10372391u)(local);
