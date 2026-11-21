@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "checks": 90,
+  "native_symbol_cases": 15,
+  "original_symbol_registration_measure_draw_override_routing_and_destruction_execute": true,
+  "native_png_metadata_reader_executes": true,
+  "synthetic_resource_callbacks_font_metrics_allocator_and_final_draw_supplied": true,
+  "portrait_symbol_rotation_native_assets_mutex_task_lifetime_or_pixels_proven": false,
+  "camera_card_access": false,
+  "native_entries": {
+    "register": "104BBAA2",
+    "measure": "104BB461",
+    "draw": "104BB605",
+    "resource": "104BBAE5",
+    "override": "104BBAEB"
+  },
+  "probe_sha256": "82fbd88cfa691acd3d65f022e8bb5dcaa306d82b186bd95dfc3508c8a9d10fa8",
+  "reproducible_probe": true,
+  "source_sha256": {
+    "tools/audit_z7_native_symbol_provider.py": "296c170df57b648a5ced7bc215affdb445eced9598536ad61e4c0ea020c46a46",
+    "tools/audit_z7_native_text_descriptor.py": "801b8757a3e372444659606512b761f22e09616c813f287be1f9921699cff9d4",
+    "tools/audit_z7_native_glyph.py": "303eb6ada13a7eba1bdacfefa11c8967b68a127de5f0436a29412b72eebc5367",
+    "tools/audit_z7_portrait_text.py": "e62e350399137b8218f995ca60a4a2e7d9756d848562e4054fa4f590f1543d75",
+    "tools/audit_splash_image.py": "e16fda47a68ae4a5586a0dc48855c2d265359ee70ee52f5caf7fb2ad16a9d19b",
+    "tools/build_z7_module.py": "1db3f23b03729dabe490a4b67fc0d6dd93fa386f4cc6e7760b9e063e92ed2689",
+    "z7-native-modules/examples/portrait_text_probe.c": "8b707527d124932ee9c6de3ef14d49e0aaa63b8616f58f45b45b82904e9342e7",
+    "z7-native-modules/plugins/portrait_text.h": "5a6c7875248fe88480b4cc0fa198b8e8df64c96cb5836aa7b7e66c8fe822849a",
+    "z7-native-modules/sdk/module.h": "0a364de5f2a65e33de2c7095be3111dbb4212815ae56fe62ef1ea940333d6b21",
+    "z7-native-modules/sdk/module.ld": "62a816bb8809dcb18a0c2d46289d30700086ed441b9f8ce2a120cf2f1ea23f67"
+  },
+  "schema": 1,
+  "date": "2026-11-21",
+  "status": "PROGRESS; native symbol bindings and bitmap decode; portrait drawing not connected",
+  "root_tests": 71,
+  "root_tests_skipped": 0,
+  "source_fingerprints_verified": true,
+  "full_goal_complete": false,
+  "functional_combined_display_module_changed": false,
+  "installation_candidate_cleared": false,
+  "camera_card_access_staging_flash_or_push": false
+}

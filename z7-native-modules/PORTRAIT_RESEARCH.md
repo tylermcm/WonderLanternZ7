@@ -5,6 +5,38 @@ Independent work against original Z7 C3.80, following the MIT-licensed
 This is an incomplete port. No orientation drawing hook is installed by the
 current display module. The accepted LCD/EVF highlight pair is unchanged.
 
+## Native inline-symbol foundation
+
+`portrait_symbol_bitmap.h` uses the original reader init104313D1, header10431279,
+pixel decode104311F5 and reader release10373B41. It validates dimensions<=480,
+output<=128KiB and stride bounds, allocates extra127 bytes, and returns the base
+of an allocation with128-byte-aligned pixels. Native decode releases its reader;
+the helper releases the reader on earlier failure and the output on decode
+failure. Caller owns valid asset input, serialization and post-render release.
+No font bitmap mutex, GPU finish or graphics-task lifetime closure is claimed.
+
+Private portrait-symbol-bitmap-02 passes30 checks including five exact active
+RGBA pixel comparisons through original PNG decoding, RGB/RGBA/odd dimensions,
+480-pixel edges, metadata/output guards, limits and supplied allocation failures. The384-byte
+probe has320 image bytes, no BSS and no relocations. PNG assets and allocation
+are supplied; no native font asset inventory or GPU pixels are established.
+
+Private native-symbol-provider-01 passes90 checks over15 cases. Original104BBAA2
+clones the20-byte provider template1062C940 into glyph-state+B8 with count+B4.
+It covers E300..EFFF, measure104BB461, draw104BB605, descriptor at provider+10.
+Native replacement and destruction release copies. Resource wrappers104BBAE5/
+104BBAEB call globals A180ADA0/ADA4. E700..E702 overrides use byte enable==1 at
+descriptor7E/86/8E and values80/88/90. Original symbol measurement, PNG metadata
+and draw argument construction execute; resource callbacks, font metrics,
+allocator and final image renderer are supplied. Disabled draw makes no calls.
+
+This establishes bindings and decode support for the next temporary provider
+interception. Portrait symbol rotation/clipping is not connected yet. Original
+image1A angle word15 differs from pinned Z7II symbol image word16. Format helper
+10431197 and finish1042EB0F need caller-specific verification. Root71 checks pass.
+Source-only summaries: `evidence/20261121-portrait-symbol-bitmap.json` and
+`native-symbol-provider.json`. Accepted functional module/host remain unchanged.
+
 ## Native34 backing rectangles
 
 The original Z7 descriptor34 reads background color at descriptor+2C. Its alpha

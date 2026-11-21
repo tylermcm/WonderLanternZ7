@@ -1,5 +1,51 @@
 # Laptop handoff — October 20, 2026
 
+## Native symbol provider and bitmap reader - November 21, 2026
+
+Previous1201faf closed menu34 background suppression. Native inline symbol
+identities are now executed rather than copied from Z7II. Original104BBAA2
+registers one20-byte provider at glyph-state+ B8, count at+B4. The ROM template
+1062C940 covers E300..EFFF with measure104BB461/draw104BB605 and descriptor at
+provider+10. Re-registration frees the old copy; context destruction frees it.
+Resource wrappers104BBAE5/104BBAEB call the registered callbacks at A180ADA0/ADA4
+(FONT_CONTEXT global A180AD98 plus8/C). E700/E701/E702 select descriptor override
+slots7E/80,86/88,8E/90 only when their enable byte equals1.
+
+New portrait_symbol_bitmap.h adapts the pinned per-image decode helper to verified
+original reader-init104313D1, metadata10431279, decode104311F5, reader-release
+10373B41 and allocation10431071/free1016FE4B. It caps both dimensions at480 and
+output at128KiB, validates stride*height, returns the allocation base while pixels
+start at the next128-byte boundary, and cleans the reader on pre-decode failure.
+The decode function consumes/releases its reader; caller frees returned pixels
+after drawing. Caller must supply a valid asset and serialize execution. No
+original font bitmap mutex identity/task exclusion or GPU finish closure yet.
+
+Private portrait-symbol-bitmap-02 PASS30 includes five exact active RGBA pixel
+cases (RGB/RGBA, odd dimensions and480-pixel edges), invalid output bounds,
+reader allocation failures1..3, output allocation failure and missing inputs.
+Native PNG header/pixel/cleanup execute with supplied allocator and synthetic
+assets. Metadata/output allocation guards pass; row padding is not asserted.
+Probe384/image320/0BSS/0relocs SHA
+a45a6cebeaede0084c0d727ef4f1a891f740b9e429066d8d91156772b259bd11.
+native-symbol-provider-01 PASS90 over15 cases executes native context/options,
+registration/replacement, original symbol measurement, PNG metadata and original
+symbol draw argument construction. Resource callbacks, font metrics/allocator and
+final image renderer supplied. Disabled draw performs no resource/render calls.
+Original text probe stays byte-identical SHA82fbd88cfa691acd3d65f022e8bb5dcaa306d82b186bd95dfc3508c8a9d10fa8.
+Both direct source maps verified; root71/no skips; ignored Graphify refreshed
+to3652nodes/10009links with existing conditional-C parser warnings.
+See evidence/20261121-portrait-symbol-bitmap.json, native-symbol-provider.json
+and PORTRAIT_RESEARCH.md. Generated data/firmware/images stay private.
+
+Next connect rotation/clipping to a temporary clone of the verified symbol
+provider during native glyph drawing. Original1A uses angle word15, unlike pinned
+Z7II symbol image word16; reuse verified original image ABI. Native format helper
+10431197 and finish1042EB0F are located but not yet audited for this caller.
+Native34 symbols, actual font assets, mutex/finish/task lifetime, input/settings,
+pending requests/live/external/magnified pages, Info mirror/real histogram and
+integrated release/exact installation/recovery remain. Full goal ACTIVE. Accepted
+host MAIN/functional combined display unchanged; no camera/card/staging/flash/push.
+
 ## Native34 text background suppression - November 21, 2026
 
 Previous43fffd4 reflowed glyphs but left native34 backing rectangles at their
