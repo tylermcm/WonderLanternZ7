@@ -112,7 +112,7 @@ def main():
     names=('tools/audit_z7_portrait_grid_message.py','tools/audit_z7_portrait_draw.py','tools/audit_splash_image.py','tools/build_z7_module.py',
            'z7-native-modules/sdk/module.h','z7-native-modules/sdk/module.ld','z7-native-modules/plugins/portrait_grid.h',
            'z7-native-modules/plugins/portrait_draw.h','z7-native-modules/plugins/portrait_geometry.h',
-           'z7-native-modules/plugins/portrait_grid_message.h','z7-native-modules/examples/portrait_grid_message_probe.c')
+           'z7-native-modules/plugins/portrait_grid_message.h','z7-native-modules/plugins/portrait_footer.h','z7-native-modules/examples/portrait_grid_message_probe.c')
     result.update(probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),source_sha256={n:hashlib.sha256((ROOT/n).read_bytes()).hexdigest() for n in names})
     out.mkdir(parents=True);(out/'probe.BIN').write_bytes(packet)
     (out/'probe.json').write_text(json.dumps(metadata,indent=2)+'\n',encoding='utf-8',newline='\n')

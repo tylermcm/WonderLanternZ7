@@ -365,6 +365,42 @@ The previously documented supplied-NULL allocator counterexamples remain open.
 
 ## Remaining integration
 
+### Footer hint graphics
+
+`portrait_footer.h` now ports the pinned hint geometry: top>=418, bottom>426,
+bottom<=484, scale7/8 with floor-rounded edges, translation(-211,+295), and
+the reserved logical band y660..720. Full-width rectangle13/17 backgrounds
+become480 pixels wide. A clear17 crossing x242 is clipped to that boundary;
+other hints beginning left of242 are consumed instead of reflowed. The helper
+validates the entire result before publishing it and leaves output unchanged on
+failure. Raw rectangles retain their original x<=720 source limit; packed image
+geometry can use the additional validated edge allowance through724/484.
+
+GRID messages now test hint geometry before tile/title policy, and DIAL's existing
+outside-strip route reaches the same footer path. Images use the strip adapter,
+including19 centre compensation and disabled local word9 clearing. Invalid hint
+angles or unsupported hint graphics acknowledge once without native rendering.
+No footer dirty/band ownership, begin-footer clearing, transition orientation
+latch, footer text or input handling is supplied yet. The diagnostic can exercise
+graphics placement but does not establish complete footer lifecycle behavior.
+
+Private `20261121-portrait-footer-01/result.json` passed1645 checks including352
+original image-renderer cases: both orientations, GRID/DIAL, all rectangle/image
+forms, modes0/1, angle composition, fractional scaling, clipping, one-pixel hints,
+packed-image edge coordinates, signed19 compensation, clear suppression and
+single producer completion. The original19/1A CPU math executes with supplied
+GPU services; rectangle backend drawing/page admission are supplied. The first
+audit incorrectly treated the packed-image edge allowance as a valid rectangle
+source; it was corrected to check the original rectangle rejection separately.
+No pixels or real buffer/task lifetime are proved.
+
+Loaded footer-host-01 passed70 integration checks, adding both page/orientation
+footer graphics and left-hint consumption. Raw-grid996, page752, native-image97
+and root71 regressions passed. Footer standalone probe3968 bytes, page/native
+regression probe3968, loaded probe4608; equal size does not imply byte identity.
+See [footer evidence](../evidence/20261121-portrait-footer.json) and updated
+[loaded evidence](../evidence/20261121-portrait-grid-host.json).
+
 ### Dial image19 compensation and native renderer execution
 
 The dial strip now uses a dedicated draw variant. It clears only the local

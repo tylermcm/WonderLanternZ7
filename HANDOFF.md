@@ -1,5 +1,41 @@
 # Laptop handoff — October 20, 2026
 
+## Footer hint graphics in loaded diagnostic - November 21, 2026
+
+Previousc36adb2 ported dial strip images. New portrait_footer.h ports hint bounds
+top>=418,bottom>426,<=484,7/8 floor-edge scale,translation(-211,+295),logical
+band660..720. Full-width13/17 backgrounds become480 wide; clear17 crossingx242
+clips there; other left hints consume once. Result validated before publication.
+GRID now tests footer before tile/title; DIAL outside-strip reaches it too.
+Images use native strip compensation/clear suppression. Source remains unchanged.
+No band ownership/dirty/begin-footer clearing or orientation latch/cleanup yet.
+Footer text/input and complete footer lifecycle are still unfinished.
+
+Private portrait-footer-01 PASS1645/352 original image-renderer cases (400 total
+draws), both rotations/GRID/DIAL/all rectangle/image forms/modes/angles/clipping/
+one-pixel/edge coordinates/signed19 compensation/clear suppression/one completion.
+Original19/1A CPU math executes; GPU services/rectangle backend/page admission
+supplied. Initial audit assumed packed-image edge allowance also applied to raw
+rectangles; corrected to verify original x<=720 rectangle rejection separately.
+No pixels/real buffer lifetime/native task schedule proved.
+Footer probe3968/3904image/0BSS/0relocs SHA
+8f3b0bb388dac979bcc7ab9bced24836c130bc2982f9cb43fa930ff059083460.
+footer-host-01 PASS70 actual loaded callback checks, probe4608/4544image/8BSS/
+0relocs SHAb6ef86d0817658aa119f956f3f880e9372950035afa40102b1652db8fa990fac.
+Regressions footer-grid-message-01 PASS996/probe3200, footer-page-01 PASS752/
+probe3968, footer-native-regression-01 PASS97/44 native cases/probe3968. Page and
+native probes identical SHA4af45088ce246b5851384e347f5cf17d2b6cc3842a45ab0f413f61d1a1f5eecf;
+footer probe is different despite equal size. Root71/no skips; five direct source
+maps verified. Ignored Graphify3551nodes/9675edges, existing warnings. New footer
+summary and four summaries updated. See z7-native-modules/PORTRAIT_RESEARCH.md.
+
+Next band ownership/cleanup/orientation latch, text/input/settings controls,
+pending requests/live/external/magnified admission, font files/inline symbols,
+Info mirror/real histogram, native lifetime/writer closure, exact installation/
+recovery assessment. Full goal ACTIVE. Accepted host MAIN and functional combined
+display module unchanged; emulator-only diagnostic is incomplete, not a release.
+No camera/card access, staging, flash or push.
+
 ## Dial strip images and original image renderer math - November 21, 2026
 
 Previous901219c left dial19/clear fields on stock fallback. Dedicated strip

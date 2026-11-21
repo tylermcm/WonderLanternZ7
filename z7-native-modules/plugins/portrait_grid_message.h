@@ -1,12 +1,13 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 C3.80 adaptation of
  * JKWTCN portrait_menu.c at 50a22b24c50619cffa646dac386e8334659f475a,
  * copyright (c) 2026 JKWTCN. Caller admits GRID page, output, task and lifetime.
- * Tile/border/backdrop/title path only; footer, dial, text and input unfinished.
+ * Tile/border/backdrop/title/footer graphics; band ownership, text/input unfinished.
  */
 #ifndef Z7_PORTRAIT_GRID_MESSAGE_H
 #define Z7_PORTRAIT_GRID_MESSAGE_H
 #include "portrait_grid.h"
 #include "portrait_draw.h"
+#include "portrait_footer.h"
 struct z7_portrait_draw_source {
     struct z7_portrait_box box;
     uint32_t command,image,angle;
@@ -67,6 +68,13 @@ static uint32_t z7_portrait_grid_message(volatile uint32_t *message,uint32_t ori
     struct z7_portrait_draw_source source;
     if ((orientation!=1 && orientation!=2) || !z7_portrait_message_source(message,&source)) return 0;
     struct z7_portrait_box stock=source.box,boxes[2];uint32_t count=0;
+    if (z7_portrait_is_hint(&stock)) {
+        uint32_t angle=source.angle==360 ? 0 : source.angle;
+        if ((source.image && (angle>270 || angle%90)) ||
+            !z7_portrait_footer_box(&stock,source.command,boxes)) return z7_portrait_consume_draw(message);
+        uint32_t handled=z7_portrait_draw_strip_box(message,boxes,orientation);
+        return handled ? handled : z7_portrait_consume_draw(message);
+    }
     if (source.image) {
         /* Preserve stock preview/surface copies and pre-rotated tile images. */
         if ((source.angle && source.angle!=360) ||

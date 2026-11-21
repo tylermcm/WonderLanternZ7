@@ -104,6 +104,20 @@ def audit(raw,host,packet,metadata,old_raw,old_host):
                 else:
                     start,end=struct.unpack_from('<2I',data,24);x,y=start&65535,start>>16;actual=(x,y,(end&65535)-x,(end>>16)-y)
                 check(f'loaded-page{page}-{orientation}-{command}',handled==1 and len(f.rendered)==1 and actual==expected)
+        for mode in (3,2):
+            for command in (0x17,0x19,0x1a,0x1c):
+                f.setup(orientation);f.u.mem_write(0xa18298b8,bytes([mode,0]))
+                handled=f.dispatch(command,box=(300,430,80,24),clear=1)
+                expected=reference_destination((51,671,70,21),orientation)
+                if command==0x19:expected=strip19_reference(expected,80,24,90 if orientation==2 else 270)
+                _,data=f.rendered[0]
+                if command==0x17:
+                    x,y,w,h=struct.unpack_from('<4i',data);actual=(x,480-y-h,w,h)
+                else:
+                    x,y,x2,y2=struct.unpack_from('<4h',data,24);actual=(x,y,x2-x,y2-y)
+                check(f'loaded-footer-{mode}-{orientation}-{command}',handled==1 and len(f.rendered)==1 and actual==expected)
+            f.setup(orientation);f.u.mem_write(0xa18298b8,bytes([mode,0]))
+            check(f'loaded-left-footer-image-consumed-{mode}-{orientation}',f.dispatch(0x19,box=(200,430,80,24))==1 and not f.rendered)
     for p,data in ((0xa1829af4,b'\0'),(0xa20207bc+12,bytes(4)),(0xa18298b8,b'\4'),(0xa201d4d0,b'\1'),
                    (0xa1821394,struct.pack('<I',2)),(0xa180ad84,b'\xff'),(TABLE+40,bytes(4)),(TABLE+46,struct.pack('<H',640)),
                    (0xa182ed2c,b'\1'),(0xa182ed2c,b'\2'),(0xa182ed2c,b'\3'),(0xa183de04,b'\1'),(0xa183de04,b'\2'),(0xa183de04,b'\3')):
@@ -141,7 +155,7 @@ def main():
     names=('tools/audit_z7_portrait_grid_host.py','tools/audit_z7_module_host.py','tools/audit_z7_information_native.py','tools/audit_z7_portrait_draw.py',
            'tools/audit_z7_portrait_grid_message.py','tools/audit_z7_portrait_page_message.py','tools/audit_splash_image.py','tools/build_z7_module.py','z7-native-modules/sdk/module.ld',
            'z7-native-modules/examples/portrait_grid_host_probe.c','z7-native-modules/plugins/portrait_grid_message.h',
-           'z7-native-modules/plugins/portrait_page_message.h',
+           'z7-native-modules/plugins/portrait_page_message.h','z7-native-modules/plugins/portrait_footer.h',
            'z7-native-modules/plugins/portrait_draw.h','z7-native-modules/plugins/portrait_geometry.h','z7-native-modules/plugins/portrait_grid.h',
            'z7-native-modules/plugins/portrait_page.h','z7-native-modules/plugins/portrait_takeover.h','z7-native-modules/plugins/portrait_target.h','z7-native-modules/plugins/orientation_sample.h')
     result.update(host_sha256=host['main_payload_sha256'],probe_sha256=hashlib.sha256(packet).hexdigest(),reproducible_probe=True,probe_bytes=len(packet),
