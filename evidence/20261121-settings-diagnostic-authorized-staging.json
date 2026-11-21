@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "authorization": "yes",
+  "scope": "One settings-I/O-disabled SD diagnostic; no firmware update",
+  "timestamp": "2026-11-21T21:23:25.662723+00:00",
+  "complete": true,
+  "diagnostic_sha256": "69921c4efc2b2395c76b969499cdf9f78d77ef675017acc2d5130365fbbf63e0",
+  "firmware_flashed": false,
+  "full_readback_verified": true,
+  "file_flushed": true,
+  "disabled_originals_preserved": true,
+  "noinit_preserved": true,
+  "existing_file_count": 220,
+  "existing_metadata_unchanged_except_authorized_rename": true,
+  "catalog_unchanged": true,
+  "safe_eject_verified": true,
+  "eject_note": "Shell eject completed: reader letter remains with zero media bytes, no mounted partition and inaccessible root",
+  "private_staging_record_sha256": "9232923fe42a1573c4da7b2132afb8f2a920571e96e579097587219aa8b4eb4d",
+  "hardware_result": "pending",
+  "repair_claimed": false
+}

@@ -46,6 +46,14 @@ observation is owner-confirmed: normal operation and usual fast responsiveness.
 No load marker exists, so entry execution is unproven. No firmware update or
 full-release hardware acceptance is claimed.
 
+Owner subsequently approved "yes" to the following settings comparison.
+Staging COMPLETE: current no-init preserved as Z7APP.NOINIT.disabled; both
+original .disabled files intact; exact new Z7APP.BIN flushed/readback verified.
+220 existing file metadata records/catalog preserved (authorized rename only).
+Safe eject verified: zero-media reader, no partition and inaccessible card root.
+No firmware update. Await ONE startup/control/menu-row observation. Historical
+proposal below records the exact approved scope and limitations.
+
 Next proposed SD-only comparison (NOT authorized/staged): keep display/menu
 initialization, skip settings preparation and its worker. Exact module SHA-256:
 69921c4efc2b2395c76b969499cdf9f78d77ef675017acc2d5130365fbbf63e0.

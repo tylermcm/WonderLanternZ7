@@ -1,5 +1,24 @@
 # Laptop handoff — October 20, 2026
 
+## Settings diagnostic authorized, staged and ejected - November 21, 2026
+
+Owner approved "yes" to the explained SD-only settings diagnostic and confirmed
+card connected. Same card identity and all three existing payload hashes verified.
+Original failed module and EG remain .disabled, unchanged. Working no-init file
+preserved by rename to Z7APP.NOINIT.disabled. Exact settings diagnostic exclusively
+created as Z7APP.BIN, flushed/fsync and full readback verified. SHA69921c4e...bbf63e0.
+220 existing file metadata records unchanged except authorized filename rename;
+Nikon catalog hash unchanged. No photos deleted or read; no firmware flash.
+Private record: .private/card-staging/20261121-settings-diagnostic-01/staging.json.
+Safe eject verified: Windows retained an empty reader letter (zero media bytes),
+no mounted partition and inaccessible card root after Shell eject.
+
+Ready for ONE ordinary cold startup, MENU/touch responsiveness, then presence
+of Display settings row under Framing grid display. Do not change settings or
+run Update. Could still freeze; stop/report if it does. Hardware result pending.
+Installed host remains modified; full release withdrawn. No automatic next probe.
+No code edits or tests rerun for this card operation/documentation-only checkpoint.
+
 ## Diagnostic owner result and offline comparison - November 21, 2026
 
 Owner reports: "everything works as it should and is fast as it usually is"
