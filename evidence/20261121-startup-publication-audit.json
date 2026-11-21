@@ -1,0 +1,273 @@
+{
+  "full": {
+    "module_sha256": "aafb4b392203589e7dabc244d1d1e4b40a2c02023013621d9fc393328eb60e22",
+    "native_load_status": 8,
+    "entry_observed": true,
+    "traced_stores": [
+      {
+        "address": "0xa183354c",
+        "bytes": 4,
+        "value": "0xa1833574",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833550",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833554",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833558",
+        "bytes": 4,
+        "value": "0x5010afe4",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa183355c",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833560",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833564",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833568",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa183356c",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833570",
+        "bytes": 4,
+        "value": "0x5010b004",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833548",
+        "bytes": 4,
+        "value": "0x2",
+        "pc": "0x5010627e",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa182ed34",
+        "bytes": 4,
+        "value": "0x50109d8d",
+        "pc": "0x50106290",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa970005c",
+        "bytes": 4,
+        "value": "0x1",
+        "pc": "0x11fa5fc8",
+        "display_ready_before": 0
+      }
+    ],
+    "module_functions_entered": [
+      "z7_main",
+      "persistence_prepare"
+    ],
+    "block_sampled_load_call_stack_depth_bytes": 1724,
+    "stack_depth_while_module_loading_bytes": 1724,
+    "settings_file_events": [
+      [
+        "open",
+        "A:\\Z7CFG0.DAT"
+      ],
+      [
+        "open",
+        "A:\\Z7CFG1.DAT"
+      ]
+    ],
+    "native_menu_published_before_host_ready": true,
+    "native_descriptor_stack_bytes": 8192,
+    "limits": [
+      "Single task with supplied kernel/filesystem/UI boundaries",
+      "Stack sampled at basic-block entries; excludes supplied services/task wrapper and is a lower bound",
+      "Native runtime RAM and active application are fixture inputs",
+      "Publication order is observed; preemption or freeze causation is not established"
+    ]
+  },
+  "noinit": {
+    "module_sha256": "ecba70f7e93974cda15f7515c2747a06c2ed1c77731cc60fac2cbc8b95c77cdc",
+    "native_load_status": 8,
+    "entry_observed": true,
+    "traced_stores": [],
+    "module_functions_entered": [
+      "z7_main"
+    ],
+    "block_sampled_load_call_stack_depth_bytes": 1068,
+    "stack_depth_while_module_loading_bytes": 832,
+    "settings_file_events": [],
+    "native_menu_published_before_host_ready": false,
+    "native_descriptor_stack_bytes": 8192,
+    "limits": [
+      "Single task with supplied kernel/filesystem/UI boundaries",
+      "Stack sampled at basic-block entries; excludes supplied services/task wrapper and is a lower bound",
+      "Native runtime RAM and active application are fixture inputs",
+      "Publication order is observed; preemption or freeze causation is not established"
+    ]
+  },
+  "no_settings_io": {
+    "module_sha256": "69921c4efc2b2395c76b969499cdf9f78d77ef675017acc2d5130365fbbf63e0",
+    "native_load_status": 8,
+    "entry_observed": true,
+    "traced_stores": [
+      {
+        "address": "0xa183354c",
+        "bytes": 4,
+        "value": "0xa1833574",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833550",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833554",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833558",
+        "bytes": 4,
+        "value": "0x5010afe4",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa183355c",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833560",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833564",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833568",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa183356c",
+        "bytes": 4,
+        "value": "0x0",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833570",
+        "bytes": 4,
+        "value": "0x5010b004",
+        "pc": "0x50106274",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa1833548",
+        "bytes": 4,
+        "value": "0x2",
+        "pc": "0x5010627e",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa182ed34",
+        "bytes": 4,
+        "value": "0x50109d8d",
+        "pc": "0x50106290",
+        "display_ready_before": 0
+      },
+      {
+        "address": "0xa970005c",
+        "bytes": 4,
+        "value": "0x1",
+        "pc": "0x11fa5fc8",
+        "display_ready_before": 0
+      }
+    ],
+    "module_functions_entered": [
+      "z7_main",
+      "persistence_prepare"
+    ],
+    "block_sampled_load_call_stack_depth_bytes": 1068,
+    "stack_depth_while_module_loading_bytes": 912,
+    "settings_file_events": [],
+    "native_menu_published_before_host_ready": true,
+    "native_descriptor_stack_bytes": 8192,
+    "limits": [
+      "Single task with supplied kernel/filesystem/UI boundaries",
+      "Stack sampled at basic-block entries; excludes supplied services/task wrapper and is a lower bound",
+      "Native runtime RAM and active application are fixture inputs",
+      "Publication order is observed; preemption or freeze causation is not established"
+    ]
+  },
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "emulator_only": true,
+  "hardware_cause_established": false,
+  "card_written": false,
+  "firmware_generated": false,
+  "post_trace_descriptor_check": [
+    1,
+    28,
+    8192,
+    0
+  ],
+  "audit_source_note": "Trace completed before adding explicit descriptor identity check and source fingerprint; descriptor checked independently afterward",
+  "audit_source_sha256": "9b8ecfd361999759356eb41684fb9db80354a846926b06da67483a1242f9f64d",
+  "repository_tests": 95,
+  "graph_nodes": 3980,
+  "graph_edges": 10986
+}

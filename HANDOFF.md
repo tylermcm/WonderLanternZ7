@@ -1,5 +1,22 @@
 # Laptop handoff — October 20, 2026
 
+## Offline startup publication audit - November 21, 2026
+
+Read STARTUP_FAILURE_REVIEW.md and evidence/20261121-startup-publication-audit.json.
+New tool audit_z7_startup_publication.py traces exact full/no-init/settings-skipped
+module variants through the exact installed host. Full and settings-skipped both
+publish native menu header and event dispatcher while host display_ready=0;
+no-init publishes neither. Settings-skipped has zero modeled settings file ops.
+This establishes compiled ordering, NOT preemption or hardware freeze causation.
+Basic-block sampled stack depths1724/1068/1068; original descriptor8192 verified.
+Samples are lower bounds excluding supplied services/task-entry wrapper. Existing
+95 root tests pass. No C/runtime behavior changed, firmware generated, card write
+or further camera trial. All trial files remain disabled; host still modified.
+Next offline target: menu ownership/native task lifecycle and readiness gate,
+then preemption model. Do not move readiness earlier and call it fixed. No new
+hardware proposal ready. Existing fixtures seed runtime state/use supplied
+services and did not predict the observed hardware failures.
+
 ## Failed settings diagnostic quarantined - November 21, 2026
 
 Owner confirms card connected and camera responds normally without card.
