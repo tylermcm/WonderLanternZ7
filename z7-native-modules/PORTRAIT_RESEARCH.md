@@ -5,6 +5,38 @@ Independent work against original Z7 C3.80, following the MIT-licensed
 This is an incomplete port. No orientation drawing hook is installed by the
 current display module. The accepted LCD/EVF highlight pair is unchanged.
 
+## Opt-in resident graphics bridge (API84)
+
+The independent host now offers `sdk/graphics.h`, preserving the API80 prefix.
+`--graphics-queue-hooks` requires the native-cache profile. It reserves 384 bytes
+of state, including two new guards, and a 256-byte cold hook. Registration is
+init-only; module failure clears staged registration before freeing its image.
+After successful publication, the resident worker waits for native task slot
+`A1D75D60` to contain stock dispatcher `10372391`, then atomically installs a
+permanent host bridge. It never places unloadable module code directly in that
+slot. A foreign slot value or later replacement makes takeover sticky-disabled.
+
+The bridge validates committed state, callback bounds, the current slot and
+message span, then uses a recursion guard. Callback return1 means synchronous
+handling and completion finished; return0 must preserve the message and leave
+completion to stock. Other results fall back to stock. This is a trusted native
+callback contract, not a sandbox. LCD/page/command admission belongs to the
+callback and is not yet implemented in the functional portrait module. Native
+task caller closure, renderer lifetime, full boot and camera pixels remain open.
+
+Private `20261121-graphics-host-02/result.json` passed29 checks using actual loader,
+SDK registration, dispatch, completion and cold initialization instructions.
+Filesystem, allocator, kernel, rectangle renderer and task scheduling are supplied.
+The reproducible 320-byte probe tests stock/owned completion, invalid-result
+fallback, reentrancy, late-registration rejection, guard corruption, foreign
+ownership and failed-init rollback. It does not rotate any UI.
+
+The API84 host independently rebuilt exactly; cache regression passed102 and
+existing display/highlight handoff passed68. Graphics disabled reproduces the
+accepted API80 MAIN exactly. Root71 passed with no skips. Source-only evidence:
+[evidence record](../evidence/20261121-graphics-host.json). These results do not
+clear an installation candidate or establish camera update acceptance/recovery.
+
 ## Native orientation and bounded geometry
 
 `plugins/orientation_sample.h` calls the original read-only Thumb API

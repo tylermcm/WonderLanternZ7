@@ -66,7 +66,7 @@ def audit(raw,host,stock,packet,module):
         if not good:raise AssertionError(n)
     f=CacheHostFixture(raw,host,packet,module);f.load();f.indices(0,1,2)
     api=struct.unpack('<3I',f.u.mem_read(f.module_base+module['symbols']['z7_cache_probe_api'],12))
-    check('loaded-sdk-probe-receives-api80-and-correct-function-pointers',api==(80,host['symbols']['z7_native_cache_snapshot'],host['symbols']['z7_native_cache_snapshot_valid']))
+    check('loaded-sdk-probe-receives-api80-compatible-prefix-and-correct-function-pointers',api==(host.get('api_bytes',80),host['symbols']['z7_native_cache_snapshot'],host['symbols']['z7_native_cache_snapshot_valid']))
     f.u.mem_write(SNAPSHOT,b'\xa5'*44)
     check('unobserved-cache-does-not-establish-ready-baseline',f.api(1)==0 and f.snapshot()==b'\xa5'*44)
     baseline=CacheFixture(stock);baseline.indices(0,1,2)

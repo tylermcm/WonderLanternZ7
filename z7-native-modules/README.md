@@ -18,6 +18,10 @@ experimental `host/z7_380.c` supplies those bindings for an isolated stock-based
 probe; its [research and validation record](../Z7_MODULE_HOST_RESEARCH.md)
 separates successful instruction-fixture loading from actual QEMU no-card boot.
 
+The opt-in API84 `sdk/graphics.h` adds staged resident graphics dispatch. Its
+[scope and checks](PORTRAIT_RESEARCH.md#opt-in-resident-graphics-bridge-api84)
+cover registration and stock fallback; the functional portrait module is unfinished.
+
 The SDK now exports ABI, API size, target identity and staged display/menu
 registration. See [the display module record](../Z7_DISPLAY_MODULE_RESEARCH.md)
 for ownership, publication, the additive API size and reproducible audit commands.

@@ -14,6 +14,9 @@ static uint32_t register_after_gui_update(void (*callback)(void));
 static uint32_t register_information_cycle(uint32_t (*callback)(void));
 static uint32_t register_before_information_update(void (*callback)(void));
 static uint32_t register_worker(void (*callback)(void));
+#ifdef Z7_HOST_GRAPHICS
+static uint32_t register_graphics(uint32_t (*callback)(volatile uint32_t *));
+#endif
 #ifdef Z7_HOST_HIGHLIGHTS
 static uint32_t register_highlight(const struct z7_highlight_hooks *hooks);
 #ifdef Z7_HOST_PARAMETERS
@@ -32,7 +35,11 @@ static uint32_t owned_warning_available(void);
 #ifdef Z7_HOST_NATIVE_CACHE_COPY
 uint32_t z7_native_cache_snapshot(uint32_t, struct z7_native_cache_snapshot *);
 uint32_t z7_native_cache_snapshot_valid(uint32_t, const struct z7_native_cache_snapshot *);
+#ifdef Z7_HOST_GRAPHICS
+static const struct z7_module_graphics_api api = { { { { { { { { {
+#else
 static const struct z7_module_native_cache_api api = { { { { { { { {
+#endif
 #else
 static const struct z7_module_native_warning_api api = { { { { { { {
 #endif
@@ -78,8 +85,13 @@ static const struct z7_module_worker_api api = {
 #ifdef Z7_HOST_NATIVE_CACHE_COPY
 }, z7_native_cache_snapshot, z7_native_cache_snapshot_valid
 #endif
+#ifdef Z7_HOST_GRAPHICS
+}, register_graphics
+#endif
 };
-#ifdef Z7_HOST_NATIVE_CACHE_COPY
+#ifdef Z7_HOST_GRAPHICS
+_Static_assert(sizeof(api) == 84, "Graphics API prefix layout");
+#elif defined(Z7_HOST_NATIVE_CACHE_COPY)
 _Static_assert(sizeof(api) == 80, "Native cache API prefix layout");
 #elif defined(Z7_HOST_NATIVE_WARNING_TRANSACTION)
 _Static_assert(sizeof(api) == 72, "Native warning API prefix layout");
@@ -126,6 +138,9 @@ static uint32_t valid_state(const struct z7_host_state *s)
 #endif
 #ifdef Z7_HOST_NATIVE_CACHE_COPY
     for (uint32_t i = 0; i < 2; ++i) if (s->native_cache_guards[i] != 0xa5a5a5a5u) return 0;
+#endif
+#ifdef Z7_HOST_GRAPHICS
+    for (uint32_t i = 0; i < 2; ++i) if (s->graphics_guards[i] != 0xa5a5a5a5u) return 0;
 #endif
     return 1;
 }
@@ -538,6 +553,52 @@ void z7_highlight_consumer_leave(void *packet, uint32_t decision)
     FN(s->highlight_after_consumer, void, void *, uint32_t)(packet, decision);
 }
 #endif
+#ifdef Z7_HOST_GRAPHICS
+#define Z7_GRAPHICS_SLOT ((uint32_t *)(uintptr_t)0xa1d75d60u)
+void z7_graphics_dispatch_bridge(volatile uint32_t *message)
+{
+    struct z7_host_state *s=(void *)(uintptr_t)Z7_HOST_STATE;
+    uint32_t p=(uint32_t)(uintptr_t)message;
+    if (valid_state(s) && s->status==Z7_HOST_LOADED && s->image && s->allocation &&
+        __atomic_load_n(&s->display_ready,__ATOMIC_ACQUIRE) && s->graphics_registered &&
+        s->graphics_phase==1 && *Z7_GRAPHICS_SLOT==(uint32_t)(uintptr_t)z7_graphics_dispatch_bridge &&
+        (s->graphics_callback&1) && s->resident_image_size<=s->memory_size &&
+        within(s->graphics_callback&~1u,s->image,s->resident_image_size,2) &&
+        !(p&3u) && p>=0xa1800000u && p<=0xb0000000u-28u) {
+        uint32_t expected=0;
+        if (__atomic_compare_exchange_n(&s->graphics_running,&expected,1,0,__ATOMIC_ACQUIRE,__ATOMIC_RELAXED)) {
+            uint32_t handled=FN(s->graphics_callback,uint32_t,volatile uint32_t *)(message);
+            __atomic_store_n(&s->graphics_running,0,__ATOMIC_RELEASE);
+            if (handled==1) return;
+        }
+    }
+    FN(0x10372391u,void,volatile uint32_t *)(message);
+}
+static uint32_t register_graphics(uint32_t (*callback)(volatile uint32_t *))
+{
+    struct z7_host_state *s=(void *)(uintptr_t)Z7_HOST_STATE;
+    if (!valid_state(s) || !s->loading_image || s->image || s->display_ready ||
+        s->graphics_registered || !loading_code(s,(uint32_t)(uintptr_t)callback)) return 0;
+    s->graphics_callback=(uint32_t)(uintptr_t)callback;
+    s->graphics_registered=1;
+    return 1;
+}
+static void graphics_try_bind(struct z7_host_state *s)
+{
+    if (!s->graphics_registered || !s->graphics_callback || !s->display_ready || s->graphics_phase==2) return;
+    uint32_t current=__atomic_load_n(Z7_GRAPHICS_SLOT,__ATOMIC_ACQUIRE);
+    if (s->graphics_phase==1) {
+        if (current!=(uint32_t)(uintptr_t)z7_graphics_dispatch_bridge) s->graphics_phase=2;
+        return;
+    }
+    if (!current) return; /* Native task has not registered its dispatcher yet. */
+    uint32_t expected=0x10372391u;
+    if (current==expected && __atomic_compare_exchange_n(Z7_GRAPHICS_SLOT,&expected,
+            (uint32_t)(uintptr_t)z7_graphics_dispatch_bridge,0,__ATOMIC_RELEASE,__ATOMIC_RELAXED))
+        s->graphics_phase=1;
+    else s->graphics_phase=2; /* Preserve foreign ownership; no automatic takeover. */
+}
+#endif
 static uint32_t register_worker(void (*callback)(void))
 {
     struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
@@ -550,6 +611,10 @@ static uint32_t register_worker(void (*callback)(void))
 void z7_module_worker_tick(void)
 {
     struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
+#ifdef Z7_HOST_GRAPHICS
+    if (valid_state(s) && s->status==Z7_HOST_LOADED && s->image && s->allocation && !s->loading_image)
+        graphics_try_bind(s);
+#endif
     if (!valid_state(s) || s->status != Z7_HOST_LOADED || !s->image || !s->allocation ||
         s->loading_image || !s->worker_registered || !s->worker_callback ||
         !(s->worker_callback & 1) || s->resident_image_size > s->memory_size ||
@@ -846,7 +911,11 @@ __attribute__((noinline)) uint32_t z7_module_call(uint8_t *body, uint32_t entry)
     return ((uint32_t (*)(const struct z7_module_api *))
              ((uintptr_t)body + entry + 1))(
 #ifdef Z7_HOST_NATIVE_CACHE_COPY
+#ifdef Z7_HOST_GRAPHICS
+                &api.cache.warning.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
+#else
                 &api.warning.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
+#endif
 #elif defined(Z7_HOST_NATIVE_WARNING_TRANSACTION)
                 &api.owned.cached.frame.parameters.highlight.worker.information.gui.disp.update.base);
 #elif defined(Z7_HOST_OWNED_FRAME_COORDINATION)
@@ -950,6 +1019,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
     s->before_information_update = s->information_update_registered = 0;
     s->information_cycle_running = s->information_update_running = 0;
     s->worker_callback = s->worker_registered = s->worker_running = s->resident_image_size = 0;
+#ifdef Z7_HOST_GRAPHICS
+    s->graphics_callback=s->graphics_registered=s->graphics_phase=s->graphics_running=0;
+#endif
 #ifdef Z7_HOST_HIGHLIGHTS
     clear_highlight(s);
 #endif
@@ -967,6 +1039,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
         s->before_information_update = s->information_update_registered = 0;
         s->information_cycle_running = s->information_update_running = 0;
         s->worker_callback = s->worker_registered = s->worker_running = s->resident_image_size = 0;
+#ifdef Z7_HOST_GRAPHICS
+        s->graphics_callback=s->graphics_registered=s->graphics_phase=s->graphics_running=0;
+#endif
 #ifdef Z7_HOST_HIGHLIGHTS
         clear_highlight(s);
 #endif
@@ -986,6 +1061,9 @@ uint32_t z7_module_load_once(struct z7_host_state *s)
         s->information_cycle_registered || s->information_update_registered
 #ifdef Z7_HOST_HIGHLIGHTS
         || s->highlight_descriptor
+#endif
+#ifdef Z7_HOST_GRAPHICS
+        || s->graphics_registered
 #endif
         )
         __atomic_store_n(&s->display_ready, 1, __ATOMIC_RELEASE);

@@ -55,6 +55,9 @@ class HostFixture(NativePNG):
         if report.get('native_cache_copy_hooks'):
             for off in (352, 356):
                 self.setword(off, 0xa5a5a5a5)
+        if report.get('graphics_queue_hooks'):
+            for off in (376,380):
+                self.setword(off,0xa5a5a5a5)
         self.position = 0
         self.events, self.cache = [], []
         self.open_count = self.close_count = self.read_count = self.create_count = self.start_count = 0

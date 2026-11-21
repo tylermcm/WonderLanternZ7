@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## Resident graphics dispatch bridge - November 21, 2026
+
+PROGRESS only: opt-in API84 host graphics registration now waits for committed
+module initialization and native stock dispatcher registration. A stable host
+bridge owns the task slot; module callback publication is staged, with failed-init
+rollback, bounded resident code, recursion guard and stock fallback. Foreign
+ownership blocks automatic takeover. No hot unload protocol is supplied.
+
+Private graphics-host-03 independently rebuilt, deterministic, CRC zero:
+MAIN SHA390368fbfb49850eeaeb5c7d729b30bd39ad8077c73f4592480bbc65888c3ef9,
+API84/state384/reserve384/cold256. Graphics-host-02 audit PASS29; cache regression
+PASS102; existing functional display/highlight module handoff PASS68. Disabling
+graphics reproduces accepted API80 MAIN byte-for-byte. Root71/no skips; direct
+audit source fingerprints verified. Ignored Graphify refreshed3399nodes/9197edges
+with existing parser warnings. The graphics probe is diagnostic only and
+does not rotate the display. See evidence/20261121-graphics-host.json and
+z7-native-modules/PORTRAIT_RESEARCH.md.
+
+Latest user is ready for a flash IF ready. Readiness condition is not met:
+portrait LCD/page/command admission, reflow/input/settings integration, font-file
+and bitmap rendering, Info mirror, real histogram producer, native lifetime/
+writer closure and exact installation/recovery assessment remain unfinished.
+No camera/card access, staging, flash or push. Full original goal remains ACTIVE.
+
+
 ## Original text descriptors and full font-context fixture - November 21, 2026
 
 Previouseb5d8c7 exercised native glyph layout with a descriptor stub. This is

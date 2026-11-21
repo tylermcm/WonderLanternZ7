@@ -31,9 +31,17 @@
 #include "native_cache.h"
 #include "../plugins/cache_observation.h"
 #endif
+#ifdef Z7_HOST_GRAPHICS
+#ifndef Z7_HOST_NATIVE_CACHE_COPY
+#error Graphics API requires the native cache API prefix
+#endif
+#include "graphics.h"
+#endif
 
 #define Z7_HOST_STATE 0xa9700000u
-#ifdef Z7_HOST_NATIVE_CACHE_COPY
+#ifdef Z7_HOST_GRAPHICS
+#define Z7_HOST_STATE_BYTES 384u
+#elif defined(Z7_HOST_NATIVE_CACHE_COPY)
 #define Z7_HOST_STATE_BYTES 360u
 #elif defined(Z7_HOST_NATIVE_WARNING_TRANSACTION)
 #define Z7_HOST_STATE_BYTES 336u
@@ -103,8 +111,16 @@ struct z7_host_state {
     struct z7_cache_observation native_cache;
     uint32_t native_cache_ready, native_cache_guards[2];
 #endif
+#ifdef Z7_HOST_GRAPHICS
+    uint32_t graphics_callback, graphics_registered, graphics_phase, graphics_running;
+    uint32_t graphics_guards[2];
+#endif
 };
 _Static_assert(sizeof(struct z7_host_state) == Z7_HOST_STATE_BYTES, "Host state layout");
+#ifdef Z7_HOST_GRAPHICS
+_Static_assert(__builtin_offsetof(struct z7_host_state,graphics_callback)==360, "Graphics state prefix");
+_Static_assert(__builtin_offsetof(struct z7_host_state,graphics_guards)==376, "Graphics state guards");
+#endif
 uint32_t z7_module_load_once(struct z7_host_state *state);
 void z7_module_worker(struct z7_host_state *state);
 void z7_module_worker_tick(void);
