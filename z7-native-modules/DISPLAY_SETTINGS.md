@@ -1191,7 +1191,7 @@ Back returns to the Highlight row of the owning preset. Per-preset reset keeps
 the global pattern/threshold choices. Turning a page or global pattern off
 restores the latest captured native baseline rather than erasing Nikon settings.
 
-Only this variant defines `Z7_HIGHLIGHT_PREFERENCES`. Its in-memory model adds
+This variant and its EVF derivative define `Z7_HIGHLIGHT_PREFERENCES`. The model adds
 two words (48 bytes total); the wire payload stays64 bytes. `Z7C1` payload
 version2 uses former reserved words56/60 for pattern0..2 and threshold index0..7.
 The existing `Z7J1` envelope remains80 bytes and keeps the same two-slot transport.
@@ -1216,3 +1216,27 @@ and restart loading are exercised. The settings controller emits the expected
 native label slots; menu raster and physical camera pixels remain unverified.
 Native transaction41 and cleanup27/ownership36 regressions also pass with this
 variant. See `evidence/20261120-highlight-preferences.json` and root HANDOFF.md.
+
+## Native-update-driven EVF highlight diagnostic
+
+`display-highlight-evf-probe` extends the preferences profile with photo EVF
+conversion and ownership using original-Z7 bindings. It follows the global
+pattern/threshold and Custom enable, independently of the LCD page checkbox.
+Logical EVF routing uses converter output4, command42062007 and first color13;
+LCD keeps output1, command42060007 and first color15.
+
+A copied native-origin record prevents the shared parameter block from being
+mistaken for the newly selected output's original settings. First ownership in
+both outputs requires an observed matching photo native update. Switching outputs
+disables the old owned plane, retaining its baseline, and waits for the new
+output's update. Movie updates cannot become photo baselines on a mode change.
+A native update observed before GUI eligibility can support later owned work.
+Returning to the same unmodified owned context can reuse its retained baseline.
+Global Off restores the latest native baseline for that context. Disabled native
+parameter tails remain undefined and are normalized when retained/restored.
+
+This is an intermediate experimental port. Automatic output transitions without
+a new native update still require producer binding; physical output mapping,
+engine lifetime, EVF pixels and orientation remain unverified. Existing preference
+profile bytes remain unchanged when the EVF option is absent. See root HANDOFF.md
+and `evidence/20261120-highlight-evf.json` for exact validation scope.

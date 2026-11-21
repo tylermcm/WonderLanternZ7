@@ -74,9 +74,22 @@ class CleanupFixture(PlaneFixture):
 class AdmittedOwnedFixture(OwnedFixture):
     """Original ownership model plus admitted engine; no plane hook overhead."""
     def __init__(self, *args):
+        symbols = args[1]['symbols']
+        self.validation_span = (symbols['z7_module_validate'] & ~1, symbols['z7_module_prepare'] & ~1)
+        if not self.validation_span[0] < self.validation_span[1]: raise AssertionError('Host validation span')
+        self.validating = True
         super().__init__(*args)
         self.write(NATIVE + 0x2800, 0x141); self.write(NATIVE + 0x2804, 0)
         self.write(0xa180a578, NATIVE + 0x2800)
+    def hook(self, u, address, size, context):
+        # As in CleanupFixture: execute the complete pure C validator, without
+        # layered Python service dispatch for each CRC instruction. Guards stay
+        #30s/10M; no native instruction or modeled service is replaced.
+        if self.validating and self.validation_span[0] <= address < self.validation_span[1]: return
+        OwnedFixture.hook(self, u, address, size, context)
+    def load(self):
+        OwnedFixture.load(self)
+        self.validating = False
 
 
 def audit(raw, host, packet, module):
@@ -153,7 +166,17 @@ def audit(raw, host, packet, module):
     check('queued-old-restore-cannot-clobber-new-native-parameters-or-plane',
           f.dispatch() == 0 and f.parameters() == newer and len(f.programs) == programs)
     f.worker(); f.write(0xa24e1e00, 0); f.gui()
-    f.toggle(); f.gui(); f.worker(); f.dispatch(); f.worker(); f.call(SOURCE_APPLY, 0, FRAME)
+    f.toggle(); f.gui()
+    if module.get('highlight_evf_native_update_required'):
+        # This profile records native origin, so a movie update cannot become
+        # a photo baseline just because the mode word changed back to photo.
+        queued = len(f.queued); f.worker()
+        check('photo-return-does-not-import-observed-movie-native-baseline',
+              len(f.queued) == queued and f.lease() == 0 and f.parameters() == newer)
+        f.native(newer)  # Fresh photo producer update, deliberately same bytes.
+    else:
+        f.worker(); f.dispatch()
+    f.worker(); f.call(SOURCE_APPLY, 0, FRAME)
     check('new-native-generation-can-capture-fresh-original-frame-input', f.read(record + 60) == 1 and f.control() & 1 == 1)
     # A menu can invalidate the live epoch before GUI publication. Worker
     # restoration operates only in the native consumer and invokes no frame.
@@ -260,7 +283,8 @@ def main():
     admitted = module.get('kind') in ('original-Z7-display-highlight-cleanup-diagnostic', 'original-Z7-display-highlight-cached-diagnostic',
                                     'original-Z7-display-highlight-coordinated-diagnostic',
                                     'original-Z7-display-highlight-native-transaction-diagnostic',
-                                    'original-Z7-display-highlight-preferences-diagnostic')
+                                    'original-Z7-display-highlight-preferences-diagnostic',
+                                    'original-Z7-display-highlight-evf-diagnostic')
     if (not host.get('frame_permission_hooks') or not admitted or
         module['api_minimum_bytes'] > host.get('api_bytes', 0) or
         (module['api_minimum_bytes'] >= 60 and not host.get('cached_frame_permission_hooks')) or

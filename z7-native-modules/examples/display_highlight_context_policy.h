@@ -21,11 +21,20 @@ extern volatile uint32_t z7_highlight_owned_parked;
 #endif
 static uint32_t highlight_native_lease_capture(const struct z7_highlight_snapshot *,
     uint32_t generation, uint32_t palette, const volatile uint32_t *, const uint32_t *);
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+static uint32_t highlight_native_origin_note(uint32_t command, const void *payload, uint32_t generation);
+#endif
 #else
 static uint32_t highlight_descriptor[7];
 #endif
 static uint32_t highlight_ui_ready(void)
 {
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+    if (W(0xa181c764u) == 2 && B(0xa180a568u) == 1)
+        return B(0xa18237c6u) == 2 && !B(0xa201d4d0u + 0x40) && pool() &&
+            !base_blocked && !base_releasing && !information_components_blocked() &&
+            !W(0xa2c41008u) && !W(0xa18b4de8u) && ram(W(0xa181f91cu),16) && !W(W(0xa181f91cu) + 8);
+#endif
     return z7_base_active && !base_blocked && !base_releasing &&
         !information_components_blocked() && !W(0xa2c41008u) &&
         !W(0xa18b4de8u) && base_gui_memory_context();
@@ -44,13 +53,23 @@ static void highlight_gui_publish(void)
         (settings.enabled_pages & (1u << view.preset)) &&
         (settings.components[view.preset] & Z7_COMPONENT_HIGHLIGHTS);
     view.wanted = !!view.wanted;
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+    if (context && view.context.output_kind == 2 && view.context.selector == 1)
+        view.wanted = valid && (settings.flags & Z7_SETTINGS_CUSTOM);
+#endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
     view.pattern = valid ? settings.highlight_pattern : 0;
     view.threshold = valid ? settings.highlight_threshold : 1;
     view.wanted = view.wanted && view.pattern != 0;
 #endif
-    view.eligible = context && view.context.mode == 0 && view.context.selector == 0 &&
-        view.context.output_kind == 1 && view.context.ready == 1 &&
+    view.eligible = context && view.context.mode == 0 &&
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+        ((view.context.output_kind == 1 && view.context.selector == 0) ||
+         (view.context.output_kind == 2 && view.context.selector == 1)) &&
+#else
+        view.context.selector == 0 && view.context.output_kind == 1 &&
+#endif
+        view.context.ready == 1 &&
         (view.context.service == 3 || view.context.service == 4) && highlight_ui_ready();
     if (!z7_highlight_publish(&z7_highlight_publication, &view)) ++z7_highlight_publish_errors;
     struct z7_highlight_snapshot snapshot;
@@ -151,7 +170,11 @@ static uint32_t highlight_preferences_request_make(struct highlight_native_reque
     r->enabled = s->view.pattern != 0;
     for (uint32_t i = 0; i < 2; ++i) {
         r->groups[i * 4] = 255; r->groups[i * 4 + 1] = levels[s->view.threshold];
-        r->groups[i * 4 + 2] = 15; r->groups[i * 4 + 3] = 5;
+        r->groups[i * 4 + 2] =
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+            i == 0 && s->view.context.selector == 1 ? 13 :
+#endif
+            15; r->groups[i * 4 + 3] = 5;
         r->patterns[i] = s->view.pattern ? s->view.pattern - 1 : 2;
     }
     r->horizontal = r->vertical = 4; return 1;
@@ -174,6 +197,11 @@ static void highlight_native_parameters(uint32_t command, void *payload100)
     z7_highlight_parameter_epoch = 0;
     if (generation == UINT32_MAX) return; /* Never recycle native-update identity. */
     __atomic_store_n(&z7_highlight_native_parameter_generation, generation + 1, __ATOMIC_RELEASE);
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+    if (!highlight_native_origin_note(command, payload100, generation + 1)) {
+        z7_highlight_owned_parked = 1; return;
+    }
+#endif
 #ifdef Z7_HIGHLIGHT_OWNED_PROBE
     if (generation + 1 == UINT32_MAX) return;
 #endif
@@ -181,7 +209,12 @@ static void highlight_native_parameters(uint32_t command, void *payload100)
     if (!cleanup_ok) { z7_highlight_owned_parked = 1; return; }
 #endif
     if (!payload100) return; /* Ineligible native update, no writable data exposed. */
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+    if (!highlight_current(&snapshot) || command !=
+        (snapshot.view.context.selector == 1 ? 0x42062007u : 0x42060007u)) return;
+#else
     if (command != 0x42060007u || !highlight_current(&snapshot)) return;
+#endif
     uint32_t palette = W(0xa1f18facu);
     if (!ram(palette, 256 * 4)) return;
     struct highlight_native_request request;
@@ -201,7 +234,11 @@ static void highlight_native_parameters(uint32_t command, void *payload100)
     }
     request.horizontal = request.vertical = 4;
 #endif
-    F(0x1034fe23u, void, void *, const void *, uint32_t)(converted, &request, 1);
+    F(0x1034fe23u, void, void *, const void *, uint32_t)(converted, &request,
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+        snapshot.view.context.selector == 1 ? 4 :
+#endif
+        1);
     if (!highlight_current(&final) || final.epoch != snapshot.epoch || W(0xa1f18facu) != palette) return;
     volatile uint32_t *data = payload100;
 #ifdef Z7_HIGHLIGHT_OWNED_PROBE

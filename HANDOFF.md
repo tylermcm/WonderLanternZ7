@@ -1,5 +1,78 @@
 # Laptop handoff — October 20, 2026
 
+## Native-update-driven EVF highlight path - November 20, 2026
+
+Previous e47e58e was PROGRESS (persistent LCD highlight preferences). This
+checkpoint is PROGRESS toward the SAME full display-port goal: new opt-in
+`display-highlight-evf-probe` admits logical EVF native/owned photo requests after
+an observed matching native parameter update. This is NOT the complete EVF port.
+Automatic handoff without a new native update, native producer binding,
+orientation/portrait, Info mirror, real histogram producer, full caller/task/
+engine lifetime closure and final integrated installation/recovery remain open.
+No camera/card/staging/flash/push. Emulator results do not prove camera pixels,
+physical output mapping, updater acceptance or recovery.
+
+Original routing distinguishes rear-monitor and EVF16-byte source tags. Logical
+EVF uses kind2/selector1/source output2/converter output4/command42062007; LCD
+kind1/selector0/source output0/converter output1/command42060007. New EVF UI
+admission requires photo mode, scene2, no movie/menu/playback/transient UI and
+valid native context. EVF follows global pattern/threshold and Custom enable;
+it ignores the LCD page checkbox. First EVF color is13, other group15; LCD15/15.
+No foreign firmware addresses were copied into this independent Z7 port.
+
+A bounded copied native-origin publication records context/generation/baseline
+before optional conversion. Native updates in mismatched modes/outputs or NULL
+notices retire origin. New owned claims require a matching observed origin and
+current baseline (disabled tail is undefined and normalized). This also means
+initial LCD ownership waits for a native update in THIS experimental profile.
+Switching away disables the old owned plane, keeps its lease and waits rather
+than interpreting the other display's shared parameters as a new native baseline.
+Matching native updates replace the old lease; observed native updates before GUI
+eligibility can support later owned work. Preferences still use asynchronous
+worker requests and consumer-only conversion/cleanup. Native producer binding
+is needed to finish immediate/no-packet output transitions; do not silently
+substitute this narrower event-driven path for the full EVF requirement.
+
+Module .private/builds/20261120-display-highlight-evf-01,
+SHA1fb3afc1f389c636d4bb681ce19cccc571593bd6b64747dc4a6191124b071c21,
+31692file/31296image/6936BSS/minAPI72/reproducible,62 source inputs.
+Host remains20261120-native-transaction-host-04,
+MAINef6f1f703b87978336465452ee572f0b464fedfc37b90d4afb36c1ede6aaec1a.
+Previous preference profile rebuild20261120-evf-compat-preferences-01 is byte
+identical99d5f7357a1fd5c4b369837ddccd304d9b6a22ee0da1a00829d1cd5739c2a795.
+
+EVF audit04 passes37 checks: all16 enabled choices match independent output4
+requests, actual source/frame/gate/driver/register effects, output-switch disable
+and waiting, native baseline restoration, update-before-GUI, global EVF/page-mask
+separation, movie exclusion, disabled-tail normalization and busy-publication
+parking. First audit used incorrect raw lease selector offset48; corrected to40
+before accepted evidence. Cleanup01 exposed an older fixture assumption that
+movie parameters could be reused as a photo baseline. The new-profile branch
+explicitly checks waiting for a fresh photo native update (same bytes allowed)
+then retains original frame-capture/cleanup assertions. Older profile unchanged.
+Cleanup02 completed behavior checks but the separate ownership fixture hit its
+30s pure-C module CRC observation timeout. AdmittedOwnedFixture now uses the
+same validator-only Python-dispatch fast path as CleanupFixture; all ARM CRC/
+header/relocation instructions and original30s/10M guards still execute.
+Supplied boundaries remain kernel/FS/UI/colors/surfaces/context/source schedule,
+same shared engine/MMIO storage. No engine lifetime or physical EVF claim.
+
+FINAL evidence: .private/evidence/20261120-highlight-evf-04.json PASS37;
+20261120-evf-preferences-02/result.json PASS609 codec +95 native preferences;
+20261120-evf-transactions-02.json PASS41;20261120-evf-cleanup-03.json PASS28
+cleanup +36 owned. Root71/no skips:20261120-evf-root-tests.log. All result source
+hashes and62 module inputs verified current; fingerprinted inputs stayed fixed
+during live audits.
+Ignored Graphify refreshed:3180nodes/8505edges; new EVF
+files verified present. Source-only summary:evidence/20261120-highlight-evf.json.
+
+NEXT: native parameter-producer/output-transition binding. Preliminary direct-BL
+scan found caller1034FF1E at1035183C/1035189E/10351900/103542E6. Nearby native
+output4 path fetches request via10434CEE before submission; investigate that
+getter, ownership/locking and producer lifetime before any baseline acquisition.
+This scan includes data and is NOT indirect-caller closure. Preserve previous
+profiles, native baseline restoration and the native transaction contract.
+
 ## Highlight preferences and settings version2 - November 20, 2026
 
 Previousa9e7b86 was PROGRESS (native warning transaction API72). This turn is

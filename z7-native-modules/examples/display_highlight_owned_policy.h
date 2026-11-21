@@ -98,6 +98,34 @@ static void highlight_baseline(uint32_t *to, const volatile uint32_t *from)
     /* Disabled native conversion defines only word0. Normalize the unused
      * remainder; never interpret undefined native disabled scratch fields. */
 }
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+/* An output switch does not prove that the shared100-byte parameter state is
+ * a native baseline for the newly selected output. Require a matching native
+ * update before a first owned application there. No caller pointer retained.
+ */
+struct z7_highlight_lease z7_highlight_native_origin;
+static uint32_t highlight_native_origin_note(uint32_t command, const void *payload, uint32_t generation)
+{
+    struct z7_highlight_lease_record r;
+    for (uint32_t i = 0; i < sizeof(r) / 4; ++i) ((uint32_t *)&r)[i] = 0;
+    r.native_generation = generation;
+    if (payload && z7_highlight_context_read(&r.context) && r.context.mode == 0 &&
+        r.context.ready == 1 && (r.context.service == 3 || r.context.service == 4) &&
+        ((r.context.output_kind == 1 && r.context.selector == 0 && command == 0x42060007u) ||
+         (r.context.output_kind == 2 && r.context.selector == 1 && command == 0x42062007u))) {
+        r.valid = 1; highlight_baseline(r.baseline, payload);
+    }
+    return z7_highlight_lease_publish(&z7_highlight_native_origin, &r);
+}
+static uint32_t highlight_native_origin_matches(const struct z7_highlight_context *context, uint32_t generation)
+{
+    struct z7_highlight_lease_snapshot s;
+    if (!z7_highlight_lease_read(&z7_highlight_native_origin, &s) || !s.record.valid ||
+        s.record.native_generation != generation || !highlight_identity(&s.record.context, context)) return 0;
+    if (!s.record.baseline[0]) return W(context->state + 0x28) == 0;
+    return highlight_parameters_match(context->state, s.record.baseline);
+}
+#endif
 static void highlight_native_lease_invalidate(void)
 {
     struct z7_highlight_lease_snapshot old;
@@ -159,6 +187,9 @@ static uint32_t highlight_owned_before(void *packet)
         uint32_t palette = W(0xa1f18facu);
         if (!current || wanted.epoch != epoch || !ram(palette, 1024) ||
             (owned && !same) || W(context.state + 0x28) > 1) return highlight_owned_cancel();
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+        if (!same && !highlight_native_origin_matches(&context, generation)) return highlight_owned_cancel();
+#endif
         if (same && !lease.record.disabled && lease.record.epoch == epoch && lease.record.palette == palette)
             return highlight_owned_cancel(); /* Native update already settled it. */
         struct highlight_native_request request;
@@ -235,6 +266,9 @@ static void highlight_owned_worker(void)
     uint32_t operation = HO_NONE;
     if (owned && !same) { if (!lease.record.disabled) operation = HO_DISABLE; }
     else if (current) {
+#ifdef Z7_HIGHLIGHT_EVF_PROBE
+        if (!same && !highlight_native_origin_matches(&context, generation)) return;
+#endif
         if (!same || lease.record.disabled || lease.record.epoch != wanted.epoch || lease.record.palette != W(0xa1f18facu)) operation = HO_APPLY;
     } else if (same) operation = HO_RESTORE;
     if (!operation) return;
