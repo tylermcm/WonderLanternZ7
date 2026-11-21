@@ -16,19 +16,22 @@ static uint32_t z7_portrait_native_words(uint32_t address, uint32_t words)
 static void z7_portrait_defer_completion(uint32_t code, uint32_t result)
 { (void)code; (void)result; }
 
-/* Dispatch a caller-selected portrait box. Native rectangle payloads use
+/* Dispatch one or two caller-selected portrait boxes. Native rectangle payloads use
  * bottom-origin y, image payloads use packed top-origin exclusive corners.
  * Original-Z7 images have angle at word15, NOT pinned Z7II word16.
  * The local message/payload remain live throughout original dispatch. Original
- * producer acknowledgement follows dispatch return, exactly once. Admission
+ * producer acknowledgement follows the final dispatch return, exactly once. Admission
  * failure changes neither the original message nor its source payload.
  */
-static uint32_t z7_portrait_draw_box(volatile uint32_t *message,
-                                   const struct z7_portrait_box *box, uint32_t orientation)
+static uint32_t z7_portrait_draw_boxes(volatile uint32_t *message,
+    const struct z7_portrait_box *boxes, uint32_t count, uint32_t orientation)
 {
-    struct z7_portrait_box dest;
+    struct z7_portrait_box destinations[2];
     if (!z7_portrait_native_words((uint32_t)(uintptr_t)message,7) ||
-        !z7_portrait_box_to_lcd(box,orientation,&dest) || message[3] != 0x1042eadfu) return 0;
+        !boxes || !count || count>2 || message[3] != 0x1042eadfu) return 0;
+    /* Validate the whole batch before the first native draw or acknowledgement. */
+    for (uint32_t i=0;i<count;++i)
+        if (!z7_portrait_box_to_lcd(boxes+i,orientation,destinations+i)) return 0;
     uint32_t command=message[4]-0x42010000u, words;
     switch (command) {
     case 0x13: words=8; break;
@@ -63,22 +66,30 @@ static uint32_t z7_portrait_draw_box(volatile uint32_t *message,
         uint32_t angle=(payload[15]&0xffffu)+(orientation==2 ? 90u : 270u);
         angle%=360u;
         payload[0]=0;
-        payload[6]=(uint32_t)dest.x | ((uint32_t)dest.y<<16);
-        payload[7]=(uint32_t)(dest.x+dest.w) | ((uint32_t)(dest.y+dest.h)<<16);
         payload[15]=(payload[15]&0xffff0000u) | angle;
-    } else {
-        payload[0]=(uint32_t)dest.x;
-        payload[1]=(uint32_t)(480-dest.y-dest.h);
-        payload[2]=(uint32_t)dest.w;
-        payload[3]=(uint32_t)dest.h;
     }
     for (uint32_t i=0;i<7;++i) local[i]=message[i];
     if (command==0x1c) local[4]=0x4201001au;
     local[3]=(uint32_t)(uintptr_t)z7_portrait_defer_completion;
     local[5]=(uint32_t)(uintptr_t)payload;
-    ((void (*)(const uint32_t *))(uintptr_t)0x10372391u)(local);
+    for (uint32_t i=0;i<count;++i) {
+        const struct z7_portrait_box *dest=destinations+i;
+        if (image) {
+            payload[6]=(uint32_t)dest->x | ((uint32_t)dest->y<<16);
+            payload[7]=(uint32_t)(dest->x+dest->w) | ((uint32_t)(dest->y+dest->h)<<16);
+        } else {
+            payload[0]=(uint32_t)dest->x;
+            payload[1]=(uint32_t)(480-dest->y-dest->h);
+            payload[2]=(uint32_t)dest->w;
+            payload[3]=(uint32_t)dest->h;
+        }
+        ((void (*)(const uint32_t *))(uintptr_t)0x10372391u)(local);
+    }
     message[6]=local[6];
     ((void (*)(uint32_t,uint32_t))(uintptr_t)0x1042eadfu)(0x42010062u,local[6]);
     return 1;
 }
+static inline uint32_t z7_portrait_draw_box(volatile uint32_t *message,
+                                   const struct z7_portrait_box *box, uint32_t orientation)
+{ return z7_portrait_draw_boxes(message,box,1,orientation); }
 #endif

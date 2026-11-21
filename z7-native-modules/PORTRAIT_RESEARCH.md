@@ -365,6 +365,36 @@ The previously documented supplied-NULL allocator counterexamples remain open.
 
 ## Remaining integration
 
+### Grid tile/edge reflow and synchronous batches
+
+`plugins/portrait_grid.h` ports pinned JKWTCN's 6x2-to-4x3 tile placement:
+stock tiles120x73 at y280 become four columns at y440 and three rows. Small
+image overshoot up to132 pixels is fitted to width120 with bounded height
+reduction. Shared vertical/horizontal stock edges can yield two separate
+portrait borders. The helper takes caller-selected stock geometry; message
+geometry extraction, backdrop/title/footer/dial policy and page admission still
+need integration. It does not choose a page, rotate text or map input.
+
+`portrait_draw.h` now has a two-box synchronous batch operation. Both destination
+boxes are validated before any rendering. The local message/payload remains on
+the stack through each original dispatcher call; original completion is deferred
+for each draw, and producer completion occurs once after the last draw. Source
+payload bytes are preserved, and only the original message result is updated.
+The existing one-box entry remains a wrapper of this operation.
+
+Private `20261121-portrait-grid-02/result.json` passed760 checks over336 original
+native draws: all12 tiles, shared vertical/horizontal borders in both rotations,
+rectangle13/16/17 and two-box image19/1A/fixed1C dispatch, bounded image overshoot,
+source preservation and pre-draw batch rejection. Original dispatch/normalization/
+completion executes; backend rendering and event signaling are supplied. The
+reproducible reflow probe is1664 bytes. Final one-box regression
+`portrait-batch-draw-03/result.json` passed186 checks with150 draw cases; probe832.
+The initial reflow build caught an unused compatibility wrapper under -Werror;
+making that wrapper static-inline fixed the batch-only include. The earlier
+draw-01 run precedes that source-only wrapper change; draw-02 preceded comment clarification; final grid-02/draw-03
+reruns match the previous probe bytes exactly and have current fingerprints.
+No installed rotation hook, full reflowed UI, native task timing or pixels proved.
+
 ### Original i-menu classification
 
 The later observed-task guard extends the initial classifier below. Native

@@ -1,5 +1,38 @@
 # Laptop handoff — October 20, 2026
 
+## Portrait grid reflow and batched native drawing - November 21, 2026
+
+Previous0ae2d68 added observed native MENU/playback guards. Pending request word
+still lacks a verified binding; no new request-fence claim. New portrait_grid.h
+ports pinned JKWTCN 6x2-to-4x3 tiles and split shared borders. Geometry is supplied
+by the caller; actual message extraction and full title/backdrop/footer/dial,
+text/input/settings policy remain unfinished. No graphics callback installed.
+
+portrait_draw.h now draws one/two logical boxes with all destinations validated
+before the first draw, source payload unchanged and one producer acknowledgement
+after final synchronous original dispatch. One-box wrapper retained. This is the
+required completion behavior when one stock edge becomes two portrait borders.
+
+Private portrait-grid-02 PASS760/336 native draws, all12 tiles and horizontal/
+vertical borders both rotations, rectangle13/16/17, image19/1A/fixed1C batches,
+overshoot fitting and pre-draw rejection. Reproducible1664-byte probe SHA
+393e43b55c73f3169948810c10e7f5b3d1d3a109e0fe3258b2fda7f37afc71a7.
+Final portrait-batch-draw-03 PASS186/150 one-box draw cases; probe832 SHA
+da849a9f46b21935ec32eeb4a9b25027ce9e04d03eb88c6d944ea66e47966299.
+Original dispatcher/normalization/completion run; backend render/event boundaries
+and stock geometry/page admission supplied. No live UI or pixels proved.
+The initial batch-only include failed unused-wrapper -Werror; static-inline
+wrapper fixed it. Final comments-only reruns match preceding probe bytes exactly.
+Root71/no skips, direct fingerprints current. Ignored Graphify3467nodes/9381edges
+with existing parser warnings. See evidence/20261121-portrait-grid.json and
+z7-native-modules/PORTRAIT_RESEARCH.md.
+
+Next actual message geometry extraction/full reflow and graphics callback wiring,
+alongside pending requests/live/external/magnified exclusions and text/input/
+settings. Font files/bitmap symbols, Info mirror, real histogram, native lifetime/
+writer closure and exact installation/recovery remain unfinished. Full goal ACTIVE.
+Existing accepted firmware/module unchanged; no camera/card/stage/flash/push.
+
 ## Observed native MENU/playback task guard - November 21, 2026
 
 Previous0019fc4 added original i-menu classification. Native configuration
