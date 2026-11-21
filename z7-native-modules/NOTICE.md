@@ -8,6 +8,10 @@ are independent local modifications under the same license. See
 `plugins/portrait_draw.h` follows the same pinned synchronous local-message and
 deferred-completion approach, with independently bound original-Z7 payloads,
 native adapter addresses, angle offset and argument layouts under MIT.
+`plugins/portrait_text.h` adapts the pinned temporary font-provider and matrix
+interception approach under that MIT license, with independent Z7 bindings,
+bounded arithmetic, ownership admission and cleanup. Its audit supplies text
+descriptor processing and glyph rendering; native text pixels remain unproved.
 
 This is an independent, modified adaptation for **original Nikon Z7 C 3.80**.
 It is not a Nikon, Wonder Lantern, or JKWTCN release. It currently contains a

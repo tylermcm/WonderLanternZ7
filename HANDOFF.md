@@ -1,5 +1,48 @@
 # Laptop handoff — October 20, 2026
 
+## Caller-admitted portrait text matrix interception - November 21, 2026
+
+Previous686929a is the fixed-image/font-binding checkpoint. This is PROGRESS:
+portrait_text.h now implements synchronous temporary provider interception for
+original-Z7 text commands34/37/38. No persistent graphics hook or full portrait
+page/input integration. Full original goal ACTIVE; no camera/card/stage/flash/push.
+
+Native font context slotA180AD98/getter104BA37C; text completion104BA383 signals
+eventA1D75E48/2 through original wrapper. Descriptor spanC8 (original34 reads past
+pinnedB0), descriptor+94 must match context4604, provider+45B4 must be11B6E120,
+glyph slot+1C must be10539575. Caller owns graphics execution and LCD/page policy.
+Positive bounded scales/translations compose portrait glyph matrices with int64
+intermediates. Queries/null origins retain stock matrices. Unsupported matrices,
+rounded-zero scales and translation overflow fall back to stock renderer. Seven
+matrix words restored after renderer return, including failed returns.
+
+Local provider table and deferred callback live through original dispatch. Busy
+owner rejected. Normal provider/state restored before original acknowledgement;
+foreign provider replacement preserved. Reentrancy/task/lifetime closure remains
+unproved. Bitmap-symbol provider interception and descriptor reflow unfinished.
+
+Private portrait-text-02/result.json PASS261:216 draw combinations,7 query cases,
+foreign provider replacement,18 rejection+18 owner-preservation cases, native
+context getter. Original dispatcher/completion/event wrapper execute; native
+descriptor processing and glyph renderer are supplied Thumb-stub/sink boundaries.
+No glyph shaping/native metrics/live font state/pixels proof. Probe1088file/
+1024image/28BSS/0relocs/reproducible, SHA
+9ee393c727b0a817880dc88e9cc4d4702b74e343b59da95d4305f9875535db59.
+Flat loading does not exercise module-loader admission.01 PASS170;02 broadens
+boundary/argument-mapping and cleanup-before-ack coverage. Direct fingerprints
+verified current; see evidence/20261121-portrait-text.json and PORTRAIT_RESEARCH.md.
+
+Next: actual native text/glyph and inline symbols, live LCD output/target/page
+admission and graphics-task ownership, then portrait reflow/input/settings.
+Original highlight host/module unchanged. Native startup/writer/bank/engine
+closure, Info mirror, real histogram producer, integrated release and exact
+installation/recovery assessment remain unfinished.
+
+Final root71/no skips:20261121-portrait-text-root-tests.log. Probe identity and
+all direct audit fingerprints verified; ignored Graphify refreshed3354nodes/
+9036edges with new code present, existing parser warnings retained. Source-only
+checkpoint; no full functional host/module release rebuild implied.
+
 ## Fixed-point portrait images and font-provider binding - November 20, 2026
 
 Previous67450bd added caller-admitted portrait rectangles/images. This checkpoint

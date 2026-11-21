@@ -120,7 +120,7 @@ The local message defers completion until original dispatch returns, then copies
 its result and invokes the original producer completion exactly once. Admission
 checks reject foreign callbacks, unknown commands, malformed RAM spans, invalid
 angles/modes, unsupported orientations and invalid boxes without dispatch or
-acknowledgement. Text and page policy are unfinished.
+acknowledgement. Page policy and full text integration are unfinished.
 
 Private `20261120-portrait-draw-02/result.json` passes155 checks:138 draw cases
 covering all five commands, both portrait directions, three boxes, both image
@@ -174,9 +174,53 @@ supplied option values and the null-provider return execute in the audit, with
 matrix/provider preservation. This test distinguishes the wrong layer; it does
 not exercise the dedicated glyph renderer or establish a live font context.
 
+## Synchronous text-provider interception
+
+`plugins/portrait_text.h` is a callable adapter for commands34/37/38 with the
+original Z7 text completion104BA383. It uses the original context slotA180AD98,
+also read by native getter104BA37C, and requires descriptor+94 to match that
+context. Descriptors must spanC8 bytes; the original34 path accesses fields
+past the pinned B0-byte admission range. It requires context4604 bytes, stock
+provider11B6E120 at+45B4 and dedicated glyph slot10539575. Caller graphics-task
+ownership and LCD/page admission are still required.
+
+A bounded caller transform specifies orientation1/2, positive16.16 x/y scales
+at most2 and fixed-point translation within +/-720 pixels. Ordinary eligible
+glyph draws receive composed portrait matrices. Measurement/bounds queries and
+null origins retain their matrix. Zero/negative/large/rotated source scales,
+rounded-zero products and overflowing destination translations use the stock
+renderer unchanged. Int64 intermediate arithmetic prevents signed overflow;
+all seven matrix words are restored after the glyph call, including failure
+return values. Caller scale and placement do not implement descriptor reflow.
+
+The adapter copies the eight-word provider table, replaces only its glyph slot
+for one synchronous dispatch, and defers the producer acknowledgement. A busy
+owner is rejected. Normal completion unpublishes the local table and releases
+the state before acknowledging42010063/0 through the original text callback.
+If another owner replaces the provider during rendering, its replacement is
+preserved. This does not prove general task exclusion or renderer reentrancy.
+Inline bitmap-symbol provider rotation is not yet implemented.
+
+Private `20261120-portrait-text-02/result.json` passes261 checks:216 command/
+orientation/scale/matrix combinations, seven query/null-origin cases, a foreign
+provider replacement,18 admission rejections with18 busy-owner preservation
+checks, and the original context getter. An independent affine composition
+reference checks transformed values. Tests inspect actual34/37/38 dispatch
+argument mapping, glyph return propagation, source payload/message preservation,
+provider publication, matrix restoration and cleanup-before-acknowledgement.
+
+The original dispatcher, text completion and event wrapper execute. Descriptor
+functions104BAA5E/104BB130/104BB248 are redirected to a supplied Thumb stub that
+calls the published provider; renderer10539574 is a supplied glyph sink. Native
+glyph shaping, metrics, bitmap symbols, context initialization and pixels are
+not exercised. The probe is reproducible:1088 file/1024 image/28 BSS/0 relocations,
+SHA256 `9ee393c727b0a817880dc88e9cc4d4702b74e343b59da95d4305f9875535db59`.
+Flat fixture loading does not establish module-loader admission. Run01 passed170
+before extreme-boundary, argument mapping and cleanup coverage expanded in02.
+
 ## Remaining integration
 
-Bind actual LCD output/target admission and text payloads,
+Bind actual LCD output/target admission, live native text behavior and bitmap symbols,
 draw-task lifetime and callback ownership before installing a rotation hook.
 Preserve producer completion and payload lifetime: never redirect asynchronous
 native work to a temporary stack copy. Then port portrait reflow, navigation and
