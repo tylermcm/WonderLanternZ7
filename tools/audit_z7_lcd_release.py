@@ -19,10 +19,13 @@ OBJECT = 0xa1833548
 DEFAULTS = (0, 15, 1, 0, 5, 0, 127, 7, 0, 127)
 
 
-def audit(raw, host, packet, module):
+def audit(raw, host, packet, module, volatile=False):
     assert hashlib.sha256(raw).hexdigest() == host['main_payload_sha256']
     assert hashlib.sha256(packet).hexdigest() == module['module_sha256']
     symbols = module['symbols']
+    if volatile:
+        assert module['kind']=='original-Z7-LCD-volatile-checkpoint'
+        assert not any(n.startswith(('persistence_','z7_persistence_','z7_settings_files_')) for n in symbols)
     checks = []
 
     def check(name, good):
@@ -31,10 +34,14 @@ def audit(raw, host, packet, module):
 
     def load(files=None):
         f = PersistenceFixture(raw, host, packet, files)
+        original_dispatch=f.read(0xa182ed34)
         status = f.call(host['symbols']['z7_module_load_once'], STATE)
         f.base = f.words()[12]
         f.setword(40, status)
         check('load-' + str(len(checks)), status == 8)
+        if volatile:
+            file_ops=[e for e in f.file_events if e[0] not in ('clean','invalidate')]
+            check('volatile-load-no-worker-file-io-or-dispatch-replacement-'+str(len(checks)),not file_ops and not f.words()[50] and f.read(0xa182ed34)==original_dispatch)
         # This instruction fixture supplies native renderer readiness. The live
         # QEMU probe separately verifies the actual before-paint publication.
         f.write(f.base + symbols['sm_lcd_rows_ready'], 1)
@@ -67,7 +74,8 @@ def audit(raw, host, packet, module):
 
     f = load()
     check('four-supported-default-presets', model(f) == DEFAULTS)
-    check('no-native-information-hook-registration', f.words()[44] == f.words()[46] == 0 and f.words()[50] == 1)
+    check('no-native-information-hook-registration', f.words()[44] == f.words()[46] == 0)
+    check('worker-registration-matches-storage-profile',f.words()[50]==int(not volatile))
     check('information-transition-code-not-linked', not any(n.startswith('z7_information_') for n in symbols))
     call(f, 'sm_render', OBJECT)
     check('compact-root-controls', rows(f, 6) and [labels(f)[231+i] for i in range(6)] ==
@@ -98,21 +106,28 @@ def audit(raw, host, packet, module):
     check('back-returns-to-compact-root', word(f, 'z7_settings_view') == 0 and rows(f, 6))
     check('unsupported-controls-not-present', not any(text in ('Histogram', 'Photo highlights', 'Information display') for _, text in f.menu_labels))
     saved = model(f)
-    tick(f)
-    check('worker-saves-supported-model', word(f, 'z7_persistence_saves') == 1 and record(saved, 0) in f.files.values())
-    restarted = load(dict(f.files))
-    check('restart-restores-menu-and-battery-preferences', model(restarted) == saved and word(restarted, 'z7_battery_enabled') == 1)
-    legacy = (3, 16, 15, 10, 8, 2, 255, 7, 0, 127)
-    original = record(legacy, 7)
-    migrated = load({PATHS[0]: original})
-    expected = (3, 1, 5, 0, 0, 0, 255, 7, 0, 127)
-    check('legacy-info-only-and-unsupported-components-filtered', model(migrated) == expected)
-    check('startup-filter-does-not-write-files', not any(e[0] == 'write' for e in migrated.file_events) and migrated.files[PATHS[0]] == original)
-    check('filtered-load-marked-dirty', word(migrated, 'z7_settings_revision') == 2)
-    tick(migrated)
-    check('normalization-saved-to-other-journal-slot', migrated.files[PATHS[0]] == original and migrated.files[PATHS[1]] == record(expected, 8))
-    again = load(dict(migrated.files))
-    check('normalized-restart-is-stable', model(again) == expected and word(again, 'z7_settings_revision') == 0)
+    if volatile:
+        tick(f)
+        check('volatile-worker-ticks-do-not-read-or-save-settings',not [e for e in f.file_events if e[0] not in ('clean','invalidate')] and model(f)==saved and not f.words()[50])
+        ignored=record((3,16,15,10,8,2,255,7,0,127),7)
+        restarted=load({PATHS[0]:ignored})
+        check('volatile-restart-resets-and-ignores-existing-journal',model(restarted)==DEFAULTS and word(restarted,'z7_battery_enabled')==0 and restarted.files=={PATHS[0]:ignored} and not [e for e in restarted.file_events if e[0] not in ('clean','invalidate')])
+    else:
+        tick(f)
+        check('worker-saves-supported-model', word(f, 'z7_persistence_saves') == 1 and record(saved, 0) in f.files.values())
+        restarted = load(dict(f.files))
+        check('restart-restores-menu-and-battery-preferences', model(restarted) == saved and word(restarted, 'z7_battery_enabled') == 1)
+        legacy = (3, 16, 15, 10, 8, 2, 255, 7, 0, 127)
+        original = record(legacy, 7)
+        migrated = load({PATHS[0]: original})
+        expected = (3, 1, 5, 0, 0, 0, 255, 7, 0, 127)
+        check('legacy-info-only-and-unsupported-components-filtered', model(migrated) == expected)
+        check('startup-filter-does-not-write-files', not any(e[0] == 'write' for e in migrated.file_events) and migrated.files[PATHS[0]] == original)
+        check('filtered-load-marked-dirty', word(migrated, 'z7_settings_revision') == 2)
+        tick(migrated)
+        check('normalization-saved-to-other-journal-slot', migrated.files[PATHS[0]] == original and migrated.files[PATHS[1]] == record(expected, 8))
+        again = load(dict(migrated.files))
+        check('normalized-restart-is-stable', model(again) == expected and word(again, 'z7_settings_revision') == 0)
     cycle = load()
     call(cycle, 'z7_settings_flag', cycle.base + symbols['z7_menu_settings'], 0, 1)
     for expected_preset in (1, 2, 3, 0):
@@ -134,7 +149,8 @@ def audit(raw, host, packet, module):
         check(label + '-does-not-consume-custom-cycle', word(cycle, 'z7_preset_cycles') == previous)
         cycle.u.mem_write(address, saved_bytes)
     return dict(schema=1, passed=True, checks=len(checks), check_names=checks,
-                scope='Actual API44 load, compact menu callbacks/count metadata, supported defaults, battery/focal switches, reset, worker save/restart, v1 legacy normalization and native DISP cycling/page skipping/context fallback',
+                storage_free=volatile,
+                scope=('Storage-free compact menu, supported defaults/actions, volatile reset and native DISP/context checks' if volatile else 'Actual API44 load, compact menu callbacks/count metadata, supported defaults, battery/focal switches, reset, worker save/restart, v1 legacy normalization and native DISP cycling/page skipping/context fallback'),
                 limits=['UI rendering services supplied; compact menu needs native visual/lifecycle validation',
                         'No complete overlay/output/capture lifecycle or physical card validation',
                         'Not an installation-cleared candidate'], installation_candidate=False)
@@ -144,6 +160,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('build', 'module', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--volatile',action='store_true',help='Require and audit the storage-free LCD checkpoint')
     args = parser.parse_args()
     out = args.output.resolve()
     if not out.is_relative_to(ROOT/'.private') or out.exists():
@@ -152,7 +169,7 @@ def main():
     host = json.loads((args.build/'module-host.emulator.json').read_text())
     packet = (args.module/'Z7APP.BIN').read_bytes()
     module = json.loads((args.module/'module.json').read_text())
-    result = audit(raw, host, packet, module)
+    result = audit(raw, host, packet, module, args.volatile)
     names = ('audit_z7_lcd_release', 'audit_z7_display_persistence', 'audit_z7_settings_files', 'audit_z7_settings_storage',
              'audit_z7_display_information', 'audit_z7_focal_overlay', 'audit_z7_histogram_component', 'audit_z7_module_host', 'audit_splash_image')
     result.update(module_sha256=module['module_sha256'], host_sha256=host['main_payload_sha256'],

@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "scope": "AFK offline build checkpoint; working camera/card unchanged",
+  "owner_afk": true,
+  "card_accessed": false,
+  "card_written": false,
+  "firmware_build_or_update_performed": false,
+  "host_sources_unchanged": true,
+  "working_host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "working_module_sha256": "767ada057f52df432aa037c341d300207d1bf436fea9258c5c58b78d4556a158",
+  "root_tests_passed": 101,
+  "baseline_A_B_packets_rebuilt_identically": true,
+  "checkpoints": {
+    "passed": true,
+    "host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+    "progress": {
+      "module_sha256": "3b5aced1e58f56ebad9d5f945452254d82614549e6904acb5ff3d460909e51a9",
+      "file_bytes": 5452,
+      "compiled_functions_without_exclusives": 28,
+      "grid_checks": 270,
+      "geometry_calls": 450,
+      "format_boundary_labels": [
+        "Off [W 0001]",
+        "Off [W 0009]",
+        "Off [W 0010]",
+        "Off [W 0099]",
+        "Off [W 0100]",
+        "Off [W 0999]",
+        "Off [W 1000]",
+        "Off [W 9999]",
+        "Off [W 9999]"
+      ],
+      "no_gui_calls_or_text_writes_from_worker": true,
+      "menu_reads_do_not_increment": true,
+      "saturates_at": 9999,
+      "fresh_boot_zero": true,
+      "file_operations": 0
+    },
+    "restore": {
+      "module_sha256": "839d8aaef7f404ba64f710d092aceba628552b969e54820867bd6b6d4c363b40",
+      "file_bytes": 6564,
+      "compiled_functions_without_exclusives": 34,
+      "grid_checks": 270,
+      "geometry_calls": 450,
+      "fault_preemption_codec_checks": 52,
+      "read_only": true,
+      "gui_latch_stays_one_after_repeated_choices": true,
+      "selection_after_ready_vetoes_restore": true
+    },
+    "card_written": false,
+    "hardware_tested": false,
+    "stage_authorized": false,
+    "limits": [
+      "Only compiled module functions scanned; called native routines are outside scan",
+      "UI/kernel/filesystem/telemetry and interleaving are supplied fixture boundaries",
+      "Selection latch assumes existing native GUI event ownership",
+      "No physical counter, card-read, cache/scheduler or recovery validation"
+    ]
+  },
+  "persistence": {
+    "module_sha256": "b4f4be274e4249587bacf5a252b9508e7ed7ff0ab30123275325c29db903161d",
+    "checks": 84,
+    "functions_scanned": 91,
+    "exclusive_instructions_found": 0,
+    "writer_preemption_passed": true
+  },
+  "lcd_persistent": {
+    "module_sha256": "3e8854834417bb29e0b4ea9ea3c5a7be5b37fcb941826e1099adc43be3f5d954",
+    "checks": 48,
+    "functions_scanned": 83,
+    "exclusive_instructions_found": 0
+  },
+  "lcd_volatile": {
+    "module_sha256": "9b076c6db032d6b17884aadda8ec75934be9b9456655e2ef30010870d51c8592",
+    "checks": 44,
+    "functions_scanned": 68,
+    "exclusive_instructions_found": 0,
+    "no_settings_file_io": true,
+    "no_worker_registered": true
+  },
+  "default_packet_hashes_unchanged_after_optional_mode": true,
+  "default_metadata_refreshed_in_builds_with_suffix_02": true,
+  "next_hardware_gate": "Visible no-I/O worker counter",
+  "stage_authorized": false,
+  "hardware_test_authorized": false,
+  "limits": [
+    "All new modules hardware-unverified and private; nothing staged",
+    "Native firmware callees outside exclusive scans",
+    "GUI single-writer and physical memory-order/lifecycle assumptions remain open",
+    "Persistence writes/full LCD remain behind owner-guided incremental hardware checks"
+  ],
+  "graph_nodes": 4338,
+  "graph_edges": 11997,
+  "alignment_and_worker_call_scan_passed": true,
+  "graph_limits": "Existing conditional-C extraction gaps remain; ELF ranges and instruction fixtures used separately"
+}

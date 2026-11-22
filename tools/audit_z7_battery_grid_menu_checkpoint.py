@@ -25,15 +25,19 @@ LAYOUTS=[('fourths',1,0x1901,'4x4 grid'),('thirds',2,0x7a30,'3x3 grid'),
          ('dense',5,0x7a33,'6x6 grid'),('off',0,0x1902,'Off')]
 
 
-def audit(raw,host,packet,module,stock,worker_expected=False,worker_pair=False):
+def audit(raw,host,packet,module,stock,worker_expected=False,worker_pair=False,worker_progress=False):
     assert hashlib.sha256(raw).hexdigest()==host['main_payload_sha256']
     assert hashlib.sha256(packet).hexdigest()==module['module_sha256']
     assert hashlib.sha256(stock).hexdigest()==STOCK_SHA
-    expected_kind=('original-Z7-worker-registration-pair' if worker_pair else
+    assert not (worker_pair and worker_progress)
+    expected_kind=('original-Z7-worker-progress-checkpoint' if worker_progress else
+                   'original-Z7-worker-registration-pair' if worker_pair else
                    'original-Z7-grid-restore-readonly-checkpoint' if worker_expected else 'original-Z7-battery-grid-menu-checkpoint')
     assert module['kind']==expected_kind
     if worker_pair:
         assert module['configuration']['worker_registration_enabled']==worker_expected
+    if worker_progress:
+        assert worker_expected and module['configuration']['worker_registration_enabled']
     assert not any(n.startswith(('sm_','persistence_','preset_','focal_')) or
                    (n.startswith('z7_settings_') and not (worker_expected and n.startswith('z7_settings_files_')))
                    for n in module['symbols'])
@@ -79,7 +83,8 @@ def audit(raw,host,packet,module,stock,worker_expected=False,worker_pair=False):
         check(name+'-stores-only-native-on-off',a.word(GRID_VALUE)==int(value!=0) and all(v in (0,1) for v in a.setters))
         if value:check(name+'-volatile-choice',a.word(base+symbols['checkpoint_grid_value'])==value)
         a.labels.clear();a.rows.clear();a.marks.clear();a.u.mem_write(OBJECT+36,struct.pack('<I',MEM+0x10000));a.call(base+symbols['grid_enter'],OBJECT)
-        check(name+'-six-labels-and-selection',a.labels==[(39+i,x[3]) for i,x in enumerate(LAYOUTS)] and a.rows==list(range(39,45)) and a.marks==[(control,1)])
+        expected_labels=[(39+i,'Off [W 0000]' if worker_progress and i==5 else x[3]) for i,x in enumerate(LAYOUTS)]
+        check(name+'-six-labels-and-selection',a.labels==expected_labels and a.rows==list(range(39,45)) and a.marks==[(control,1)])
         check(name+'-native-visibility',a.call(0x1037723e)==int(value!=0))
     check('menu-activation-does-not-program-internal-flash-in-fixture',not a.operations)
     geometry_calls=0

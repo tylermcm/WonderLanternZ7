@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "module_sha256": "b4f4be274e4249587bacf5a252b9508e7ed7ff0ab30123275325c29db903161d",
+  "host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "actual_writer_paused_after_odd_store": true,
+  "reader_calls_while_writer_paused": 4,
+  "readers_returned_without_io": true,
+  "reader_stack_separate": true,
+  "writer_resumed_with_abi_preserved": true,
+  "revision_store_sequence": [
+    1,
+    2
+  ],
+  "payload_stores_between_revision_stores": true,
+  "completed_revision_saved": true,
+  "card_written": false,
+  "hardware_tested": false,
+  "limits": [
+    "Explicit emulator interleaving is not a physical memory-order/scheduler proof",
+    "Single GUI writer or loader before publication remains a requirement",
+    "Native filesystem services and storage durability supplied/unverified"
+  ]
+}

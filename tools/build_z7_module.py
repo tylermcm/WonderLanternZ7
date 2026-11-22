@@ -55,7 +55,7 @@ def pack_module(image, bss_size, entry_offset, relocations=()):
     return seal(header + image + b''.join(struct.pack('<I', off) for off in relocs))
 
 
-def from_elf(data):
+def from_elf(data, function_details=None):
     """Accept bounded linked ELF32 ARM, with retained relocation records."""
     def region(offset, size):
         if offset < 0 or size < 0 or offset + size > len(data):
@@ -75,6 +75,7 @@ def from_elf(data):
         if section[1] != 8:
             region(section[4], section[5])
     symbols = {}
+    functions = {}
     for section in sections:
         if section[1] != 2:
             continue
@@ -85,7 +86,7 @@ def from_elf(data):
             raise ValueError('Invalid symbol string table')
         names = region(strings[4], strings[5])
         for off in range(section[4], section[4] + section[5], 16):
-            name, value, _, _, _, index = struct.unpack_from('<IIIBBH', data, off)
+            name, value, size, info, _, index = struct.unpack_from('<IIIBBH', data, off)
             end = names.find(b'\0', name)
             if end < 0:
                 raise ValueError('Invalid symbol name')
@@ -101,6 +102,8 @@ def from_elf(data):
                 raise ValueError('Conflicting module symbol: ' + label)
             if label and not label.startswith('$'):
                 symbols[label] = value
+                if info & 15 == 2 and size:
+                    functions[label] = dict(address=value,bytes=size,binding=info>>4)
     if not {'__image_end', '__memory_end', 'z7_main'} <= symbols.keys():
         raise ValueError('Missing linker bounds or z7_main')
     image_size, memory_size = symbols['__image_end'], symbols['__memory_end']
@@ -145,11 +148,18 @@ def from_elf(data):
                 raise ValueError(f'Unsupported ARM relocation {kind} at {address:#x}')
     relocations.sort()
     packed = pack_module(image, memory_size - image_size, entry & ~1, relocations)
+    if function_details is not None:
+        for name, function in functions.items():
+            start=function['address'] & ~1
+            if not function['address'] & 1 or start+function['bytes']>image_size:
+                raise ValueError('Invalid Thumb function bounds: '+name)
+        function_details.clear()
+        function_details.update(functions)
     return packed, dict(target=TARGET, image_bytes=image_size, bss_bytes=memory_size - image_size,
                         entry_offset=entry & ~1, relocations=relocations, symbols=symbols)
 
 
-def build(source, clang='clang', linker=None, zig=None):
+def build(source, clang='clang', linker=None, zig=None, function_details=None):
     linker = linker or ('ld.lld.exe' if os.name == 'nt' else 'ld.lld')
     temporary_root = ROOT / '.private/tmp'
     temporary_root.mkdir(parents=True, exist_ok=True)
@@ -170,7 +180,7 @@ def build(source, clang='clang', linker=None, zig=None):
         link = ([str(zig), 'ld.lld', '-T', str(SDK / 'module.ld'), '--emit-relocs', '--no-undefined']
                 if zig else [linker, '-T', str(SDK / 'module.ld'), '--emit-relocs', '--no-undefined'])
         subprocess.run(link + [str(obj), '-o', str(elf)], check=True, env=environment)
-        return from_elf(elf.read_bytes())
+        return from_elf(elf.read_bytes(),function_details)
 
 
 def main():

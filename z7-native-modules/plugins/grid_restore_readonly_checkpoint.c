@@ -26,16 +26,21 @@ static const char *restore_label(uint32_t row, const char *fallback);
 
 enum { RESTORE_WAIT, RESTORE_READING, RESTORE_READY, RESTORE_APPLIED,
        RESTORE_MISSING, RESTORE_ERROR, RESTORE_SKIPPED };
-static uint32_t restore_gui_seen, restore_state, restore_choice, restore_selection_revision;
+static uint32_t restore_gui_seen, restore_state, restore_choice;
+/* Selection and menu-entry hooks run on the native GUI path. The worker never
+ * writes this monotonic latch. Counting selections is unnecessary: any owned layout
+ * must veto the pending restore. Ordinary GUI-owned access avoids exclusive RMW.
+ */
+static volatile uint32_t restore_user_selected;
 static struct z7_settings_files restore_files;
 static void restore_selected(uint32_t value)
 {
-    if (value >= 1 && value <= 5) __atomic_fetch_add(&restore_selection_revision,1,__ATOMIC_RELEASE);
+    if (value >= 1 && value <= 5) restore_user_selected=1;
 }
 static void restore_menu_enter(void)
 {
     if (__atomic_load_n(&restore_state,__ATOMIC_ACQUIRE) != RESTORE_READY) return;
-    if (__atomic_load_n(&restore_selection_revision,__ATOMIC_ACQUIRE)) {
+    if (restore_user_selected) {
         __atomic_store_n(&restore_state,RESTORE_SKIPPED,__ATOMIC_RELEASE); return;
     }
     checkpoint_grid_value=restore_choice;

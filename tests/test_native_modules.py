@@ -256,6 +256,26 @@ class NativeModuleTests(unittest.TestCase):
 
 
 class ModuleBuilderTests(unittest.TestCase):
+    def test_optional_function_bounds_do_not_change_packet_or_default_report(self):
+        data=bytearray(elf_fixture())
+        shoff=struct.unpack_from('<I',data,32)[0]
+        symoff=struct.unpack_from('<I',data,shoff+4*40+16)[0]+3*16
+        struct.pack_into('<I',data,symoff+8,2)
+        data[symoff+12]=0x12
+        expected=from_elf(data)
+        functions={'stale':{}}
+        self.assertEqual(from_elf(data,functions),expected)
+        self.assertEqual(functions,{'z7_main':dict(address=1,bytes=2,binding=1)})
+
+    def test_optional_function_bounds_reject_size_outside_image(self):
+        data=bytearray(elf_fixture())
+        shoff=struct.unpack_from('<I',data,32)[0]
+        symoff=struct.unpack_from('<I',data,shoff+4*40+16)[0]+3*16
+        struct.pack_into('<I',data,symoff+8,66)
+        data[symoff+12]=0x12
+        with self.assertRaisesRegex(ValueError,'Invalid Thumb function bounds'):
+            from_elf(data,{})
+
     def test_linked_elf_is_packaged_with_bss_and_pointer_relocation(self):
         packet, report = from_elf(elf_fixture())
         self.assertEqual(report['relocations'], [4])

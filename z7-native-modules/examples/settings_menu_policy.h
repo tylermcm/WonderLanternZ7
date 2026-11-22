@@ -191,6 +191,8 @@ static uint32_t sm_action(uint32_t object)
     }
 #ifdef Z7_SETTINGS_PERSISTENCE
     persistence_commit(&staged);
+#elif defined(Z7_LCD_FIRST_RELEASE)
+    (void)z7_lcd_release_filter(&z7_menu_settings);
 #endif
 #undef SM_MODEL
     ++z7_settings_actions;
@@ -387,6 +389,9 @@ static uint32_t sm_prepare(void)
     sm_callbacks[4] = sm_callbacks[5] = sm_callbacks[6] = (uint32_t)(uintptr_t)sm_zero; sm_callbacks[7] = 0x1040525f;
     sm_object[0] = 2; sm_object[1] = leaf[1]; sm_object[4] = (uint32_t)(uintptr_t)sm_callbacks; sm_object[10] = (uint32_t)(uintptr_t)sm_meta;
     z7_settings_defaults(&z7_menu_settings);
+#if defined(Z7_LCD_FIRST_RELEASE) && !defined(Z7_SETTINGS_PERSISTENCE)
+    if (!z7_lcd_release_filter(&z7_menu_settings)) return 0;
+#endif
     z7_battery_enabled = 0;
     return 1;
 }

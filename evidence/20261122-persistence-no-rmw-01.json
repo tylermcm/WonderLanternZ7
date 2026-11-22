@@ -1,0 +1,361 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "full-api44-profile-loads-all-existing-hooks-and-worker",
+      "passed": true
+    },
+    {
+      "name": "startup-loads-newest-model-before-first-menu-publication",
+      "passed": true
+    },
+    {
+      "name": "startup-battery-flag-follows-loaded-preference",
+      "passed": true
+    },
+    {
+      "name": "startup-read-only-and-current-revision-clean",
+      "passed": true
+    },
+    {
+      "name": "menu-title-4-Display: Saved",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-5-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "unchanged-startup-model-never-autosaves",
+      "passed": true
+    },
+    {
+      "name": "confirmed-missing-slots-enable-persistence-with-defaults",
+      "passed": true
+    },
+    {
+      "name": "menu-title-8-Display: Defaults",
+      "passed": true
+    },
+    {
+      "name": "menu-action-9-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "menu-title-10-Standard: Defaults",
+      "passed": true
+    },
+    {
+      "name": "submenu-navigation-does-not-dirty-settings",
+      "passed": true
+    },
+    {
+      "name": "menu-action-12-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "native-menu-publishes-even-revision-and-master-change",
+      "passed": true
+    },
+    {
+      "name": "menu-title-14-Display: Unsaved",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-15-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "three-quiet-observation-ticks-do-not-write",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-17-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "menu-title-18-Display: Saved",
+      "passed": true
+    },
+    {
+      "name": "fourth-worker-tick-saves-menu-settings-through-native-files",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-20-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "saved-menu-revision-does-not-write-again",
+      "passed": true
+    },
+    {
+      "name": "menu-action-22-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "battery-menu-setting-publishes-model-and-renderer-flag",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-24-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "next-menu-save-alternates-and-keeps-previous-valid-slot",
+      "passed": true
+    },
+    {
+      "name": "fresh-module-initializer-restores-native-menu-edit",
+      "passed": true
+    },
+    {
+      "name": "menu-action-27-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-28-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "save-error-remains-dirty-and-preserves-original",
+      "passed": true
+    },
+    {
+      "name": "menu-title-30-Display: Save retry",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-31-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "transient-save-error-backs-off-five-worker-ticks",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-33-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "menu-title-34-Display: Saved",
+      "passed": true
+    },
+    {
+      "name": "retry-saves-current-dirty-settings",
+      "passed": true
+    },
+    {
+      "name": "menu-action-36-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-37-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "odd-writer-revision-defers-bounded-snapshot-without-io",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-39-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "released-writer-revision-can-save-next-complete-model",
+      "passed": true
+    },
+    {
+      "name": "startup-open-failure-keeps-module-resident-with-defaults",
+      "passed": true
+    },
+    {
+      "name": "menu-title-42-Display: Restart to save",
+      "passed": true
+    },
+    {
+      "name": "menu-action-43-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "menu-title-44-Display: Restart to save",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-45-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "startup-open-failure-never-overwrites-unread-settings",
+      "passed": true
+    },
+    {
+      "name": "startup-read-failure-keeps-module-resident-with-defaults",
+      "passed": true
+    },
+    {
+      "name": "menu-title-48-Display: Restart to save",
+      "passed": true
+    },
+    {
+      "name": "menu-action-49-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "menu-title-50-Display: Restart to save",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-51-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "startup-read-failure-never-overwrites-unread-settings",
+      "passed": true
+    },
+    {
+      "name": "startup-close-failure-keeps-module-resident-with-defaults",
+      "passed": true
+    },
+    {
+      "name": "menu-title-54-Display: Restart to save",
+      "passed": true
+    },
+    {
+      "name": "menu-action-55-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "menu-title-56-Display: Restart to save",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-57-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "startup-close-failure-never-overwrites-unread-settings",
+      "passed": true
+    },
+    {
+      "name": "startup-uncertain-close-retains-descriptor-and-module",
+      "passed": true
+    },
+    {
+      "name": "menu-action-60-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-61-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "menu-title-62-Display: Restart to save",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-63-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "save-close-latch-blocks-retries-and-keeps-dirty-revision",
+      "passed": true
+    },
+    {
+      "name": "menu-action-65-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "worker-preempted-at-snapshot",
+      "passed": true
+    },
+    {
+      "name": "preempting-menu-snapshot-uses-separate-stack-without-io",
+      "passed": true
+    },
+    {
+      "name": "menu-during-snapshot-shows-correct-save-state",
+      "passed": true
+    },
+    {
+      "name": "worker-resumes-after-snapshot-with-original-abi",
+      "passed": true
+    },
+    {
+      "name": "snapshot-retry-observes-actual-menu-two-field-reset",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-71-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "reset-save-contains-complete-new-snapshot",
+      "passed": true
+    },
+    {
+      "name": "menu-action-73-performs-no-file-io",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-74-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "worker-preempted-at-write",
+      "passed": true
+    },
+    {
+      "name": "preempting-menu-write-uses-separate-stack-without-io",
+      "passed": true
+    },
+    {
+      "name": "menu-during-write-shows-correct-save-state",
+      "passed": true
+    },
+    {
+      "name": "worker-resumes-after-write-with-original-abi",
+      "passed": true
+    },
+    {
+      "name": "menu-edit-during-io-is-not-marked-saved-with-old-snapshot",
+      "passed": true
+    },
+    {
+      "name": "worker-ticks-80-never-touch-native-labels",
+      "passed": true
+    },
+    {
+      "name": "subsequent-worker-saves-newer-menu-edit-and-retains-prior",
+      "passed": true
+    },
+    {
+      "name": "foreign-native-menu-prevents-init-and-all-settings-io",
+      "passed": true
+    },
+    {
+      "name": "api40-host-rejects-persistence-before-menu-or-file-preparation",
+      "passed": true
+    }
+  ],
+  "main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "module_sha256": "b4f4be274e4249587bacf5a252b9508e7ed7ff0ab30123275325c29db903161d",
+  "full_focal_other_histogram_information_profile": true,
+  "worker_api_bytes": 44,
+  "startup_loading_implemented": true,
+  "actual_menu_edits_and_worker_saves_execute": true,
+  "atomic_snapshot_instructions_execute": true,
+  "actual_menu_preempts_worker_on_separate_emulated_stack": true,
+  "supplied_boundaries": [
+    "Module/settings filesystem dispatcher",
+    "Kernel/heap/UI services",
+    "Incoming application state",
+    "Odd revision models interrupted writer"
+  ],
+  "actual_parallel_scheduler_verified": false,
+  "actual_pixels": false,
+  "physical_card_access": false,
+  "camera_access": false,
+  "shutdown_flush_implemented": false,
+  "physical_cache_or_durability_verified": false
+}

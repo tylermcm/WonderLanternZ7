@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "module_sha256": "3e8854834417bb29e0b4ea9ea3c5a7be5b37fcb941826e1099adc43be3f5d954",
+  "compiled_functions": 83,
+  "decoded_instructions": 7803,
+  "dmb_instructions": 19,
+  "function_bounds_from_elf": true,
+  "independently_rebuilt": true,
+  "exclusive_instructions": 0,
+  "source": "z7-native-modules/plugins/lcd_release.c",
+  "card_written": false,
+  "hardware_tested": false,
+  "limits": [
+    "Only module-owned function ranges; literal pools may be decoded within compiler function extents",
+    "Called native firmware functions and other modules are outside this scan",
+    "No proof of physical memory attributes or scheduler/memory ordering"
+  ]
+}

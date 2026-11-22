@@ -1,5 +1,63 @@
 # Laptop handoff — October 20, 2026
 
+## AFK offline build checkpoint complete; working card UNCHANGED - November 22, 2026
+
+Owner "just keep building im going afk" authorizes continued engineering. Agent
+committed to offline work, NO camera/card writes or new staging/firmware update.
+No pending question while AFK. Read AFK_BUILD_CHECKPOINT.md first for this sprint.
+Installed owner-tested host/B remain hardware checkpoint: EGf479950e... /
+MAIN24b20745... plus active B767ada05... . Host source hashes still match installed
+candidate build; A/B rebuilt byte-identically after tooling changes. No new
+hardware success/callback count claimed. All existing card files untouched.
+
+New private builds/reviews (all staged/hardware authorization flags FALSE):
+1) Worker progress,5452bytes SHA3b5aced1e58f56ebad9d5f945452254d82614549e6904acb5ff3d460909e51a9,
+ .private/builds and .private/review/20261122-worker-progress-checkpoint-01.
+ Off row shows W0000..9999 on menu entry. One worker writer, GUI samples atomic
+ word; no file I/O, native UI calls or text writes from worker, no exclusive ops.
+ Counter saturates9999, resets each boot. NEXT proposed HW gate: two increasing
+ menu observations, no selections required; review WORKER_PROGRESS_REVIEW.md.
+2) Read-only restore revision2,6564bytes SHA839d8aaef7f404ba64f710d092aceba628552b969e54820867bd6b6d4c363b40,
+ .private/builds and .private/review/20261122-grid-restore-no-rmw-01.
+ GUI-owned monotonic user-selected latch replaces fetch-add; worker never writes
+ latch, menu refuses to override owned user choice. Reads existing Z7GRID.DAT
+ only, no writes; no native card-ready proof. RESTORE_NO_RMW_REVIEW.md. Old failed
+ 0714... restore stays disabled; do not reuse it. Hardware gate AFTER progress.
+3) Storage-free LCD,17868bytes SHA9b076c6db032d6b17884aadda8ec75934be9b9456655e2ef30010870d51c8592,
+ .private/builds and .private/review/20261122-lcd-volatile-01. Existing four DISP
+ presets/compact menu/grid/horizon/info/battery/focal without worker/file adapter.
+ Defaults master+battery OFF, expected Framing grid display > Display settings.
+ Settings reset each boot; old journals ignored/preserved. LCD_VOLATILE_REVIEW.md.
+ This separates UI/overlay tests from storage; no physical UI/capture clearance.
+
+Persistence policy revised offline: one GUI writer/loader-before-publication;
+replace odd/even revision fetch-add with load/store+fence and final release.
+Bounded snapshot reader returns after at most3 attempts. Not multiwriter mutex.
+PERSISTENCE_PUBLICATION_REVIEW.md. Current refreshed source builds:
+ .private/builds/20261122-persistence-no-rmw-02,24048bytes SHAb4f4be274e4249587bacf5a252b9508e7ed7ff0ab30123275325c29db903161d;
+ .private/builds/20261122-lcd-no-rmw-02,21104bytes SHA3e8854834417bb29e0b4ea9ea3c5a7be5b37fcb941826e1099adc43be3f5d954.
+ Both byte-identical to tested -01 after optional volatile-mode source branches.
+ No save-capable/full LCD activation approved. Deferred highlight/cache/portrait/
+ advanced-host RMW sites inventoried but not mechanically rewritten.
+
+Validation:101 root tests; progress+RO270 grid checks/450 geometry calls EACH;
+RO52 codec/fault/preemption checks incl actual paused read + GUI user choice;
+progress format/carry/saturation/reset/GUI-read-only/no-I-O checks. Full persistence
+84 checks; targeted actual odd-store writer preemption with4 bounded reader
+calls/no I/O on separate stack, writer resume/ABI and complete revision save.
+Persistent LCD48 checks; volatile LCD44. Exact function scans:28/34/91/83/68
+functions respectively, zero exclusive instructions found; native callees outside
+scan. Python compile/diff pass, graph4338nodes/11997edges (conditional-C gaps).
+Optional build_z7_module function_details export preserves default packet/report;
+2 meaningful ELF bounds tests added. New builders/audits under tools/.
+
+Source-safe consolidated evidence/20261122-afk-build-checkpoint.json and related
+prefix reports. Private audit originals remain under .private/evidence; frozen
+reviews include exact module/metadata/assessment/audit hashes, no firmware images.
+The no-storage audit was adjusted to distinguish loader cache maintenance from
+settings file I/O and require NO worker, preserving persistent-profile contracts.
+No live build/audit process remains after final completion. Root memories not edited.
+
 ## B owner PASS: targeted worker-freeze hardware checkpoint - November 22, 2026
 
 Owner "works perfectly, no issues" confirms B general normal coldstart/controls/

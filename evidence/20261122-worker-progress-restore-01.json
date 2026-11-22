@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "progress": {
+    "module_sha256": "3b5aced1e58f56ebad9d5f945452254d82614549e6904acb5ff3d460909e51a9",
+    "file_bytes": 5452,
+    "compiled_functions_without_exclusives": 28,
+    "grid_checks": 270,
+    "geometry_calls": 450,
+    "format_boundary_labels": [
+      "Off [W 0001]",
+      "Off [W 0009]",
+      "Off [W 0010]",
+      "Off [W 0099]",
+      "Off [W 0100]",
+      "Off [W 0999]",
+      "Off [W 1000]",
+      "Off [W 9999]",
+      "Off [W 9999]"
+    ],
+    "no_gui_calls_or_text_writes_from_worker": true,
+    "menu_reads_do_not_increment": true,
+    "saturates_at": 9999,
+    "fresh_boot_zero": true,
+    "file_operations": 0
+  },
+  "restore": {
+    "module_sha256": "839d8aaef7f404ba64f710d092aceba628552b969e54820867bd6b6d4c363b40",
+    "file_bytes": 6564,
+    "compiled_functions_without_exclusives": 34,
+    "grid_checks": 270,
+    "geometry_calls": 450,
+    "fault_preemption_codec_checks": 52,
+    "read_only": true,
+    "gui_latch_stays_one_after_repeated_choices": true,
+    "selection_after_ready_vetoes_restore": true
+  },
+  "card_written": false,
+  "hardware_tested": false,
+  "stage_authorized": false,
+  "limits": [
+    "Only compiled module functions scanned; called native routines are outside scan",
+    "UI/kernel/filesystem/telemetry and interleaving are supplied fixture boundaries",
+    "Selection latch assumes existing native GUI event ownership",
+    "No physical counter, card-read, cache/scheduler or recovery validation"
+  ]
+}

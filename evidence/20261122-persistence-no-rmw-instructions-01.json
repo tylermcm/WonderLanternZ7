@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "module_sha256": "b4f4be274e4249587bacf5a252b9508e7ed7ff0ab30123275325c29db903161d",
+  "compiled_functions": 91,
+  "decoded_instructions": 8995,
+  "dmb_instructions": 19,
+  "function_bounds_from_elf": true,
+  "independently_rebuilt": true,
+  "exclusive_instructions": 0,
+  "source": "z7-native-modules/examples/display_persistence_probe.c",
+  "card_written": false,
+  "hardware_tested": false,
+  "limits": [
+    "Only module-owned function ranges; literal pools may be decoded within compiler function extents",
+    "Called native firmware functions and other modules are outside this scan",
+    "No proof of physical memory attributes or scheduler/memory ordering"
+  ]
+}

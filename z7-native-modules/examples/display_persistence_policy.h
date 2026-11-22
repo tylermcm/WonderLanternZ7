@@ -45,10 +45,18 @@ static void persistence_commit(const struct z7_display_settings *staged)
     for (uint32_t i = 0; i < sizeof(*staged) / 4; ++i)
         if (__atomic_load_n(destination + i, __ATOMIC_RELAXED) != source[i]) changed = 1;
     if (!changed) return;
-    __atomic_fetch_add(&z7_settings_revision, 1, __ATOMIC_ACQ_REL);
+    /* One GUI writer (or loader before GUI publication), worker only reads.
+     * A fetch-add unnecessarily emits exclusive accesses. Publish odd first,
+     * then fence before payload stores; final release publishes the even value.
+     * This does not serialize multiple concurrent writers.
+     */
+    uint32_t revision=__atomic_load_n(&z7_settings_revision,__ATOMIC_RELAXED);
+    if (revision & 1) return;
+    __atomic_store_n(&z7_settings_revision,revision+1,__ATOMIC_RELAXED);
+    __atomic_thread_fence(__ATOMIC_SEQ_CST);
     for (uint32_t i = 0; i < sizeof(*staged) / 4; ++i)
         __atomic_store_n(destination + i, source[i], __ATOMIC_RELAXED);
-    __atomic_fetch_add(&z7_settings_revision, 1, __ATOMIC_RELEASE);
+    __atomic_store_n(&z7_settings_revision,revision+2,__ATOMIC_RELEASE);
 }
 static uint32_t persistence_snapshot(struct z7_display_settings *out, uint32_t *revision)
 {
