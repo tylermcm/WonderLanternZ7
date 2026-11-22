@@ -1,5 +1,25 @@
 # Laptop handoff — October 20, 2026
 
+## Worker progress checkpoint fully owner PASS; RO approval pending - November 22, 2026
+
+After counter4->6, owner "yeah everthtbing works like it should" confirms ordinary
+controls/power-off. Progress module3b5aced1... now complete scoped hardware pass,
+physical worker execution via counter and GUI observation confirmed. No measured
+cadence or blanket native I/O/lifecycle proof. Progress remains current working
+active module; B backup preserved. No card operations this result-recording turn.
+
+Prepared next RO revision2 review .private/review/20261122-grid-restore-no-rmw-01
+reverified all files/current source fingerprints. Module6564bytes
+839d8aaef7f404ba64f710d092aceba628552b969e54820867bd6b6d4c363b40;
+seed80bytes a0b38b... is6x6 and already preserved on card. No camera writes;
+GUI-owned monotonic selection latch replaces old RMW. Requires newly working
+host and progress gate now passed. Read RESTORE_NO_RMW_REVIEW.md. Ask approval
+before staging; preserve progress as unused Z7APP.PROGRESS-WORKING.disabled,
+inspect/back up actual seed and never overwrite unexpected contents. All other
+files/updaters intact/disabled. No new host update or automatic full LCD trial.
+Next result: normal boot/controls and grid menu6x6 [SD] marker, normal power-off.
+Old failed0714... restore remains disabled; never re-enable it.
+
 ## Visible worker callback progress CONFIRMED; power-off pending - November 22, 2026
 
 Owner reports Off W0004, then W0006 after leaving/reopening menu. Progress module

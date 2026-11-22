@@ -13,7 +13,9 @@
   "callback_execution_directly_observed_via_counter": true,
   "gui_counter_sampling_observed": true,
   "exact_elapsed_time_measured": false,
-  "full_controls_and_poweroff_confirmed": false,
+  "full_controls_and_poweroff_confirmed": true,
   "file_io_tested": false,
-  "card_changed_this_turn": false
+  "card_changed_this_turn": false,
+  "owner_completion_response": "yeah everthtbing works like it should",
+  "hardware_checkpoint_passed": true
 }
