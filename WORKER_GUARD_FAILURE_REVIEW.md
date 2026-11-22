@@ -1,5 +1,51 @@
 # Worker guard: localized suspected failure point
 
+## Update: exclusive-load sequence reproduces the symptom without any store
+
+November 22: owner confirmed ordinary read `Center [RD OK]` without issues, then
+CLREX-plus-ordinary-read control completed OK without issues. The next LX control
+froze immediately on selection with slightly dimmed screen and full input freeze;
+owner removed the battery and returned the card. No LX result label, physical PC,
+exception record or automatic timeout recovery was captured in this LX trial.
+
+| Control | Exact SHA-256 prefix | Owner result |
+| --- | --- | --- |
+| Ordinary LDR | 10864694 | RD OK, no issues |
+| CLREX then ordinary LDR | e55eda50 | CL OK, no issues |
+| CLREX, LDREX, CLREX | f8f4506f | Immediate matching freeze; battery removed |
+
+All probe addresses are the same guard word 0xa97000cc. The load-only function
+has address setup at image117c/117e, CLREX1182, LDREX1186, CLREX118a and return118e.
+It has no STREX, calls, backwards branch, host-word writes or worker registration.
+The installed host's corresponding guard LDREX is at 0x11fa5852.
+
+This is stronger hardware evidence for the exclusive-load-associated path on
+this region. It does not prove an exact physical opcode: the cleanup CLREX now
+follows an exclusive load, unlike the earlier cleanup-only control. No target
+execution marker separates those two instructions, and no actual MMU attributes
+or exception type were observed. Do not generalize to every LDREX on this CPU.
+
+The source-only weak-CAS hardening still begins with LDREX on the same guard.
+Bounding the STREX retry is insufficient to address the newly demonstrated path;
+do not present that build as a camera fix. No store-only trial is necessary to
+establish that STREX and the retry loop are not required for this symptom.
+
+Next implementation investigation should avoid exclusive accesses to this host
+state word. A task-owned guard or verified native synchronization requires an
+ownership/caller audit and validation, rather than a guessed cached alias. Current
+source has one production call to worker_tick, inside the resident loader-task
+loop; the function is declared publicly, so full reachability/recursion review is
+still required before changing its concurrency contract. No such host change or
+installable firmware is produced by this result. Any new host flash requires a
+fresh exact installation/recovery assessment and explicit owner authorization.
+
+The failed LX module is preserved/disabled as Z7APP.GUARD-LOAD.disabled. Earlier
+working modules and all files remain intact. See the source-safe result in
+`evidence/20261122-worker-guard-load-hardware-result.json`; private quarantine is
+`.private/card-backups/20261122-worker-guard-load-freeze-01/quarantine.json`.
+The older STREX-stall experiments below remain valid injected offline cases;
+their suspected physical cause is superseded by this finer hardware isolation.
+
 ## Update: matched hardware trigger and resident-loop trace
 
 November 22: owner-confirmed A working, B freezing, and camera normal again with

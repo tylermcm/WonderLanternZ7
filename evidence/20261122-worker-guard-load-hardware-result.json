@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-22",
+  "module_sha256": "f8f4506fa30fe5379403f2a8f9ee6d919b2e4d60b31a94efeee8588ae7085a4a",
+  "owner_response": "Immediate matching full freeze and slightly dimmed screen on LX selection; battery removed and card returned",
+  "result_label": "Unknown; battery removed",
+  "ordinary_read_control": "owner pass",
+  "clrex_ordinary_read_control": "owner pass",
+  "tested_sequence": [
+    "CLREX",
+    "LDREX 0xa97000cc",
+    "CLREX"
+  ],
+  "strex_executed": false,
+  "retry_loop_present": false,
+  "physical_failure_pc_captured": false,
+  "exception_type_captured": false,
+  "automatic_recovery_observed_in_this_trial": false,
+  "camera_recovery_confirmed": false,
+  "candidate_withdrawn": true,
+  "disabled_as": "Z7APP.GUARD-LOAD.disabled",
+  "all_files_preserved": true,
+  "no_active_root_bin": true,
+  "safe_eject_verified": true,
+  "firmware_flashed": false,
+  "weak_cas_alone_established_as_fix": false
+}

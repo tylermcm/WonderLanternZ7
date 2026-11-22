@@ -1,5 +1,10 @@
 # Exclusive-load-only control - November 22, 2026
 
+WITHDRAWN after owner reported an immediate matching freeze and slight screen
+dim on selection. Battery removed; no result marker or physical PC captured.
+Preserved as Z7APP.GUARD-LOAD.disabled. Do not repeat this diagnostic. All prior
+working files remain intact. The procedure below describes the completed trial.
+
 Owner authorized continuing the one-step investigation. Ordinary read and CLREX controls both passed on
 camera. This control adds one LDREX with the tested CLREX cleanup; no exclusive-store trial or
 firmware update is included. Earlier combined exclusive probe is withdrawn.

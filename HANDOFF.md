@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## LX reproduced freeze; preserved/disabled/ejected - November 22, 2026
+
+Owner: immediate matching full freeze/slight dim on LX selection, battery pulled,
+card returned. RD10864694 and CLe55eda50 both owner-pass; LXf8f4506f FAIL.
+Exact probe image117c..118e: addresssetup, CLREX1182, LDREX1186, CLREX118a, return.
+NO STREX, retry, host writes or worker registration required for this symptom.
+LDREX-associated access on guard a97000cc leading trigger; cannot distinguish
+LDREX from post-load CLREX cleanup without target markers. Exact physical PC,
+exception, MMU and automatic recovery in THIS LX run not captured. Result label
+unknown due battery pull; current no-card recovery asked asynchronously, pending.
+Source-only weakCAS still performs LDREX on guard; NOT an adequate demonstrated
+fix. No more store/combined probe repetitions. Read latest WORKER_GUARD_FAILURE_REVIEW.md.
+Future fix investigation: avoid exclusive access to this guard; review task
+ownership/recursion/native synchronization before changing concurrency contract.
+No guessed cached alias/new host image/flash or further hardware trial authorized.
+
+Same Sony card identified, backups/named contents verified, native rename only
+Z7APP.BIN -> Z7APP.GUARD-LOAD.disabled.238 existing metadata/catalog unchanged
+except rename; all working copies/other payloads/seed intact, no active root BIN.
+Safe eject VERIFIED. Private .private/card-backups/20261122-worker-guard-load-freeze-01;
+source-safe evidence/20261122-worker-guard-load-hardware-result.json.
+Validation this turn: exact frozen disassembly and production caller search,
+verified backup/rename/eject; no code edit or new runtime test (hardware result
+supersedes emulator clearance). Earlier offline tests remain scoped evidence.
+
 ## CL passed; LDREX-only LX control staged/ejected - November 22, 2026
 
 Owner "cl run > Cl run OK no issues" confirms CL control pass. RD and CL both
