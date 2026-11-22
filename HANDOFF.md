@@ -1,5 +1,27 @@
 # Laptop handoff — October 20, 2026
 
+## Battery-plus-thirds authorized, staged and safely ejected - November 21, 2026
+
+Owner approved "go ahead" to exact reviewed battery-plus-3x3 trial. Same card,
+frozen review and five existing payload hashes verified; named payload/settings
+files privately backed up and readback verified. Native Move-Item preserved
+working battery module as Z7APP.BATTERY-WORKING.disabled. Exclusively added only
+new3160-byte Z7APP.BIN SHA78af00b6...e8ebadc91; flush/fsync and full readback match.
+Four earlier trials remain disabled/intact, existing settings unchanged.226
+existing file metadata records preserved except authorized working-name change;
+Nikon catalog hash unchanged. No photos read/deleted, format, EG reenable, new
+firmware image or flash. Safe eject VERIFIED: no card partition/media bytes/root
+access. Private record .private/card-staging/20261121-battery-thirds-test-01/.
+
+Ready for ONE ordinary OFF/insert/ON rear photo LCD check: percentage, existing
+Framing grid On -> two lines per axis (3x3), Off -> no grid, MENU/touch and normal
+power-off. No Update, repeated restarts, capture/movie/EVF/output tests. If frozen,
+stop/report and follow reviewed card/battery recovery boundary; exact-candidate
+recovery unknown. Current active Z7APP.BIN is new battery-plus-thirds diagnostic;
+working battery baseline preserved disabled. Hardware result pending. Full LCD
+and ownership-hardening builds remain withdrawn. No next test authorized.
+Docs/card-operation-only checkpoint; no code/tests rerun or live process.
+
 ## Battery-plus-thirds review frozen; owner approval pending - November 21, 2026
 
 .private/review/20261121-battery-thirds-test-01 contains8 files independently

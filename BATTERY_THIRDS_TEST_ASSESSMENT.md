@@ -1,5 +1,12 @@
 # Battery plus 3x3 grid: next SD test assessment
 
+Owner subsequently approved "go ahead". Exact candidate now staged, flushed,
+readback/hash verified and safely ejected. Working battery module preserved as
+Z7APP.BATTERY-WORKING.disabled; four earlier disabled trials/settings intact.
+Existing file metadata/catalog preserved except authorized working-name rename.
+No firmware update. Await ONE owner startup/grid-On-Off/control/power-off result.
+Frozen preapproval bundle stays unchanged; this note supersedes pending approval.
+
 November 21, 2026. Independent WonderLanternZ7 checkpoint for original Z7 C 3.80.
 Prepared for owner review; no card staging or camera test authorized yet.
 Component MIT licenses and battery attribution remain intact.
