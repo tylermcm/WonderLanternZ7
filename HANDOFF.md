@@ -1,5 +1,27 @@
 # Laptop handoff — October 20, 2026
 
+## Read-only restore review frozen; approval pending - November 21, 2026
+
+Exact10-file bundle .private/review/20261121-grid-restore-readonly-test-01
+independently readback/hash verified. Source checkpoint
+53233bcdec62d21848809d1f0b2a4e70579c8f86. Candidate6628bytes SHA0714fe84...
+b2c4bf95; seed80bytes SHAa0b38b76...8567ae0.52 restore/fault/preemption checks,
+270 grid-menu checks,38 battery checks,99 root tests; graph4103nodes/11293edges
+refreshed (existing conditional-C limits). Compiled writer excluded. See
+GRID_RESTORE_READONLY_TEST_ASSESSMENT.md and scoped frozen-review evidence.
+
+Ready for owner review only. NO new stage/test consent or card changes. Current
+working six-grid module remains active. Proposed next test needs BOTH exact new
+Z7APP.BIN and new Z7GRID.DAT seed selecting6x6, plus preservation rename of working
+baseline to Z7APP.GRID-MENU-WORKING.disabled. Require seed/name absence, same-card
+identity and all prior hashes, private backups, exclusive copy/flush/readback,
+metadata/catalog verification and safe eject. Existing files cannot be overwritten.
+Marker6x6 [SD] on first grid-menu opening after post-GUI worker read proves restore;
+menu choices are NOT saved by this read-only phase. Returned I/O errors park;
+blocked native calls have no module timeout. Physical read/recovery still unknown.
+Full LCD hold remains. Stop for exact owner approval; no automatic hardware test.
+No live process.
+
 ## Read-only restore checkpoint prepared offline - November 21, 2026
 
 After six-grid hardware PASS, owner requested continuing. First persistence
