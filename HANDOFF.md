@@ -1,5 +1,25 @@
 # Laptop handoff — October 20, 2026
 
+## Six-grid menu review frozen; fresh approval pending - November 21, 2026
+
+Exact8-file review .private/review/20261121-battery-grid-menu-test-01 independently
+readback/hash verified. Source checkpoint28cc6751619663338051d099050c554f2959ac67.
+5260-byte candidate SHA53334536...12f226195;270 checkpoint checks,450 native
+geometry calls,38 battery checks,95 root tests; graph4045nodes/11166edges refreshed
+with existing conditional-C limitations. See GRID_MENU_TEST_ASSESSMENT.md.
+
+Ready for owner REVIEW only; no new card copies, hardware test or firmware flash.
+Active working battery/thirds candidate stays unchanged. If fresh consent arrives,
+verify same card/current78af00b6...e8ebadc91 baseline and five preserved payloads;
+back up named files, preserve active baseline by rename to
+Z7APP.THIRDS-WORKING.disabled, exclusively add reviewed candidate with complete
+flush/readback/metadata/catalog checks and safe eject. Check destination names
+absent; stop on mismatch/collision. Test one ordinary rear-LCD startup, six native
+grid-menu choices, battery/controls/normal power-off. Layout is volatile and
+resets to thirds on restart if nativeOn; only native0/1 stored. No custom settings
+page/dispatcher/journals/worker/mask changes. Full LCD remains withdrawn and
+physical menu repaint/recovery unknown. No live process; stop for review/approval.
+
 ## Six volatile grid choices checkpoint prepared offline - November 21, 2026
 
 Owner requested continuing after LCD battery/thirds success. New isolated
