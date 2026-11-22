@@ -1,5 +1,22 @@
 # Laptop handoff — October 20, 2026
 
+## Post-update A owner PASS; B approval pending - November 22, 2026
+
+Owner "works as intended, no issures" confirms general A check pass on updated
+host: normal start/battery/MENU-touch/grids/brief use/power-off prompt. No itemized
+timings. A412dffaf... registers no worker; baseline+new bridges working by owner
+report. Worker fix still unverified until B. Source-safe result
+ evidence/20261122-post-host-A-result.json and private A staging record updated.
+
+Exact B already frozen/rebuilt/integration-audited at
+.private/review/20261122-worker-guard-host-01/controls/enabled/Z7APP.BIN,
+5324bytes SHA767ada057f52df432aa037c341d300207d1bf436fea9258c5c58b78d4556a158.
+Same empty callback packet that froze old host; only flag/CRC differ from A.
+Ask approval to stage B only, preserve active A under unused
+Z7APP.POST-HOST-A.disabled. No firmware Update, restore/I-O or exclusive probe.
+No card mutation/staging in this result-recording turn. Reidentify card and
+verify all prior bytes/backup/readback/eject before any approved B stage.
+
 ## Post-update A staged/ejected; owner test pending - November 22, 2026
 
 Owner explicitly approved A only (yes). Same Sony card verified, prior named
