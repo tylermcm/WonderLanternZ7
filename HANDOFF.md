@@ -1,5 +1,28 @@
 # Laptop handoff — October 20, 2026
 
+## Matched single-step worker controls prepared - November 22, 2026
+
+Owner requested one step at a time until reproduction. Prepared A worker-disabled
+and B worker-enabled from working battery/six-grid source; both 5324 bytes, BSS2216,
+identical code/entry/relocations. Only image5012 flag and header CRC differ.
+A SHA412dffaf...99a200f9; B SHA767ada05...4556a158. Callback begins bx lr.
+No restore/file adapters/GUI-seen wrapper/selection atomics. Artifacts private:
+.private/builds/20261122-worker-registration-pair-01. Neither staged/authorized.
+Review WORKER_REGISTRATION_PAIR_REVIEW.md before asking to stage A ONLY.
+A must pass before separately approved B; no automatic next trial or flash.
+Card remains previous working53334536... module, restoration not yet owner-tested.
+
+Both exact candidates pass270 grid checks/450 geometry calls and38 battery checks
+each against ORIGINAL installed7d7356... host. Healthy worker tick returns for both;
+B enters callback once, A never enters. Injected failed STREX: A returns with0
+attempts; B stops after805 injected failures before callback, zero file I/O.
+Not physical camera reproduction/cause proof. Source weak-CAS host NOT included.
+Private audit .private/evidence/20261122-worker-registration-pair-01.json;
+source-safe summary evidence/20261122-worker-registration-pair.json.
+Build reproduced twice; Python compile/diff checks pass. Graph4151nodes/11443edges,
+conditional-C parser limitations remain. Root suite not repeated for diagnostic
+pair; existing feature audits exercised both exact files. No live audit process.
+
 ## Exact working/frozen comparison completed - November 22, 2026
 
 User requested direct comparison of last working53334536... six-grid module with

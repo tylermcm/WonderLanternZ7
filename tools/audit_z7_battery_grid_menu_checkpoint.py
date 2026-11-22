@@ -25,12 +25,15 @@ LAYOUTS=[('fourths',1,0x1901,'4x4 grid'),('thirds',2,0x7a30,'3x3 grid'),
          ('dense',5,0x7a33,'6x6 grid'),('off',0,0x1902,'Off')]
 
 
-def audit(raw,host,packet,module,stock,worker_expected=False):
+def audit(raw,host,packet,module,stock,worker_expected=False,worker_pair=False):
     assert hashlib.sha256(raw).hexdigest()==host['main_payload_sha256']
     assert hashlib.sha256(packet).hexdigest()==module['module_sha256']
     assert hashlib.sha256(stock).hexdigest()==STOCK_SHA
-    expected_kind='original-Z7-grid-restore-readonly-checkpoint' if worker_expected else 'original-Z7-battery-grid-menu-checkpoint'
+    expected_kind=('original-Z7-worker-registration-pair' if worker_pair else
+                   'original-Z7-grid-restore-readonly-checkpoint' if worker_expected else 'original-Z7-battery-grid-menu-checkpoint')
     assert module['kind']==expected_kind
+    if worker_pair:
+        assert module['configuration']['worker_registration_enabled']==worker_expected
     assert not any(n.startswith(('sm_','persistence_','preset_','focal_')) or
                    (n.startswith('z7_settings_') and not (worker_expected and n.startswith('z7_settings_files_')))
                    for n in module['symbols'])

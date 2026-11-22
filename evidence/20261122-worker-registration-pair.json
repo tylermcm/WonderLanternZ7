@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "results": {
+    "disabled": {
+      "sha256": "412dffaf9a2b5f9aa5cf9e715b66e778e9de1e9f4c67eabc2963df7899a200f9",
+      "grid_checks": 270,
+      "geometry_calls": 450,
+      "battery_checks": 38,
+      "worker_runs": {
+        "healthy": {
+          "returned": true,
+          "worker_entries": 0,
+          "injected_failures": 0,
+          "file_operations": 0
+        },
+        "injected-store-failure": {
+          "returned": true,
+          "worker_entries": 0,
+          "injected_failures": 0,
+          "file_operations": 0
+        }
+      }
+    },
+    "enabled": {
+      "sha256": "767ada057f52df432aa037c341d300207d1bf436fea9258c5c58b78d4556a158",
+      "grid_checks": 270,
+      "geometry_calls": 450,
+      "battery_checks": 38,
+      "worker_runs": {
+        "healthy": {
+          "returned": true,
+          "worker_entries": 1,
+          "injected_failures": 0,
+          "file_operations": 0
+        },
+        "injected-store-failure": {
+          "returned": false,
+          "worker_entries": 0,
+          "injected_failures": 805,
+          "file_operations": 0
+        }
+      }
+    }
+  },
+  "only_flag_and_crc_differ": true,
+  "noop_first_instruction": "bx lr",
+  "camera_access": false,
+  "card_written": false,
+  "hardware_cause_established": false,
+  "limits": [
+    "Supplied GUI, telemetry, storage and native service boundaries",
+    "Store-exclusive failure is injected; physical failure PC remains unknown",
+    "No camera acceptance, timing or recovery validation"
+  ]
+}
