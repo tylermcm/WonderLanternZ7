@@ -1,5 +1,22 @@
 # Laptop handoff — October 20, 2026
 
+## Visible worker callback progress CONFIRMED; power-off pending - November 22, 2026
+
+Owner reports Off W0004, then W0006 after leaving/reopening menu. Progress module
+3b5aced1... worker is sole counter writer; menu only samples. This directly
+confirms physical callback execution and GUI publication in this observed context.
+No measured elapsed time/cadence; do not infer native delay units. Owner has not
+separately confirmed general controls or normal power-off in this progress test.
+Record status partial completion, not failure or full lifecycle clearance.
+
+Private .private/card-staging/20261122-worker-progress-test-01/staging.json updated;
+source-safe evidence/20261122-worker-progress-hardware-result.json. No card writes
+or new staging in this result-recording turn. Active progress module remains;
+working B preserved Z7APP.POST-HOST-B.disabled. No firmware update needed.
+Next ask normal power-off/controls confirmation, then separately choose/review
+one next checkpoint (read-only restore or storage-free LCD menu) and approve
+staging. Do not auto-activate full persistent LCD or repeat retired probes.
+
 ## Worker-progress module approved/staged/ejected - November 22, 2026
 
 Owner returned, asked ready for test/flash, then explicitly approved progress

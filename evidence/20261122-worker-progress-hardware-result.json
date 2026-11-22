@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-22",
+  "module_sha256": "3b5aced1e58f56ebad9d5f945452254d82614549e6904acb5ff3d460909e51a9",
+  "readings": [
+    4,
+    6
+  ],
+  "owner_responses": [
+    "off w 0004",
+    "w0006"
+  ],
+  "visible_worker_progress_verified": true,
+  "callback_execution_directly_observed_via_counter": true,
+  "gui_counter_sampling_observed": true,
+  "exact_elapsed_time_measured": false,
+  "full_controls_and_poweroff_confirmed": false,
+  "file_io_tested": false,
+  "card_changed_this_turn": false
+}
