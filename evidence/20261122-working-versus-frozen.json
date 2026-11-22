@@ -1,0 +1,247 @@
+{
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "working_sha256": "53334536d00ed18ea9d80d36dd736d6341fd1943da674f6e0fd513112f226195",
+  "failed_sha256": "0714fe8491b4e802406ed0867f0c5ecacc3ceb4c573feecceb742364b2c4bf95",
+  "footprints": {
+    "working": {
+      "file_bytes": 5260,
+      "image_bytes": 5120,
+      "bss_bytes": 2216,
+      "entry_offset": 1388,
+      "api_minimum_bytes": 20,
+      "relocations": 19
+    },
+    "failed": {
+      "file_bytes": 6628,
+      "image_bytes": 6464,
+      "bss_bytes": 2260,
+      "entry_offset": 2164,
+      "api_minimum_bytes": 44,
+      "relocations": 25
+    }
+  },
+  "shared_source_hashes_equal": {
+    "z7-native-modules/plugins/battery_grid_menu_checkpoint.c": false,
+    "z7-native-modules/plugins/battery_percent.c": true,
+    "z7-native-modules/plugins/battery_sample.h": true,
+    "z7-native-modules/plugins/grids_histogram.c": false,
+    "z7-native-modules/sdk/display.h": true,
+    "z7-native-modules/sdk/module.h": true,
+    "z7-native-modules/sdk/module.ld": true
+  },
+  "worker_comparison": {
+    "working": {
+      "normal-exclusive-store": {
+        "returned": true,
+        "registered_worker": false,
+        "worker_entries": 0,
+        "settings_operations": [],
+        "injected_attempts": 0,
+        "stopped_pc": "0x503ff000",
+        "registration_sequence": [
+          {
+            "name": "display",
+            "module_call_offset": 1496
+          },
+          {
+            "name": "grid_menu",
+            "module_call_offset": 1508
+          }
+        ]
+      },
+      "failed-exclusive-store": {
+        "returned": true,
+        "registered_worker": false,
+        "worker_entries": 0,
+        "settings_operations": [],
+        "injected_attempts": 0,
+        "stopped_pc": "0x503ff000",
+        "registration_sequence": [
+          {
+            "name": "display",
+            "module_call_offset": 1496
+          },
+          {
+            "name": "grid_menu",
+            "module_call_offset": 1508
+          }
+        ]
+      }
+    },
+    "failed": {
+      "normal-exclusive-store": {
+        "returned": true,
+        "registered_worker": true,
+        "worker_entries": 1,
+        "settings_operations": [
+          "open",
+          "read",
+          "close"
+        ],
+        "injected_attempts": 0,
+        "stopped_pc": "0x503ff000",
+        "registration_sequence": [
+          {
+            "name": "display",
+            "module_call_offset": 2242
+          },
+          {
+            "name": "grid_menu",
+            "module_call_offset": 2252
+          },
+          {
+            "name": "worker",
+            "module_call_offset": 2262
+          }
+        ]
+      },
+      "failed-exclusive-store": {
+        "returned": false,
+        "registered_worker": true,
+        "worker_entries": 0,
+        "settings_operations": [],
+        "injected_attempts": 19986,
+        "stopped_pc": "0x11fa585c",
+        "registration_sequence": [
+          {
+            "name": "display",
+            "module_call_offset": 2242
+          },
+          {
+            "name": "grid_menu",
+            "module_call_offset": 2252
+          },
+          {
+            "name": "worker",
+            "module_call_offset": 2262
+          }
+        ]
+      }
+    },
+    "failed-without-registration": {
+      "normal-exclusive-store": {
+        "returned": true,
+        "registered_worker": false,
+        "worker_entries": 0,
+        "settings_operations": [],
+        "injected_attempts": 0,
+        "stopped_pc": "0x503ff000",
+        "registration_sequence": [
+          {
+            "name": "display",
+            "module_call_offset": 2242
+          },
+          {
+            "name": "grid_menu",
+            "module_call_offset": 2252
+          }
+        ]
+      },
+      "failed-exclusive-store": {
+        "returned": true,
+        "registered_worker": false,
+        "worker_entries": 0,
+        "settings_operations": [],
+        "injected_attempts": 0,
+        "stopped_pc": "0x503ff000",
+        "registration_sequence": [
+          {
+            "name": "display",
+            "module_call_offset": 2242
+          },
+          {
+            "name": "grid_menu",
+            "module_call_offset": 2252
+          }
+        ]
+      }
+    },
+    "failed-with-empty-worker": {
+      "normal-exclusive-store": {
+        "returned": true,
+        "registered_worker": true,
+        "worker_entries": 1,
+        "settings_operations": [],
+        "injected_attempts": 0,
+        "stopped_pc": "0x503ff000",
+        "registration_sequence": [
+          {
+            "name": "display",
+            "module_call_offset": 2242
+          },
+          {
+            "name": "grid_menu",
+            "module_call_offset": 2252
+          },
+          {
+            "name": "worker",
+            "module_call_offset": 2262
+          }
+        ]
+      },
+      "failed-exclusive-store": {
+        "returned": false,
+        "registered_worker": true,
+        "worker_entries": 0,
+        "settings_operations": [],
+        "injected_attempts": 19986,
+        "stopped_pc": "0x11fa585c",
+        "registration_sequence": [
+          {
+            "name": "display",
+            "module_call_offset": 2242
+          },
+          {
+            "name": "grid_menu",
+            "module_call_offset": 2252
+          },
+          {
+            "name": "worker",
+            "module_call_offset": 2262
+          }
+        ]
+      }
+    }
+  },
+  "selection_atomic_comparison": {
+    "working": {
+      "exclusive_store_offsets": [],
+      "returned": true,
+      "normal_on_off_setter_calls": 1,
+      "injected_failures": 0
+    },
+    "failed": {
+      "exclusive_store_offsets": [
+        5206
+      ],
+      "returned": false,
+      "normal_on_off_setter_calls": 0,
+      "injected_failures": 1999
+    }
+  },
+  "in_memory_changes": {
+    "no_registration": {
+      "image_offset": 2262,
+      "code_bytes_changed": 2
+    },
+    "empty_worker": {
+      "image_offset": 2304,
+      "code_bytes_changed": 4
+    },
+    "header_changes": "CRC only",
+    "file_size_bss_and_relocations_unchanged": true
+  },
+  "source_sha256": "a8cb5bd3b3842944143f8bbe5a12a3aca5ee4f6ae7883663349c4c0dbe08fca5",
+  "card_written": false,
+  "hardware_diagnostics_generated": false,
+  "firmware_image_generated": false,
+  "hardware_cause_established": false,
+  "limits": [
+    "Exclusive failure is injected; no target PC or physical monitor capture",
+    "Both same-size variants exist in memory only and were not tested on camera",
+    "UI/kernel/filesystem/telemetry/On-Off setter boundaries supplied",
+    "Menu-selection loop cannot explain a boot freeze unless that handler ran"
+  ],
+  "frozen_review_host_hashes_verified_equal": true,
+  "controlled_execution_cases": 10
+}

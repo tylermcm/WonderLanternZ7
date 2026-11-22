@@ -1,5 +1,37 @@
 # Laptop handoff — October 20, 2026
 
+## Exact working/frozen comparison completed - November 22, 2026
+
+User requested direct comparison of last working53334536... six-grid module with
+frozen0714fe84... read-only restore. Same installed7d7356e7... host confirmed in
+both frozen review manifests. Battery/sample source identical. New restore adds
+worker registration, post-paint GUI flag, file/decoder, menu entry/label hooks,
+and atomic fetch-add in selection handlers. File5260->6628; BSS2216->2260(+44,
+accounted for by restore globals/file context/staging). No new native task,
+custom settings page/dispatcher/key/mask changes; host source weak-CAS fix NOT
+installed and not used in comparison.
+
+Comparison tool executes exact failed binary plus two in-memory same-size controls:
+2-byte registration call skip/ack at image2262 vs4-byte worker return stub at2304.
+CRC only other change; size/entry/BSS/relocations/rest unchanged. Under injected
+host STREX failure, exact working and registration-skip return; original failure
+and empty-worker variants stall BEFORE callback and with ZERO file I/O. Normal
+exclusive run verifies original worker open/read/close and stub no-I/O. Ten
+controlled cases incl menu handlers. No diagnostic packets written/staged.
+
+Important additional delta: failed grid selection handlers contain a second
+LDREX/STREX loop from restore_selected's atomic increment. Center STREX image5206
+stalls before setter under failure injection; old handler has no exclusive and
+returns. This cannot explain boot freeze unless a selection handler ran. GUI-ready
+check occurs inside worker callback, AFTER host guard; cannot protect against
+host guard spin. Stronger localization, NOT physical cause confirmation.
+
+Read WORKING_VS_FROZEN_COMPARISON.md and evidence/20261122-working-versus-frozen.json.
+Card unchanged: restored working six-grid active, all failed payloads/seed intact.
+No new flash/trial authorization. Direct comparison and Python compile checks
+pass; graph refreshed. No full root tests repeated for comparison-only code/docs.
+No live process or new installable artifact.
+
 ## Working module restored; worker-guard failure path localized offline - November 22, 2026
 
 Owner authorized "yes and lets try to pin down the failure point". Exact previous
