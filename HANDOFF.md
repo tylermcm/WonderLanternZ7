@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## SD-only manual guard probe ready; waiting for card - November 22, 2026
+
+Owner requests "lets test it out see if we can find if its one ofthose". Prepared
+SD-only one-attempt probe, NO host firmware change. Review WORKER_GUARD_ONCE_REVIEW.md.
+Exact5664-byte module83ab23cadd63e902fb252cbb563f8b262ceac9e2e9ec332c0e0344be4ce2e99c.
+Private build/review20261122-worker-guard-once-01. User request authorizes this
+bounded SD diagnostic; no firmware flash. NOT STAGED: E reader has no media.
+
+No worker registration. Working battery/grid base plus selection/label hooks.
+Runtime checks API register-worker pointer11fa66f7 and28 guard-code bytes; mismatch
+shows Center [EX host] and refuses probe. Boot/paint/menu entry do not attempt it.
+Owner selects Center [EX run] ONCE; registration words must be0; one LDREX on
+same guard a97000cc, ifzero one STREX writing samezero, CLREX, return status.
+No retries. Subsequent selections do not repeat. Reopen menu for EX OK/fail/busy.
+A freeze specifically on selection narrows manual access path but not exact PC.
+Execution context/value differ from host worker; EX OK does not clear worker path.
+No exception handler; probe can still freeze on access fault/stall.
+
+Build reproduced twice, five controlled paths pass (success/failure/guardbusy/
+registeredworker/mismatchedhost), manual-only/one-attempt/resultlabels/guardword
+preservation/no-I/O checks;38 battery checks pass. Python compile passed. Root/full
+geometry suites not repeated; shared base unchanged. Graph refreshed separately.
+Source-safe evidence evidence/20261122-worker-guard-once.json. No card changed.
+B remains disabled, A and earlier working files intact. Camera normal without card.
+
 ## Matched freeze localized to leading pre-callback suspect - November 22, 2026
 
 Owner confirms camera responds normally without card; asks to find exact origin.

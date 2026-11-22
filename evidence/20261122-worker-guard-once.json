@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "module_sha256": "83ab23cadd63e902fb252cbb563f8b262ceac9e2e9ec332c0e0344be4ce2e99c",
+  "file_bytes": 5664,
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "cases": {
+    "healthy": {
+      "label": "Center [EX OK]",
+      "probe_attempts": 1,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [
+        [
+          2842689740,
+          4,
+          0
+        ]
+      ],
+      "no_worker_registered_by_module": true
+    },
+    "store-fails": {
+      "label": "Center [EX fail]",
+      "probe_attempts": 1,
+      "injected_store_failures": 1,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "no_worker_registered_by_module": true
+    },
+    "guard-busy": {
+      "label": "Center [EX busy]",
+      "probe_attempts": 1,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "no_worker_registered_by_module": true
+    },
+    "worker-registered": {
+      "label": "Center [EX busy]",
+      "probe_attempts": 0,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "no_worker_registered_by_module": true
+    },
+    "wrong-host-signature": {
+      "label": "Center [EX host]",
+      "probe_attempts": 0,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "no_worker_registered_by_module": true
+    }
+  },
+  "battery_checks": 38,
+  "exclusive_instruction_count": {
+    "ldrex": 1,
+    "strex": 1
+  },
+  "no_retry_branch": true,
+  "card_written": false,
+  "hardware_tested": false,
+  "limits": [
+    "Native UI, telemetry, memory and filesystem services supplied",
+    "One store failure injected; physical attributes/exceptions unobserved",
+    "Probe runs in menu context and stores zero back; host worker acquires one in task context",
+    "No fault recovery handler; an exclusive-access exception could still freeze the camera"
+  ]
+}
