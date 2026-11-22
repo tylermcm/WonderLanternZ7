@@ -1,5 +1,18 @@
 # Original Z7 startup failure: offline findings
 
+Latest hardware evidence: battery, fixed-thirds and native six-grid profiles
+work by owner report. Post-GUI read-only restore failed with the same input/power
+freeze. Owner saw the percentage but controls were already frozen; no responsive
+interval or SD marker established. Camera normal without card. Failed restore
+module quarantined; all files and seed preserved, safe eject verified.
+
+All three failed SD profiles register a worker; the three working feature
+profiles do not. The earlier settings-disabled profile kept a return-zero worker
+and still froze. This is a source-level correlation, not proof of dispatch or
+causation, and it argues against treating file reads as the established cause.
+Worker registration/dispatch/task lifetime needs offline isolation before further
+I/O trials. No new hardware trial prepared. Full release remains withdrawn.
+
 November 21, 2026. Full release withdrawn. All card trial files disabled.
 No firmware or card deployment authorized by this review.
 

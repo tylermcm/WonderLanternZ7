@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "module_sha256": "0714fe8491b4e802406ed0867f0c5ecacc3ceb4c573feecceb742364b2c4bf95",
+  "seed_sha256": "a0b38b760a81b292131af5944fa3ade0ce48bc9e21e9a424b712dc2368567ae0",
+  "result": "FAILED hardware trial; withdrawn",
+  "owner_quote": "that caused it to freeze like it did the first time. no input ability until i removed the card, same with the power swith not working either until i pull the battery",
+  "owner_camera_without_card": "responds normally",
+  "battery_marker_before_freeze": "Owner: it appeared but it was already frozen",
+  "sd_marker_observed": "not reported",
+  "worker_or_file_read_execution_proven": false,
+  "root_cause_established": false,
+  "failed_module_and_seed_match_staged_hashes": true,
+  "quarantine_complete": true,
+  "safe_eject_verified": true,
+  "seed_preserved": true,
+  "working_baselines_preserved": true,
+  "no_active_root_bin": true,
+  "firmware_flashed": false,
+  "new_file_io_trials_authorized": false,
+  "limits": [
+    "Recovery details preserved as reported; exact sequence/timing not established",
+    "New variant adds worker registration and post-GUI I/O; cannot attribute freeze to a particular instruction or file operation",
+    "Earlier settings-disabled full module also froze; no single cause established"
+  ],
+  "percentage_visible_while_frozen": true,
+  "responsive_interval_before_freeze_established": false,
+  "profile_correlation": "All three failed SD profiles register a worker; three feature-working profiles do not; source correlation, not causal proof"
+}

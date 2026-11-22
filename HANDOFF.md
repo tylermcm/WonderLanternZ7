@@ -1,5 +1,44 @@
 # Laptop handoff — October 20, 2026
 
+## Read-only restore FAILED; quarantined, camera normal without card - November 21, 2026
+
+Owner reports same no-input freeze, inputs returning on card removal; power switch
+unresponsive until battery pull. Exact order/timing not independently established.
+Owner then confirms card connected and camera responds normally without card.
+WITHDRAW read-only restore candidate. No more file-I/O trials/new flashes. Do not
+call codec/fault/emulator success hardware clearance. No [SD] marker or worker/
+file-read execution established. Owner clarified: "it appeared but it was already frozen". Percentage visible
+with controls already frozen; no responsive-before-freeze interval established.
+No SD marker reported; worker/read execution remains unproven. New worker/
+file-I/O profile is implicated by comparison, but exact failing stage remains
+unknown. Earlier no-settings full init failure remains separate evidence.
+
+Same card/nine named hashes verified, all backed up/readback verified privately:
+.private/card-backups/20261121-grid-restore-freeze-01. Native Move-Item renamed
+ONLY Z7APP.BIN -> Z7APP.RESTORE-RO.disabled. All nine named files/seed/baselines
+unchanged; other metadata/catalog preserved except rename. No active root BIN.
+Safe eject VERIFIED; no firmware flash, restore, deletion/format. Quarantine
+source-only evidence and failure result recorded. Frozen review preserved with
+adjacent withdrawal marker. Current card: all modules disabled, inert seed intact.
+Installed host remains modified; normal no-card behavior is owner-confirmed.
+
+Cross-profile clue (source correlation only): all three failed profiles
+(full LCD, settings-I/O-disabled with return-zero worker, read-only restore)
+register a worker; battery-only, fixed-thirds and six-grid working profiles do
+not. This weakens a claim that file reads alone explain the common failures.
+Next offline target should separate worker registration/dispatch/lifetime from
+I/O; no further probe is prepared or authorized. Native task traces are absent.
+
+Previously working six-grid file remains Z7APP.GRID-MENU-WORKING.disabled,
+5260bytes SHA53334536d00ed18ea9d80d36dd736d6341fd1943da674f6e0fd513112f226195.
+Proposed restoration, NOT yet approved: verify same card/no active BIN and exact
+working/failure/seed hashes; exclusively copy that known working payload to
+Z7APP.BIN, leaving every disabled file and seed intact, flush/readback/hash and
+verify existing metadata/catalog then safely eject. No firmware update; no new
+feature or I/O probe. Need explicit restoration approval as reviewed stop plan
+forbids automatic active-module restore. Full release remains withdrawn.
+Docs/preservation-only update, no code/tests rerun or live process.
+
 ## Read-only restore module and seed staged; safely ejected - November 21, 2026
 
 Owner explicitly approved "go ahead" for exact read-only restore module+seed.

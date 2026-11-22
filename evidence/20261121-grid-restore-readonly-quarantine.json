@@ -1,0 +1,17 @@
+{
+  "complete": true,
+  "renamed_from": "Z7APP.BIN",
+  "renamed_to": "Z7APP.RESTORE-RO.disabled",
+  "diagnostic_sha256": "0714fe8491b4e802406ed0867f0c5ecacc3ceb4c573feecceb742364b2c4bf95",
+  "all_nine_named_hashes_verified": true,
+  "seed_preserved": true,
+  "working_baselines_preserved": true,
+  "existing_file_count": 230,
+  "existing_metadata_unchanged_except_rename": true,
+  "catalog_unchanged": true,
+  "no_active_root_bin": true,
+  "safe_eject_verified": true,
+  "firmware_flashed": false,
+  "camera_without_card_owner_result": "responds normally",
+  "private_quarantine_record_sha256": "3ed70c5f88a4f03de98a5453d87ac8828f82a89db89902dd7ce7fc60eb268486"
+}

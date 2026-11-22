@@ -27,6 +27,8 @@
   "updater_disabled": true,
   "eject_evidence": "No mounted card partition, no media bytes and inaccessible root",
   "private_staging_record_sha256": "18ed5749f8bf2d0e4e2c26d0b974886605a3ba0ba59351050abe03251b79af31",
-  "hardware_result": "pending",
-  "hardware_test_authorized": true
+  "hardware_result": "FAILED: same input/power freeze by owner report; camera normal without card",
+  "hardware_test_authorized": true,
+  "hardware_result_evidence": "evidence/20261121-grid-restore-readonly-hardware-result.json",
+  "quarantine_status": "Complete: failed module renamed Z7APP.RESTORE-RO.disabled; seed preserved; safe eject verified"
 }

@@ -1,5 +1,12 @@
 # Original Z7 LCD first-release installation assessment
 
+Latest read-only restore trial FAILED with input/power freeze. Percentage visible
+while already frozen, worker/read execution unproven. Failed code quarantined,
+seed and all baselines preserved, card safely ejected; no active module/update
+BIN. Camera normal without card. No new firmware or I/O test authorized.
+Earlier battery/six-grid version is available for explicit agreed restoration.
+See GRID_RESTORE_READONLY_TEST_ASSESSMENT.md and hardware failure evidence.
+
 Separate next checkpoint under review: battery-only SD diagnostic described in
 BATTERY_HARDWARE_TEST_ASSESSMENT.md. This does not clear the full LCD release,
 require a firmware flash, or authorize card staging/testing. The prior ownership

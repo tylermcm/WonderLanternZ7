@@ -1,5 +1,16 @@
 # Read-only grid restore: SD test assessment
 
+**WITHDRAWN: hardware test FAILED.** Owner reports the same input/power freeze,
+card-removal recovery and battery pull. Owner confirms camera normal without card.
+Failed module now preserved as Z7APP.RESTORE-RO.disabled; all nine named files
+and inert seed hash-verified/backed up, metadata/catalog preserved and safe eject
+verified. No active root BIN remains. Owner saw the percentage while controls were already frozen; no prior responsive
+interval or SD marker established. Worker/read execution and cause unproven.
+No further file-I/O trial or flash. Frozen bundle remains intact with adjacent
+withdrawal record. See evidence/20261121-grid-restore-readonly-hardware-result.json.
+Restoration of the previous working six-grid payload requires explicit approval;
+it has not been performed. This supersedes all pending/success-gate wording below.
+
 Owner subsequently approved "go ahead". Exact module and seed now staged,
 flushed/readback/hash verified and safely ejected. Working six-grid module
 preserved as Z7APP.GRID-MENU-WORKING.disabled; all prior baselines/trials/settings
