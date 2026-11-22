@@ -1,0 +1,292 @@
+{
+  "passed": true,
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "probe_module_sha256": "428a947e16a756a659a0a88df6dbed67f8ca06d3378ea41baae3efd4aa5db83e",
+  "installed_guard": {
+    "entry": 301619156,
+    "load": 301619282,
+    "store": 301619288,
+    "store_bytes": 4,
+    "retry_branch": 301619294,
+    "clear": 301619318
+  },
+  "results": {
+    "installed": {
+      "healthy": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 1,
+          "store_attempts": 1,
+          "injected_failures": 0,
+          "worker_running": 0
+        }
+      ],
+      "busy": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 0,
+          "injected_failures": 0,
+          "worker_running": 1
+        }
+      ],
+      "no-worker": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 0,
+          "injected_failures": 0,
+          "worker_running": 0
+        }
+      ],
+      "recursive": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 1,
+          "store_attempts": 1,
+          "injected_failures": 0,
+          "worker_running": 0
+        }
+      ],
+      "transient-failure": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 1,
+          "store_attempts": 3,
+          "injected_failures": 2,
+          "worker_running": 0
+        },
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 2,
+          "store_attempts": 4,
+          "injected_failures": 2,
+          "worker_running": 0
+        },
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 3,
+          "store_attempts": 5,
+          "injected_failures": 2,
+          "worker_running": 0
+        }
+      ],
+      "permanent-failure": [
+        {
+          "returned": false,
+          "pc": "0x11fa585e",
+          "callback_calls": 0,
+          "store_attempts": 805,
+          "injected_failures": 805,
+          "worker_running": 0
+        }
+      ]
+    },
+    "in-memory-single-attempt": {
+      "healthy": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 1,
+          "store_attempts": 1,
+          "injected_failures": 0,
+          "worker_running": 0
+        }
+      ],
+      "busy": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 0,
+          "injected_failures": 0,
+          "worker_running": 1
+        }
+      ],
+      "no-worker": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 0,
+          "injected_failures": 0,
+          "worker_running": 0
+        }
+      ],
+      "recursive": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 1,
+          "store_attempts": 1,
+          "injected_failures": 0,
+          "worker_running": 0
+        }
+      ],
+      "transient-failure": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 1,
+          "injected_failures": 1,
+          "worker_running": 0
+        },
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 2,
+          "injected_failures": 2,
+          "worker_running": 0
+        },
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 1,
+          "store_attempts": 3,
+          "injected_failures": 2,
+          "worker_running": 0
+        }
+      ],
+      "permanent-failure": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 1,
+          "injected_failures": 1,
+          "worker_running": 0
+        }
+      ]
+    },
+    "compiled-weak-cas": {
+      "healthy": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 1,
+          "store_attempts": 1,
+          "injected_failures": 0,
+          "worker_running": 0
+        }
+      ],
+      "busy": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 0,
+          "injected_failures": 0,
+          "worker_running": 1
+        }
+      ],
+      "no-worker": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 0,
+          "injected_failures": 0,
+          "worker_running": 0
+        }
+      ],
+      "recursive": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 1,
+          "store_attempts": 1,
+          "injected_failures": 0,
+          "worker_running": 0
+        }
+      ],
+      "transient-failure": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 1,
+          "injected_failures": 1,
+          "worker_running": 0
+        },
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 2,
+          "injected_failures": 2,
+          "worker_running": 0
+        },
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 1,
+          "store_attempts": 3,
+          "injected_failures": 2,
+          "worker_running": 0
+        }
+      ],
+      "permanent-failure": [
+        {
+          "returned": true,
+          "pc": "0x503ff000",
+          "callback_calls": 0,
+          "store_attempts": 1,
+          "injected_failures": 1,
+          "worker_running": 0
+        }
+      ]
+    }
+  },
+  "source_sha256": "a87fa83b46972c26ffb0aa7da220d7a08369ca6e68027251ccfbee7358269387",
+  "simulation": "STREX failure status supplied; failed store skipped; instruction cap4096",
+  "hardware_cause_established": false,
+  "physical_memory_attributes_verified": false,
+  "card_written": false,
+  "firmware_image_generated": false,
+  "limits": [
+    "No evidence yet that physical STREX fails at this address",
+    "A simulated busy loop is not a reproduction of whole-camera input freeze",
+    "Compiled blob tested after fixture load, not complete rebuilt firmware boot"
+  ],
+  "compiled_host_blob_sha256": "c117bbeb1141d60e0b3d909aee6571baa5888a48e5a6237903da351d0f19fbed",
+  "compiled_guard": {
+    "entry": 301619156,
+    "load": 301619278,
+    "store": 301619292,
+    "store_bytes": 4,
+    "retry_branch": null,
+    "clear": 301619284
+  },
+  "root_tests": 99,
+  "compiled_blob_scope": {
+    "before_reproduces_installed_blob": true,
+    "both_blob_bytes": 4593,
+    "all_function_addresses_unchanged": true,
+    "changed_bytes": 52,
+    "first_change": "0x11fa5846",
+    "last_change": "0x11fa5879",
+    "changes_confined_to_worker_tick": true
+  },
+  "assisted_stock_cache_classification": {
+    "guard_word": "0xa97000cc",
+    "table": "0xa29dbf18",
+    "range_start": "0xa9700000",
+    "range_end": "0xac400000",
+    "native_range_flag": 1,
+    "native_cache_helper": "0x101e3e2a",
+    "helper_result_would_be_cached": false,
+    "physical_mmu_verified": false,
+    "whole_table_not_published": true
+  },
+  "primary_reference": "https://arm-software.github.io/CMSIS_6/main/Core_A/mmu_c_pg.html",
+  "reference_interpretation": "Arm documents uncached exclusive access reliance on global monitor support; actual camera support/attributes unverified"
+}

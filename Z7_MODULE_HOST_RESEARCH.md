@@ -1,5 +1,14 @@
 # Original-Z7 module host probe
 
+November22 hardware-failure investigation: three worker-free SD feature profiles
+work by owner report; three worker-registered profiles froze. The installed
+worker guard has an unbounded exclusive-store retry before callback entry.
+Fault injection reproduces that loop; stock assisted firmware classifies its
+address as noncached. Weak-CAS source hardening is offline only, not installed
+or cleared to flash. See [the exact investigation](WORKER_GUARD_FAILURE_REVIEW.md).
+Working six-grid module restored; physical root cause and recovery remain open.
+
+
 ## Optional resident touch API92 - November 21, 2026
 
 `--touch-hooks` requires the complete navigation profile and adds `sdk/touch.h`.

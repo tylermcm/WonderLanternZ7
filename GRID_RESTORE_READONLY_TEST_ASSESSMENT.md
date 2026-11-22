@@ -1,5 +1,11 @@
 # Read-only grid restore: SD test assessment
 
+November22: owner approved restoration of the earlier working six-grid/battery
+module. Exact5260-byte SHA53334536...12f226195 now active; failed restore code,
+seed and every baseline preserved. Full readback/metadata/catalog/safe eject
+verified. Owner has not tested restored card yet. No firmware change. Separate
+offline worker-guard findings are in WORKER_GUARD_FAILURE_REVIEW.md.
+
 **WITHDRAWN: hardware test FAILED.** Owner reports the same input/power freeze,
 card-removal recovery and battery pull. Owner confirms camera normal without card.
 Failed module now preserved as Z7APP.RESTORE-RO.disabled; all nine named files

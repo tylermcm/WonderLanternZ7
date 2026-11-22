@@ -5,6 +5,8 @@
 /* Additive44-byte ARM API. One callback may be registered during initialization.
  * It runs on the resident module-loader task after each native delay(1000),
  * only following successful initialization. Delay units are not milliseconds.
+ * Dispatch makes one weak exclusive acquisition attempt; contention/spurious
+ * failure skips that tick rather than spinning. A later tick may try again.
  * No paint/menu callback runs it, and recursive dispatch is suppressed.
  * The callback must bound its own work and coordinate shared module state;
  * this API supplies neither card readiness, shutdown flushing nor an I/O lock.

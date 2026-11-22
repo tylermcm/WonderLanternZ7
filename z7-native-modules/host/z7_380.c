@@ -721,7 +721,12 @@ void z7_module_worker_tick(void)
         !(s->worker_callback & 1) || s->resident_image_size > s->memory_size ||
         !within(s->worker_callback & ~1u, s->image, s->resident_image_size, 2)) return;
     uint32_t expected = 0;
-    if (!__atomic_compare_exchange_n(&s->worker_running, &expected, 1, 0,
+    /* One acquisition attempt per tick. A strong CAS can compile to an
+     * unbounded STREX retry loop before the callback is entered. Weak failure
+     * leaves this tick idle; the resident task delays before trying again.
+     * Memory attributes/exclusive support on hardware still need validation.
+     */
+    if (!__atomic_compare_exchange_n(&s->worker_running, &expected, 1, 1,
                                     __ATOMIC_ACQUIRE, __ATOMIC_RELAXED)) return;
     ((void (*)(void))(uintptr_t)s->worker_callback)();
     __atomic_store_n(&s->worker_running, 0, __ATOMIC_RELEASE);

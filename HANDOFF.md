@@ -1,5 +1,38 @@
 # Laptop handoff — October 20, 2026
 
+## Working module restored; worker-guard failure path localized offline - November 22, 2026
+
+Owner authorized "yes and lets try to pin down the failure point". Exact previous
+working six-grid/battery5260-byte module SHA53334536...12f226195 exclusively copied
+to Z7APP.BIN. Same card/nine prior named hashes verified, private backups/readback,
+230 existing file metadata/catalog unchanged; all disabled files/inert seed intact.
+Safe eject VERIFIED. No firmware flash or new trial. Private restoration record:
+.private/card-staging/20261122-restore-working-grid-menu-01. Owner reply to ordinary
+restored-card check: "Not tested yet". Do not claim post-restore hardware test pass.
+
+See WORKER_GUARD_FAILURE_REVIEW.md. Source reproduced installed host blob exactly
+(4593bytes SHA6ef05fb5...2566fd3). Installed worker_tick strong CAS retries STREX at
+0x11fa5858 via BNE0x11fa585e to LDREX0x11fa5852 on guard0xa97000cc BEFORE module
+callback0x11fa5868. Fault injection (not physical proof):805 failed stores within
+4096 instructions, zero callback calls, PCstays585e. One-attempt branch and actual
+compiled weak-CAS source return after one failure. Healthy/busy/no-worker/recursive/
+transient tests pass. Without worker registration the path reaches no STREX, matching working profiles.
+Source now weak CAS, SDK documents skipped ticks; OFFLINE ONLY, NOT installed.
+Reproduced compiled blob4593bytes SHAc117bbeb...f19fbed; all function addresses
+unchanged,52 byte differences confined to worker tick. No EG/full image generated.
+
+Stock assisted-QEMU boot range table classifies guard address in noncached range
+0xa9700000..0xac400000 (flag1). Native helper101e3e2a agrees. This is software
+classification, not physical MMU/monitor capture. Arm documentation supports
+uncached/global-monitor failure mechanism. No guessed alias/address change.
+Weak CAS prevents demonstrated spin but cannot make callbacks run if stores
+always fail, or cure a data abort. Root physical failure remains unconfirmed.
+Next boundary: resolve physical memory binding/execution evidence before any host
+flash or more I/O trials. Full release/restore candidate remain withdrawn.
+99 root tests pass; guarded fault cases and recursion/register checks pass;
+stock QEMU inspected once and closed. Code graph refreshed, private dumps/binaries
+remain private. No live process/new hardware authorization.
+
 ## Read-only restore FAILED; quarantined, camera normal without card - November 21, 2026
 
 Owner reports same no-input freeze, inputs returning on card removal; power switch

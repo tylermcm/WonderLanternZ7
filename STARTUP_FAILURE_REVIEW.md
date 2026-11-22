@@ -1,5 +1,13 @@
 # Original Z7 startup failure: offline findings
 
+November22 update: exact working six-grid module restored and safely ejected
+with owner consent; post-restore camera check not yet done. A concrete worker
+pre-callback STREX retry loop is reproduced under fault injection. Stock assisted
+firmware classifies its guard address as noncached. Source weak-CAS hardening is
+verified offline but NOT installed, and physical root cause remains unconfirmed.
+Read WORKER_GUARD_FAILURE_REVIEW.md for exact PCs, evidence and limits before
+continuing earlier hypotheses below. No new flash or I/O trial is authorized.
+
 Latest hardware evidence: battery, fixed-thirds and native six-grid profiles
 work by owner report. Post-GUI read-only restore failed with the same input/power
 freeze. Owner saw the percentage but controls were already frozen; no responsive

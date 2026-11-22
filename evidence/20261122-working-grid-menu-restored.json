@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "timestamp": "2026-11-22T07:22:10.365114+00:00",
+  "authorization": "yes and lets try to pin down the failure point",
+  "scope": "Restore exact previously working battery/six-grid SD module only; no new trial or firmware update",
+  "module_sha256": "53334536d00ed18ea9d80d36dd736d6341fd1943da674f6e0fd513112f226195",
+  "module_bytes": 5260,
+  "complete": true,
+  "safe_eject_verified": true,
+  "firmware_flashed": false,
+  "full_readback_verified": true,
+  "file_flushed": true,
+  "only_working_module_added": true,
+  "all_disabled_payloads_and_seed_preserved": true,
+  "settings_preserved": true,
+  "existing_file_count": 230,
+  "existing_metadata_unchanged": true,
+  "catalog_unchanged": true,
+  "updater_disabled": true,
+  "private_staging_record_sha256": "1cedd0477ac1be61d149f07409f83ff05fd24796776999285913c5b9a83423a9",
+  "owner_post_restore_result": "Not tested yet"
+}
