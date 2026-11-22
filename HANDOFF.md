@@ -1,5 +1,89 @@
 # Laptop handoff — October 20, 2026
 
+## Ordinary-read control staged/ejected - November 22, 2026
+
+Owner "ok lets get to it" authorizes read control first. Exact5664-byte module
+10864694f04424d479adc4b61cc99dd7e3b512e70129621595f547428f888438 staged as
+Z7APP.BIN on same verified Sony card. No host firmware change or flash. All235
+existing files metadata/catalog preserved, all prior payloads/seed contents and
+configuration presence verified/backed up. Exclusive create/flush/full readback
+passed. Safe eject VERIFIED. Private review/build/card-staging20261122-worker-guard-read-01;
+backups .private/card-backups/20261122-before-worker-guard-read-01.
+
+Same manual Center trigger and code/API signature validation, no worker. Probe
+is ordinary volatile LDR only on a97000cc, no host writes and no LDREX/STREX/CLREX.
+Zero guard -> Center [RD OK]; registered worker/nonzero guard -> [RD busy];
+signature mismatch -> [RD host]. Initial [RD run], incomplete marker [RD begun].
+Runs only once when Center selected; other choices/menu-open/boot do not probe.
+Next owner: normal coldstart NO Update, open grid menu, select Center [RD run]
+ONCE; reopen WITHOUT selecting again and report label/responsiveness/power-off.
+If stalls, wait for previously observed ~12s recovery if it occurs and inspect
+label before any battery pull; do not repeat. No further exclusive trial staged.
+
+Build reproduced twice; four controlled cases pass, manual-only read-count0/1,
+no retries/host writes/worker/I-O and label checks;38 battery policy checks pass.
+Python compile/diff checks pass; graph refreshed (see private graph log). Root
+suite/full geometry not repeated for shared unchanged base. Hardware pass pending.
+Read WORKER_GUARD_READ_REVIEW.md; source-safe evidence20261122-worker-guard-read.json.
+
+## Probe label unavailable; battery removed - November 22, 2026
+
+Owner clarifies they do not remember seeing any change except camera freezing,
+and battery was already removed. No EX begun/OK/fail label was observed or
+confirmed. Do not infer callback completion, exception or exact failing opcode.
+Volatile marker unavailable; do not repeat withdrawn combined probe for it.
+Next useful diagnostic design separates exclusive load and store, with a plain
+read control and explicit progress markers; no new trial staged/authorized by
+this clarification. Card remains safely ejected with guard-once disabled; all
+files preserved, no active root BIN. Prior ~12s recovery remains owner report.
+
+## Stalled manual probe quarantined and ejected - November 22, 2026
+
+Same Sony card identified. All named prior bytes compared to pre-probe backup,
+new private backups verified; only Z7APP.BIN renamed to Z7APP.GUARD-ONCE.disabled.
+235 existing metadata/catalog unchanged except rename, no active root BIN,
+working A and all earlier files intact. Safe eject VERIFIED. Record/backups:
+.private/card-backups/20261122-worker-guard-once-freeze-01/quarantine.json.
+No firmware flash/new trial. Pending owner label from already recovered session;
+do not ask to reboot/repeat to recover that observation. Source-safe result:
+evidence/20261122-worker-guard-once-hardware-result.json. Existing emulator audit
+still passes but does not reproduce the physical stall; no new code/test run
+needed for recording owner result and verified quarantine.
+
+## Manual single attempt stalls; owner reports ~12-second recovery - November 22, 2026
+
+Owner: immediate freeze/slight screen dim on pressing Center probe. Battery pull
+is an alternative, but waiting about12s closes menu/restores FULL control with
+card still inserted. Do not conflate with proven permanent spin or data abort.
+Exact post-recovery label pending; asked owner to reopen menu only WITHOUT
+selecting again, and only if already recovered without battery removal. No
+repeat diagnostic authorized. Candidate83ab23... WITHDRAWN. Reader currently has
+card media; preserve/disable before future boot, record quarantine separately.
+
+Exact compiled exclusive function image1180..119a: address setup, LDREX1186,
+conditional STREX118e, CLREX1196, return119a; no back edge. Probe STARTED store
+image113c precedes call1148. Result store1158 precedes ordinary native setter
+branch1172 to104065b1. Therefore EX begun vs OK/fail after recovery can separate
+pre-result path from subsequent native setter/menu behavior; no physical PC or
+exception record yet. Current observations do not prove which exclusive op stalled.
+No host flash, no further trial prepared. Keep all payloads/files intact.
+
+## Manual one-attempt diagnostic staged/ejected - November 22, 2026
+
+Owner "ready"; same Sony card identity and all preserved hashes verified.
+Active Z7APP.BIN now5664 bytes SHA83ab23cadd63e902fb252cbb563f8b262ceac9e2e9ec332c0e0344be4ce2e99c.
+Exclusively added only diagnostic, no renames/deletions or firmware flash.234
+prior file metadata/catalog unchanged; all prior payloads, working A, seed and
+configuration presence preserved. Private backup/readback verified:
+.private/card-backups/20261122-before-worker-guard-once-01;
+.private/card-staging/20261122-worker-guard-once-01/staging.json.
+Safe eject verified by no-media volume check. Await owner test: normal boot, open
+native grid menu; Center [EX run], select ONCE, reopen menu and report exact
+EX OK/fail/busy/host label and normal power-off. Do not repeat/reboot for more
+attempts before reviewing result. If freezes, distinguish boot/menu-open/selection.
+No worker is registered and no exclusive runs until Center selection. Candidate
+can still fault/freeze during one operation; physical PC remains unobserved.
+
 ## SD-only manual guard probe ready; waiting for card - November 22, 2026
 
 Owner requests "lets test it out see if we can find if its one ofthose". Prepared

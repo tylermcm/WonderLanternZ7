@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "module_sha256": "10864694f04424d479adc4b61cc99dd7e3b512e70129621595f547428f888438",
+  "file_bytes": 5664,
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "cases": {
+    "healthy": {
+      "label": "Center [RD OK]",
+      "probe_attempts": 1,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "ordinary_guard_reads": 1,
+      "no_worker_registered_by_module": true
+    },
+    "guard-busy": {
+      "label": "Center [RD busy]",
+      "probe_attempts": 1,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "ordinary_guard_reads": 1,
+      "no_worker_registered_by_module": true
+    },
+    "worker-registered": {
+      "label": "Center [RD busy]",
+      "probe_attempts": 0,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "ordinary_guard_reads": 0,
+      "no_worker_registered_by_module": true
+    },
+    "wrong-host-signature": {
+      "label": "Center [RD host]",
+      "probe_attempts": 0,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "ordinary_guard_reads": 0,
+      "no_worker_registered_by_module": true
+    }
+  },
+  "battery_checks": 38,
+  "probe_exclusive_instruction_count": 0,
+  "no_retry_branch": true,
+  "card_written": false,
+  "hardware_tested": false,
+  "limits": [
+    "Native UI, telemetry, memory and filesystem services supplied",
+    "No exclusive access is attempted; physical attributes/exceptions unobserved",
+    "Plain read does not establish exclusive support or worker-task behavior",
+    "No fault recovery handler; unrelated address/menu faults could still stall the camera"
+  ]
+}

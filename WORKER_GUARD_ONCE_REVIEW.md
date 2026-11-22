@@ -1,5 +1,14 @@
 # Manual single-attempt guard probe - November 22, 2026
 
+Owner result: selecting Center immediately stalls inputs and slightly dims the
+screen. Owner reports that waiting approximately 12 seconds closes the menu and
+restores full control with the card still inserted; battery removal is an
+alternative. Exact result label after recovery remains pending. This is not
+proof of an infinite retry, physical fault PC or exception type. Candidate is
+WITHDRAWN and preserved as Z7APP.GUARD-ONCE.disabled; all files intact, no active
+root BIN, safe ejection verified. Do not repeat this diagnostic. The preparation
+and test instructions below are historical.
+
 Owner requested a diagnostic test after matched A worked and B froze. This is
 an SD module only; no new firmware image, update or host-code patch is involved.
 Prepared candidate is private and not yet staged. Windows currently sees the

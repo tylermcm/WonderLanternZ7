@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-22",
+  "module_sha256": "83ab23cadd63e902fb252cbb563f8b262ceac9e2e9ec332c0e0344be4ce2e99c",
+  "owner_observation": "Immediate freeze and slight screen dim on manual Center selection; after approximately 12 seconds menu closes and full control returns with card still inserted; battery removal is alternative",
+  "post_recovery_label": "Unknown; owner does not recall a changed label and battery already removed",
+  "physical_pc_captured": false,
+  "exception_captured": false,
+  "firmware_flashed": false,
+  "candidate_withdrawn": true,
+  "disabled_as": "Z7APP.GUARD-ONCE.disabled",
+  "no_active_root_bin": true,
+  "all_files_preserved": true,
+  "safe_eject_verified": true,
+  "battery_removed_confirmed": true
+}
