@@ -1,5 +1,26 @@
 # Laptop handoff — October 20, 2026
 
+## Post-update B staged/ejected; owner result pending - November 22, 2026
+
+Owner explicitly approved B only (yes) after new-host A owner pass. Same Sony
+card identity verified, all named earlier files vs pre-A backup verified/new
+private backups made. Native rename ONLY active A -> Z7APP.POST-HOST-A.disabled;
+exclusive add B as Z7APP.BIN5324bytes SHA767ada057f52df432aa037c341d300207d1bf436fea9258c5c58b78d4556a158.
+Same return-only worker packet that froze old host; no I/O/restore/new selection
+atomics/GUI-seen wrapper. Source fingerprints and new-host integration evidence
+verified. All240 preexisting size/mtime/catalog unchanged except intended rename,
+all named contents intact, updater remains disabled. Flush/full readback pass;
+safe eject VERIFIED. No firmware update or further module staged.
+
+Private stage .private/card-staging/20261122-post-host-B-01/staging.json;
+backup .private/card-backups/20261122-before-post-host-B-01. Await normal coldboot
+NO Update, battery/MENU-touch/grids, about30s ordinary use and normal power-off.
+If freezes stop/report, no repeat. No menu probe selection required. A result
+cannot establish worker responsiveness; B pass would support fixed freeze path
+with worker registered, but this bx-lr callback has no visible execution marker,
+so do not claim direct physical callback-entry observation. No arbitrary atomics/
+persistence/full release clearance. No further trial approved.
+
 ## Post-update A owner PASS; B approval pending - November 22, 2026
 
 Owner "works as intended, no issures" confirms general A check pass on updated
