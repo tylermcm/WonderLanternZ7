@@ -1,5 +1,12 @@
 # Controls after the host update - November 22, 2026
 
+Hardware follow-up: owner confirmed the host update, then A and B both working
+without issues. B is the exact empty-worker packet that froze on the old host.
+The targeted responsiveness checkpoint passes on camera; no direct callback-entry
+marker, installed-image readback, physical fault PC or persistence clearance is
+claimed. See evidence/20261122-post-host-B-result.json. Older pending-test and
+not-installed statements below describe earlier checkpoints.
+
 Owner reports the exact host-only update worked with no failures or freezes.
 This is a general update/basic-operation pass, not a readback of installed code
 or a successful worker callback test. Preserved previous-host/stock inputs do not

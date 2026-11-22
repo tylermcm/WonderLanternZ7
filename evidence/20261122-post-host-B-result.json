@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-22",
+  "scope": "Targeted old-host/new-host empty-worker A/B hardware checkpoint",
+  "host_eg_candidate_sha256": "f479950ea8188f1de337719bda34dc3765f397c97d79759349ec21566d58f140",
+  "host_main_candidate_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "module_sha256": "767ada057f52df432aa037c341d300207d1bf436fea9258c5c58b78d4556a158",
+  "owner_response": "works perfectly, no issues",
+  "old_host_same_module": "owner-reported freeze",
+  "new_host_A": "owner-reported pass",
+  "new_host_B": "owner-reported pass",
+  "targeted_freeze_checkpoint_passed": true,
+  "callback_entry_directly_observed": false,
+  "installed_image_readback": false,
+  "physical_failure_pc_captured": false,
+  "settings_restore_or_file_io_tested": false,
+  "entire_release_cleared": false,
+  "card_changed_this_turn": false
+}

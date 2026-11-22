@@ -1,5 +1,12 @@
 # Worker guard: localized suspected failure point
 
+Hardware follow-up: owner confirmed the host update, then A and B both working
+without issues. B is the exact empty-worker packet that froze on the old host.
+The targeted responsiveness checkpoint passes on camera; no direct callback-entry
+marker, installed-image readback, physical fault PC or persistence clearance is
+claimed. See evidence/20261122-post-host-B-result.json. Older pending-test and
+not-installed statements below describe earlier checkpoints.
+
 ## Update: task-owned guard implemented offline
 
 The owner authorized offline engineering after confirmed no-card recovery.

@@ -1,5 +1,12 @@
 # Private task-owned worker guard - November 22, 2026
 
+Hardware follow-up: owner confirmed the host update, then A and B both working
+without issues. B is the exact empty-worker packet that froze on the old host.
+The targeted responsiveness checkpoint passes on camera; no direct callback-entry
+marker, installed-image readback, physical fault PC or persistence clearance is
+claimed. See evidence/20261122-post-host-B-result.json. Older pending-test and
+not-installed statements below describe earlier checkpoints.
+
 Follow-up: the complete base host and native bridges have now been regenerated,
 independently rebuilt and checked with both exact worker controls. See
 WORKER_GUARD_HOST_ASSESSMENT.md and evidence/20261122-worker-task-full-host.json.

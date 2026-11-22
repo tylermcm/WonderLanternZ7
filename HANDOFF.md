@@ -1,5 +1,28 @@
 # Laptop handoff — October 20, 2026
 
+## B owner PASS: targeted worker-freeze hardware checkpoint - November 22, 2026
+
+Owner "works perfectly, no issues" confirms B general normal coldstart/controls/
+battery/grids/brief-use/power-off prompt pass. Same exact B767ada05... packet
+froze old host and now works after revised host update. New-host A and B both
+owner-pass. This validates targeted registered-empty-worker responsiveness on
+camera; no direct callback-entry counter, physical exception PC or installed
+image readback. Do not claim every worker body/module atomic/persistence safe.
+No file I/O/restore attempted by this B. Full feature release remains incomplete.
+
+Working checkpoint: host EGf479950e... / MAIN24b20745... (owner installed exact
+staged update, not readback), active SD Z7APP.BIN5324bytes
+767ada057f52df432aa037c341d300207d1bf436fea9258c5c58b78d4556a158.
+A preserved Z7APP.POST-HOST-A.disabled, prior updater/module trials intact and
+updaters disabled. Card last safely ejected for owner test; no card mutations
+this result-recording turn. B staging record and source-safe evidence
+ evidence/20261122-post-host-B-result.json updated. Source commit recorded later.
+
+Next useful incremental work: observable worker progress (volatile counter/
+marker) without I/O before restoring file paths; then review remaining module
+atomics independently. Do not reuse LX/combined exclusive probes, reflash host
+or activate failed restore module. No next hardware trial staged/approved.
+
 ## Post-update B staged/ejected; owner result pending - November 22, 2026
 
 Owner explicitly approved B only (yes) after new-host A owner pass. Same Sony
