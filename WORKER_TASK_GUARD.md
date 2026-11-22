@@ -1,5 +1,11 @@
 # Private task-owned worker guard - November 22, 2026
 
+Follow-up: the complete base host and native bridges have now been regenerated,
+independently rebuilt and checked with both exact worker controls. See
+WORKER_GUARD_HOST_ASSESSMENT.md and evidence/20261122-worker-task-full-host.json.
+No camera update or card staging is authorized/performed. The overlay limitation
+below describes the earlier blob-only checkpoint, not the subsequent full build.
+
 Implemented and validated offline. Not installed on the camera. No new complete
 MAIN/EG/update image, card staging or installation/recovery clearance is produced.
 Owner authorized offline engineering work after the load-only probe froze.

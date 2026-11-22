@@ -1,0 +1,112 @@
+{
+  "passed": true,
+  "scope": "Complete regenerated base display host and exact no-I/O worker controls; offline only",
+  "host_eg_sha256": "f479950ea8188f1de337719bda34dc3765f397c97d79759349ec21566d58f140",
+  "host_eg_bytes": 33058842,
+  "host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "host_code_sha256": "5b389010817fe30ae681c9526c45832f71dcc40547bc2d637215c0ae74051ccd",
+  "host_code_bytes": 4573,
+  "previous_host_sha256": "fa709dba7eb7a9addc8bd5b90f839edd578cfb6d4bb0df87a1cd8cb4a7beaa4d",
+  "software_gates": {
+    "loader": {
+      "sha256": "f6e3a619ec6f88e18396f841bd42d2ab7acf51b8248de0bdea7c6eddcae79371",
+      "checks": 99
+    },
+    "worker": {
+      "sha256": "57b9809b203877f23a306e944acbcb6a2fef4e87d44f9f029524804e7f17b280",
+      "checks": 55
+    },
+    "display": {
+      "sha256": "615127b15afff72628d72278cc2898daccd113bec71aadb615ea5df3725ba10a",
+      "checks": 316
+    },
+    "pair-integration": {
+      "sha256": "a4e514c556efe56ed61d6126f8931be1803020f8bb63776d0bd6fd46eb697bdf",
+      "results": {
+        "disabled": {
+          "module_sha256": "412dffaf9a2b5f9aa5cf9e715b66e778e9de1e9f4c67eabc2963df7899a200f9",
+          "grid_checks": 270,
+          "geometry_calls": 450,
+          "interleaved_gui_worker_ticks": 64,
+          "callback_entries": 0,
+          "worker_guard_released": true,
+          "file_operations": 0
+        },
+        "enabled": {
+          "module_sha256": "767ada057f52df432aa037c341d300207d1bf436fea9258c5c58b78d4556a158",
+          "grid_checks": 270,
+          "geometry_calls": 450,
+          "interleaved_gui_worker_ticks": 64,
+          "callback_entries": 64,
+          "worker_guard_released": true,
+          "file_operations": 0
+        }
+      }
+    }
+  },
+  "native_admission_check_count": 14,
+  "native_admission_checks": [
+    "stock-header-0",
+    "stock-header-1",
+    "candidate-header-0",
+    "candidate-header-1",
+    "previous-host-header-0",
+    "previous-host-header-1",
+    "oversize-rejected",
+    "short-header-rejected",
+    "filename-EG161080.BIN",
+    "filename-eg161080.bin",
+    "filename-EG16100380.BIN",
+    "filename-EG162080.BIN",
+    "filename-EG161080.BIN.extra",
+    "filename-EG1610.BIN"
+  ],
+  "integration": {
+    "passed": true,
+    "host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+    "host_blob_sha256": "5b389010817fe30ae681c9526c45832f71dcc40547bc2d637215c0ae74051ccd",
+    "results": {
+      "disabled": {
+        "module_sha256": "412dffaf9a2b5f9aa5cf9e715b66e778e9de1e9f4c67eabc2963df7899a200f9",
+        "grid_checks": 270,
+        "geometry_calls": 450,
+        "interleaved_gui_worker_ticks": 64,
+        "callback_entries": 0,
+        "worker_guard_released": true,
+        "file_operations": 0
+      },
+      "enabled": {
+        "module_sha256": "767ada057f52df432aa037c341d300207d1bf436fea9258c5c58b78d4556a158",
+        "grid_checks": 270,
+        "geometry_calls": 450,
+        "interleaved_gui_worker_ticks": 64,
+        "callback_entries": 64,
+        "worker_guard_released": true,
+        "file_operations": 0
+      }
+    },
+    "complete_regenerated_host_used": true,
+    "card_written": false,
+    "physical_fix_verified": false,
+    "limits": [
+      "Native UI/telemetry/kernel/filesystem/viewport services supplied",
+      "Interleaving is explicit, not physical scheduler/cache behavior",
+      "No camera updater/flash writer, real boot or recovery executed"
+    ]
+  },
+  "complete_host_independently_rebuilt": true,
+  "regenerated_native_bridges": true,
+  "exact_private_review_sha256": "2c961ee0a65c4b538403fdb6509649b726a96339f6c5f4aa0f52fd44bafd44e1",
+  "stage_authorized": false,
+  "flash_authorized": false,
+  "card_written": false,
+  "physical_fix_verified": false,
+  "recovery_physically_verified": false,
+  "limits": [
+    "Header/name probes supply native I/O/property boundaries; no complete updater or flash writer executed",
+    "Prior host update accepted and normal no-card boot observed; exact new update acceptance/boot unknown",
+    "Normal-menu reflash inputs preserved; no verified recovery if camera cannot boot or reach updater",
+    "Guard change does not establish safety of module atomics, restores or persistence",
+    "No unsupported camera modes or deferred release features added"
+  ]
+}

@@ -1,5 +1,42 @@
 # Laptop handoff — October 20, 2026
 
+## Complete worker-fix host rebuilt; exact review awaiting approval - November 22, 2026
+
+Owner "lets keep going...look into fixing it" authorizes continued engineering,
+NOT a specific host flash. Complete base display host/bridges regenerated and
+built twice; third independent rebuild in exact review also matches. New EG
+33058842 bytes SHA f479950ea8188f1de337719bda34dc3765f397c97d79759349ec21566d58f140;
+MAIN33058840 SHA24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce.
+Host blob4573 bytes SHA5b389010... unchanged from task-owned guard audit.
+All native bridges regenerated, fixing the prior overlay limitation. Private
+build .private/builds/20261122-worker-task-display-host-01.
+
+Rebuilt A/B pair .private/builds/20261122-worker-task-pair-01 is byte-identical to
+camera-tested A412dffaf and B767ada05 with refreshed source fingerprints.
+Complete-host checks:99 loader,55 worker,316 display incl2114 indexed reads/image;
+270 grid checks/450 geometry calls per A/B;64 interleaved GUI/ticks per control,
+B callback64/A0, guard released, zero module I/O. No camera fix yet verified.
+Root99 tests passed prior implementation turn; not repeated for integration-only
+tools. Python compile/diff checks pass; graph refreshed separately.
+
+Read WORKER_GUARD_HOST_ASSESSMENT.md. Exact private review frozen at
+.private/review/20261122-worker-guard-host-01: only host-only/EG161080.BIN for
+proposed first update; A/B controls SEPARATE, previous installed EG and original
+stock/container preserved as normal-menu fallback inputs.14 native header/name/
+capacity probes pass, CRC0, exact hashes/full readback. No flash writer exercised.
+No proven unbootable-host recovery. Card removal cannot guarantee recovery from
+a faulty host itself. No installed-image readback. Exact same-version new update
+acceptance remains unknown despite prior modified update acceptance.
+
+NO card writes/staging/flash authorized or performed. Next step: owner approval
+for exact host-only update, confirm normal no-card boot/C3.80/full battery,
+then card preflight/private backups/preserve all disabled files; exclusively add
+EG only with no active Z7APP. After approved update first no-card normal boot;
+then preserve/disable updater and separately review A then B after each owner
+result. No automatic worker/restore/settings trial. LX remains disabled, camera
+normal without card confirmed. Source-safe evidence20261122-worker-task-full-host.json.
+Tools audit_z7_worker_host_integration.py and prepare_z7_worker_guard_review.py.
+
 ## Task-owned worker guard implemented/validated OFFLINE - November 22, 2026
 
 Owner "go ahead" authorizes offline ownership/guard engineering, NOT a flash.
