@@ -49,10 +49,30 @@ static uint32_t readable(uint32_t p, uint32_t n)
     return p % 4 == 0 && ((p >= 0x10020000u && p <= 0x11fa55b8u - n) ||
                           (p >= 0xa1800000u && p <= 0xa1901200u - n));
 }
+#ifdef Z7_GRID_VOLATILE_CHECKPOINT
+/* Checkpoint only: native storage remains ordinary Off/On (0/1). Layout is
+ * volatile, starts at thirds, and never extends the native settings schema.
+ */
+static uint32_t checkpoint_grid_value = 2;
+static uint32_t checkpoint_grid_lcd(void)
+{
+    return !*(volatile uint8_t *)(uintptr_t)0xa18237c6u &&
+           !*(volatile uint8_t *)(uintptr_t)0xa201d510u;
+}
+static uint32_t grid_value(void)
+{
+    return WORD(GRID_RAW) == 1 ? checkpoint_grid_value : 0;
+}
+#endif
 static const uint16_t *grid_source(const uint16_t *native)
 {
+#ifdef Z7_GRID_VOLATILE_CHECKPOINT
+    if (!checkpoint_grid_lcd() || WORD(GRID_RAW) != 1) return native;
+    uint32_t value = grid_value();
+#else
     (void)native;
     uint32_t value = WORD(GRID_RAW);
+#endif
     if (value == 2 || value == 3) return tables[1];
     if (value == 4) return tables[2];
     if (value == 5) return tables[3];
@@ -77,7 +97,11 @@ static uint32_t histogram_gate(uint32_t state) {
 }
 static void grid_geometry(void *pointer)
 {
+#ifdef Z7_GRID_VOLATILE_CHECKPOINT
+    if (!checkpoint_grid_lcd() || grid_value() != 3 || (uintptr_t)pointer != 0xa2020c2cu) return;
+#else
     if (WORD(GRID_RAW) != 3 || (uintptr_t)pointer != 0xa2020c2cu) return;
+#endif
     uint8_t *p = pointer;
     int32_t origins[2];
     uint32_t intervals[2];
@@ -96,7 +120,13 @@ static void grid_geometry(void *pointer)
         *(uint16_t *)(p + steps[i]) = (uint16_t)intervals[i];
     }
 }
-static uint32_t set_grid(uint32_t value) { return FN(0x104065b1u, uint32_t, uint32_t, uint32_t)(0x102d, value); }
+static uint32_t set_grid(uint32_t value) {
+#ifdef Z7_GRID_VOLATILE_CHECKPOINT
+    if (value >= 1 && value <= 5) checkpoint_grid_value = value;
+    value = !!value;
+#endif
+    return FN(0x104065b1u, uint32_t, uint32_t, uint32_t)(0x102d, value);
+}
 static uint32_t fourths(void) { return set_grid(1); }
 static uint32_t thirds(void) { return set_grid(2); }
 static uint32_t golden(void) { return set_grid(3); }
@@ -122,7 +152,12 @@ static uint32_t grid_enter(uint32_t object)
         if (!control) break;
         FN(0x103fb345u, void, uint32_t, uint32_t)(control, 39 + i);
     }
-    uint32_t value = WORD(GRID_RAW), id = control_ids[value >= 1 && value <= 5 ? value - 1 : 5];
+#ifdef Z7_GRID_VOLATILE_CHECKPOINT
+    uint32_t value = grid_value();
+#else
+    uint32_t value = WORD(GRID_RAW);
+#endif
+    uint32_t id = control_ids[value >= 1 && value <= 5 ? value - 1 : 5];
     if (FN(0x10405f01u, uint32_t, void)() != 1)
         FN(0x10402bc3u, void, uint32_t, uint32_t)(object, id);
     FN(0x10404cd9u, void, uint32_t, uint32_t, uint32_t)(object, id, 1);

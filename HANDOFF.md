@@ -1,5 +1,29 @@
 # Laptop handoff — October 20, 2026
 
+## Six volatile grid choices checkpoint prepared offline - November 21, 2026
+
+Owner requested continuing after LCD battery/thirds success. New isolated
+battery_grid_menu_checkpoint.c composes unchanged battery and flag-specific grid
+adapter. Six choices on existing native grid page:4x4,3x3,Golden ratio,Center cross,
+6x6,Off. Only native0/1 stored; local layout starts at thirds each fresh load when
+nativeOn, Off remainsOff. Layout persistence deliberately deferred for this test,
+still required for actual release. LCD photo layouts only; EVF/movie use stock.
+No custom Display settings page, dispatcher/key replacement, settings/worker,
+histogram masks, DISP or readout hooks. No native GUI RAM stores in initializer.
+Existing host defers grid-page pointer publication to GUI while page inactive.
+
+New conditional Z7_GRID_VOLATILE_CHECKPOINT in grids_histogram.c; old standalone
+grid variant builds byte-for-byte unchanged (before/after SHA3f698f03...b987e62).
+New build variant battery-grid-menu-checkpoint reproduced twice.5260bytes,
+5120image,2216BSS,19relocations,entry1388; SHA
+53334536d00ed18ea9d80d36dd736d6341fd1943da674f6e0fd513112f226195.
+270 checkpoint checks/450 native geometry calls,38 battery checks,95 root tests
+pass. Supplied UI/kernel/storage/telemetry/viewport boundaries; physical menu
+render/repaint, scheduling and recovery NOT established. Full release hold stays.
+See GRID_MENU_TEST_ASSESSMENT.md and scoped evidence. Working card unchanged:
+active battery/thirds, earlier working battery and four trials preserved disabled.
+No new staging or test authorization. Fresh consent required after frozen review.
+
 ## Battery-plus-thirds working on rear LCD by owner report - November 21, 2026
 
 Owner: "confirmed working but not in the evf only the back lcd". This matches
