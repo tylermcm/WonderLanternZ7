@@ -154,7 +154,6 @@ _Static_assert(__builtin_offsetof(struct z7_host_state,touch_guards)==416, "Touc
 #endif
 uint32_t z7_module_load_once(struct z7_host_state *state);
 void z7_module_worker(struct z7_host_state *state);
-void z7_module_worker_tick(void);
 void z7_module_boot(void);
 uint32_t z7_autoop_init(void);
 const uint16_t *z7_display_grid_source(void);

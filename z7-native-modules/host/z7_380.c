@@ -709,7 +709,7 @@ static uint32_t register_worker(void (*callback)(void))
     s->worker_registered = 1;
     return 1;
 }
-void z7_module_worker_tick(void)
+static __attribute__((noinline)) void z7_module_worker_tick(void)
 {
     struct z7_host_state *s = (struct z7_host_state *)(uintptr_t)Z7_HOST_STATE;
 #ifdef Z7_HOST_GRAPHICS
@@ -720,16 +720,19 @@ void z7_module_worker_tick(void)
         s->loading_image || !s->worker_registered || !s->worker_callback ||
         !(s->worker_callback & 1) || s->resident_image_size > s->memory_size ||
         !within(s->worker_callback & ~1u, s->image, s->resident_image_size, 2)) return;
-    uint32_t expected = 0;
-    /* One acquisition attempt per tick. A strong CAS can compile to an
-     * unbounded STREX retry loop before the callback is entered. Weak failure
-     * leaves this tick idle; the resident task delays before trying again.
-     * Memory attributes/exclusive support on hardware still need validation.
+    /* Private to the single resident loader task. This is a recursion flag,
+     * not a cross-task mutex: no SDK callback or other task may dispatch here.
+     * Camera probes stalled on LDREX of this state region, even without STREX.
+     * Keep ordinary volatile accesses and compiler ordering around the callback;
+     * callback publication and cross-task module state have separate contracts.
      */
-    if (!__atomic_compare_exchange_n(&s->worker_running, &expected, 1, 1,
-                                    __ATOMIC_ACQUIRE, __ATOMIC_RELAXED)) return;
+    volatile uint32_t *running = &s->worker_running;
+    if (*running) return;
+    *running = 1;
+    __asm__ volatile("" ::: "memory");
     ((void (*)(void))(uintptr_t)s->worker_callback)();
-    __atomic_store_n(&s->worker_running, 0, __ATOMIC_RELEASE);
+    __asm__ volatile("" ::: "memory");
+    *running = 0;
 }
 static uint32_t register_display(const struct z7_display_hooks *hooks)
 {

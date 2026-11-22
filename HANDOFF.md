@@ -1,5 +1,48 @@
 # Laptop handoff — October 20, 2026
 
+## Task-owned worker guard implemented/validated OFFLINE - November 22, 2026
+
+Owner "go ahead" authorizes offline ownership/guard engineering, NOT a flash.
+Read WORKER_TASK_GUARD.md. z7_module_worker_tick now static/noinline and removed
+from host header. Production C/H references exactly definition plus resident
+loader-task-loop call. SDK exposes registration only and documents one-task
+ownership. ELF local binding verified. Replaces weakCAS with ordinary volatile
+recursion flag + compiler barriers: busy skips; 1 before callback,0 after return.
+Not a cross-task mutex; arbitrary raw-address/concurrent calls outside contract.
+No layout/API change, cached alias, guessed RAM/mutex or native-task addition.
+
+Private .private/builds/20261122-worker-task-guard-01: host-code.bin4573 bytes
+SHA5b389010817fe30ae681c9526c45832f71dcc40547bc2d637215c0ae74051ccd,
+reproduced twice. Private146-byte dispatcher has zero LDREX/STREX/CLREX.
+55 existing worker checks +4 exact guard-write/recursion cases passed; actual
+resident loop with success/failure/missing and legacy API refusal included.
+99 root tests pass; Python compile/diff checks passed. Graph4261nodes/11774edges;
+conditional-C parser limits retained, explicit source/ELF checks used.
+
+Only blob/symbols/evidence saved, no complete MAIN/EG/update image. Audit uses
+in-memory blob overlay + new C symbols; old out-of-blob native display bridges
+NOT regenerated/tested. Code addresses moved with20-byte shrink, so MUST fully
+rebuild host/bridges before any installable candidate. Optional advanced profiles
+not validated. No card writes/new hardware trial/flash. Installed host unchanged,
+LX disabled; camera recovery normal without card confirmed. Module atomics/shared
+state still need their own review; no blanket exclusive-support claim.
+
+Source-safe evidence/20261122-worker-task-guard.json. Root build helper now accepts
+optional symbol_details dict to inspect ELF function size/type/binding; normal
+return tuple unchanged. Next checkpoint: complete base-host+bridge rebuild,
+minimal no-I/O worker integration, then exact install/recovery review and fresh
+flash authorization. Do not claim hardware fix or firmware readiness yet.
+
+## Recovery confirmed after LX failure - November 22, 2026
+
+Owner confirms "Yes, normal without card": battery reinserted, normal boot and
+MENU/touch responding. Records updated. No-card recovery confirmed, not stock
+firmware restoration or exact physical exception diagnosis. Failed LX remains
+preserved/disabled, all earlier files intact, card safely ejected, no active BIN.
+No further hardware trial staged. Next engineering work: review worker guard
+ownership and avoid exclusive access to this host-state region; weakCAS alone
+is not a demonstrated fix. Any host flash still needs exact review/authorization.
+
 ## LX reproduced freeze; preserved/disabled/ejected - November 22, 2026
 
 Owner: immediate matching full freeze/slight dim on LX selection, battery pulled,

@@ -1,0 +1,332 @@
+{
+  "passed": true,
+  "host_blob_sha256": "5b389010817fe30ae681c9526c45832f71dcc40547bc2d637215c0ae74051ccd",
+  "host_blob_bytes": 4573,
+  "installed_host_blob_bytes": 4593,
+  "reproducible": true,
+  "guard_symbol": {
+    "address": 301621143,
+    "bytes": 146,
+    "binding": 0,
+    "type": 2
+  },
+  "exclusive_instructions_in_worker_guard": 0,
+  "production_symbol_references": [
+    {
+      "file": "z7-native-modules/host/z7_380.c",
+      "line": 712,
+      "text": "static __attribute__((noinline)) void z7_module_worker_tick(void)"
+    },
+    {
+      "file": "z7-native-modules/host/z7_380.c",
+      "line": 1218,
+      "text": "z7_module_worker_tick();"
+    }
+  ],
+  "worker_suite_checks": 55,
+  "worker_suite": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "worker-only-module-loads-with-api44",
+        "passed": true
+      },
+      {
+        "name": "registration-null-foreign-even-bss-duplicate-rejected",
+        "passed": true
+      },
+      {
+        "name": "initialization-does-not-call-worker",
+        "passed": true
+      },
+      {
+        "name": "worker-only-module-does-not-publish-display-hooks",
+        "passed": true
+      },
+      {
+        "name": "resident-image-bounds-published",
+        "passed": true
+      },
+      {
+        "name": "late-registration-rejected",
+        "passed": true
+      },
+      {
+        "name": "unpublished-load-status-suppresses-tick",
+        "passed": true
+      },
+      {
+        "name": "successful-resident-tick-once",
+        "passed": true
+      },
+      {
+        "name": "nested-worker-dispatch-suppressed-and-guard-released",
+        "passed": true
+      },
+      {
+        "name": "bad-magic-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "bad-magic-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "bad-guard-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "bad-guard-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "not-loaded-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "not-loaded-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "no-image-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "no-image-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "no-allocation-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "no-allocation-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "loading-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "loading-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "unregistered-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "unregistered-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "null-callback-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "null-callback-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "even-callback-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "even-callback-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "foreign-callback-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "foreign-callback-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "bss-callback-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "bss-callback-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "past-end-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "past-end-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "empty-code-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "empty-code-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "oversize-code-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "oversize-code-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "already-running-skips-callback",
+        "passed": true
+      },
+      {
+        "name": "already-running-preserves-state",
+        "passed": true
+      },
+      {
+        "name": "failed-initializer-rejected",
+        "passed": true
+      },
+      {
+        "name": "failed-initializer-clears-worker-and-code-bounds",
+        "passed": true
+      },
+      {
+        "name": "failed-init-cannot-dispatch-freed-image",
+        "passed": true
+      },
+      {
+        "name": "worker-success-success-original-loop-delay-before-callback",
+        "passed": true
+      },
+      {
+        "name": "worker-success-success-three-resident-delays",
+        "passed": true
+      },
+      {
+        "name": "worker-success-success-callback-completes-with-guard-released",
+        "passed": true
+      },
+      {
+        "name": "worker-success-success-host-guards-preserved",
+        "passed": true
+      },
+      {
+        "name": "worker-failure-success-original-loop-delay-before-callback",
+        "passed": true
+      },
+      {
+        "name": "worker-failure-success-three-resident-delays",
+        "passed": true
+      },
+      {
+        "name": "worker-failure-success-callback-completes-with-guard-released",
+        "passed": true
+      },
+      {
+        "name": "worker-failure-success-host-guards-preserved",
+        "passed": true
+      },
+      {
+        "name": "worker-success-missing-original-loop-delay-before-callback",
+        "passed": true
+      },
+      {
+        "name": "worker-success-missing-three-resident-delays",
+        "passed": true
+      },
+      {
+        "name": "worker-success-missing-callback-completes-with-guard-released",
+        "passed": true
+      },
+      {
+        "name": "worker-success-missing-host-guards-preserved",
+        "passed": true
+      },
+      {
+        "name": "api40-host-rejects-api44-module-before-registration",
+        "passed": true
+      }
+    ],
+    "api_bytes": 44,
+    "state_bytes": 256,
+    "main_sha256": "5ec6eeadf7da3de1e34ede479e085a496c71b7ab58a384332b2f3dae7799ad26",
+    "module_sha256": "428a947e16a756a659a0a88df6dbed67f8ca06d3378ea41baae3efd4aa5db83e",
+    "actual_worker_loop_executed": true,
+    "settings_persistence_implemented": false,
+    "supplied_boundaries": [
+      "Filesystem dispatcher",
+      "Kernel/task services",
+      "Allocator",
+      "Immediate delay return"
+    ],
+    "camera_access": false,
+    "card_access": false,
+    "hardware_timing_verified": false
+  },
+  "guard_runs": {
+    "normal": {
+      "callback_calls": 1,
+      "guard_writes": [
+        [
+          2842689740,
+          4,
+          1
+        ],
+        [
+          2842689740,
+          4,
+          0
+        ]
+      ],
+      "final_guard": 0
+    },
+    "recursive": {
+      "callback_calls": 1,
+      "guard_writes": [
+        [
+          2842689740,
+          4,
+          1
+        ],
+        [
+          2842689740,
+          4,
+          0
+        ]
+      ],
+      "final_guard": 0
+    },
+    "already-running": {
+      "callback_calls": 0,
+      "guard_writes": [],
+      "final_guard": 1
+    },
+    "no-worker": {
+      "callback_calls": 0,
+      "guard_writes": [],
+      "final_guard": 0
+    }
+  },
+  "source_inputs_sha256": {
+    "z7-native-modules/host/z7_380.c": "766c54469122a6923898331fbcc861bb7566f0257b0cd793e0048339de8f6d73",
+    "z7-native-modules/host/z7_380.h": "26683dd776f2f339fa2e66c14ca729f4767437e83306206111826ae2bb71675b",
+    "z7-native-modules/sdk/worker.h": "48d3b8d407b17487a79aba977d64b3852fbd21881a5551132dd66844cc990c83",
+    "tools/build_z7_module_host.py": "3ff64793aaf7a628715134d741a07ce823704971eca97e2b02e841ed3742deb1",
+    "tools/audit_z7_worker_task_guard.py": "6145c2999c3418cb26f45f1f13fd51798df3355a6290a33c2b86ea6ec847107a"
+  },
+  "card_written": false,
+  "firmware_image_written": false,
+  "hardware_fix_confirmed": false,
+  "limits": [
+    "Task-owned recursion flag is not mutual exclusion for concurrent tasks",
+    "Private C linkage and one audited production caller; arbitrary raw-address calls are outside contract",
+    "Native kernel/heap/filesystem/delay boundaries supplied",
+    "Compiled blob overlaid in memory; old native display bridges not rebuilt or validated",
+    "No installation/recovery clearance, camera test or full firmware build"
+  ],
+  "root_tests_passed": 99,
+  "graph_nodes": 4261,
+  "graph_edges": 11774,
+  "graph_limits": "Existing conditional-C parse gaps remain; source reference scan and ELF binding used for ownership proof"
+}

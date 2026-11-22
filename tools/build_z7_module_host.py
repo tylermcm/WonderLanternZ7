@@ -386,7 +386,7 @@ def add_navigation_hook(plan,symbols):
                 mode='0xa182df80',slots='0xa182df88',original_functions='0x11eca19c')
 
 
-def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False,touch_hooks=False,touch_original=0):
+def compile_host(base, zig=ZIG, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False,touch_hooks=False,touch_original=0,symbol_details=None):
     """Fixed-address, BSS-free host; all writable state is explicitly reserved."""
     temporary = ROOT / '.private/tmp'
     temporary.mkdir(parents=True, exist_ok=True)
@@ -447,12 +447,14 @@ ASSERT(SIZEOF(.bss) == 0, "Host must not contain unreserved BSS");
         strings = sections[section[6]]
         names = data[strings[4]:strings[4] + strings[5]]
         for offset in range(section[4], section[4] + section[5], 16):
-            name, value, _, _, _, index = struct.unpack_from('<IIIBBH', data, offset)
+            name, value, size, info, _, index = struct.unpack_from('<IIIBBH', data, offset)
             label = names[name:].split(b'\0', 1)[0].decode()
             if label and index == 0:
                 raise ValueError('Unresolved host symbol: ' + label)
             if label.startswith('z7_'):
                 symbols[label] = value
+                if symbol_details is not None:
+                    symbol_details[label] = dict(address=value,bytes=size,binding=info>>4,type=info&15)
     return code, symbols
 
 

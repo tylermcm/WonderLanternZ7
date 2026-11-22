@@ -1,5 +1,15 @@
 # Worker guard: localized suspected failure point
 
+## Update: task-owned guard implemented offline
+
+The owner authorized offline engineering after confirmed no-card recovery.
+See WORKER_TASK_GUARD.md. Dispatcher is now private with one audited production
+caller, and an ordinary task-owned recursion flag replaces its exclusive guard.
+Two builds reproduce, compiled guard has no exclusive instructions, 55 existing
+worker checks plus four guard traces and 99 root tests pass. No complete native
+bridge rebuild, installable firmware, card change or camera validation occurred.
+This supersedes the earlier weak-CAS source proposal, not the installed host.
+
 ## Update: exclusive-load sequence reproduces the symptom without any store
 
 November 22: owner confirmed ordinary read `Center [RD OK]` without issues, then

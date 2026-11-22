@@ -15,12 +15,13 @@
   "physical_failure_pc_captured": false,
   "exception_type_captured": false,
   "automatic_recovery_observed_in_this_trial": false,
-  "camera_recovery_confirmed": false,
+  "camera_recovery_confirmed": true,
   "candidate_withdrawn": true,
   "disabled_as": "Z7APP.GUARD-LOAD.disabled",
   "all_files_preserved": true,
   "no_active_root_bin": true,
   "safe_eject_verified": true,
   "firmware_flashed": false,
-  "weak_cas_alone_established_as_fix": false
+  "weak_cas_alone_established_as_fix": false,
+  "owner_recovery": "Yes, normal without card"
 }
