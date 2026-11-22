@@ -1,5 +1,27 @@
 # Laptop handoff — October 20, 2026
 
+## Hardened read-only restore approved/staged/ejected - November 22, 2026
+
+Owner explicitly approved next RO module (yes) after progress full hardware pass.
+Same Sony card identity/current named bytes verified; working progress3b5aced1...
+preserved as Z7APP.PROGRESS-WORKING.disabled. Only new active Z7APP.BIN6564bytes
+839d8aaef7f404ba64f710d092aceba628552b969e54820867bd6b6d4c363b40.
+Existing Z7GRID.DAT80 bytes SHAa0b38b760a81b292131af5944fa3ade0ce48bc9e21e9a424b712dc2368567ae0
+matches frozen6x6 seed and was NOT changed. All242 preexisting size/mtime/catalog
+unchanged except intended module rename; all named contents preserved, updaters
+remain disabled. Private backups/flush/full readback pass. Safe eject VERIFIED.
+No firmware update, no camera-side settings writes; no hardware RO result yet.
+
+Private stage .private/card-staging/20261122-grid-restore-no-rmw-test-01/staging.json;
+backup .private/card-backups/20261122-before-grid-restore-no-rmw-test-01. Frozen
+review .private/review/20261122-grid-restore-no-rmw-01. Exact source hashes checked.
+Next owner: normal coldstart NO Update, let liveview/battery appear, open grid
+menu before changing a choice; report6x6 [SD] marker or exact Off [SD miss/error]
+label and controls/power-off. If no marker yet, leave briefly/reopen without
+selecting another grid. Native On/Off visibility stays as it was. If stalls stop
+and report trigger; no repeat/reflash. Old0714... restore remains disabled.
+No automatic volatile/full LCD/settings-write trial authorized after this result.
+
 ## Worker progress checkpoint fully owner PASS; RO approval pending - November 22, 2026
 
 After counter4->6, owner "yeah everthtbing works like it should" confirms ordinary
