@@ -1,5 +1,28 @@
 # Laptop handoff — October 20, 2026
 
+## Six-grid checkpoint authorized, staged and safely ejected - November 21, 2026
+
+Owner explicitly approved "go ahead" to exact reviewed six-grid SD candidate.
+Same card/frozen bundle/current working thirds and five preserved payload hashes
+verified; named payload/configuration files privately backed up/readback verified.
+Native Move-Item preserved current module as Z7APP.THIRDS-WORKING.disabled.
+Exclusively added5260-byte Z7APP.BIN SHA53334536...12f226195; flush/fsync and full
+readback match. Earlier battery baseline/four original trials stay disabled/intact.
+227 existing file metadata records preserved except authorized rename; existing
+settings and Nikon catalog SHA unchanged. No photos read/deleted, format, EG
+reenable, firmware generation or flash. Safe eject VERIFIED: no mounted card
+partition/media bytes/root access. Private staging record:
+.private/card-staging/20261121-battery-grid-menu-test-01/staging.json.
+
+Active candidate now six-grid/battery; two working earlier baselines are preserved
+disabled. Ready for ONE ordinary startup on rear photo LCD, percentage, existing
+Framing grid display six entries/layout changes/Off, MENU/touch, normal power-off.
+No Update, repeat restarts, capture/movie/EVF/output trial. Layout volatile, resets
+to thirds after restart if nativeOn. Hardware result pending. If frozen stop and
+follow assessed card/battery recovery boundary; exact recovery unverified. Full
+LCD/ownership hardening remain withdrawn; no next test authorized. Card/docs-only
+checkpoint, no code/tests rerun or live process.
+
 ## Six-grid menu review frozen; fresh approval pending - November 21, 2026
 
 Exact8-file review .private/review/20261121-battery-grid-menu-test-01 independently

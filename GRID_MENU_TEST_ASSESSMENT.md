@@ -1,5 +1,12 @@
 # Battery plus six grid choices: SD test assessment
 
+Owner subsequently approved "go ahead". Exact candidate staged, flushed,
+readback/hash verified and safely ejected. Working thirds module preserved as
+Z7APP.THIRDS-WORKING.disabled; earlier battery and all original trials intact.
+227 existing metadata records/catalog/settings preserved except authorized rename.
+No firmware update. Await ONE owner startup/grid-menu/layout/control/power-off
+observation. Frozen preapproval bundle unchanged; this supersedes approval status.
+
 November 21, 2026. Independent original Nikon Z7 C 3.80 checkpoint.
 Prepared for owner review; no new card staging/test authorization yet.
 Existing component MIT licenses and battery attribution retained.
