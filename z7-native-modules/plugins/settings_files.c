@@ -6,9 +6,15 @@
 #define FILE_FN(a, result, ...) ((result (*)(__VA_ARGS__))(uintptr_t)(a))
 #define FILE_STATE_MAGIC 0x3146535au
 #define FILE_NOT_FOUND 0x80000010u
+#ifndef Z7_SETTINGS_SLOT0_PATH
+#define Z7_SETTINGS_SLOT0_PATH "A:\\Z7CFG0.DAT"
+#endif
+#ifndef Z7_SETTINGS_SLOT1_PATH
+#define Z7_SETTINGS_SLOT1_PATH "A:\\Z7CFG1.DAT"
+#endif
 static const char *settings_slot_path(uint32_t slot)
 {
-    return slot ? "A:\\Z7CFG1.DAT" : "A:\\Z7CFG0.DAT";
+    return slot ? Z7_SETTINGS_SLOT1_PATH : Z7_SETTINGS_SLOT0_PATH;
 }
 uint32_t z7_settings_files_init(struct z7_settings_files *s)
 {
@@ -50,6 +56,7 @@ uint32_t z7_settings_files_read(void *context, uint32_t slot, uint8_t *out)
     for (uint32_t i = 0; i < Z7_SETTINGS_RECORD_BYTES; ++i) out[i] = staging[i];
     return Z7_STORAGE_IO_OK;
 }
+#ifndef Z7_SETTINGS_READ_ONLY
 uint32_t z7_settings_files_write(void *context, uint32_t slot, const uint8_t *record)
 {
     struct z7_settings_files *s = context;
@@ -67,3 +74,4 @@ uint32_t z7_settings_files_write(void *context, uint32_t slot, const uint8_t *re
     if (!settings_files_close(s, fd) || result || actual != Z7_SETTINGS_RECORD_BYTES) return Z7_STORAGE_IO_ERROR;
     return Z7_STORAGE_IO_OK;
 }
+#endif

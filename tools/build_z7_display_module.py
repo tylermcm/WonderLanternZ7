@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--zig', type=Path, default=ZIG)
     parser.add_argument('--diagnostics', action='store_true', help='Also build ownership and initializer-failure audit modules')
-    parser.add_argument('--variant', choices=('battery-grid-menu-checkpoint', 'battery-thirds-checkpoint', 'lcd-first-release', 'grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe', 'settings-files-probe', 'display-persistence-probe', 'display-highlight-context-probe', 'display-highlight-parameters-probe', 'display-highlight-owned-probe', 'display-highlight-frame-probe', 'display-highlight-cleanup-probe', 'display-highlight-cached-probe', 'display-highlight-coordinated-probe', 'display-highlight-native-transaction-probe', 'display-highlight-preferences-probe', 'display-highlight-evf-probe', 'display-highlight-handoff-probe'), default='grids')
+    parser.add_argument('--variant', choices=('grid-restore-readonly-checkpoint', 'battery-grid-menu-checkpoint', 'battery-thirds-checkpoint', 'lcd-first-release', 'grids', 'battery-probe', 'battery-sample', 'focal-sample', 'battery-native', 'battery-percent', 'combined', 'clean-probe', 'disp-key-probe', 'settings-probe', 'settings-menu-probe', 'display-settings', 'display-readouts-probe', 'display-disp-probe', 'display-base-probe', 'display-histogram-probe', 'display-groups-probe', 'display-other-probe', 'display-focal-probe', 'gui-update-probe', 'information-host-probe', 'information-transition-probe', 'display-information-probe', 'worker-probe', 'settings-storage-probe', 'settings-files-probe', 'display-persistence-probe', 'display-highlight-context-probe', 'display-highlight-parameters-probe', 'display-highlight-owned-probe', 'display-highlight-frame-probe', 'display-highlight-cleanup-probe', 'display-highlight-cached-probe', 'display-highlight-coordinated-probe', 'display-highlight-native-transaction-probe', 'display-highlight-preferences-probe', 'display-highlight-evf-probe', 'display-highlight-handoff-probe'), default='grids')
     parser.add_argument('--battery-percent', choices=('on', 'off'), help='Initial battery feature setting in its SD module')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -26,9 +26,10 @@ def main():
         parser.error('Choose a new directory under .private')
     if args.diagnostics and args.variant not in ('grids', 'combined'):
         parser.error('Ownership diagnostic variants apply to grids or combined modules')
-    if args.battery_percent is not None and args.variant not in ('battery-percent', 'combined', 'battery-thirds-checkpoint', 'battery-grid-menu-checkpoint'):
+    if args.battery_percent is not None and args.variant not in ('battery-percent', 'combined', 'battery-thirds-checkpoint', 'battery-grid-menu-checkpoint', 'grid-restore-readonly-checkpoint'):
         parser.error('--battery-percent applies only to configurable battery variants')
     relative, kind, minimum_api = {
+        'grid-restore-readonly-checkpoint': ('plugins/grid_restore_readonly_checkpoint.c', 'original-Z7-grid-restore-readonly-checkpoint', 44),
         'battery-grid-menu-checkpoint': ('plugins/battery_grid_menu_checkpoint.c', 'original-Z7-battery-grid-menu-checkpoint', 20),
         'battery-thirds-checkpoint': ('plugins/battery_thirds_checkpoint.c', 'original-Z7-battery-thirds-checkpoint', 16),
         'lcd-first-release': ('plugins/lcd_release.c', 'original-Z7-LCD-first-release-candidate', 44),
@@ -76,7 +77,7 @@ def main():
     again, second = build(source, zig=args.zig.resolve())
     if packet != again or report != second:
         raise RuntimeError('Display module is not reproducible')
-    if args.variant in ('battery-percent', 'combined', 'battery-thirds-checkpoint', 'battery-grid-menu-checkpoint'):
+    if args.variant in ('battery-percent', 'combined', 'battery-thirds-checkpoint', 'battery-grid-menu-checkpoint', 'grid-restore-readonly-checkpoint'):
         enabled = args.battery_percent != 'off'
         offset = report['symbols']['z7_battery_enabled']
         if offset % 4 or not 0 <= offset <= report['image_bytes'] - 4 or offset in report['relocations']:
@@ -102,6 +103,10 @@ def main():
             report['readout_ownership_bits'] = 64
     inputs = [source, ROOT / 'z7-native-modules/sdk/module.h', ROOT / 'z7-native-modules/sdk/display.h',
               ROOT / 'z7-native-modules/sdk/module.ld']
+    if requested_variant == 'grid-restore-readonly-checkpoint':
+        inputs.extend(ROOT / 'z7-native-modules/plugins' / n for n in ('battery_grid_menu_checkpoint.c', 'battery_percent.c', 'battery_sample.h', 'grids_histogram.c', 'grid_restore_record.h', 'settings_files.c', 'settings_files.h', 'settings_storage.h', 'display_settings.h'))
+        inputs.extend(ROOT / 'z7-native-modules/sdk' / n for n in ('worker.h', 'information.h', 'gui.h', 'disp.h', 'update.h'))
+        report['checkpoint_scope'] = 'One post-GUI read of Z7GRID.DAT, applied on grid-menu entry unless user selected first; no camera writes'
     if requested_variant == 'battery-grid-menu-checkpoint':
         inputs.extend(ROOT / 'z7-native-modules/plugins' / n for n in ('battery_percent.c', 'battery_sample.h', 'grids_histogram.c'))
         report['checkpoint_scope'] = 'Battery plus six volatile rear-photo-LCD grid choices; native stored grid remains Off/On; default thirds each reboot'

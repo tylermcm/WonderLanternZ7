@@ -122,6 +122,9 @@ static void grid_geometry(void *pointer)
 }
 static uint32_t set_grid(uint32_t value) {
 #ifdef Z7_GRID_VOLATILE_CHECKPOINT
+#ifdef Z7_GRID_SELECTION_CHECKPOINT_HOOK
+    Z7_GRID_SELECTION_CHECKPOINT_HOOK(value);
+#endif
     if (value >= 1 && value <= 5) checkpoint_grid_value = value;
     value = !!value;
 #endif
@@ -143,9 +146,18 @@ static uint32_t (*const choices[Z7_GRID_ACTIONS])(void) = {fourths, thirds, gold
 
 static uint32_t grid_enter(uint32_t object)
 {
+#ifdef Z7_GRID_ENTER_CHECKPOINT_HOOK
+    Z7_GRID_ENTER_CHECKPOINT_HOOK();
+#endif
     ++z7_display_grid_entries;
     for (uint32_t i = 0; i < Z7_GRID_ROWS; ++i)
-        FN(0x103fbb5du, void, const char *, uint32_t, uint32_t)(names[i], 39 + i, 0);
+        FN(0x103fbb5du, void, const char *, uint32_t, uint32_t)(
+#ifdef Z7_GRID_LABEL_CHECKPOINT_HOOK
+            Z7_GRID_LABEL_CHECKPOINT_HOOK(i, names[i]),
+#else
+            names[i],
+#endif
+            39 + i, 0);
     uint32_t list = WORD(object + 36);
     if (list) for (uint32_t i = 0; i < Z7_GRID_ROWS; ++i) {
         uint32_t control = FN(0x103fcf0fu, uint32_t, uint32_t, uint32_t, uint32_t)(list, 1, i);

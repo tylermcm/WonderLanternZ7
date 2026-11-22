@@ -1,5 +1,33 @@
 # Laptop handoff — October 20, 2026
 
+## Read-only restore checkpoint prepared offline - November 21, 2026
+
+After six-grid hardware PASS, owner requested continuing. First persistence
+increment deliberately READ-ONLY: new grid_restore_readonly_checkpoint.c waits
+for eligible battery GUI progress, then one worker read of dedicated Z7GRID.DAT.
+No I/O in initializer, no custom settings page/dispatcher, no write function
+linked or saves/retries.80-byte strict Z7G1 seed selects6x6; GUI applies only on
+next grid-menu entry if user has not selected first. Marker6x6 [SD] proves read/
+decode/application. Missing/error/skip markers on Off row; uncertain close keeps
+handle/module resident after successful init. Native calls synchronous: blocked
+service cannot be cancelled/timed out. Hardware freeze/recovery still unknown.
+
+Final candidate .private/builds/20261121-grid-restore-readonly-test-03:
+6628bytes,6464image,2260BSS,25relocations,entry2164; module SHA
+0714fe8491b4e802406ed0867f0c5ecacc3ceb4c573feecceb742364b2c4bf95.
+Seed80bytes SHAa0b38b76...8567ae0. Research01/02 preserved; NOT candidates.
+52 restore/fault/preemption checks,270 menu/geometry checks(450 native calls),
+38 battery checks,99 root tests pass. Working six-grid binary byte-identical
+under source hooks absent. Generic file adapter default paths/writes preserved;
+new profile overrides path and compiles writer OUT. File fixture now accepts an
+explicit per-class path allowlist with unchanged default. Source graph refreshed.
+
+See GRID_RESTORE_READONLY_TEST_ASSESSMENT.md and public scoped evidence.
+No card writes/new firmware or new test authorization. Existing working six-grid
+module remains active; all previous baselines/trials preserved disabled. Camera
+saving not implemented: later choices do NOT persist in this phase. Need fresh
+explicit review/approval before adding new module AND seed. Full release hold.
+
 ## Six-grid/battery LCD checkpoint PASSED by owner report - November 21, 2026
 
 Owner responded "yep that works like normal" to requested six-grid entries/layout

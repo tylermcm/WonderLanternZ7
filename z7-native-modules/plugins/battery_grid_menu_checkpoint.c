@@ -42,7 +42,10 @@ static const struct z7_display_hooks checkpoint_hooks = {
     Z7_DISPLAY_ABI, sizeof(checkpoint_hooks), grid_source, grid_geometry,
     0, 0, before, after
 };
-uint32_t z7_main(const struct z7_module_api *api)
+#ifndef Z7_GRID_MENU_CHECKPOINT_ENTRY
+#define Z7_GRID_MENU_CHECKPOINT_ENTRY z7_main
+#endif
+uint32_t Z7_GRID_MENU_CHECKPOINT_ENTRY(const struct z7_module_api *api)
 {
     if (!api || api->abi != Z7_MODULE_ABI || api->target != Z7_MODULE_TARGET ||
         api->size < sizeof(*api) || !api->register_display || !api->register_grid_menu) return 1;

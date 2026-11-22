@@ -21,6 +21,7 @@ NOT_FOUND, ERROR = 0x80000010, 0x80000041
 
 
 class FilesFixture(HostFixture):
+    file_paths = PATHS
     files_enabled = False
     allow_module_loader = False
     derivation = None
@@ -68,7 +69,7 @@ class FilesFixture(HostFixture):
                 result = 0
                 if op in (5, 13):
                     path = self.cstring(words[4])
-                    if path not in PATHS:
+                    if path not in self.file_paths:
                         if self.allow_module_loader and op == 5 and path == 'A:\\Z7APP.BIN':
                             super().hook(u, address, size, context)
                             return

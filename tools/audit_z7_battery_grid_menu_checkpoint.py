@@ -25,12 +25,15 @@ LAYOUTS=[('fourths',1,0x1901,'4x4 grid'),('thirds',2,0x7a30,'3x3 grid'),
          ('dense',5,0x7a33,'6x6 grid'),('off',0,0x1902,'Off')]
 
 
-def audit(raw,host,packet,module,stock):
+def audit(raw,host,packet,module,stock,worker_expected=False):
     assert hashlib.sha256(raw).hexdigest()==host['main_payload_sha256']
     assert hashlib.sha256(packet).hexdigest()==module['module_sha256']
     assert hashlib.sha256(stock).hexdigest()==STOCK_SHA
-    assert module['kind']=='original-Z7-battery-grid-menu-checkpoint'
-    assert not any(n.startswith(('sm_','persistence_','z7_settings_','preset_','focal_')) for n in module['symbols'])
+    expected_kind='original-Z7-grid-restore-readonly-checkpoint' if worker_expected else 'original-Z7-battery-grid-menu-checkpoint'
+    assert module['kind']==expected_kind
+    assert not any(n.startswith(('sm_','persistence_','preset_','focal_')) or
+                   (n.startswith('z7_settings_') and not (worker_expected and n.startswith('z7_settings_files_')))
+                   for n in module['symbols'])
     f=CheckpointFixture(raw,host,packet);checks=[]
     def check(name,good):
         assert good,name
@@ -44,7 +47,8 @@ def audit(raw,host,packet,module,stock):
     status=f.call(host['symbols']['z7_module_load_once'],STATE);f.u.hook_del(hook)
     check('init-no-native-stores-or-rendering',status==8 and not stores and not f.labels and not f.getter_calls)
     check('grid-page-not-published-in-initializer',bytes(f.u.mem_read(OBJECT,44))==old_menu and f.words()[34:36]==(1,0))
-    check('no-scalar-histogram-update-disp-gui-info-or-worker-hooks',f.words()[28:30]==(0,0) and f.words()[36:52]==(0,)*16)
+    check('only-expected-grid-paint-and-optional-worker-hooks',f.words()[28:30]==(0,0) and f.words()[36:49]==(0,)*13 and
+          ((bool(f.words()[49]) and f.words()[50:52]==(1,0)) if worker_expected else f.words()[49:52]==(0,)*3))
     f.setword(92,0);f.call(host['symbols']['z7_display_before_paint'])
     check('not-ready-cannot-publish-grid-menu',f.words()[35]==0 and bytes(f.u.mem_read(OBJECT,44))==old_menu)
     f.setword(92,1)
@@ -125,9 +129,10 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for n in ('host','module','output'):p.add_argument('--'+n,type=Path,required=True)
     p.add_argument('--stock',type=Path,default=ROOT/'.private/builds/20261021-laptop-01/stock-main.bin')
+    p.add_argument('--readonly-restore',action='store_true',help='Require the read-only restore profile and its one worker; feature audit does not run file I/O')
     a=p.parse_args();out=require_private_output(a.output)
     host=json.loads((a.host/'module-host.emulator.json').read_text());module=json.loads((a.module/'module.json').read_text())
-    r=audit((a.host/'module-host.emulator.main.bin').read_bytes(),host,(a.module/'Z7APP.BIN').read_bytes(),module,a.stock.read_bytes())
+    r=audit((a.host/'module-host.emulator.main.bin').read_bytes(),host,(a.module/'Z7APP.BIN').read_bytes(),module,a.stock.read_bytes(),a.readonly_restore)
     r['source_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest();out.parent.mkdir(parents=True,exist_ok=True)
     with out.open('x',encoding='utf-8',newline='\n') as f:f.write(json.dumps(r,indent=2)+'\n')
     print(json.dumps(dict(passed=True,checks=len(r['checks']),geometry_calls=r['geometry_calls'])))
