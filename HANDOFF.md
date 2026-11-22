@@ -1,5 +1,22 @@
 # Laptop handoff — October 20, 2026
 
+## Post-update A staged/ejected; owner test pending - November 22, 2026
+
+Owner explicitly approved A only (yes). Same Sony card verified, prior named
+hashes/update-disabled file verified, private backups/flush/full readback pass.
+Only Z7APP.BIN added,5324 bytes SHA412dffaf9a2b5f9aa5cf9e715b66e778e9de1e9f4c67eabc2963df7899a200f9.
+Worker DISABLED, battery/six-grid control on new owner-confirmed host. All239
+preexisting file size/mtime/catalog unchanged and named contents preserved.
+EG161080.WORKER-GUARD-HOST.disabled and old updater remain disabled, no active
+EG. Safe eject VERIFIED. No firmware flash or new code change this turn.
+
+Private stage .private/card-staging/20261122-post-host-A-01/staging.json;
+backup .private/card-backups/20261122-before-post-host-A-01. Await ordinary
+coldstart (NO Update), battery percentage/MENU/touch/grids, about30s normal use,
+normal power-off owner result. A is not worker fix proof; do not claim callback
+hardware success. B767ada05 requires separate approval after A pass; do not
+repeat LX/combined probe or activate restore/persistence. All files kept intact.
+
 ## Completed updater disabled; A approval pending - November 22, 2026
 
 Same identified Sony card returned/available. Verified completed EGf479950e...,
