@@ -1,0 +1,59 @@
+{
+  "passed": true,
+  "module_sha256": "f8f4506fa30fe5379403f2a8f9ee6d919b2e4d60b31a94efeee8588ae7085a4a",
+  "file_bytes": 5664,
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "cases": {
+    "healthy": {
+      "label": "Center [LX OK]",
+      "probe_attempts": 1,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "ordinary_guard_reads": 1,
+      "no_worker_registered_by_module": true
+    },
+    "guard-busy": {
+      "label": "Center [LX busy]",
+      "probe_attempts": 1,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "ordinary_guard_reads": 1,
+      "no_worker_registered_by_module": true
+    },
+    "worker-registered": {
+      "label": "Center [LX busy]",
+      "probe_attempts": 0,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "ordinary_guard_reads": 0,
+      "no_worker_registered_by_module": true
+    },
+    "wrong-host-signature": {
+      "label": "Center [LX host]",
+      "probe_attempts": 0,
+      "injected_store_failures": 0,
+      "host_word_contents_preserved": true,
+      "guard_writes": [],
+      "ordinary_guard_reads": 0,
+      "no_worker_registered_by_module": true
+    }
+  },
+  "battery_policy_reused_from": "e55eda505bca7bca749acb52931ae614afd57e2170dd6273528cec29e7e1882f",
+  "probe_instructions": {
+    "clrex": 2,
+    "ldrex": 1,
+    "strex": 0
+  },
+  "no_retry_branch": true,
+  "card_written": false,
+  "hardware_tested": false,
+  "limits": [
+    "Native UI, telemetry, memory and filesystem services supplied",
+    "One exclusive load, no store; physical attributes/exceptions unobserved",
+    "Exclusive load does not establish exclusive store support or worker-task behavior",
+    "No fault recovery handler; unrelated address/menu faults could still stall the camera"
+  ]
+}

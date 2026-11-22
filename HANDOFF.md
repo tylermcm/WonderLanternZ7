@@ -1,5 +1,33 @@
 # Laptop handoff — October 20, 2026
 
+## CL passed; LDREX-only LX control staged/ejected - November 22, 2026
+
+Owner "cl run > Cl run OK no issues" confirms CL control pass. RD and CL both
+pass; do not infer exclusive load/store support yet. Result in clear staging
+record and evidence/20261122-worker-guard-clear-hardware-result.json.
+Next LX control executes CLREX, one LDREX on a97000cc, CLREX cleanup; NO STREX,
+worker registration, host-word/code writes, file I/O or firmware change.
+Manual Center only, once per boot, same ready/host/busy checks as prior controls.
+
+Exact5664-byte module f8f4506fa30fe5379403f2a8f9ee6d919b2e4d60b31a94efeee8588ae7085a4a
+staged on same identified Sony card. Confirmed working CL preserved as
+Z7APP.GUARD-CLEAR-WORKING.disabled; RD and every earlier file preserved.
+All237 existing metadata unchanged except intended rename, catalog/named hashes
+unchanged, configuration presence backed up/verified; flush/full readback pass.
+Safe eject VERIFIED, no flash. Private build/review/staging20261122-worker-guard-load-01;
+backup .private/card-backups/20261122-before-worker-guard-load-01.
+
+Next owner: normal coldstart NO Update, select Center [LX run] ONCE, reopen
+without selecting again, report exact LX label/responsiveness/power-off. If
+stalls wait for possible prior~12s recovery and inspect label before battery
+removal if feasible. Do not repeat. No store trial staged/physical PC captured.
+Read WORKER_GUARD_LOAD_REVIEW.md; evidence20261122-worker-guard-load.json.
+Build reproduced twice; four controlled paths and exact HUD smoke pass; read
+counts0/1, no repeats/writes/workers/I-O checked. No fresh full battery policy
+suite: previous38-check CL evidence reused only after unchanged dependency hash
+checks. No full geometry/root suite repeat. Python compile/diff pass, graph
+refreshed separately. LX hardware outcome pending.
+
 ## RD passed; CLREX-only control staged/ejected - November 22, 2026
 
 Owner: "reports center RD OK with no issues at all". Ordinary guard read and
