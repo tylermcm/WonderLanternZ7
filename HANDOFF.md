@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## Next incremental checkpoint: battery plus native On/Off thirds - November 21, 2026
+
+Owner asked to keep going after battery-only hardware PASS. Prepared narrow
+battery_thirds_checkpoint.c: keeps same battery component, adds ONLY grid-source
+hook returning an owned two-line-per-axis table for native On value1 on rear
+photo LCD. Stock Off, EVF/movie/other scalar values fall back to native table.
+No custom grid/menu pointers, dispatcher, scalar writes, histogram-mask edits,
+settings, worker, DISP/readout hooks or failed full-module code. Source staging
+API prepares battery hooks before a single host registration. No native GUI RAM
+stores or battery getter/render calls during init in exact-host fixture.
+
+New build variant battery-thirds-checkpoint built twice identically. Candidate
+3160bytes,3072image,156BSS,6relocations,entry100; SHA
+78af00b6fb9dd2cb29c2d391e1ce36412a25bd771a9f56ce02fdcd1e8ebadc91.
+110 boundary/native-geometry checks,38 battery checks and95 root tests pass.
+Includes45 viewport/mode/crop cases for thirds and matching stock EVF fallback;
+no physical pixels/lifecycle or freeze-cause proof. See scoped evidence and
+BATTERY_THIRDS_TEST_ASSESSMENT.md. No new firmware or card changes. Current
+working battery-only module stays active and must be preserved by rename if a
+new test is explicitly approved. All earlier trial files remain disabled.
+
+Preparation for owner review only: NO staging or hardware-test approval inferred.
+Next consent must cover exact candidate and one ordinary startup/grid-On-Off/
+controls/power-off check, plus preservation/recovery plan. Keep full LCD hold.
+
 ## Battery-only hardware startup/control checkpoint PASSED - November 21, 2026
 
 Owner saw percentage: "yep i see it". Asked specifically whether MENU/touch and
