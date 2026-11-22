@@ -1,5 +1,33 @@
 # Laptop handoff — October 20, 2026
 
+## Owner approved host-only update; EG staged/ejected - November 22, 2026
+
+Owner "yes" explicitly approves staging/testing exact reviewed host-only update.
+Same identified Sony card privately backed up/verified. Exclusively added ONLY
+EG161080.BIN33058842 bytes SHA f479950ea8188f1de337719bda34dc3765f397c97d79759349ec21566d58f140.
+Full readback/CRC0, all238 prior file size/mtime/catalog unchanged, all named
+payloads/seed/configurations preserved. No rename/deletion, no Z7APP.BIN or other
+active root BIN. All SD modules disabled. Safe eject VERIFIED. No firmware flash
+executed by assistant; owner update result/actual installed image still pending.
+
+Private stage .private/card-staging/20261122-worker-guard-host-only-01/staging.json;
+backup .private/card-backups/20261122-before-worker-guard-host-only-01. Source-safe
+evidence/20261122-worker-guard-host-only-staged.json. Exact assessment remains
+WORKER_GUARD_HOST_ASSESSMENT.md and frozen private review20261122-worker-guard-host-01.
+Before camera Update owner must confirm Setup firmware C3.80 and fully charged
+battery (not yet observed/confirmed). If differs/not offered/error, stop/report;
+no bypass. Normal manual approved update; do not interrupt. On completion follow
+power-off instruction, remove card, ordinary no-card boot/MENU/touch/power-off
+check first. No custom overlay expected; all modules disabled. After owner pass,
+preserve/disable updater on laptop before separately approved A then B control
+staging. No automatic next module trial; no restore or probe repetition.
+
+Recovery limits unchanged: old host and stock copies preserved, but no proven
+unbootable-host recovery. New host fix still hardware-unverified. Current known
+camera state normal without card before update. No fresh code/test suite this
+turn; exact review/source hashes, identity, backups, copy/readback/CRC/catalog
+and eject checks performed. Do not claim update acceptance/installed new hash.
+
 ## Complete worker-fix host rebuilt; exact review awaiting approval - November 22, 2026
 
 Owner "lets keep going...look into fixing it" authorizes continued engineering,

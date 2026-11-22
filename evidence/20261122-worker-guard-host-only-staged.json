@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-22",
+  "authorization": "Owner explicitly approved staging/testing exact reviewed host-only update",
+  "host_eg_sha256": "f479950ea8188f1de337719bda34dc3765f397c97d79759349ec21566d58f140",
+  "host_eg_bytes": 33058842,
+  "host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "review_sha256": "2c961ee0a65c4b538403fdb6509649b726a96339f6c5f4aa0f52fd44bafd44e1",
+  "staged_file": "EG161080.BIN",
+  "existing_file_count": 238,
+  "all_sd_modules_disabled": true,
+  "private_backups_verified": true,
+  "full_readback_and_crc_verified": true,
+  "prior_named_contents_preserved": true,
+  "prior_file_size_mtime_catalog_unchanged": true,
+  "safe_eject_verified": true,
+  "firmware_flash_executed": false,
+  "physical_fix_verified": false,
+  "camera_preflight_pending": [
+    "Confirm Setup firmware C 3.80 before initiating Update",
+    "Fully charged battery before initiating Update"
+  ]
+}
