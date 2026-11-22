@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "module_sha256": "53334536d00ed18ea9d80d36dd736d6341fd1943da674f6e0fd513112f226195",
+  "module_bytes": 5260,
+  "owner_quote": "yep that works like normal",
+  "result": "PASS by owner report for the requested six-grid checkpoint",
+  "scope": "One rear-LCD photo startup, battery, six native grid-menu choices/layout redraw/Off, MENU/touch and normal power-off",
+  "confirmation_detail": "Owner gave a general confirmation of the requested checks; no itemized measurements, screenshots or trace",
+  "battery_and_six_grid_checkpoint_owner_confirmed": true,
+  "layout_persistence": "Volatile by design; restart resets to thirds if native grid is On; not separately hardware retested",
+  "evf_extension": false,
+  "full_lcd_release_cleared": false,
+  "earlier_freeze_cause_established": false,
+  "card_changed_after_result": false,
+  "firmware_flashed_for_this_test": false,
+  "limits": [
+    "No extended-run/capture/movie/output acceptance",
+    "Layout persistence and repeated startup not verified",
+    "Pass of native grid menu does not identify the earlier full-module freeze cause"
+  ]
+}

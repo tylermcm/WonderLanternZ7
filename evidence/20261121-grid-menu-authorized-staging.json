@@ -23,6 +23,7 @@
   "updater_disabled": true,
   "eject_evidence": "No mounted card partition, no media bytes and inaccessible root",
   "private_staging_record_sha256": "6a5c74c7622b5bcef249c4923824f9ce005cbdbf3b652d53cdfabc7250b13e3d",
-  "hardware_result": "pending",
-  "hardware_test_authorized": true
+  "hardware_result": "PASS by general owner confirmation of the requested six-grid/battery/control test",
+  "hardware_test_authorized": true,
+  "hardware_result_evidence": "evidence/20261121-grid-menu-hardware-result.json"
 }

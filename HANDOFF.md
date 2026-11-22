@@ -1,5 +1,22 @@
 # Laptop handoff — October 20, 2026
 
+## Six-grid/battery LCD checkpoint PASSED by owner report - November 21, 2026
+
+Owner responded "yep that works like normal" to requested six-grid entries/layout
+redraw/Off, percentage, MENU/touch and normal power-off checks. Record general
+owner-confirmed PASS for that scoped trial, not itemized measurements or full
+release acceptance. Native grid-page extension now has positive hardware evidence;
+this does not clear custom settings page/dispatcher/persistence or identify the
+previous full-module freeze cause. Layout remains intentionally volatile; repeat
+startup/persistence not separately tested. No EVF extension/capture/movie/output
+or long-run acceptance. Evidence/20261121-grid-menu-hardware-result.json.
+
+Keep current working5260-byte six-grid/battery Z7APP.BIN active, SHA53334536...
+12f226195. Both earlier working baselines and four originals remain preserved
+as disabled per last verified staging. No card changes/new test/firmware flash
+authorized by this result. Installed host remains modified; full LCD/ownership
+hardening builds remain withdrawn. Docs/evidence-only, no tests rerun/live process.
+
 ## Six-grid checkpoint authorized, staged and safely ejected - November 21, 2026
 
 Owner explicitly approved "go ahead" to exact reviewed six-grid SD candidate.

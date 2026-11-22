@@ -1,5 +1,12 @@
 # Battery plus six grid choices: SD test assessment
 
+**Owner-reported PASS for the requested six-grid checkpoint:** "yep that works
+like normal". General confirmation covers the requested LCD/menu/control test;
+no itemized measurements or extended lifecycle acceptance inferred. Active working
+candidate stays unchanged; layouts remain volatile by design. This supersedes
+pending-result wording below. Frozen preapproval evidence remains unchanged.
+See evidence/20261121-grid-menu-hardware-result.json.
+
 Owner subsequently approved "go ahead". Exact candidate staged, flushed,
 readback/hash verified and safely ejected. Working thirds module preserved as
 Z7APP.THIRDS-WORKING.disabled; earlier battery and all original trials intact.
