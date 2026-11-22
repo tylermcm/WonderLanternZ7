@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## Read-only restore module and seed staged; safely ejected - November 21, 2026
+
+Owner explicitly approved "go ahead" for exact read-only restore module+seed.
+Same external card/current six-grid baseline/six preserved payloads/frozen bundle
+verified. Named payload/configuration files privately backed up/readback verified.
+Native Move-Item preserved working six-grid module as
+Z7APP.GRID-MENU-WORKING.disabled. Exclusively added only Z7APP.BIN(6628bytes,
+SHA0714fe84...b2c4bf95) and Z7GRID.DAT(80bytes,SHAa0b38b76...8567ae0).
+Both flushed/fsync, exact full readback. All earlier working/trial files and
+settings preserved;228 existing metadata records unchanged except authorized
+rename, Nikon catalog SHA unchanged. No photos read/deleted, format, EG reenable,
+firmware image or flash. Safe eject VERIFIED: no card partition/media bytes/root
+access. Private .private/card-staging/20261121-grid-restore-readonly-test-01/.
+
+Active module now read-only restore; seed newly present. Working six-grid and
+all previous baselines disabled/intact. Ready for ONE ordinary rear photo LCD
+startup: percentage/controls, wait up to30s before choosing a layout, then open
+Framing grid display and look for6x6 [SD]. Choose it if present, verify5 lines
+per axis, MENU/touch and normal power-off. Report exact marker including miss/
+error/skip/none. No Update, repeat restarts, captures/movie/EVF/output tests.
+Camera-side saving NOT implemented. If frozen stop/report and follow assessed
+card/battery boundary; exact recovery unknown. Hardware result pending, full
+release withdrawn. No next test authorized. Card/docs-only, no code/tests rerun
+or live process.
+
 ## Read-only restore review frozen; approval pending - November 21, 2026
 
 Exact10-file bundle .private/review/20261121-grid-restore-readonly-test-01

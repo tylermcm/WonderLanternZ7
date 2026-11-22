@@ -1,5 +1,12 @@
 # Read-only grid restore: SD test assessment
 
+Owner subsequently approved "go ahead". Exact module and seed now staged,
+flushed/readback/hash verified and safely ejected. Working six-grid module
+preserved as Z7APP.GRID-MENU-WORKING.disabled; all prior baselines/trials/settings
+intact.228 existing metadata records/catalog preserved except authorized rename.
+No firmware update. Await ONE owner marker/layout/control/power-off result.
+Frozen preapproval bundle unchanged; this supersedes pending approval status.
+
 November 21, 2026. Independent original Z7 C 3.80 checkpoint, prepared for owner
 review only. No new staging or camera-test authorization. Existing MIT notices
 and battery attribution retained. This is the read half of persistence;
