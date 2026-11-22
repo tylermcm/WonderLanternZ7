@@ -1,5 +1,24 @@
 # Laptop handoff — October 20, 2026
 
+## Battery-plus-thirds review frozen; owner approval pending - November 21, 2026
+
+.private/review/20261121-battery-thirds-test-01 contains8 files independently
+readback/hash verified: exact3160-byte Z7APP.BIN, metadata, boundary110 checks,
+battery38 checks, assessment, root95 checks and source manifest. Source checkpoint
+2b2a95d9866808f4d860d0abaa22318b2f42b7e2. Candidate SHA78af00b6...e8ebadc91.
+Graph refreshed4028nodes/11107edges (existing conditional-C limitations). Public
+freeze record under evidence/. See BATTERY_THIRDS_TEST_ASSESSMENT.md.
+
+Ready for OWNER REVIEW only. No card changes or firmware flash. Working battery
+module remains current; all earlier trial files stay disabled. Fresh consent
+required to preserve working Z7APP.BIN by rename to Z7APP.BATTERY-WORKING.disabled
+and exclusively add reviewed candidate. Same-card/hash/name-collision preflight,
+backups/readback/metadata/catalog checks and safe eject required before owner
+ONE startup, native grid On/Off, controls and normal power-off test. No custom
+menu, native scalar writes, settings/worker/dispatcher replacement. Hardware
+freeze/recovery/grid pixels not validated. Full release remains withdrawn.
+No live process. Stop here for review; no automatic staging or next camera test.
+
 ## Next incremental checkpoint: battery plus native On/Off thirds - November 21, 2026
 
 Owner asked to keep going after battery-only hardware PASS. Prepared narrow
@@ -7,7 +26,7 @@ battery_thirds_checkpoint.c: keeps same battery component, adds ONLY grid-source
 hook returning an owned two-line-per-axis table for native On value1 on rear
 photo LCD. Stock Off, EVF/movie/other scalar values fall back to native table.
 No custom grid/menu pointers, dispatcher, scalar writes, histogram-mask edits,
-settings, worker, DISP/readout hooks or failed full-module code. Source staging
+settings, worker, DISP/readout hooks or failed full-module initialization. Source staging
 API prepares battery hooks before a single host registration. No native GUI RAM
 stores or battery getter/render calls during init in exact-host fixture.
 

@@ -1,0 +1,20 @@
+{
+  "source_checkpoint": "2b2a95d9866808f4d860d0abaa22318b2f42b7e2",
+  "module_sha256": "78af00b6fb9dd2cb29c2d391e1ce36412a25bd771a9f56ce02fdcd1e8ebadc91",
+  "module_bytes": 3160,
+  "host_main_sha256": "7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057",
+  "scope": "One battery-plus-thirds SD startup/native grid On-Off/control/power-off test",
+  "stage_authorized": false,
+  "hardware_test_authorized": false,
+  "hardware_verified": false,
+  "card_written": false,
+  "firmware_generated": false,
+  "bundle_files_verified": 8,
+  "review_manifest_sha256": "aff83cf9dee90cf2fb857a1f5c4bc69d78deaca8fd67d7e39696391a32173f6e",
+  "boundary_geometry_checks": 110,
+  "battery_policy_checks": 38,
+  "root_tests": 95,
+  "graph_nodes": 4028,
+  "graph_edges": 11107,
+  "working_battery_baseline_unchanged": true
+}
