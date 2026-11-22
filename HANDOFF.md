@@ -1,5 +1,30 @@
 # Laptop handoff — October 20, 2026
 
+## RD passed; CLREX-only control staged/ejected - November 22, 2026
+
+Owner: "reports center RD OK with no issues at all". Ordinary guard read and
+manual menu path pass; no exclusive support inferred, power-off not itemized.
+Result saved in read staging record and evidence/20261122-worker-guard-read-hardware-result.json.
+Next control adds CLREX before proven ordinary read; no LDREX/STREX, no worker,
+host-word/code writes, file I/O or firmware update. This isolates cleanup before
+later pairing with exclusive load. No further exclusive load/store test staged.
+
+Exact5664-byte CL module e55eda505bca7bca749acb52931ae614afd57e2170dd6273528cec29e7e1882f
+staged on same verified card. RD preserved as Z7APP.GUARD-READ-WORKING.disabled.
+All236 preexisting file metadata preserved except rename; prior payloads/seed/
+configuration contents and catalog unchanged. Backups/flush/full readback passed.
+Safe eject VERIFIED. Private build/review/staging20261122-worker-guard-clear-01,
+backup .private/card-backups/20261122-before-worker-guard-clear-01.
+Read WORKER_GUARD_CLEAR_REVIEW.md. One manual test: normal start NO Update,
+select Center [CL run] ONCE, reopen menu WITHOUT selecting again, report CL label
+and controls/power-off. If stalls, wait for possible prior~12s recovery and inspect
+label before battery removal if possible. Do not repeat the probe.
+
+Build reproducible twice; four controlled cases and38 battery checks pass,
+manual-only/one-attempt/no host writes/no I-O checks. Python compile/diff passed;
+graph refreshed. No root/full geometry repeat for unchanged shared components.
+Hardware CL result pending. Source-safe evidence20261122-worker-guard-clear.json.
+
 ## Ordinary-read control staged/ejected - November 22, 2026
 
 Owner "ok lets get to it" authorizes read control first. Exact5664-byte module
