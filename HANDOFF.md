@@ -1,5 +1,26 @@
 # Laptop handoff — October 20, 2026
 
+## Worker-progress module approved/staged/ejected - November 22, 2026
+
+Owner returned, asked ready for test/flash, then explicitly approved progress
+module (go ahead). No firmware update. Same Sony card verified. Current working
+B767ada05... preserved as Z7APP.POST-HOST-B.disabled; every previous payload and
+updater left intact/disabled. Only new active Z7APP.BIN5452bytes
+3b5aced1e58f56ebad9d5f945452254d82614549e6904acb5ff3d460909e51a9.
+Frozen review/files/source hashes verified, new private backups/flush/full
+readback pass. All241 prior size/mtime/catalog unchanged except intended rename,
+all named contents preserved. Safe eject VERIFIED. No hardware result yet.
+
+Private stage .private/card-staging/20261122-worker-progress-test-01/staging.json;
+backup .private/card-backups/20261122-before-worker-progress-test-01. Review
+WORKER_PROGRESS_REVIEW.md and frozen .private/review/20261122-worker-progress-checkpoint-01.
+Owner test: normal coldstart NO Update, open grid-choice menu, note Off [W nnnn]
+WITHOUT selecting it, leave menu/brief ordinary use, reopen and report two values
+and controls/power-off. Counter changes only in worker, menu reads never increment.
+No exact callback cadence claimed. If stalls stop/report, no repeat. Saturation
+9999/unchanged number needs report, not assumption. Other AFK candidates remain
+unstaged/unapproved; do not auto-stage restore or LCD after this test.
+
 ## AFK offline build checkpoint complete; working card UNCHANGED - November 22, 2026
 
 Owner "just keep building im going afk" authorizes continued engineering. Agent
