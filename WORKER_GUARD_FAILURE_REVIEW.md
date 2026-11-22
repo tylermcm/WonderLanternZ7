@@ -1,5 +1,55 @@
 # Worker guard: localized suspected failure point
 
+## Update: matched hardware trigger and resident-loop trace
+
+November 22: owner-confirmed A working, B freezing, and camera normal again with
+the card removed. A/B have identical code/layout and differ only in the worker
+enable flag and CRC. B's callback begins `bx lr`; it contains no restore or file
+I/O. B is preserved as Z7APP.WORKER-B.disabled, no active root BIN remains,
+and safe ejection was verified. All earlier files and working A are intact.
+
+`tools/trace_z7_worker_dispatch.py` now traces the successful registration and
+the installed resident loop separately. On the supplied successful load path,
+registration at 0x11fa66f6 returns success after writing exactly two host words:
+callback at 0xa97000c4 and registered flag at 0xa97000c8. Its executed trace
+contains no calls or exclusive instructions. This excludes a hidden registration
+retry loop in that path, without proving its physical memory accesses succeeded.
+
+The exact resident loop is at 0x11fa6032: native delay(1000), worker_tick, repeat.
+The audit enters that loop after the real audited module load, supplies native
+delay returns, and stops at the fourth delay boundary or 4096 instructions:
+
+| Exact module and supplied condition | Delay calls | Callback entries | Failed stores |
+| --- | ---: | ---: | ---: |
+| A, healthy | 4 | 0 | 0 |
+| B, healthy | 4 | 3 | 0 |
+| A, failed-store injection | 4 | 0 | 0 |
+| B, failed-store injection | 1 | 0 | 804 |
+| B, failed-store injection, bounded branch in memory | 4 | 0 | 3 |
+
+The last case changes only the host's two-byte BNE target from retry to its
+existing return in emulator memory. No patched host artifact or firmware image
+is emitted. It proves that the retry loop can prevent subsequent native delays;
+it does not model scheduler priorities or establish that this stalls physical
+input tasks. A bounded failure also does not demonstrate a functioning worker:
+all three ticks skip it when the exclusive store is forced to fail.
+
+The leading suspect is therefore the pre-callback guard acquisition, specifically
+STREX 0x11fa5858 and its retry branch 0x11fa585e. The physical distinction between
+repeated STREX failure, an exclusive-access exception, or another worker-path
+fault remains open. No physical PC, MMU attributes, exception record or callback
+entry was captured. Do not call this exact hardware cause confirmed.
+
+Next hardware evidence must distinguish bounded failure from successful guard
+acquisition/callback execution. Another empty-worker SD test would repeat B.
+Any installed-host change needs its own exact installation/recovery assessment
+and explicit authorization; the existing offline weak-CAS build is not installed.
+Private trace: `.private/evidence/20261122-worker-dispatch-trace-01.json`;
+source-safe copy: `evidence/20261122-worker-dispatch-trace.json`.
+
+The earlier investigation below is historical; its pre-A/B card state and
+pending-owner-check statements are superseded by this update.
+
 November 22, 2026. Camera's working battery/six-grid module restored; no new
 firmware flash or camera experiment. The read-only restore module and seed,
 earlier baselines and all trial files remain intact. Card safely ejected.

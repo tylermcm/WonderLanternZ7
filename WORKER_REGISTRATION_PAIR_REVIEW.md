@@ -1,6 +1,10 @@
 # Single-step worker registration test - November 22, 2026
 
-Prepared privately; neither trial is staged or authorized for camera use yet.
+Completed A/B experiment: owner confirmed A working and B freezing. Camera
+responds normally with card removed. B is withdrawn, privately backed up and
+preserved as Z7APP.WORKER-B.disabled; no active root BIN remains. Card safely
+ejected, A and all earlier files preserved. No further trial is authorized.
+The preparation and sequential procedure below describe the completed experiment.
 Independent MIT diagnostic built from the working battery/six-grid components.
 No firmware image or update is involved. Installed host remains the original
 7d7356e7775db90483ed9fe5598f401afb7fb8498a7b42bd71900db849d7f057 build;

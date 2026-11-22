@@ -1,5 +1,84 @@
 # Laptop handoff — October 20, 2026
 
+## Matched freeze localized to leading pre-callback suspect - November 22, 2026
+
+Owner confirms camera responds normally without card; asks to find exact origin.
+Read WORKER_GUARD_FAILURE_REVIEW.md latest update. New exact A/B trace separates
+registration from resident task progress. Successful registration stores only
+callback0xa97000c4 and flag0xa97000c8; returns1, no executed exclusive/call.
+Installed resident loop6032 supplies delay1000, tick, repeat. Five controlled
+cases: A healthy/fault both reach4 delays; B healthy4delays/3callbacks; B fault
+1delay/0callbacks/804 failed STREX in4096instructions; same B with two-byte
+in-memory branch-to-return4delays/0callbacks/3failures. No I/O in ticks.
+Strongest suspect STREX11fa5858/retry585e on guard a97000cc beforecallback5868.
+Physical PC/exception/MMU/monitor NOT captured; hardware cause not proven.
+Bounded failure is responsiveness hardening, not worker-functionality proof.
+No new host image/flash/card write/trial authorized. B remains disabled; A and
+other files intact. Recovery confirmed in private quarantine record.
+Validation: five controlled resident-loop/registration cases passed; Python
+compile and diff checks passed. Root suite not repeated for trace-only additions.
+Trace tool tools/trace_z7_worker_dispatch.py, source-safe evidence
+ evidence/20261122-worker-dispatch-trace.json; exact firmware remains private.
+
+## Failed B preserved and disabled - November 22, 2026
+
+Same identified card available after B freeze report. Privately backed up all named
+payloads/seed/configuration if present, compared earlier preserved contents; native
+Move-Item Z7APP.BIN -> Z7APP.WORKER-B.disabled ONLY.234 existing files metadata
+preserved except rename; catalog/named contents identical. A and all working copies
+intact. No active root BIN, no replacement or flash. Safe eject VERIFIED.
+Private record .private/card-backups/20261122-worker-pair-B-freeze-01/quarantine.json.
+Current camera recovery not yet owner-confirmed. No further hardware trial approved.
+
+## B froze on camera after A passed - November 22, 2026
+
+Owner reports "yep that froze the camera" for return-only-worker B767ada05...
+following working A412dffaf... . Exact matched pair differs only enable flag/CRC.
+B WITHDRAWN. Worker registration/execution path now implicated on hardware without
+restore/file I/O/GUI-seen wrapper/selection atomics. Actual failure PC and callback
+entry remain unproved; current camera recovery NOT yet confirmed.
+No further trials or host flashes authorized. Preserve/disable B when card available;
+do not automatically restore or stage another payload. Record quarantine separately.
+Prior known working A and six-grid baseline are preserved on card and privately.
+
+## Return-only worker B staged and safely ejected - November 22, 2026
+
+After A owner pass, owner explicitly approved B (yes). Same Sony card verified;
+B Z7APP.BIN5324 bytes SHA767ada057f52df432aa037c341d300207d1bf436fea9258c5c58b78d4556a158.
+Worker ENABLED, callback bx lr; only flag/CRC differ from working A.
+A preserved as Z7APP.WORKER-A.disabled; six-grid baseline and all other payloads/
+seed intact.233 preexisting metadata/catalog verified, private backups/readback:
+.private/card-backups/20261122-before-worker-pair-B-01;
+.private/card-staging/20261122-worker-pair-B-01/staging.json.
+Safe eject VERIFIED by no-media volume check. No firmware flash or file I/O added.
+Await owner normal cold-start result; do not claim B pass or physical cause.
+If B freezes, stop, preserve/disable before any further trial; worker path implicated
+by A/B but actual camera failure PC remains unproved. No further trial authorized.
+
+## Owner confirmed control A working - November 22, 2026
+
+Owner replied "yep works" to the staged A normal-start/battery/MENU-touch/grids/
+ordinary-use/power-off check. General owner-confirmed pass, no itemized timings.
+A is SHA412dffaf...99a200f9, worker disabled. This validates the common pair layout
+on camera; next B differs only in worker-enable flag and CRC, callback bx lr.
+B remains unstaged and requires separate approval. All card files preserved;
+card last safely ejected to owner for A. No new firmware flash.
+
+## Control A staged and safely ejected - November 22, 2026
+
+Owner approved A only (yes; try again). Same identified Sony card verified.
+Active Z7APP.BIN now5324 bytes SHA412dffaf9a2b5f9aa5cf9e715b66e778e9de1e9f4c67eabc2963df7899a200f9,
+worker DISABLED. Exact old53334536... working module preserved as
+Z7APP.SIX-GRID-WORKING.disabled, plus existing GRID-MENU-WORKING copy intact.
+Private verified backups .private/card-backups/20261122-before-worker-pair-A-01;
+record .private/card-staging/20261122-worker-pair-A-01/staging.json.
+232 preexisting files verified by metadata, all prior payloads/seed contents and
+catalog unchanged, configuration presence preserved. Exclusive create, flush/full
+readback passed; Shell eject followed by no-media volume check VERIFIED.
+No firmware flash. Await owner's ordinary cold-start A result: battery, MENU/touch,
+grids, approximately30 seconds normal use and power-off. No hardware pass claimed.
+Do not stage B until A result and separate explicit approval.
+
 ## Matched single-step worker controls prepared - November 22, 2026
 
 Owner requested one step at a time until reproduction. Prepared A worker-disabled
