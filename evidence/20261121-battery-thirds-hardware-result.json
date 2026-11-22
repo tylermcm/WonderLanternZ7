@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "module_sha256": "78af00b6fb9dd2cb29c2d391e1ce36412a25bd771a9f56ce02fdcd1e8ebadc91",
+  "module_bytes": 3160,
+  "owner_quote": "confirmed working but not in the evf only the back lcd",
+  "result": "Owner confirms working on rear LCD; custom behavior absent in EVF",
+  "rear_lcd_working_owner_confirmed": true,
+  "evf_custom_behavior_absent_owner_reported": true,
+  "evf_matches_intended_stock_fallback": true,
+  "individual_menu_touch_shutdown_results": "Not separately itemized in this reply",
+  "scope": "Rear photo LCD battery-plus-thirds checkpoint only",
+  "full_lcd_release_cleared": false,
+  "earlier_freeze_cause_established": false,
+  "card_changed_after_result": false,
+  "firmware_flashed_for_this_test": false,
+  "limits": [
+    "No complete EVF transition/lifecycle validation established",
+    "Individual requested checks were confirmed generally rather than itemized",
+    "No capture/movie/output or extended-run acceptance"
+  ]
+}

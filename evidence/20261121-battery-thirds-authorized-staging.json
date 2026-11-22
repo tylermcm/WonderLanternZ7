@@ -23,6 +23,7 @@
   "updater_disabled": true,
   "eject_evidence": "No mounted card partition, no media bytes and inaccessible root",
   "private_staging_record_sha256": "a774f436d18ddb2dab6e177ab345de3ef11ebd1d9e249c6a65cf1d4927fdc9a6",
-  "hardware_result": "pending",
-  "hardware_test_authorized": true
+  "hardware_result": "Owner confirms working on rear LCD, absent in EVF as intended",
+  "hardware_test_authorized": true,
+  "hardware_result_evidence": "evidence/20261121-battery-thirds-hardware-result.json"
 }

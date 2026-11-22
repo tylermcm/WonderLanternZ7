@@ -1,5 +1,12 @@
 # Battery plus 3x3 grid: next SD test assessment
 
+Owner result: "confirmed working but not in the evf only the back lcd".
+Rear-LCD success recorded; custom EVF behavior is intentionally excluded by
+this build. No complete EVF-transition or lifecycle acceptance is inferred.
+Current working candidate remains active; no card change or next test authorized.
+See evidence/20261121-battery-thirds-hardware-result.json. This supersedes the
+pending-result wording below; frozen preapproval evidence remains unchanged.
+
 Owner subsequently approved "go ahead". Exact candidate now staged, flushed,
 readback/hash verified and safely ejected. Working battery module preserved as
 Z7APP.BATTERY-WORKING.disabled; four earlier disabled trials/settings intact.

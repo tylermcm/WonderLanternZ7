@@ -1,5 +1,22 @@
 # Laptop handoff — October 20, 2026
 
+## Battery-plus-thirds working on rear LCD by owner report - November 21, 2026
+
+Owner: "confirmed working but not in the evf only the back lcd". This matches
+the intentional rear photo LCD-only checkpoint: grid callback falls back to stock
+for EVF/movie; battery overlay also has a rear-LCD-only context guard. Record
+rear-LCD feature success and reported EVF absence, not EVF feature acceptance.
+Requested controls/shutdown checks were confirmed generally, not separately
+itemized in this reply. No complete transition/lifecycle, capture/movie/output
+or extended-run validation established. Full LCD release remains withdrawn;
+earlier freeze cause unresolved. Evidence/20261121-battery-thirds-hardware-result.json.
+
+Current active working module remains3160-byte battery-plus-thirds Z7APP.BIN
+SHA78af00b6...e8ebadc91. Prior battery baseline and four earlier trial files stay
+preserved disabled per last verified staging. No card changes, new firmware,
+EVF extension or next trial authorized by this observation. Installed host remains
+modified. Docs/evidence-only update; no tests rerun or live process.
+
 ## Battery-plus-thirds authorized, staged and safely ejected - November 21, 2026
 
 Owner approved "go ahead" to exact reviewed battery-plus-3x3 trial. Same card,
