@@ -1,5 +1,38 @@
 # Laptop handoff — October 20, 2026
 
+## Completed updater disabled; A approval pending - November 22, 2026
+
+Same identified Sony card returned/available. Verified completed EGf479950e...,
+all named previous bytes vs pre-update backups and private new backups. Native
+Move-Item ONLY EG161080.BIN -> EG161080.WORKER-GUARD-HOST.disabled.239 preexisting
+size/mtime/catalog unchanged except rename; all prior modules/stock/seed intact.
+No active root BIN. Card LEFT MOUNTED in reader for next approved staging, NOT
+claimed ejected. All handles closed, backups flushed/readback verified. No module
+staged and no further flash. Private record/backups:
+.private/card-backups/20261122-worker-guard-host-update-complete-01/quarantine.json.
+
+A then B next: WORKER_POST_UPDATE_CONTROLS.md. Exact frozen controls already
+validated in .private/review/20261122-worker-guard-host-01/controls. A412dffaf...
+worker-disabled battery/six-grid, B767ada05... sameplusreturn-onlyworker.
+Ask approval for A ONLY; record owner coldstart/battery/MENU-touch/grid/normal
+power-off result before separately approved B. No more Update, restore/I-O or
+exclusive-probe trials. New host basic operation owner-pass but worker fix still
+unconfirmed. Installed-image hash remains inferred, not physical readback.
+
+## Owner confirms new host update/normal operation pass - November 22, 2026
+
+Owner: "update worked as intended. not failures freezes or otherwise" in response
+to exact host-only update/no-card basic-operation check. General owner pass, no
+itemized timings. New host EGf479950e.../MAIN24b20745... presumed installed from
+approved exact staged file; NO physical image readback. Do not claim verified
+installed hash. Worker remains UNTESTED on new host; no hardware fix established.
+All SD modules were disabled during update. Next preserve/disable completed
+EG161080.BIN under unique EG161080.WORKER-GUARD-HOST.disabled if card available.
+Keep previous old-host EG161080.BIN.disabled and every other file intact. Record
+cleanup separately. Then separately approve/review A worker-disabled battery/
+six-grid, record owner result, then B exactemptyworker767ada05. No restore/I-O or
+exclusive-probe repetition. Host update itself need not be repeated.
+
 ## Owner approved host-only update; EG staged/ejected - November 22, 2026
 
 Owner "yes" explicitly approves staging/testing exact reviewed host-only update.
