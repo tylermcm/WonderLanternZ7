@@ -79,7 +79,15 @@ static uint32_t base_before(void)
     }
     uint32_t components = z7_menu_settings.components[z7_readout_preset];
     uint32_t grid = !!(components & Z7_COMPONENT_GRID);
+#ifdef Z7_BASE_INITIAL_GRID_DELTA_ONLY
+    /* First ownership of an enabled grid does not change native visibility.
+     * Initial suppression still needs a delta, as do all later visibility edits.
+     * Page/readout changes independently request their own native invalidation.
+     */
+    if ((!base_grid_valid && !grid) || (base_grid_valid && base_grid_key != grid)) changed = 1;
+#else
     if (!base_grid_valid || base_grid_key != grid) changed = 1;
+#endif
     base_grid_key = grid; base_grid_valid = 1;
     uint32_t desired = components & Z7_COMPONENT_HORIZON ? 3u : 0u;
     if (desired == z7_base_applied) return changed;

@@ -1,0 +1,201 @@
+{
+  "passed": true,
+  "module_sha256": "eae52b4946ad375c3eacbe98cd61054a8eb9d94a402764fac85958f01aa3eda2",
+  "baseline_sha256": "88b53ce46ae816b634c249cfe011f05a501f2619447d9c156e2828c2cf82a71e",
+  "host_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "checks": 65,
+  "check_names": [
+    "master-off-baseline-load",
+    "master-off-baseline-first-invalidation-count",
+    "master-off-baseline-settled-update-no-extra-invalidation",
+    "master-off-baseline-update-never-performs-file-io",
+    "master-off-candidate-load",
+    "master-off-candidate-first-invalidation-count",
+    "master-off-candidate-settled-update-no-extra-invalidation",
+    "master-off-candidate-update-never-performs-file-io",
+    "master-off-native-page-writes-unchanged",
+    "unchanged-grid-on-baseline-load",
+    "unchanged-grid-on-baseline-first-invalidation-count",
+    "unchanged-grid-on-baseline-settled-update-no-extra-invalidation",
+    "baseline-cold-information-mask-changes-still-require-redraw",
+    "baseline-matching-mask-grid-on-reacquisition",
+    "unchanged-grid-on-baseline-real-grid-toggle-invalidates",
+    "unchanged-grid-on-baseline-grid-toggle-does-not-write-page",
+    "unchanged-grid-on-baseline-update-never-performs-file-io",
+    "unchanged-grid-on-candidate-load",
+    "unchanged-grid-on-candidate-first-invalidation-count",
+    "unchanged-grid-on-candidate-settled-update-no-extra-invalidation",
+    "candidate-cold-information-mask-changes-still-require-redraw",
+    "candidate-matching-mask-grid-on-reacquisition",
+    "unchanged-grid-on-candidate-real-grid-toggle-invalidates",
+    "unchanged-grid-on-candidate-grid-toggle-does-not-write-page",
+    "unchanged-grid-on-candidate-update-never-performs-file-io",
+    "unchanged-grid-on-native-page-writes-unchanged",
+    "initial-grid-hidden-baseline-load",
+    "initial-grid-hidden-baseline-first-invalidation-count",
+    "initial-grid-hidden-baseline-settled-update-no-extra-invalidation",
+    "initial-grid-hidden-baseline-real-grid-toggle-invalidates",
+    "initial-grid-hidden-baseline-grid-toggle-does-not-write-page",
+    "initial-grid-hidden-baseline-update-never-performs-file-io",
+    "initial-grid-hidden-candidate-load",
+    "initial-grid-hidden-candidate-first-invalidation-count",
+    "initial-grid-hidden-candidate-settled-update-no-extra-invalidation",
+    "initial-grid-hidden-candidate-real-grid-toggle-invalidates",
+    "initial-grid-hidden-candidate-grid-toggle-does-not-write-page",
+    "initial-grid-hidden-candidate-update-never-performs-file-io",
+    "initial-grid-hidden-native-page-writes-unchanged",
+    "enable-horizon-baseline-load",
+    "enable-horizon-baseline-first-invalidation-count",
+    "enable-horizon-baseline-settled-update-no-extra-invalidation",
+    "enable-horizon-baseline-real-grid-toggle-invalidates",
+    "enable-horizon-baseline-grid-toggle-does-not-write-page",
+    "enable-horizon-baseline-update-never-performs-file-io",
+    "enable-horizon-candidate-load",
+    "enable-horizon-candidate-first-invalidation-count",
+    "enable-horizon-candidate-settled-update-no-extra-invalidation",
+    "enable-horizon-candidate-real-grid-toggle-invalidates",
+    "enable-horizon-candidate-grid-toggle-does-not-write-page",
+    "enable-horizon-candidate-update-never-performs-file-io",
+    "enable-horizon-native-page-writes-unchanged",
+    "leave-native-horizon-baseline-load",
+    "leave-native-horizon-baseline-first-invalidation-count",
+    "leave-native-horizon-baseline-settled-update-no-extra-invalidation",
+    "leave-native-horizon-baseline-real-grid-toggle-invalidates",
+    "leave-native-horizon-baseline-grid-toggle-does-not-write-page",
+    "leave-native-horizon-baseline-update-never-performs-file-io",
+    "leave-native-horizon-candidate-load",
+    "leave-native-horizon-candidate-first-invalidation-count",
+    "leave-native-horizon-candidate-settled-update-no-extra-invalidation",
+    "leave-native-horizon-candidate-real-grid-toggle-invalidates",
+    "leave-native-horizon-candidate-grid-toggle-does-not-write-page",
+    "leave-native-horizon-candidate-update-never-performs-file-io",
+    "leave-native-horizon-native-page-writes-unchanged"
+  ],
+  "cases": [
+    {
+      "case": "master-off",
+      "comparison": [
+        {
+          "profile": "baseline",
+          "initial_invalidations": 0,
+          "initial_readout_mask_changes": 0,
+          "matching_masks_reacquisition_invalidations": null,
+          "page_writes": []
+        },
+        {
+          "profile": "candidate",
+          "initial_invalidations": 0,
+          "initial_readout_mask_changes": 0,
+          "matching_masks_reacquisition_invalidations": null,
+          "page_writes": []
+        }
+      ]
+    },
+    {
+      "case": "unchanged-grid-on",
+      "comparison": [
+        {
+          "profile": "baseline",
+          "initial_invalidations": 1,
+          "initial_readout_mask_changes": 17,
+          "matching_masks_reacquisition_invalidations": 1,
+          "page_writes": []
+        },
+        {
+          "profile": "candidate",
+          "initial_invalidations": 1,
+          "initial_readout_mask_changes": 17,
+          "matching_masks_reacquisition_invalidations": 0,
+          "page_writes": []
+        }
+      ]
+    },
+    {
+      "case": "initial-grid-hidden",
+      "comparison": [
+        {
+          "profile": "baseline",
+          "initial_invalidations": 1,
+          "initial_readout_mask_changes": 17,
+          "matching_masks_reacquisition_invalidations": null,
+          "page_writes": []
+        },
+        {
+          "profile": "candidate",
+          "initial_invalidations": 1,
+          "initial_readout_mask_changes": 17,
+          "matching_masks_reacquisition_invalidations": null,
+          "page_writes": []
+        }
+      ]
+    },
+    {
+      "case": "enable-horizon",
+      "comparison": [
+        {
+          "profile": "baseline",
+          "initial_invalidations": 1,
+          "initial_readout_mask_changes": 17,
+          "matching_masks_reacquisition_invalidations": null,
+          "page_writes": [
+            [
+              12053,
+              3
+            ]
+          ]
+        },
+        {
+          "profile": "candidate",
+          "initial_invalidations": 1,
+          "initial_readout_mask_changes": 17,
+          "matching_masks_reacquisition_invalidations": null,
+          "page_writes": [
+            [
+              12053,
+              3
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "case": "leave-native-horizon",
+      "comparison": [
+        {
+          "profile": "baseline",
+          "initial_invalidations": 1,
+          "initial_readout_mask_changes": 17,
+          "matching_masks_reacquisition_invalidations": null,
+          "page_writes": [
+            [
+              12053,
+              0
+            ]
+          ]
+        },
+        {
+          "profile": "candidate",
+          "initial_invalidations": 1,
+          "initial_readout_mask_changes": 17,
+          "matching_masks_reacquisition_invalidations": null,
+          "page_writes": [
+            [
+              12053,
+              0
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "cold_initial_redraw_removed": false,
+  "matching_masks_reacquisition_redraw_removed": true,
+  "owner_visible_startup_flash_reproduced": false,
+  "hardware_fix_confirmed": false,
+  "card_written": false,
+  "limits": [
+    "Supplied native GUI/property/filesystem context",
+    "Actual compiled before-update and native invalidation/page-setter instructions execute",
+    "No first-frame cached geometry, scanout or physical boot timing"
+  ]
+}

@@ -24,7 +24,7 @@ def main():
     m=json.loads((a.module/'module.json').read_text());packet=(a.module/'Z7APP.BIN').read_bytes()
     assert hashlib.sha256(raw).hexdigest()==h['main_payload_sha256']
     assert hashlib.sha256(packet).hexdigest()==m['module_sha256']
-    assert m['kind']=='original-Z7-LCD-persistence-checkpoint'
+    assert m['kind'] in ('original-Z7-LCD-persistence-checkpoint','original-Z7-LCD-startup-grid-checkpoint')
     symbols=m['symbols'];checks=[]
     def check(name,good):
         assert good,name

@@ -1,5 +1,50 @@
 # Laptop handoff — October 20, 2026
 
+## Optional startup grid comparison built and reviewed offline - November 22, 2026
+
+Owner asked to keep going. Found/reproduced extra grid ownership invalidation:
+masterOFF initial before-update requests0 native snapshot invalidations;
+masterON requests1 even with unchanged native page. New opt-in macro
+Z7_BASE_INITIAL_GRID_DELTA_ONLY in display_base_policy.h omits only initial
+gridON contribution; initial suppression/later grid edits/page/readout deltas
+retain invalidation. Wrapper plugins/lcd_startup_grid_checkpoint.c enables it.
+Existing88b53ce4 owner-working persistence packet independently rebuilds EXACT
+under default configuration, refreshed metadata in .private/builds/20261122-lcd-persistence-baseline-rebuild-01.
+No host or card change. Old frozen source fingerprints remain historical.
+
+CRITICAL LIMIT: broader A/B audit found cold native information-mask changes
+still produce1 initial invalidation for BOTH packets. With masks already matching,
+controlled fresh base acquisition invalidates1 for old versus0 for candidate.
+This isolates one contribution; DOES NOT reproduce/fix the visible cold-start
+flash. Do not imply the candidate eliminates the entire first redraw or root
+cause is proven. Hardware comparison may show no difference. User-visible issue
+remains open. No speculative host readiness/publication or timer change.
+
+Candidate21360bytes SHAeae52b4946ad375c3eacbe98cd61054a8eb9d94a402764fac85958f01aa3eda2.
+Build .private/builds/20261122-lcd-startup-grid-01; frozen review
+.private/review/20261122-lcd-startup-grid-01 with six reports/source/tool/file
+hash manifest and assessment. Root LCD_STARTUP_GRID_REVIEW.md. Not staged or
+hardware-authorized yet. Owner-working card still88b53ce4. Native settings schema,
+preferences and RAM-grid policy unchanged. Hardware fix NOT confirmed.
+
+Checks:65 targeted A/B invalidation assertions,48 LCD UI/save/restart checks,
+262 grid/storage checks/450 geometry comparisons,69 preference fault/restart,
+15 native menu-status,83 ELF functions0 exclusive/19DMB,101 root tests. Initial
+concurrent emulator runs hit30s wall limit in host module CRC; lower-concurrency
+reruns all completed and are the six passing reports. No timeout weakening.
+Public evidence uses20261122-lcd-startup-grid prefixes. Graphify refreshed after
+code edits; conditional-C extraction remains partial.
+
+If owner chooses comparison, review exact candidate then identify/back up card.
+Require active88b53ce4 and valid unambiguous LCD-compatible journals; preserve
+ALL existing files and both journal bytes. Rename working module to unused
+Z7APP.LCD-PERSISTENCE-WORKING.disabled, exclusively add/readback candidate/eject.
+No firmware update, seed/journal writes or automatic preference migration.
+Owner test: Custom pagesON/Saved with ordinary gridON/3x3, normal shutdown/cold
+start, report brief4x4 presence/absence then controls/DISP/power-off. If master
+leftOFF, enable only it and waitSaved first. Stop on errors. An unchanged flash
+is a meaningful comparison result; do not stack speculative patches afterward.
+
 ## Startup-only grid transient clarified; bounded offline comparison - November 22, 2026
 
 Owner explicitly confirms brief4x4->3x3 occurs ONLY at startup with Custom pages

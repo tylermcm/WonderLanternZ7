@@ -11,9 +11,12 @@ from prepare_flash_review import require_private_output
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--persistent',action='store_true',help='Build the v1 display-preference journal trial; grid layout stays in RAM')
+    profiles=p.add_mutually_exclusive_group()
+    profiles.add_argument('--persistent',action='store_true',help='Build the v1 display-preference journal trial; grid layout stays in RAM')
+    profiles.add_argument('--startup-grid',action='store_true',help='Build the persistence comparison with initial grid invalidation limited to actual deltas')
     a=p.parse_args();out=require_private_output(a.output)
-    source=ROOT/'z7-native-modules/plugins'/('lcd_persistence_checkpoint.c' if a.persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
+    persistent=a.persistent or a.startup_grid
+    source=ROOT/'z7-native-modules/plugins'/('lcd_startup_grid_checkpoint.c' if a.startup_grid else 'lcd_persistence_checkpoint.c' if persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
     packet,meta=build(source,zig=ZIG.resolve(),function_details=functions)
     again,other=build(source,zig=ZIG.resolve(),function_details=other_functions)
     assert packet==again and meta==other and functions==other_functions
@@ -28,16 +31,16 @@ def main():
             match=next((p for p in choices if p.is_file()),None)
             assert match is not None,(name,include)
             pending.append(match)
-    if a.persistent:
+    if persistent:
         assert all(n in meta['symbols'] for n in ('persistence_worker','persistence_prepare','z7_settings_files_write'))
     else:
         assert not any(n.startswith(('persistence_','z7_persistence_','z7_settings_files_')) for n in meta['symbols'])
-    meta.update(kind='original-Z7-LCD-persistence-checkpoint' if a.persistent else 'original-Z7-LCD-volatile-checkpoint',module_sha256=hashlib.sha256(packet).hexdigest(),file_bytes=len(packet),
+    meta.update(kind='original-Z7-LCD-startup-grid-checkpoint' if a.startup_grid else 'original-Z7-LCD-persistence-checkpoint' if persistent else 'original-Z7-LCD-volatile-checkpoint',module_sha256=hashlib.sha256(packet).hexdigest(),file_bytes=len(packet),
                 source_inputs_sha256=inputs,function_details=functions,api_minimum_bytes=44,reproducible=True,
                 dependency_scope='Conservative recursive quoted includes, including inactive conditional dependencies',
                 do_not_stage=True,hardware_test_authorized=False,firmware_image=False,
-                configuration=dict(persistent_settings=a.persistent,worker_registration_enabled=a.persistent),
-                scope=('Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; v1 preference journal, RAM-only grid layout' if a.persistent else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; all preferences volatile'))
+                configuration=dict(persistent_settings=persistent,worker_registration_enabled=persistent,initial_grid_delta_only=a.startup_grid),
+                scope=('Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; v1 preference journal, RAM-only grid layout' if persistent else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; all preferences volatile'))
     out.mkdir(parents=True)
     (out/'Z7APP.BIN').write_bytes(packet)
     (out/'module.json').write_text(json.dumps(meta,indent=2)+'\n',encoding='utf-8',newline='\n')
