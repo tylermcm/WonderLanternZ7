@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "date": "2026-11-22",
+  "module_sha256": "88b53ce46ae816b634c249cfe011f05a501f2619447d9c156e2828c2cf82a71e",
+  "owner_response": "yep works as intended. only thing noteworthy is that when this custom pages is on, the camera loads the 4x4 grid for a just a moment less than a second, then it goes to the 3x3. this did NOT occur after i turned OFF cystom pages, it stayed on 3x3 (or whatever i had loaded)",
+  "custom_pages_restart_and_disp_owner_pass": true,
+  "transient_grid_issue": {
+    "enabled_context": "Custom pages ON",
+    "observed_sequence": "4x4 briefly then 3x3",
+    "duration_owner_report": "less than one second",
+    "disabled_context": "No transition when Custom pages OFF; selected grid stays visible",
+    "trigger_timing": "Pending clarification: startup, DISP or both",
+    "root_cause_established": false
+  },
+  "owner_also_toggled_custom_pages_off": true,
+  "physical_journal_inspected": false,
+  "card_changed_by_agent_this_turn": false,
+  "firmware_flashed_this_turn": false
+}

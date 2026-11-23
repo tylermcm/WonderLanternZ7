@@ -1,5 +1,27 @@
 # Laptop handoff — October 20, 2026
 
+## Custom pages owner pass; brief grid transition reported - November 22, 2026
+
+Owner says requested Custom pages ON/Saved/restart/DISP test works as intended.
+Reports Custom pages ON shows4x4 briefly (less than1s), then3x3; with Custom pages
+OFF it stays3x3/selected layout. Owner also toggled master OFF, so do not assume
+only generation3 edit occurred or infer final journal values without inspection.
+Record scoped custom-pages restart/DISP owner pass plus OPEN transient visual
+issue, not a clean visual release pass or diagnosed root cause. Public evidence:
+evidence/20261122-lcd-custom-pages-hardware-result.json; private staging updated.
+No card access/write, new candidate, host change or firmware update this turn.
+Asked timing via async question: startup only, pressing DISP, or both; pending.
+
+Live graph/source exploration: base_before in display_base_policy.h acquires
+native photo-LCD page when master ON, tracks grid visibility and can call native
+page setter; readouts_before calls base_before then invalidates native delta
+snapshot through10367c5b when components change. Master OFF releases ownership.
+RAM grid_source itself does not branch on master: photo-LCD+nativeOn1+RAM2 selects
+thirds; native fallback depends on output/context and host readiness. These are
+candidate investigation boundaries, NOT reproduced cause. Await trigger timing
+before changing hook order, native settings or startup publication. Do not flash
+or stage a speculative fix. Existing functionality remains responsive per owner.
+
 ## Additional ON save confirmed; battery journal sequence resolved - November 22, 2026
 
 Owner explicitly answered "Yes, I turned it back ON" after OFF restart check.
