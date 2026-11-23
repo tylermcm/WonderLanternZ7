@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "date": "2026-11-22",
+  "module_sha256": "eae52b4946ad375c3eacbe98cd61054a8eb9d94a402764fac85958f01aa3eda2",
+  "owner_response": "it doesnt stay stay anymore. there isnt that swap thing anymore from last time, that seems to be fixed, however, it reverts back to a 3x3 if you change any grids",
+  "startup_swap_absent_owner_report": true,
+  "grid_reversion_report": "Changing grids reverts to 3x3; timing pending clarification",
+  "grid_reversion_timing": "Pending: immediately, menu/DISP transition, or restart only",
+  "full_hardware_pass": false,
+  "root_cause_established": false,
+  "card_changed_by_agent_this_turn": false,
+  "firmware_flashed_this_turn": false
+}

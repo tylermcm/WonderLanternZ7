@@ -1,5 +1,26 @@
 # Laptop handoff — October 20, 2026
 
+## Startup swap absent; reported grid reversion needs timing - November 22, 2026
+
+Owner reports eae52b49 startup no longer shows4x4->3x3 swap. Scoped physical
+startup visual improvement observed; do NOT mark full module pass: owner also
+reports any changed grid reverts to3x3. Asked async whether immediate, after
+DISP/leaving menu, or only restart. Answer pending; don't repeat hardware test
+unnecessarily or assume failure versus existing RAM-only restart behavior.
+Public evidence/20261122-lcd-startup-grid-hardware-result.json; private stage
+updated, no new card access/write, candidate change or firmware update.
+
+Source read: checkpoint_grid_value assigned only at static default2 and explicit
+set_grid choices. Native property receives booleanOn1; selected shape lives RAM.
+base_release resets base_grid_valid on losing GUI/page context, and reacquisition
+also resets it. New macro removes initial/reacquisition gridON invalidation.
+Potential investigation if SAME-BOOT menu issue: cached native geometry may need
+an explicit delta when RAM layout changes despite unchanged nativeOn scalar.
+This is a hypothesis until trigger clarified and actual transition tested.
+If restart-only, shape reset is documented existing behavior; shape persistence
+is unfinished and must not be confused with display-preference journal success.
+Owner-working88b53ce4 remains preserved on card for any needed comparison/rollback.
+
 ## Startup grid comparison authorized/staged/safely ejected - November 22, 2026
 
 Owner says "ok its pugged in" after exact comparison review/test invitation.
