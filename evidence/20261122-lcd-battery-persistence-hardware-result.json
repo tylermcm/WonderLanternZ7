@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-22",
+  "module_sha256": "88b53ce46ae816b634c249cfe011f05a501f2619447d9c156e2828c2cf82a71e",
+  "owner_response": "yep its owkring even after turning off and keeping it off for several minjtes",
+  "battery_preference_save_restore_owner_pass": true,
+  "powered_off_interval_owner_report": "several minutes",
+  "scope": "Battery percentage retained after requested normal shutdown and restart; overall owner pass",
+  "saved_title_separately_confirmed": false,
+  "journal_bytes_inspected": false,
+  "other_preferences_restore_tested": false,
+  "power_loss_durability_tested": false,
+  "card_changed_by_agent_this_turn": false,
+  "firmware_flashed_this_turn": false
+}

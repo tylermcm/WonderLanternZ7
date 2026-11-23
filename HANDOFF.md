@@ -1,5 +1,21 @@
 # Laptop handoff — October 20, 2026
 
+## LCD battery preference save/restore owner PASS - November 22, 2026
+
+Owner: "yep its owkring even after turning off and keeping it off for several minjtes"
+in response to battery-only enable/Saved/normal shutdown/restart instructions.
+Record battery preference retained across normal shutdown and several minutes
+powered off on exact88b53ce46ae816b634c249cfe011f05a501f2619447d9c156e2828c2cf82a71e.
+Saved title not separately described; journal bytes/CRC/generation not inspected.
+No claim for other preference restoration, abrupt power-loss durability or all
+filesystem behavior. Startup-only pass already recorded. Public evidence:
+evidence/20261122-lcd-battery-persistence-hardware-result.json; private staging
+updated. No card access/write or firmware flash by agent this turn.
+Next: owner camera OFF and card to reader for read-only private journal backup/
+decode/CRC/generation inspection before another preference or second-slot test.
+Keep current active module and all files intact; do not stage or toggle anything
+as part of journal inspection. Grid shape remains RAM-only.
+
 ## LCD persistence startup-only owner PASS - November 22, 2026
 
 Owner reports "nothing noteworthy to report, it worked like it should" for the
