@@ -1,5 +1,23 @@
 # Laptop handoff — October 20, 2026
 
+## Battery journal physical readback PASS; card safely ejected - November 22, 2026
+
+Owner connected card for read-only inspection. Same Sony identity/current88b53ce4
+module/working8ec preservation verified. Private readback backup of active module
+and present journals completed. Z7CFG0.DAT is80bytes, valid v1 outer AND payload
+CRCs, generation0, flags2/Battery ON. All other LCD preferences match defaults.
+Z7CFG1.DAT absent; selected slot0 unambiguous. Card-wide size/mtime inventory and
+catalog unchanged during inspection. No card writes or firmware update. Safe eject
+independently verified. Private backup/result: .private/card-inspections/20261122-battery-persistence-01;
+public evidence/20261122-lcd-battery-journal-readback.json. Normal-shutdown retention
+is now supported by both owner observation and physical valid journal readback;
+abrupt power-loss durability remains untested.
+Next single-step test on SAME module: normal boot NO Update, turn only Battery
+percentage OFF, wait Saved (reopen page if needed), normal shutdown/restart and
+confirm OFF with normal controls/power-off. Stop/report if no Saved or any stall.
+Then return card for read-only check that slot1 generation1 saves OFF and slot0
+original bytes stay intact. Do not combine other preference edits or stage modules.
+
 ## LCD battery preference save/restore owner PASS - November 22, 2026
 
 Owner: "yep its owkring even after turning off and keeping it off for several minjtes"

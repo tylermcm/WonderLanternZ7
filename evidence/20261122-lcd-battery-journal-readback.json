@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "date": "2026-11-22",
+  "module_sha256": "88b53ce46ae816b634c249cfe011f05a501f2619447d9c156e2828c2cf82a71e",
+  "slot0": {
+    "present": true,
+    "bytes": 80,
+    "generation": 0,
+    "journal_and_payload_crc_valid": true,
+    "battery_enabled": true,
+    "other_settings_match_lcd_defaults": true
+  },
+  "slot1": {
+    "present": false
+  },
+  "private_backup_readback_verified": true,
+  "card_files_metadata_unchanged": true,
+  "catalog_unchanged": true,
+  "card_written": false,
+  "safe_eject_verified": true,
+  "scope": "Physical card readback after owner normal-shutdown battery preference retention; not abrupt power-loss durability"
+}
