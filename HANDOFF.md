@@ -1,5 +1,18 @@
 # Laptop handoff — October 20, 2026
 
+## Battery OFF save/restore owner PASS - November 22, 2026
+
+Owner: "done. works as intended. percemtage turned off and stayed off" after
+requested battery-only OFF/Saved/normal shutdown/restart on88b53ce4. Record scoped
+OFF retention pass; Saved title not separately described. Prior ON retention and
+physical slot0 generation0/valid CRC readback already passed. Second slot bytes
+and preservation of prior slot are not yet inspected; do not claim them verified.
+Public evidence/20261122-lcd-battery-off-persistence-hardware-result.json and
+private staging updated. No agent card access/write or firmware update this turn.
+Next camera OFF/card to reader for read-only private backup and expected slot1
+generation1/Battery OFF check, comparing slot0 byte-for-byte with the prior private
+backup. Preserve all files and current module. No new staging or preference edits.
+
 ## Battery journal physical readback PASS; card safely ejected - November 22, 2026
 
 Owner connected card for read-only inspection. Same Sony identity/current88b53ce4

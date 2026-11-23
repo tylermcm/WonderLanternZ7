@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "date": "2026-11-22",
+  "module_sha256": "88b53ce46ae816b634c249cfe011f05a501f2619447d9c156e2828c2cf82a71e",
+  "owner_response": "done. works as intended. percemtage turned off and stayed off",
+  "battery_off_save_restore_owner_pass": true,
+  "scope": "Battery percentage changed OFF and remained OFF after requested normal shutdown/restart",
+  "saved_title_separately_confirmed": false,
+  "second_slot_bytes_inspected": false,
+  "prior_slot_preservation_verified": false,
+  "card_changed_by_agent_this_turn": false,
+  "firmware_flashed_this_turn": false
+}
