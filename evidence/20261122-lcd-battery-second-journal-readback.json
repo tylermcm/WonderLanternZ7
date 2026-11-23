@@ -21,11 +21,14 @@
   "selected_slot": 0,
   "off_record_verified": true,
   "original_generation0_replaced_by_valid_generation2": true,
-  "owner_additional_toggle_context_pending": true,
+  "owner_additional_toggle_context_pending": false,
   "private_backup_readback_verified": true,
   "card_files_metadata_unchanged": true,
   "catalog_unchanged": true,
   "card_written": false,
   "safe_eject_verified": true,
-  "scope": "Physical journals contain OFF generation1 and newer ON generation2; owner action sequence needs clarification"
+  "scope": "Physical journals contain OFF generation1 and newer ON generation2; owner action sequence needs clarification",
+  "owner_confirmed_turned_back_on": true,
+  "owner_response": "Yes, I turned it back ON",
+  "observed_records_match_owner_sequence": true
 }

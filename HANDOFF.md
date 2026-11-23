@@ -1,5 +1,20 @@
 # Laptop handoff — October 20, 2026
 
+## Additional ON save confirmed; battery journal sequence resolved - November 22, 2026
+
+Owner explicitly answered "Yes, I turned it back ON" after OFF restart check.
+This matches physical slot1 generation1 OFF then slot0 generation2 ON, both valid
+CRCs, and original physical slot0 generation0 ON backup. Newer generation2
+legitimately supersedes generation0 on alternating-slot reuse. No mismatch/fault
+remains from this sequence. Public/private second-journal records updated; card
+already safely ejected, no further card access/write or firmware update.
+Next single changed preference on SAME88b53ce4: Custom pages ON, leave battery
+and other preferences unchanged, wait Saved, normal shutdown/restart and verify
+Custom pages remains ON. Then check normal DISP cycling/responsiveness/power-off.
+If Saved never appears or any stall, stop/report. No Update or new module staging.
+Expected next save, if only that edit occurs: slot1 generation3 flags3. Inspect
+before asserting those physical bytes. Grid shape remains deliberately RAM-only.
+
 ## Second journal readback valid; extra ON save context pending - November 22, 2026
 
 Owner repeated "work as intended"; reader detection found same card connected.
