@@ -1,5 +1,28 @@
 # Laptop handoff — October 20, 2026
 
+## Startup grid comparison authorized/staged/safely ejected - November 22, 2026
+
+Owner says "ok its pugged in" after exact comparison review/test invitation.
+Same Sony identity verified; active88b53ce4 owner-working module retained as
+Z7APP.LCD-PERSISTENCE-WORKING.disabled. New active Z7APP.BIN21360bytes SHA256
+eae52b4946ad375c3eacbe98cd61054a8eb9d94a402764fac85958f01aa3eda2.
+All248 prior files preserved through intended rename. Private backups and full
+flushed readback verified; named payloads/seed/BOTH journal bytes unchanged,
+card metadata/catalog unchanged, updaters disabled. Safe eject independently
+verified. No firmware flash or journal write by agent. Hardware result pending.
+Private staging .private/card-staging/20261122-lcd-startup-grid-test-01/staging.json;
+backup .private/card-backups/20261122-before-lcd-startup-grid-test-01.
+Frozen six reports/source/tool/assessment hashes verified before copying.
+
+Both journals valid v1, selected generation4 is LCD-compatible with Custom pages
+OFF. Existing preferences preserved without normalization. Owner must normal
+boot NO Update, enable only Custom pagesON, waitSaved, normal shutdown, then
+cold-start to compare rear-LCD4x4->3x3 flash. Also check controls/DISP/power-off.
+Stop/report stalls/save errors. Candidate is an isolating comparison, NOT an
+established startup flash fix; unchanged visual behavior is meaningful evidence.
+If only this edit occurs, next journal expected generation5; do not assert until
+physical readback. Keep working module and all future journals intact on rollback.
+
 ## Optional startup grid comparison built and reviewed offline - November 22, 2026
 
 Owner asked to keep going. Found/reproduced extra grid ownership invalidation:
