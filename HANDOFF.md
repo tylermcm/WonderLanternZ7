@@ -1,5 +1,25 @@
 # Laptop handoff — October 20, 2026
 
+## Grid persistence owner PASS; battery-removal delay clarification pending - November 22, 2026
+
+Owner reports "ok it has permanence now, its instant between power on and off.
+however, there is a small delya like we had before when i pull the battery and
+restart" on f848e62d. Record scoped selected-grid retention/ordinary off-on pass.
+Do not mark whole profile pass or assume what delay means. Asked whether wrong
+then saved grid, saved grid appears late with normal controls, or camera input
+stalls; answer pending, no request to repeat battery removal. Saved shape after
+battery removal not separately confirmed; no physical newDSP readback yet.
+Public evidence/20261122-lcd-grid-persistence-hardware-result.json; private stage
+updated. No card access/write, candidate change or firmware update this turn.
+
+Source verified: loader reads newslots and restores checkpoint_grid_value before
+host-ready publication. Once newrecordvalid exists it skips legacy reads. Native
+grid fallback still applies before module ready. This makes fresh-load timing a
+candidate boundary, NOT a diagnosed cause of the battery-removal observation.
+No speculative early publication, sleep removal or host rewrite. Await behavior
+clarification; then read-only backup/inspect newDSP and comparelegacyCFG against
+pre-stage backup. Currenteae workingmodule remains preserved for rollback.
+
 ## Grid shape persistence approved/staged/safely ejected - November 22, 2026
 
 Owner says "its rady" after exact reviewed grid-persistence staging invitation.

@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "date": "2026-11-22",
+  "module_sha256": "f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e",
+  "owner_response": "ok it has permanence now, its instant between power on and off. however, there is a small delya like we had before when i pull the battery and restart",
+  "selected_grid_power_cycle_retention_owner_pass": true,
+  "ordinary_off_on_transition_owner_report": "instant",
+  "battery_removal_restart_issue": "Small delay; visual/control behavior pending clarification",
+  "saved_grid_after_battery_removal_separately_confirmed": false,
+  "physical_journal_inspected": false,
+  "full_hardware_pass": false,
+  "card_changed_by_agent_this_turn": false,
+  "firmware_flashed_this_turn": false
+}
