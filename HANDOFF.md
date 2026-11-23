@@ -1,5 +1,28 @@
 # Laptop handoff — October 20, 2026
 
+## Startup-only grid transient clarified; bounded offline comparison - November 22, 2026
+
+Owner explicitly confirms brief4x4->3x3 occurs ONLY at startup with Custom pages
+ON, not on DISP presses. Hardware result and private staging updated. No new
+card access, firmware/module change or staging. Custom pages restart/DISP owner
+pass stands; startup visual issue remains OPEN and root cause unestablished.
+
+Exact88b53ce4 module/existing24b20745 host instruction comparison loads valid v1
+journals with masterOFF versusON, native gridOn1 and stable photo-LCD context.
+Both select thirds immediately after ready publication and before/after the
+first4 before-update calls. Native base ownership activates only for masterON.
+Deliberately clearing/restoring host display_ready demonstrates native fallback
+then thirds for BOTH flags. This does NOT reproduce owner's ON-only visible
+startup flash or establish actual boot timing. Public evidence:
+evidence/20261122-lcd-startup-grid-boundary-01.json; private instrument:
+.private/audit-lcd-startup-grid-boundary-01.py. No full scanout/cached geometry/
+first native boot-frame schedule modeled. Source inspection shows ready published
+only after successful module return and settings loading, but that alone does
+not explain ON/OFF difference. Next investigation is actual initial geometry/
+redraw scheduling around base acquisition; do not label readiness fallback the
+proven cause or stage a speculative startup hook/host rewrite. All functionality
+continues to work per owner; this is a pending startup visual observation.
+
 ## Custom pages owner pass; brief grid transition reported - November 22, 2026
 
 Owner says requested Custom pages ON/Saved/restart/DISP test works as intended.

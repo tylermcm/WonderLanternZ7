@@ -9,8 +9,9 @@
     "observed_sequence": "4x4 briefly then 3x3",
     "duration_owner_report": "less than one second",
     "disabled_context": "No transition when Custom pages OFF; selected grid stays visible",
-    "trigger_timing": "Pending clarification: startup, DISP or both",
-    "root_cause_established": false
+    "trigger_timing": "Only at startup, owner explicitly confirmed",
+    "root_cause_established": false,
+    "disp_press_reproduces_issue": false
   },
   "owner_also_toggled_custom_pages_off": true,
   "physical_journal_inspected": false,

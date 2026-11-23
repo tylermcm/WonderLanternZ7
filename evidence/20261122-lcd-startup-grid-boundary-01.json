@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "passed": true,
+  "module_sha256": "88b53ce46ae816b634c249cfe011f05a501f2619447d9c156e2828c2cf82a71e",
+  "host_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "cases": [
+    {
+      "custom_pages": false,
+      "initial_ready_source": "thirds",
+      "unready_source": "native",
+      "samples": [
+        {
+          "update": 0,
+          "source_before": "thirds",
+          "source_after": "thirds",
+          "base_active": 0
+        },
+        {
+          "update": 1,
+          "source_before": "thirds",
+          "source_after": "thirds",
+          "base_active": 0
+        },
+        {
+          "update": 2,
+          "source_before": "thirds",
+          "source_after": "thirds",
+          "base_active": 0
+        },
+        {
+          "update": 3,
+          "source_before": "thirds",
+          "source_after": "thirds",
+          "base_active": 0
+        }
+      ]
+    },
+    {
+      "custom_pages": true,
+      "initial_ready_source": "thirds",
+      "unready_source": "native",
+      "samples": [
+        {
+          "update": 0,
+          "source_before": "thirds",
+          "source_after": "thirds",
+          "base_active": 1
+        },
+        {
+          "update": 1,
+          "source_before": "thirds",
+          "source_after": "thirds",
+          "base_active": 1
+        },
+        {
+          "update": 2,
+          "source_before": "thirds",
+          "source_after": "thirds",
+          "base_active": 1
+        },
+        {
+          "update": 3,
+          "source_before": "thirds",
+          "source_after": "thirds",
+          "base_active": 1
+        }
+      ]
+    }
+  ],
+  "owner_startup_transient_reproduced": false,
+  "card_written": false,
+  "camera_access": false,
+  "limits": [
+    "Stable supplied photo-LCD context, native grid On and already loaded journal",
+    "Host readiness deliberately toggled to demonstrate fallback, not physical boot timing",
+    "No display scanout, cached geometry or first native boot-frame scheduling modeled"
+  ],
+  "instrument_sha256": "27a143912d36ce55a60e426d6501fe17c107c7a1ff93182e3396504ee78cef2a"
+}
