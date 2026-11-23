@@ -1,5 +1,46 @@
 # Laptop handoff — October 20, 2026
 
+## Storage-free LCD approved/staged/ejected; INITIAL MENU ONLY - November 22, 2026
+
+Owner approved yes, then "plugged in, load it" after missing card. Same Sony card
+verified. Working RO839d8aae... preserved as Z7APP.RESTORE-RO-WORKING.disabled;
+only active Z7APP.BIN17868bytes
+9b076c6db032d6b17884aadda8ec75934be9b9456655e2ef30010870d51c8592.
+All243 prior size/mtime/catalog preserved except intended rename; all named
+payloads/seed/settings preserved, updaters disabled. New private backups/flush/
+full readback pass; safe eject VERIFIED. No firmware update, no worker/file I/O
+in this module. Hardware LCD result pending. Battery and custom pages startOFF.
+
+Private .private/card-staging/20261122-lcd-volatile-test-01/staging.json;
+backup .private/card-backups/20261122-before-lcd-volatile-test-01. Frozen review
+.private/review/20261122-lcd-volatile-01 and LCD_VOLATILE_REVIEW.md. Owner first
+check: normal start NO Update, responsive MENU/touch/power-off, Framing grid
+display > Display settings row and compact menu presence; leave toggles/actual
+grid selections untouched. No automatic full feature or persistence test.
+
+Before later ACTUAL GRID CHOICE testing, review generic grids_histogram set_grid
+in this full LCD profile: unlike small battery-grid checkpoints it currently
+lacks Z7_GRID_VOLATILE_CHECKPOINT and passes layout1..5 to native On/Off setter.
+Initial menu-only observation makes no such selection. Verify native encoding/
+geometry policy and avoid extended native writes before authorizing grid choices.
+This concern is separate from fixed worker-exclusive freeze; do not claim a new
+physical failure or modify/reflash working host. Source stayed unchanged this
+staging turn. Preserve every file and current baseline on any failure.
+
+## Volatile LCD staging approved; card unavailable - November 22, 2026
+
+Owner explicitly approved storage-free LCD test (yes). Authorization persists;
+do not ask again on card connection. Windows inventory: E absent, D reader0bytes,
+no other external media. No card writes. Working RO remains last active payload.
+Prepared .private/stage-lcd-volatile-test-01.py for subsequent verified staging,
+NOT run. Reidentify same Sony card once connected. Source frozen review
+.private/review/20261122-lcd-volatile-01, module9b076c6d...17868bytes, no worker/I-O.
+Preserve activeRO839d8aae as unused Z7APP.RESTORE-RO-WORKING.disabled; retain all
+other files/seed/updaters. Initial owner test normalboot/controls and Display
+settings menu presence ONLY, no feature toggles yet. Battery/custompages start
+OFF intentionally. No Update; settings reset each boot. After staged verification
+safely eject and record actual result; never claim staged while card missing.
+
 ## Hardened read-only restore hardware PASS; volatile LCD approval pending - November 22, 2026
 
 Owner confirms6x6 [SD] marker, normal responsiveness and normal power-off. Exact
