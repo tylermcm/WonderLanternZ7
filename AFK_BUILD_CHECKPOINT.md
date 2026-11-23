@@ -1,5 +1,13 @@
 # Offline build checkpoint - November 22, 2026
 
+Current follow-up: November 22 LCD save/restore package is complete offline.
+See [LCD_PERSISTENCE_CHECKPOINT_REVIEW.md](LCD_PERSISTENCE_CHECKPOINT_REVIEW.md)
+and the newest HANDOFF entry. Owner-working RAM-grid module remains active; no
+card change or new firmware flash. New candidate88b53ce4 has six passing reports;
+startup-only hardware gate precedes any preference-write test. The milestones
+below are historical: worker progress, read-only restore and volatile LCD/grid
+now have scoped owner passes. Grid-shape persistence remains unfinished.
+
 The owner-tested host and active empty-worker B remain the working hardware
 checkpoint. No card writes, camera operations or firmware builds/updates were
 performed during this AFK work. All new SD modules below remain private,

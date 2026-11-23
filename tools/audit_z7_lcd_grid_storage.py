@@ -19,13 +19,15 @@ from prepare_flash_review import require_private_output
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for n in ('host','module','output'):p.add_argument('--'+n,type=Path,required=True)
+    p.add_argument('--persistent',action='store_true',help='Audit the persistent display-preference checkpoint with RAM-only grid layout')
     a=p.parse_args();out=require_private_output(a.output)
     h=json.loads((a.host/'module-host.emulator.json').read_text());raw=(a.host/'module-host.emulator.main.bin').read_bytes()
     m=json.loads((a.module/'module.json').read_text());packet=(a.module/'Z7APP.BIN').read_bytes()
     assert hashlib.sha256(raw).hexdigest()==h['main_payload_sha256']
     assert hashlib.sha256(packet).hexdigest()==m['module_sha256']
     f=PersistenceFixture(raw,h,packet);assert f.call(h['symbols']['z7_module_load_once'],STATE)==8
-    f.base=f.words()[12];symbols=m['symbols'];assert not f.words()[50]
+    f.base=f.words()[12];symbols=m['symbols'];assert f.words()[50]==int(a.persistent)
+    assert m['configuration']['persistent_settings']==a.persistent
     def fixture(image=raw,metadata=m,body=f):
         g=NativeValueGrid(image);g.initialize();g.u.mem_map(STATE,4096)
         g.u.mem_write(STATE,bytes(body.u.mem_read(STATE,256)))
@@ -83,7 +85,7 @@ def main():
     assert previous.setters[-1]==5
     report=dict(passed=True,module_sha256=m['module_sha256'],checks=len(checks),check_names=checks,geometry_calls=geometry_calls,
                 native_setter_values=sorted(set(g.setters)),previous_dense_setter_value=previous.setters[-1],legacy_read_values=legacy,
-                startup_rewrites_legacy_values=False,camera_access=False,card_written=False,
+                startup_rewrites_legacy_values=False,persistent_display_preferences=a.persistent,camera_access=False,card_written=False,
                 limits=['Native On/Off setter and geometry instructions execute with supplied storage/UI/viewport boundaries',
                         'No physical grid pixels/capture/output lifecycle or persistence test',
                         'Layout is volatile, not saved in custom preference journal'])

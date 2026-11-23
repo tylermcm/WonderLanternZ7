@@ -1,0 +1,79 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "init-publishes-owned-menu-dispatch-after-success",
+      "passed": true
+    },
+    {
+      "name": "initial-menu-title-defaults-without-notification",
+      "passed": true
+    },
+    {
+      "name": "actual-menu-action-shows-unsaved",
+      "passed": true
+    },
+    {
+      "name": "worker-only-notifies-original-event-flag-without-label-writes",
+      "passed": true
+    },
+    {
+      "name": "worker-save-acknowledges-real-menu-revision",
+      "passed": true
+    },
+    {
+      "name": "original-menu-dispatch-and-empty-queue-handler-execute",
+      "passed": true
+    },
+    {
+      "name": "queued-menu-refresh-updates-saved-title-preserving-native-result",
+      "passed": true
+    },
+    {
+      "name": "unchanged-status-does-not-rewrite-native-labels",
+      "passed": true
+    },
+    {
+      "name": "worker-never-wakes-a-different-focused-menu-page",
+      "passed": true
+    },
+    {
+      "name": "other-focused-page-is-never-repainted-by-status-wrapper",
+      "passed": true
+    },
+    {
+      "name": "foreign-slot-blocks-worker-notification",
+      "passed": true
+    },
+    {
+      "name": "closed-stack-blocks-worker-notification",
+      "passed": true
+    },
+    {
+      "name": "no-event-handle-blocks-worker-notification",
+      "passed": true
+    },
+    {
+      "name": "inactive-menu-state-retains-native-delegation-without-paint-or-notify",
+      "passed": true
+    },
+    {
+      "name": "foreign-dispatch-slot-rejects-initializer-before-file-io",
+      "passed": true
+    }
+  ],
+  "module_sha256": "88b53ce46ae816b634c249cfe011f05a501f2619447d9c156e2828c2cf82a71e",
+  "main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "original_event_flag_wrapper_executes": true,
+  "original_menu_state_dispatcher_executes": true,
+  "original_empty_queue_handler_executes": true,
+  "supplied_boundaries": [
+    "Kernel event flag delivery",
+    "Empty input queue",
+    "Incoming native GUI state",
+    "Text and paint services"
+  ],
+  "actual_pixels": false,
+  "physical_card": false,
+  "camera_access": false
+}
