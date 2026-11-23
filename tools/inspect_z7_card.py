@@ -15,7 +15,8 @@ import subprocess
 from prepare_flash_review import ROOT, require_private_output
 
 LIMITS = {'EG161080.BIN': 64 << 20, 'Z_7_0380.bin': 256 << 20,
-          'Z7APP.BIN': 16 << 20, 'Z7CFG0.DAT': 4096, 'Z7CFG1.DAT': 4096}
+          'Z7APP.BIN': 16 << 20, 'Z7CFG0.DAT': 4096, 'Z7CFG1.DAT': 4096,
+          'Z7DSP0.DAT': 4096, 'Z7DSP1.DAT': 4096}
 
 
 def drive_identity(letter):

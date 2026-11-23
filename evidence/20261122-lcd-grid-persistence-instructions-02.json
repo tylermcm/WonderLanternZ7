@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "module_sha256": "f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e",
+  "compiled_functions": 84,
+  "decoded_instructions": 8006,
+  "dmb_instructions": 19,
+  "function_bounds_from_elf": true,
+  "independently_rebuilt": true,
+  "exclusive_instructions": 0,
+  "source": "z7-native-modules/plugins/lcd_grid_persistence_checkpoint.c",
+  "card_written": false,
+  "hardware_tested": false,
+  "limits": [
+    "Only module-owned function ranges; literal pools may be decoded within compiler function extents",
+    "Called native firmware functions and other modules are outside this scan",
+    "No proof of physical memory attributes or scheduler/memory ordering"
+  ]
+}

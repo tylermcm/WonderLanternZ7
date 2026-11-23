@@ -53,6 +53,8 @@ def audit(raw, host, packet, module):
 
     def load(foreign_slot=False):
         f = MenuStatusFixture(raw, host, packet)
+        if module.get('configuration',{}).get('grid_layout_persistence'):
+            f.file_paths += ('A:\\Z7DSP0.DAT','A:\\Z7DSP1.DAT')
         if foreign_slot:
             put(f, SLOT, 0xdeadbeef)
         status = f.call(host['symbols']['z7_module_load_once'], STATE)

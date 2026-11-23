@@ -5,6 +5,9 @@
 #ifndef Z7_DISPLAY_SETTINGS_H
 #define Z7_DISPLAY_SETTINGS_H
 #include <stdint.h>
+#if defined(Z7_GRID_LAYOUT_PREFERENCES) && defined(Z7_HIGHLIGHT_PREFERENCES)
+#error Grid layout v3 and highlight v2 are separate preference profiles
+#endif
 #define Z7_SETTINGS_BYTES 64u
 #define Z7_SETTINGS_INVALID 0xffffffffu
 #define Z7_SETTINGS_CUSTOM 1u
@@ -23,6 +26,9 @@
 #define Z7_INFO_FOCAL 128u
 struct z7_display_settings {
     uint32_t flags, enabled_pages, components[4], information[4];
+#ifdef Z7_GRID_LAYOUT_PREFERENCES
+    uint32_t grid_layout;
+#endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
     uint32_t highlight_pattern, highlight_threshold;
 #endif

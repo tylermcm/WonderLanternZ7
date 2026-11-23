@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 display settings model.
- * Wire format Z7C1, version1, exact64 bytes. CRC detects damage, not authenticity.
+ * Wire format Z7C1, exact64 bytes: v1 base, optional v2 highlights or v3 grid.
+ * CRC detects damage, not authenticity. Optional profiles remain independent.
  */
 #include "display_settings.h"
 #ifdef Z7_LCD_FIRST_RELEASE
@@ -29,6 +30,9 @@ void z7_settings_defaults(struct z7_display_settings *s)
 {
     if (!s) return;
     s->flags = 0; s->enabled_pages = 15;
+#ifdef Z7_GRID_LAYOUT_PREFERENCES
+    s->grid_layout = 2;
+#endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
     s->highlight_pattern = 1; s->highlight_threshold = 1;
 #endif
@@ -39,6 +43,9 @@ void z7_settings_defaults(struct z7_display_settings *s)
 uint32_t z7_settings_valid(const struct z7_display_settings *s)
 {
     if (!s || s->flags & ~3u || !s->enabled_pages || s->enabled_pages & ~31u) return 0;
+#ifdef Z7_GRID_LAYOUT_PREFERENCES
+    if (s->grid_layout < 1 || s->grid_layout > 5) return 0;
+#endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
     if (s->highlight_pattern > 2 || s->highlight_threshold > 7) return 0;
 #endif
@@ -58,6 +65,9 @@ uint32_t z7_settings_encode(const struct z7_display_settings *s, uint8_t *out, u
     put32(packet + 12, 0);
     put32(packet + 16, s->flags); put32(packet + 20, s->enabled_pages);
     put32(packet + 56, 0); put32(packet + 60, 0);
+#ifdef Z7_GRID_LAYOUT_PREFERENCES
+    put32(packet + 4, 3); put32(packet + 56, s->grid_layout);
+#endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
     put32(packet + 56, s->highlight_pattern); put32(packet + 60, s->highlight_threshold);
 #endif
@@ -71,7 +81,11 @@ uint32_t z7_settings_encode(const struct z7_display_settings *s, uint8_t *out, u
 uint32_t z7_settings_decode(const uint8_t *p, uint32_t bytes, struct z7_display_settings *out)
 {
     if (!p || !out || bytes != Z7_SETTINGS_BYTES || get32(p) != 0x3143375au ||
-#ifdef Z7_HIGHLIGHT_PREFERENCES
+#ifdef Z7_GRID_LAYOUT_PREFERENCES
+        (get32(p + 4) != 1 && get32(p + 4) != 3) ||
+        (get32(p + 4) == 1 && get32(p + 56)) || get32(p + 60) ||
+        get32(p + 8) != 0x03800007u || get32(p + 12) != crc(p)
+#elif defined(Z7_HIGHLIGHT_PREFERENCES)
         (get32(p + 4) != 1 && get32(p + 4) != 2) ||
         (get32(p + 4) == 1 && (get32(p + 56) || get32(p + 60))) ||
         get32(p + 8) != 0x03800007u || get32(p + 12) != crc(p)
@@ -81,6 +95,9 @@ uint32_t z7_settings_decode(const uint8_t *p, uint32_t bytes, struct z7_display_
         ) return 0;
     struct z7_display_settings staged;
     staged.flags = get32(p + 16); staged.enabled_pages = get32(p + 20);
+#ifdef Z7_GRID_LAYOUT_PREFERENCES
+    staged.grid_layout = get32(p + 4) == 1 ? 2 : get32(p + 56);
+#endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
     staged.highlight_pattern = get32(p + 4) == 1 ? 1 : get32(p + 56);
     staged.highlight_threshold = get32(p + 4) == 1 ? 1 : get32(p + 60);

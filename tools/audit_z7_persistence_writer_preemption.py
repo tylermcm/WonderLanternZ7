@@ -30,7 +30,10 @@ def main():
     m=json.loads((a.module/'module.json').read_text());packet=(a.module/'Z7APP.BIN').read_bytes()
     assert hashlib.sha256(raw).hexdigest()==h['main_payload_sha256']
     assert hashlib.sha256(packet).hexdigest()==m['module_sha256']
-    f=PersistenceFixture(raw,h,packet);assert f.call(h['symbols']['z7_module_load_once'],STATE)==8
+    f=PersistenceFixture(raw,h,packet)
+    if m.get('configuration',{}).get('grid_layout_persistence'):
+        f.file_paths += ('A:\\Z7DSP0.DAT','A:\\Z7DSP1.DAT')
+    assert f.call(h['symbols']['z7_module_load_once'],STATE)==8
     f.base=f.words()[12];f.setword(40,8);symbols=m['symbols']
     revision=f.base+symbols['z7_settings_revision'];model=f.base+symbols['z7_menu_settings']
     def word(address):return int.from_bytes(f.u.mem_read(address,4),'little')

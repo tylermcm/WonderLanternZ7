@@ -84,10 +84,17 @@ static void persistence_prepare(void)
         persistence_set_state(PS_BLOCKED);
         return;
     }
+#ifdef Z7_PERSISTENCE_LOAD_OVERRIDE
+    z7_persistence_result = Z7_PERSISTENCE_LOAD_OVERRIDE();
+#else
     z7_persistence_result = z7_storage_load(&persistence_io, &z7_menu_settings, &z7_persistence_info);
+#endif
     z7_persistence_ready = z7_persistence_result == Z7_STORAGE_LOADED || z7_persistence_result == Z7_STORAGE_DEFAULTS;
 #ifdef Z7_LCD_FIRST_RELEASE
     if (z7_persistence_ready) persistence_commit(&z7_menu_settings);
+#endif
+#ifdef Z7_GRID_LAYOUT_PREFERENCES
+    if (z7_persistence_ready) checkpoint_grid_value = z7_menu_settings.grid_layout;
 #endif
     if (!z7_persistence_ready) ++z7_persistence_errors;
     persistence_set_state(!z7_persistence_ready ? PS_BLOCKED :

@@ -20,14 +20,20 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for n in ('host','module','output'):p.add_argument('--'+n,type=Path,required=True)
     p.add_argument('--persistent',action='store_true',help='Audit the persistent display-preference checkpoint with RAM-only grid layout')
+    p.add_argument('--grid-persistence',action='store_true',help='Audit the separate v3 grid-shape preference checkpoint')
     a=p.parse_args();out=require_private_output(a.output)
+    persistent=a.persistent or a.grid_persistence
     h=json.loads((a.host/'module-host.emulator.json').read_text());raw=(a.host/'module-host.emulator.main.bin').read_bytes()
     m=json.loads((a.module/'module.json').read_text());packet=(a.module/'Z7APP.BIN').read_bytes()
     assert hashlib.sha256(raw).hexdigest()==h['main_payload_sha256']
     assert hashlib.sha256(packet).hexdigest()==m['module_sha256']
-    f=PersistenceFixture(raw,h,packet);assert f.call(h['symbols']['z7_module_load_once'],STATE)==8
-    f.base=f.words()[12];symbols=m['symbols'];assert f.words()[50]==int(a.persistent)
-    assert m['configuration']['persistent_settings']==a.persistent
+    f=PersistenceFixture(raw,h,packet)
+    if a.grid_persistence:
+        from audit_z7_settings_files import PATHS
+        f.file_paths=PATHS+('A:\\Z7DSP0.DAT','A:\\Z7DSP1.DAT')
+    assert f.call(h['symbols']['z7_module_load_once'],STATE)==8
+    f.base=f.words()[12];symbols=m['symbols'];assert f.words()[50]==int(persistent)
+    assert m['configuration']['persistent_settings']==persistent
     def fixture(image=raw,metadata=m,body=f):
         g=NativeValueGrid(image);g.initialize();g.u.mem_map(STATE,4096)
         g.u.mem_write(STATE,bytes(body.u.mem_read(STATE,256)))
@@ -85,10 +91,10 @@ def main():
     assert previous.setters[-1]==5
     report=dict(passed=True,module_sha256=m['module_sha256'],checks=len(checks),check_names=checks,geometry_calls=geometry_calls,
                 native_setter_values=sorted(set(g.setters)),previous_dense_setter_value=previous.setters[-1],legacy_read_values=legacy,
-                startup_rewrites_legacy_values=False,persistent_display_preferences=a.persistent,camera_access=False,card_written=False,
+                startup_rewrites_legacy_values=False,persistent_display_preferences=persistent,persistent_grid_shape=a.grid_persistence,camera_access=False,card_written=False,
                 limits=['Native On/Off setter and geometry instructions execute with supplied storage/UI/viewport boundaries',
                         'No physical grid pixels/capture/output lifecycle or persistence test',
-                        'Layout is volatile, not saved in custom preference journal'])
+                        'Grid journal save/restart requires separate audit' if a.grid_persistence else 'Layout is volatile, not saved in custom preference journal'])
     out.parent.mkdir(parents=True,exist_ok=True)
     with out.open('x',encoding='utf-8',newline='\n') as f:f.write(json.dumps(report,indent=2)+'\n')
     print(json.dumps(dict(passed=True,checks=len(checks),geometry_calls=geometry_calls,native_setter_values=report['native_setter_values'])))

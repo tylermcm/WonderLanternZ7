@@ -14,7 +14,11 @@
 #endif
 static const char *settings_slot_path(uint32_t slot)
 {
+#ifdef Z7_SETTINGS_SLOT_PATH_HOOK
+    return Z7_SETTINGS_SLOT_PATH_HOOK(slot);
+#else
     return slot ? Z7_SETTINGS_SLOT1_PATH : Z7_SETTINGS_SLOT0_PATH;
+#endif
 }
 uint32_t z7_settings_files_init(struct z7_settings_files *s)
 {

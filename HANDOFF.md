@@ -1,5 +1,56 @@
 # Laptop handoff — October 20, 2026
 
+## Grid reset classified; shape-persistence checkpoint complete offline - November 22, 2026
+
+Owner clarifies grid only resets to3x3 AFTER poweroff/on with about10seconds off;
+short off/on can retain it. No same-session regression reported. This matches
+current RAM-only shape design; exact physical short-off retention mechanism is
+unverified. Startup4x4->3x3 swap is absent on owner-tested eae52b49. Hardware
+result/private staging updated with clarification. Card/firmware untouched by
+agent this turn. Current eae remains the hardware baseline; do not roll it back
+as a failed in-session grid-selection build.
+
+Built opt-in plugins/lcd_grid_persistence_checkpoint.c inheriting startup fix.
+Adds model grid_layout1..5 and Z7C1 payloadv3 atbyte56, byte60zero; v2 highlight
+profile remains separate/compile-time incompatible. Outer Z7J1v1/80bytes unchanged.
+Writes target NEW Z7DSP0.DAT/Z7DSP1.DAT only. If both confirmed absent, loader
+reads old Z7CFG0/1 read-only; no compatible-legacy automatic migration. Existing
+invalid/unknown new records block silent default/legacy overwrite. Path selector
+loader-only, alwayscleared beforeGUI/workerready. Worker publishes/saves model44
+bytes coherently with existing bounded revision reader. GUI selection noI/O;
+loader restores RAMshape beforehostready; nativegrid setter staysboolean0/1.
+Off retains lastshape. New records own complete preferences once present; old
+Z7CFG files remain unchanged, and rollback eae ignores new files.
+
+Candidate21560bytes SHA256
+f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e.
+Build .private/builds/20261122-lcd-grid-persistence-02 (same bytes as01 aftercodec
+comment update); frozen .private/review/20261122-lcd-grid-persistence-01 with
+five reports, assessment/source/tool/file hash manifest. Root review
+LCD_GRID_PERSISTENCE_REVIEW.md. No staging/hardware approval or test yet.
+Oldeae packet independently rebuilt EXACT with final source in
+.private/builds/20261122-lcd-startup-working-rebuild-02. Earlier frozen source
+fingerprints are historical; do not rewrite their evidence.
+
+152 actual module/codec/file checks pass: five shapes save/coldreload, independent
+v3 CRC/gen records, alternating new slots, v1 fallback/noautomigration, oldfiles
+preserved, batteryedit retainsshape, invalidcodecoutput unchanged, corrupt/unknown
+new records/read/create/shortwrite/close errors. All observed writes NEWonly.
+262 geometry/storage assertions/450 geometry comparisons pass, native0/1only;
+15 native menustatus checks; actual odd-store writer paused with4 bounded worker
+reads thencompleted save;84 ELFfunctions0exclusive/19DMB;101 root tests pass.
+Physical durability/scanout/capture/recovery remains unproven. Graph refreshed.
+
+After exact-candidate owner approval, require samecard activeeae, newDSP paths
+BOTHabsent and validunambiguousLCDcompatible oldCFGselectedrecord. Backupall,
+preserve active as unusedZ7APP.LCD-STARTUP-WORKING.disabled; exclusive create/
+flush/fullreadback/metadata/catalog/eject. DO NOT change oldjournals/seed/updaters.
+Proposed first owner gate: normalstart NOUpdate, chooseONLYCenter cross, open
+Displaysettings and waitSaved, normalpoweroff>=20seconds, restart andconfirmcross
+returns. Observe any startup wrong-grid flash andnormalcontrols/poweroff; stop
+onerrors. Returncard for read-only newslotCRC/gen and oldjournal preservation
+beforeanotheredit. All newrecords retained onrollback; oldeae uses oldpreferences.
+
 ## Startup swap absent; reported grid reversion needs timing - November 22, 2026
 
 Owner reports eae52b49 startup no longer shows4x4->3x3 swap. Scoped physical
