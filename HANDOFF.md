@@ -1,5 +1,25 @@
 # Laptop handoff — October 20, 2026
 
+## Center cross v3 physical journal verified; oldCFG intact - November 22, 2026
+
+Owner connected card for read-only verification. Same Sony identity, activef848e62d
+and retainedworkingeae confirmed. Private backup/readback .private/card-inspections/20261122-grid-persistence-01.
+Z7DSP0.DAT80bytes, outer AND payload CRC valid, payloadv3/generation0, grid_layout4
+Center cross, flags3/pages15/standard LCD preferences match legacyselectedrecord.
+Z7DSP1.DAT absent, selectedslot0 unambiguous. BOTH oldCFG files byte-identical to
+before-lcd-grid-persistence-test-01 backup. Card-wide size/mtime/catalog unchanged
+through inspection. No cardwrites/firmwareupdate; safeeject independently verified.
+Public evidence/20261122-lcd-grid-journal-readback.json; private staging updated.
+Persistence now supported by scoped owner restart/battery-removal report andvalid
+physical v3 record. Brief wrong-grid startup transition after battery removal
+remains open; physical scanout/cause and abruptsave power-loss durability unproven.
+
+Next one-edit gate SAME f848 module: chooseONLY6x6, openDisplaysettings waitSaved,
+normalpoweroff>=20seconds and restart; confirm6x6 returns andcontrolsnormal. DoNOT
+runUpdate or repeatbatteryremoval. Stoponerrors. Thenread-only inspect expected
+DSP1 generation1/grid5 and verify DSP0 originalcenterbytes unchanged plusoldCFG
+stillintact. Preserve allfiles/currentmodule; no newstaging needed.
+
 ## Battery-removal observation clarified: brief visual grid transition - November 22, 2026
 
 Owner explicitly says wrong grid appears as camera boots, then saved grid appears

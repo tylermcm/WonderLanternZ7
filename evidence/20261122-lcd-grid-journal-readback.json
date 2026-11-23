@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "date": "2026-11-22",
+  "module_sha256": "f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e",
+  "slot0": {
+    "present": true,
+    "bytes": 80,
+    "generation": 0,
+    "payload_version": 3,
+    "journal_and_payload_crc_valid": true,
+    "grid_layout": 4,
+    "grid_name": "Center cross",
+    "other_preferences_match_selected_legacy": true
+  },
+  "slot1": {
+    "present": false
+  },
+  "legacy_settings_files_byte_identical": true,
+  "private_backup_readback_verified": true,
+  "card_files_metadata_unchanged": true,
+  "catalog_unchanged": true,
+  "card_written": false,
+  "safe_eject_verified": true,
+  "scope": "Physical journal readback after owner shutdown/restart and battery-removal restoration; no abrupt save interruption test"
+}
