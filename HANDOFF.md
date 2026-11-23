@@ -1,5 +1,29 @@
 # Laptop handoff — October 20, 2026
 
+## Grid shape persistence approved/staged/safely ejected - November 22, 2026
+
+Owner says "its rady" after exact reviewed grid-persistence staging invitation.
+Same Sony identity verified, active owner-workingeae preserved as unused
+Z7APP.LCD-STARTUP-WORKING.disabled. New active Z7APP.BIN21560bytes SHA256
+f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e.
+All249 existing files preserved through intended rename; prior named payloads/
+seed and BOTH current legacyCFG bytes unchanged. NewDSP0/1 absent before/after
+agent copy. OldCFGselectedgeneration5 validunambiguousLCDcompatible, Custom pages
+ON. Private backups, fullflushed readback, card size/mtime/catalog checks pass.
+Updatersdisabled, nofirmwareflash orsettingsfilewrites byagent. Safeeject verified.
+Private staging .private/card-staging/20261122-lcd-grid-persistence-test-01/staging.json;
+backup .private/card-backups/20261122-before-lcd-grid-persistence-test-01.
+Five frozen reports/source/tool/assessment hashes verified. Hardware result pending.
+
+Next owner gate: cameraOFF insertcard, normalstart NOUpdate. SelectONLYCenter
+cross in Framinggrid display, openDisplaysettings andwaitSaved, normalpoweroff
+atleast20seconds, restart andconfirmcrossreturns. Observe any startup wrong-grid
+swap andcheckcontrols/normalpoweroff. Do not change other preferences yet. Stop
+onstall/saveerror. Thenreturncard forread-only newDSP recordCRC/gen/model inspection
+andbyte-for-byte oldCFGpreservation againstthisbackup beforeanotheredit. Expected
+firstnewsave DSP0 generation0/payloadv3/grid4; notphysicallyverifiedyet. Current
+baselineeae ignoresthenewfiles onrollback; keepallfiles intact.
+
 ## Grid reset classified; shape-persistence checkpoint complete offline - November 22, 2026
 
 Owner clarifies grid only resets to3x3 AFTER poweroff/on with about10seconds off;
