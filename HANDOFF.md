@@ -1,5 +1,23 @@
 # Laptop handoff — October 20, 2026
 
+## LCD persistence startup-only trial staged and safely ejected - November 22, 2026
+
+Owner returned and connected card in response to startup-only staging instructions.
+Same Sony card identity and active working8ec66cea verified. Both settings journals
+ABSENT, preservation name unused; all frozen report/source/tool hashes verified.
+Staged exact21296-byte88b53ce46ae816b634c249cfe011f05a501f2619447d9c156e2828c2cf82a71e
+as Z7APP.BIN. Working8ec module retained as Z7APP.LCD-GRID-BOOL-WORKING.disabled.
+All245 prior files preserved through intended rename; private backups, payload/
+seed bytes, metadata/catalog, flush and full readback checks pass. Updaters stay
+disabled. Safe eject independently verified. No firmware flash. HW result pending.
+Private staging .private/card-staging/20261122-lcd-persistence-startup-test-01/staging.json;
+backup .private/card-backups/20261122-before-lcd-persistence-startup-test-01.
+Next owner gate ONLY: camera OFF insert card, normal start NO Update, open Display
+settings and expect Defaults. No preference edits. Check MENU/touch/responsiveness
+and normal power-off; report before any battery-setting write/restart test.
+If failure, preserve/disable candidate and all resulting files before restoring
+working8ec. Exact-candidate recovery and physical durability not established.
+
 Historical entries through November 21 are preserved in
 [HANDOFF_HISTORY_THROUGH_20261121.md](HANDOFF_HISTORY_THROUGH_20261121.md).
 The newest status below supersedes historical pending states.
