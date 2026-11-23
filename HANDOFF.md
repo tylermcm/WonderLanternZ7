@@ -1,5 +1,20 @@
 # Laptop handoff — October 20, 2026
 
+## Second journal readback valid; extra ON save context pending - November 22, 2026
+
+Owner repeated "work as intended"; reader detection found same card connected.
+Read-only private backup/inspection .private/card-inspections/20261122-battery-persistence-02
+verified unchanged active88b53ce4 and preserved working8ec. BOTH80byte journal
+records have valid v1 outer/payload CRCs. Slot1 generation1 is Battery OFF with
+all other preferences default. Slot0 is newer generation2 Battery ON/defaults,
+so generation0 original has been replaced by a valid third save. Newest slot0
+selected unambiguously. This differs from planned stop-after-OFF inspection;
+do not claim original slot0 bytes preserved or a firmware fault. Asked owner
+whether battery was turned back ON after OFF check; answer pending. Await that
+context before new tests/changes. Both records preserved privately. Card-wide
+metadata/catalog unchanged, no card writes/firmware updates; safe eject verified.
+Public evidence/20261122-lcd-battery-second-journal-readback.json. No new module.
+
 ## Battery OFF save/restore owner PASS - November 22, 2026
 
 Owner: "done. works as intended. percemtage turned off and stayed off" after
