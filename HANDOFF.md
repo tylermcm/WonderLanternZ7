@@ -1,5 +1,24 @@
 # Laptop handoff — October 20, 2026
 
+## Battery-removal observation clarified: brief visual grid transition - November 22, 2026
+
+Owner explicitly says wrong grid appears as camera boots, then saved grid appears
+a split second later; everything/controls works normally. Record saved-grid
+restoration even after battery removal and normal controls; classify remaining
+issue as brief startup visual transition, NOT input freeze or lost persistence.
+Do not claim the exact displayed initial shape or native boot cause was captured.
+Public hardware result/private staging updated. f848e62d remains active; no card
+access/write, new code, module stage or firmware update this turn.
+
+Loader restores saved shape before ready publication; host uses native fallback
+until module ready. This remains a plausible startup boundary, not proof of the
+physical transition's root cause. Do not bypass readiness or reorder initialization
+without measured evidence. No need to repeat battery removal. Next owner camera
+OFF/card to reader for read-only private newDSP backup/CRC/generation/model decode
+and exact oldCFG preservation versus before-grid-persistence-test-01 backup.
+Retain all files/current module; no automatic staging. Cosmetic transition remains
+OPEN while scoped save/restore and responsiveness owner tests pass.
+
 ## Grid persistence owner PASS; battery-removal delay clarification pending - November 22, 2026
 
 Owner reports "ok it has permanence now, its instant between power on and off.
