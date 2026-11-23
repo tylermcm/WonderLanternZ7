@@ -1,5 +1,39 @@
 # Laptop handoff — October 20, 2026
 
+## LCD native-bool grid revision owner pass - November 22, 2026
+
+Owner: "nothing noteworthy to report, it worked like it should" in response to
+the requested rear-LCD 3x3/Center cross/6x6/Off/reenable, responsiveness and normal
+power-off sequence. Record overall owner pass for exact 18060-byte module
+8ec66cea22ebf33755944591351d7d7f4c728e361af2b2bd7794323a72ef52ea.
+No per-selection descriptions or captured pixels; no EVF, capture-lifecycle or
+settings-persistence validation implied. Evidence: evidence/20261122-lcd-grid-bool-hardware-result.json;
+private staging record updated. No card access/write or firmware update this turn.
+This is the current working LCD baseline; preserve it on any next staging.
+Next unfinished smaller-release work: resolve full-profile grid persistence
+contract, then prepare a separately reviewed incremental settings save/restore
+checkpoint. Existing persistent candidate remains unapproved; do not stage it
+unchanged or treat volatile layout behavior as completed persistence.
+
+## LCD native-bool grid revision staged and safely ejected - November 22, 2026
+
+Owner explicitly approved staging with yes. Active Z7APP.BIN is 18060 bytes,
+SHA256 8ec66cea22ebf33755944591351d7d7f4c728e361af2b2bd7794323a72ef52ea.
+Working 9b076c6d module retained as Z7APP.LCD-VOLATILE-WORKING.disabled.
+All 244 existing files preserved through intended rename; prior payload/seed
+bytes, file metadata and catalog checks pass. Private backup and complete
+flushed readback verified; safe eject independently verified. Updaters remain
+disabled. No firmware flash. New candidate hardware result PENDING.
+Private staging: .private/card-staging/20261122-lcd-grid-bool-test-01/staging.json.
+Backup: .private/card-backups/20261122-before-lcd-grid-bool-test-01.
+
+Next owner test: normal boot, NO Update. On rear LCD choose 3x3, Center cross,
+6x6 and Off individually, checking displayed grid and selection, then reenable
+a layout. Check controls and normal power-off. Settings/layout are volatile;
+Custom pages and battery begin OFF. Native flag1 starts3x3 at each boot; legacy
+2..5 is read without startup rewrite until next explicit choice. Stop/report
+any stall rather than repeating. No new persistence or EVF test authorized.
+
 ## Live LCD menu/toggles pass; native-bool grid revision prepared - November 22, 2026
 
 Owner reports navigating all settings, turning some on, normal speed/controls/
