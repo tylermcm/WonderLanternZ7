@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-22",
+  "module_sha256": "839d8aaef7f404ba64f710d092aceba628552b969e54820867bd6b6d4c363b40",
+  "seed_sha256": "a0b38b760a81b292131af5944fa3ade0ce48bc9e21e9a424b712dc2368567ae0",
+  "owner_response": "it appears as 6x6 SD as you described, everything was normal, responsiveness normal and normal power off",
+  "observed_marker": "6x6 [SD]",
+  "hardware_pass": true,
+  "read_decode_gui_apply_observed": true,
+  "controls_and_poweroff_confirmed": true,
+  "camera_side_save_tested": false,
+  "physical_installed_image_readback": false,
+  "card_changed_this_turn": false
+}

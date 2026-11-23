@@ -1,5 +1,26 @@
 # Laptop handoff — October 20, 2026
 
+## Hardened read-only restore hardware PASS; volatile LCD approval pending - November 22, 2026
+
+Owner confirms6x6 [SD] marker, normal responsiveness and normal power-off. Exact
+RO839d8aae... now scoped HW pass: worker read/validated seed and GUI applied it.
+No file save/journal write or broader cache/lifecycle proof. Current working
+active module isRO; progress/B backups remain intact. No card writes this turn.
+Private RO staging and evidence/20261122-grid-restore-no-rmw-hardware-result.json
+updated. Hardware gates now host, A/B, direct progress, read-only seed all pass.
+
+Next prepared test is storage-free LCD .private/review/20261122-lcd-volatile-01;
+all files/source hashes reverified. Module17868bytes SHA9b076c6db032d6b17884aadda8ec75934be9b9456655e2ef30010870d51c8592.
+44 scope tests/68 exclusive-free functions software only. No worker/settings file
+I/O or native persistent menu-dispatch replacement. Four compact DISP presets,
+grid/horizon/info/battery/focal controls, volatile per boot. Custom pages AND
+battery startOFF, expected entry Framing grid display > Display settings. Read
+LCD_VOLATILE_REVIEW.md. First approved hardware result should normalboot/controls
+and menu presence only; enable features one at a time after observing initial
+state. No Update. Preserve current RO as unused Z7APP.RESTORE-RO-WORKING.disabled;
+old failed Z7APP.RESTORE-RO.disabled0714... stays untouched. Ask approval before
+staging. Full persistent LCD/settings writes still unapproved; no automatic jump.
+
 ## Hardened read-only restore approved/staged/ejected - November 22, 2026
 
 Owner explicitly approved next RO module (yes) after progress full hardware pass.
