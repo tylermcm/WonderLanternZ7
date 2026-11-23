@@ -1,5 +1,45 @@
 # Laptop handoff — October 20, 2026
 
+## Live LCD menu/toggles pass; native-bool grid revision prepared - November 22, 2026
+
+Owner reports navigating all settings, turning some on, normal speed/controls/
+power-off and no observed detriments on9b076c6d... . Clarification: does not
+remember names, enabled the two OFF settings and flipped through everything.
+Likely Custom pages+battery from defaults, INFERRED, not individually confirmed.
+Actual grid-layout selection unknown; do not claim every feature/pixel tested.
+Private LCD staging and evidence/20261122-lcd-volatile-hardware-result.json updated.
+No card write/quarantine/new staging this turn; current working9b remains active.
+
+Source review confirmed generic full LCD set_grid sends IDs1..5 to native0x102d.
+Old packet dense argument5 observed in instruction fixture; no physical failure
+or flash write demonstrated. Volatile wrapper now opts into existing RAM-only
+layout policy plus optional legacy2..5 read compatibility. At startup no rewrite;
+next explicit layout writes native0/1 only, layout retained in RAM. Native flag1
+starts3x3 each boot, legacy2..5 renders/marks its old layout until user selection.
+EVF/movie geometry native; all A/B/progress/RO default code unchanged by macro.
+
+New module18060bytes SHA8ec66cea22ebf33755944591351d7d7f4c728e361af2b2bd7794323a72ef52ea
+built reproducibly, private .private/builds and .private/review/20261122-lcd-volatile-grid-bool-01.
+Review LCD_GRID_BOOL_REVIEW.md.262 grid/storage checks,450 geometry calls,
+44 menu/DISP checks,68 function exclusive-free scan,101 root tests pass. Legacy
+read/no-init-write, next-choicebool, 7rows/selection and EVF/movie fallback covered.
+Source-safe evidence matching grid-bool prefixes; tools/audit_z7_lcd_grid_storage.py.
+
+Working A/B rebuilt .private/builds/20261122-lcd-grid-bool-baseline-pair-01 exact
+412dffaf/767ada05; progress and RO rebuilt with refreshed source hashes under
+20261122-worker-progress-checkpoint-02 and20261122-grid-restore-no-rmw-02, exact
+3b5aced1/839d8aae respectively. Frozen older reviews keep historical source hashes;
+use refreshed metadata if rebuilding, do not rewrite immutable old evidence.
+No firmware update/host source change. Remaining persistent full LCD3e885483...
+profile does NOT yet have this new grid policy; do not activate before its grid
+storage contract/review is resolved. No settings-write test approved.
+
+Ask explicit approval for new grid-bool module before staging. Preserve current
+9b as unused Z7APP.LCD-VOLATILE-WORKING.disabled, backup/verify every existing file,
+seed and config as usual, exclusive create/readback/eject. Initial next HW goal:
+3x3, Center,6x6,Off selections and rear-LCD result with controls/power-off; no
+new firmware. Current profile remains owner-working; don't reclassify it failed.
+
 ## Storage-free LCD approved/staged/ejected; INITIAL MENU ONLY - November 22, 2026
 
 Owner approved yes, then "plugged in, load it" after missing card. Same Sony card

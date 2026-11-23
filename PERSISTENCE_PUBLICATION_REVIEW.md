@@ -1,5 +1,11 @@
 # Exclusive-free settings publication - November 22, 2026
 
+Additional gate: the later LCD grid review found the generic full profile still
+passes extended layout IDs to the native grid property. Only the new storage-free
+revision currently opts into the RAM-layout/native-bool policy. The persistent
+candidate below remains unapproved until its grid storage contract is resolved;
+the publication tests alone do not clear that separate behavior.
+
 Offline implementation/regression checkpoint, not a camera candidate clearance.
 The working host/card were unchanged while the owner was away. Hardware progress
 and read-only I/O gates remain ahead of any settings-write or full LCD trial.

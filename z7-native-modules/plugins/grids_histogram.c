@@ -61,13 +61,25 @@ static uint32_t checkpoint_grid_lcd(void)
 }
 static uint32_t grid_value(void)
 {
+#ifdef Z7_GRID_LEGACY_LAYOUT_INPUT
+    /* Read compatibility for the older full LCD profile. Do not rewrite a
+     * legacy extended value at initialization; the next user layout selection
+     * stores only ordinary native On/Off and keeps its type in module RAM.
+     */
+    uint32_t raw=WORD(GRID_RAW);
+    if (raw>=2 && raw<=5) return raw;
+#endif
     return WORD(GRID_RAW) == 1 ? checkpoint_grid_value : 0;
 }
 #endif
 static const uint16_t *grid_source(const uint16_t *native)
 {
 #ifdef Z7_GRID_VOLATILE_CHECKPOINT
+#ifdef Z7_GRID_LEGACY_LAYOUT_INPUT
+    if (!checkpoint_grid_lcd() || !grid_value()) return native;
+#else
     if (!checkpoint_grid_lcd() || WORD(GRID_RAW) != 1) return native;
+#endif
     uint32_t value = grid_value();
 #else
     (void)native;

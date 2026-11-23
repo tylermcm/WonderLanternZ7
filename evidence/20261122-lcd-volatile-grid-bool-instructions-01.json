@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "module_sha256": "8ec66cea22ebf33755944591351d7d7f4c728e361af2b2bd7794323a72ef52ea",
+  "compiled_functions": 68,
+  "decoded_instructions": 6645,
+  "dmb_instructions": 2,
+  "function_bounds_from_elf": true,
+  "independently_rebuilt": true,
+  "exclusive_instructions": 0,
+  "source": "z7-native-modules/plugins/lcd_volatile_checkpoint.c",
+  "card_written": false,
+  "hardware_tested": false,
+  "limits": [
+    "Only module-owned function ranges; literal pools may be decoded within compiler function extents",
+    "Called native firmware functions and other modules are outside this scan",
+    "No proof of physical memory attributes or scheduler/memory ordering"
+  ]
+}

@@ -1,5 +1,12 @@
 # Storage-free LCD checkpoint - November 22, 2026
 
+Owner follow-up: menu navigation, unspecified toggles, speed/responsiveness and
+power-off passed with no observed detriments. The two enabled OFF settings are
+likely Custom pages and Battery percentage, inferred from defaults. Exact grid
+choices are unknown. A later source-only grid-policy revision is prepared in
+LCD_GRID_BOOL_REVIEW.md; it is not staged. The current module remains a working
+hardware baseline rather than a reported failure. Preparation text below is historical.
+
 Prepared offline while owner is AFK. Not staged or hardware-cleared. Use only
 after reviewing the next incremental hardware gates with the owner present;
 leave the current working B module and installed host unchanged meanwhile.
