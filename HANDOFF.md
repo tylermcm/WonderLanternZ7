@@ -1,5 +1,18 @@
 # Laptop handoff — October 20, 2026
 
+## LCD persistence startup-only owner PASS - November 22, 2026
+
+Owner reports "nothing noteworthy to report, it worked like it should" for the
+requested startup/Defaults/MENU/touch/response/normal-poweroff sequence on88b53ce4.
+This is an overall startup-only pass, not a journal write or restart-restore pass.
+Public evidence: evidence/20261122-lcd-persistence-startup-hardware-result.json;
+private staging record updated with scoped pass. Card/firmware unchanged this turn.
+Next single preference test on same module: enable only Battery percentage, wait
+for Saved (reopen page if necessary), then normal poweroff/cold-start and check
+Battery stays ON with normal controls. If no Saved or any stall/error, stop/report
+without repeated toggles or further tests. Do not run Update. After result, inspect
+new card journal privately before selecting another write test. No new staging.
+
 ## LCD persistence startup-only trial staged and safely ejected - November 22, 2026
 
 Owner returned and connected card in response to startup-only staging instructions.
