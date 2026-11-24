@@ -46,7 +46,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
-    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'), required=True)
+    parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-root', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'), required=True)
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--battery-source-fixture', action='store_true', help='Supply typed bar inputs at the native converter; LCD candidate battery-auto only, not physical telemetry')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
@@ -126,8 +126,12 @@ def main():
     packet = (args.module / 'Z7APP.BIN').read_bytes()
     if hashlib.sha256(packet).hexdigest() != module['module_sha256']:
         raise ValueError('Module fingerprint mismatch')
-    lcd_release = module['kind'] == 'original-Z7-LCD-first-release-candidate'
-    fixture = bind_module_fixture(output, packet, host, settings=lcd_release)
+    settings_root = module['kind'] == 'original-Z7-LCD-settings-root-checkpoint'
+    if args.view == 'settings-root' and not settings_root:
+        raise ValueError('Settings root checkpoint required')
+    lcd_release = module['kind'] == 'original-Z7-LCD-first-release-candidate' or settings_root
+    fixture = bind_module_fixture(output, packet, host, settings=lcd_release,
+        settings_paths=(b'A:\\Z7CFG0.DAT', b'A:\\Z7CFG1.DAT', b'A:\\Z7DSP0.DAT', b'A:\\Z7DSP1.DAT') if settings_root else None)
     bar_fixture = None
     if args.battery_source_fixture:
         if not lcd_release:
@@ -152,7 +156,7 @@ def main():
         (output / 'histogram-fixture-source.py').write_bytes(fixture_source)
         fixture_source_hash = hashlib.sha256(fixture_source).hexdigest()
         ui.Remote = sample_remote(ui.Remote)
-    options = {} if args.view in ('menu', 'settings-menu', 'settings-entry') else dict(capture_control_test=True,
+    options = {} if args.view in ('menu', 'settings-menu', 'settings-entry', 'settings-root') else dict(capture_control_test=True,
         raw_source=active_manifest('native0'), exmcu_no_lens=True, tg_periodic_test=True,
         tg_paired_test=True, raw_ingress_test=active_ingress(), isp_boundary_test=True,
         orientation_fixture=0, keep_awake=True, photo_liveview=True)
@@ -285,7 +289,7 @@ def main():
                     object_words=list(struct.unpack('<25I', camera.remote.memory(pointer, 100))) if pointer else []))
             step['battery_state'] = {name: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_battery_' + name], 4), 'little')
                 for name in ('enabled', 'object', 'samples', 'paints', 'percent')}
-        if args.view in ('settings-menu', 'settings-entry', 'settings-battery'):
+        if args.view in ('settings-menu', 'settings-entry', 'settings-root', 'settings-battery'):
             step['settings_view'] = int.from_bytes(camera.remote.memory(base + module['symbols']['z7_settings_view'], 4), 'little')
             labels = []
             for slot in range(230, 245):
@@ -399,7 +403,7 @@ def main():
     watchdog.daemon = True
     watchdog.start()
     try:
-        camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry') else camera.boot_shooting()
+        camera.boot(announce_ready=False) if args.view in ('menu', 'settings-menu', 'settings-entry', 'settings-root') else camera.boot_shooting()
         checkpoint()
         if args.view in ('settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'):
             # StartLV acknowledgement and a fixed delay are insufficient. This
@@ -426,7 +430,7 @@ def main():
                 if ready: break
                 previous = current
             check('native-raw-isp-and-processed-scanout-progress-before-rendering-test', ready)
-        if args.view not in ('menu', 'settings-menu', 'settings-entry'):
+        if args.view not in ('menu', 'settings-menu', 'settings-entry', 'settings-root'):
             result['histogram_source_state'] = dict(
                 viewport_flag=camera.remote.memory(0xa2367974 + 0x28, 1).hex(),
                 native_driver_state=camera.remote.memory(0xa188d70c, 3).hex(),
@@ -835,6 +839,32 @@ def main():
             check('native-menu-disable-restores-stock-battery-region', restored.crop((2, 552, 112, 622)).tobytes() == baseline.crop((2, 552, 112, 622)).tobytes())
             result['settings_battery_integration'] = dict(supplied_setting_word=False, supplied_percentage=False,
                 native_snapshot_percent=battery_word('percent'), full_frame_restored=restored.tobytes() == baseline.tobytes(), hardware_telemetry=False)
+        elif args.view == 'settings-root':
+            grid_before = camera.remote.memory(0xa24f182c, 4)
+            key('left', lambda: on_page(1)); row(1, 3)
+            key('right', lambda: on_page(0x125))
+            capture('custom-settings-overview')
+            row(0x125, 8)
+            capture('display-settings-entry')
+            key('right', lambda: on_page(0))
+            capture('display-settings-root')
+            check('direct-entry-opens-owned-page', on_page(0))
+            row(0, 1); key('right', lambda: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_settings_view'], 4), 'little') == 1)
+            capture('standard-preset')
+            key('left', lambda: int.from_bytes(camera.remote.memory(base + module['symbols']['z7_settings_view'], 4), 'little') == 0)
+            key('left', lambda: on_page(0x125))
+            capture('display-settings-back')
+            check('back-restores-custom-settings-overview', on_page(0x125))
+            row(0x125, 4); key('right', lambda: on_page(0x127)); row(0x127, 28)
+            key('right', lambda: on_page(0x153))
+            capture('grid-only-six-choices')
+            meta = int.from_bytes(camera.remote.memory(0xa1836f8c + 40, 4), 'little')
+            check('grid-has-six-choices-without-settings-row', camera.remote.memory(meta + 20, 4) == struct.pack('<I', 0x00060006))
+            check('menu-navigation-does-not-change-grid', camera.remote.memory(0xa24f182c, 4) == grid_before)
+            key('left', lambda: on_page(0x127)); key('left', lambda: on_page(0x125))
+            row(0x125, 8); key('right', lambda: on_page(0))
+            capture('display-settings-reentry')
+            check('separate-entry-reopens-after-grid-menu', on_page(0))
         elif args.view in ('settings-menu', 'settings-entry'):
             expected_kind = 'original-Z7-display-settings-module' if args.view == 'settings-entry' else 'original-Z7-display-settings-menu-diagnostic'
             if module['kind'] != expected_kind and not (args.view == 'settings-menu' and module['kind'] == 'original-Z7-display-settings-module'):

@@ -44,12 +44,14 @@ def main():
     def check(name,good):assert good,name;checks.append(name)
     check('default-layout-thirds',g.word(f.base+symbols['checkpoint_grid_value'])==2)
     for name,value,control,label in LAYOUTS:
-        g.call(f.base+symbols[name if value else 'off_owned'])
+        root_entry=m['configuration'].get('settings_root_entry',False)
+        g.call(0x104f5593 if not value and root_entry else f.base+symbols[name if value else 'off_owned'])
         check(name+'-native-on-off-only',g.word(GRID_VALUE)==int(value!=0) and all(x in (0,1) for x in g.setters))
         if value:check(name+'-ram-layout',g.word(f.base+symbols['checkpoint_grid_value'])==value)
         g.labels.clear();g.rows.clear();g.marks.clear();g.u.mem_write(OBJECT+36,struct.pack('<I',MEM+0x10000))
         g.call(f.base+symbols['grid_enter'],OBJECT)
-        check(name+'-seven-menu-rows-and-selection',g.labels==[(39+i,x[3]) for i,x in enumerate(LAYOUTS)]+[(45,'Display settings')] and g.rows==list(range(39,46)) and g.marks==[(control,1)])
+        extra=[] if root_entry else [(45,'Display settings')]
+        check(name+'-menu-rows-and-selection',g.labels==[(39+i,x[3]) for i,x in enumerate(LAYOUTS)]+extra and g.rows==list(range(39,45+len(extra))) and g.marks==[(control,1)])
     stock=(ROOT/'.private/builds/20261021-laptop-01/stock-main.bin').read_bytes();geometry_calls=0
     for viewport in ((0,0,720,480),(20,40,700,440),(0,0,640,426)):
         g.viewport=viewport;reference=GridFixture(stock,viewport,0)

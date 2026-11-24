@@ -344,6 +344,13 @@ ownership. The current optional profile is not installation-ready.
 
 ## Native menu entry and battery binding
 
+The historical grid-nested entry below remains the hardware-tested baseline.
+An opt-in `--settings-root` LCD candidate now moves **Display settings** to its
+own row in the Custom Setting Menu overview and restores a grid-only submenu.
+See the [separate-entry review](../LCD_SETTINGS_ROOT_REVIEW.md) for exact hashes,
+offline checks and the pending hardware scope. It does not change the host or
+the saved-settings format.
+
 The optional `--variant display-settings` profile adds a seventh **Display
 settings** row to Custom Settings d9, Framing grid display. It retains the six
 grid choices and their stored values. The new row opens the owned settings page

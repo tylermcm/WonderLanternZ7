@@ -45,6 +45,27 @@ class SettingsFileFixtureTests(unittest.TestCase):
         self.assertEqual(self.fixture.position, 800)
         self.assertEqual(self.fixture.packet, bytes(i % 251 for i in range(800)))
 
+    def test_optional_v3_slots_preserve_legacy_and_prior_slot(self):
+        paths = PATHS + (b'A:\\Z7DSP0.DAT', b'A:\\Z7DSP1.DAT')
+        prior = {0: b'legacy0', 1: b'legacy1', 2: b'prior-v3'}
+        self.fixture = SettingsFileFixture(self.fixture.packet, files=prior, paths=paths)
+        self.loaded()
+        self.memory.write_memory(self.path, paths[2] + b'\0')
+        fd = self.request(5, **{'4': self.path})
+        self.assertEqual(self.request(8, **{'7': fd, '10': self.buffer, '11': 81, '12': self.actual}), 0)
+        self.assertEqual(self.memory.memory(self.buffer, 8), b'prior-v3')
+        self.request(6, **{'7': fd})
+        self.memory.write_memory(self.path, paths[3] + b'\0')
+        fd = self.request(13, **{'4': self.path})
+        self.memory.write_memory(self.buffer, bytes(range(80)))
+        self.assertEqual(self.request(9, **{'7': fd, '10': self.buffer, '11': 80, '12': self.actual}), 0)
+        self.request(6, **{'7': fd})
+        self.assertEqual(self.fixture.files, {**prior, 3: bytes(range(80))})
+
+    def test_optional_paths_cannot_expand_to_other_card_files(self):
+        with self.assertRaises(ValueError):
+            SettingsFileFixture(self.fixture.packet, paths=PATHS + (b'A:\\OTHER.DAT',))
+
     def test_explicit_open_error_is_not_absence_and_preserves_unread_slots(self):
         self.loaded(); self.path_for(0)
         self.fixture.files = {0: b'old0', 1: b'old1'}

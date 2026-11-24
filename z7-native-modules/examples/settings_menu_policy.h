@@ -83,6 +83,9 @@ static uint32_t sm_open(void)
     return F(0x10404c43u, uint32_t, uint32_t, uint32_t)(2, 0);
 }
 #endif
+#ifdef Z7_SETTINGS_ROOT_ENTRY
+#include "settings_root_entry.h"
+#endif
 static uint32_t sm_label_ownership(void)
 {
     for (uint32_t i = 0; i < 15; ++i) {
@@ -351,6 +354,9 @@ static void persistence_menu_notify(void)
 #endif
 static uint32_t sm_prepare(void)
 {
+#ifdef Z7_SETTINGS_ROOT_ENTRY
+    if (!sm_root_prepare()) return 0;
+#endif
 #ifdef Z7_SETTINGS_PERSISTENCE
     if (W(0xa182ed34u) != 0x1048bffdu) return 0;
 #endif
@@ -397,6 +403,9 @@ static uint32_t sm_prepare(void)
 }
 static void sm_publish(void)
 {
+#ifdef Z7_SETTINGS_ROOT_ENTRY
+    sm_root_publish();
+#endif
     for (uint32_t i = 1; i < 11; ++i) W(0xa1833548u + i * 4) = sm_object[i];
     __asm__ volatile("dmb sy" ::: "memory");
     W(0xa1833548u) = sm_object[0];

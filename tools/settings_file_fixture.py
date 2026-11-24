@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-"""Explicit module + two writable journal-file HLE for assisted QEMU only.
+"""Explicit module + bounded writable journal-file HLE for assisted QEMU only.
 
 No SD/XQD controller or native filesystem implementation is modeled. Only the
 owned names/handles below receive supplied results. Other requests pass through.
@@ -14,12 +14,15 @@ NOT_FOUND = 0x80000010
 
 
 class SettingsFileFixture:
-    def __init__(self, packet, files=None):
+    def __init__(self, packet, files=None, paths=PATHS):
+        self.paths = tuple(paths)
+        if self.paths not in (PATHS, PATHS + (b'A:\\Z7DSP0.DAT', b'A:\\Z7DSP1.DAT')):
+            raise ValueError('Only legacy and optional v3 display journal paths are allowed')
         self.module = ModuleFileFixture(packet)
         self.events = self.module.events
         self.files = {slot: bytes(data) for slot, data in (files or {}).items()}
-        if any(slot not in (0, 1) or len(data) > 4096 for slot, data in self.files.items()):
-            raise ValueError('Only two bounded diagnostic journal slots are allowed')
+        if any(slot not in range(len(self.paths)) or len(data) > 4096 for slot, data in self.files.items()):
+            raise ValueError('Only the selected bounded diagnostic journal slots are allowed')
         self.handles, self.issued = {}, set()
         self.next_fd = FIRST_FD
         self.finished = False
@@ -51,8 +54,8 @@ class SettingsFileFixture:
             if not (0x10020000 <= p < 0x12000000 or self.ram(p, 32)):
                 return None
             path = remote.memory(p, 32).split(b'\0', 1)[0]
-            if path in PATHS:
-                slot = PATHS.index(path)
+            if path in self.paths:
+                slot = self.paths.index(path)
             else:
                 return self.module.request(remote, pointer)
         if slot is not None:

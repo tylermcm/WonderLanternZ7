@@ -136,6 +136,11 @@ readbacks; Center cross also returns after battery removal. The combined LCD/bas
 shooting smoke test also has an owner pass. Broader
 output/capture lifecycle validation remains outside that result.
 
+An optional [separate Display settings entry](LCD_SETTINGS_ROOT_REVIEW.md) now
+opens from the Custom Setting Menu overview instead of the grid submenu.
+That relocation has offline menu/navigation and persistence checks; its camera
+test is pending, and it does not replace the hardware-tested baseline above.
+
 The [configurable DISP work](z7-native-modules/DISPLAY_SETTINGS.md) now includes
 four presets, native base-page selection, six separate information groups and
 an Other-information group covering18 independently identified original-Z7

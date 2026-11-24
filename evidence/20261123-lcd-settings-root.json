@@ -1,0 +1,175 @@
+{
+  "schema": 1,
+  "date": "2026-11-23",
+  "module_sha256": "c79b6c52639c16072bb306da4e70f3017875d6649c5a329a554edd8a1c0bf2a8",
+  "module_bytes": 22128,
+  "host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "working_module_sha256": "f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e",
+  "working_profile_rebuild_byte_identical": true,
+  "reproducible_candidate_build": true,
+  "route": "Custom Setting Menu overview > Display settings, after g Movie",
+  "grid_settings_entry_removed": true,
+  "existing_native_overview_rows_preserved": 8,
+  "qemu": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "module-loaded-and-callbacks-committed",
+        "passed": true
+      },
+      {
+        "name": "grid-menu-published-on-gui-path",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x1",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "direct-entry-opens-owned-page",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x0",
+        "passed": true
+      },
+      {
+        "name": "back-restores-custom-settings-overview",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x127",
+        "passed": true
+      },
+      {
+        "name": "grid-has-six-choices-without-settings-row",
+        "passed": true
+      },
+      {
+        "name": "menu-navigation-does-not-change-grid",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "separate-entry-reopens-after-grid-menu",
+        "passed": true
+      },
+      {
+        "name": "same-live-module-retained",
+        "passed": true
+      }
+    ],
+    "frames": 7,
+    "frames_visually_inspected": [
+      "custom-settings-overview",
+      "display-settings-entry",
+      "display-settings-root",
+      "display-settings-back",
+      "grid-only-six-choices"
+    ],
+    "physical_camera": false
+  },
+  "compiled_contract_checks": {
+    "passed": true,
+    "count": 53,
+    "names": [
+      "resident-load",
+      "overview-object-only-callback-and-metadata-pointers-change",
+      "all-eight-native-rows-preserved",
+      "all-eight-native-event-map-pointers-preserved",
+      "native-callbacks-except-constructor-preserved",
+      "eight-row-viewport-nine-total",
+      "native-layout-and-geometry-preserved",
+      "new-row-label-style-and-control",
+      "native-event-preserved-0",
+      "native-event-preserved-1",
+      "native-event-preserved-2",
+      "native-event-preserved-3",
+      "native-event-preserved-4",
+      "activation-map-0x239",
+      "activation-resets-root-view-0x239",
+      "activation-opens-owned-page-0x239",
+      "native-event-preserved-6",
+      "native-event-preserved-7",
+      "activation-map-0x252",
+      "activation-resets-root-view-0x252",
+      "activation-opens-owned-page-0x252",
+      "native-event-preserved-9",
+      "activation-map-0x25f",
+      "activation-resets-root-view-0x25f",
+      "activation-opens-owned-page-0x25f",
+      "native-event-preserved-11",
+      "native-event-preserved-12",
+      "native-event-preserved-13",
+      "native-event-preserved-14",
+      "native-event-preserved-15",
+      "native-event-preserved-16",
+      "native-event-preserved-17",
+      "plain-display-settings-label",
+      "entry-and-navigation-no-file-io",
+      "grid-six-rows-only",
+      "new-row-not-in-grid",
+      "root-back-uses-native-parent-stack",
+      "reject-conflicting-overview-0",
+      "rejection-preserves-overview-0",
+      "reject-conflicting-overview-4",
+      "rejection-preserves-overview-4",
+      "reject-conflicting-overview-12",
+      "rejection-preserves-overview-12",
+      "reject-conflicting-overview-36",
+      "rejection-preserves-overview-36",
+      "reject-conflicting-overview-16",
+      "rejection-preserves-overview-16",
+      "reject-conflicting-overview-40",
+      "rejection-preserves-overview-40",
+      "occupied-overview-rejects-module-load",
+      "failed-load-no-menu-publication-0xa18367a4",
+      "failed-load-no-menu-publication-0xa1836f8c",
+      "failed-load-no-menu-publication-0xa1833548"
+    ]
+  },
+  "journal_checks": {
+    "passed": true,
+    "count": 152,
+    "legacy_slots_read_only": true,
+    "all_five_shapes_saved_and_cold_reloaded": true
+  },
+  "preset_checks": {
+    "passed": true,
+    "count": 277,
+    "presets": 4,
+    "saves": 10,
+    "all_presets_cold_reloaded": true,
+    "native_disp_skip_checks": 16
+  },
+  "grid_checks": {
+    "passed": true,
+    "count": 262,
+    "geometry_calls": 450,
+    "native_setter_values": [
+      0,
+      1
+    ]
+  },
+  "repository_tests": 103,
+  "hardware_tested": false,
+  "card_written": false,
+  "firmware_flashed": false,
+  "limits": [
+    "Assisted QEMU with supplied module and preference filesystem boundaries",
+    "Instruction checks supply GUI, property and filesystem services",
+    "No physical touch, shutdown, card durability or emergency recovery proof",
+    "Known brief wrong-grid display after battery removal is unchanged"
+  ]
+}
