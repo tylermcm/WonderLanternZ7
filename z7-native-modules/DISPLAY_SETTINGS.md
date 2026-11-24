@@ -1,5 +1,10 @@
 # Original-Z7 display settings model
 
+**Current status — November 23, 2026:** selected LCD checkpoints now have
+[owner hardware observations and saved-file checks](../DEVELOPMENT_UPDATE_2026-11-23.md).
+Photo/video proof is pending. The earlier milestones and broader experimental
+profiles below are historical or separate; they do not expand that hardware scope.
+
 Independent MIT work for original Z7 C3.80. Page/component concepts follow the
 pinned JKWTCN MIT custom-DISP feature; no Z7II addresses, configuration records,
 glyphs or implementation bytes are embedded. This is a model and serializer,

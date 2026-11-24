@@ -11,12 +11,12 @@
       "url": "https://github.com/JKWTCN/z7ii-extensions",
       "commit": "50a22b24c50619cffa646dac386e8334659f475a",
       "license": "MIT; copyright and license retained in z7-native-modules/LICENSE and NOTICE.md",
-      "local_changes": "Independent original Z7 loading core/ABI and bounded ELF packer; experimental boot/task/filesystem/cache host with compiled Thumb module checks and assisted no-card QEMU startup; physical card/cache behavior unverified"
+      "local_changes": "Independent original-Z7 loading core/ABI, host bindings, module packer and LCD display checkpoints; selected owner hardware trials and journal readback recorded in DEVELOPMENT_UPDATE_2026-11-23.md; full lifecycle, cache correctness, durability and recovery remain unverified"
     },
     "z7-firmware-extensions": {
       "url": "https://github.com/totwoto02/z7-firmware-extensions",
       "commit": "96d03002220ecb0da9e387f88361632b9c3daa54",
-      "license": "LicenseRef-Wonder-Lantern-Community; component notices retained",
+      "license": "MIT for original code/documentation except four sound implementation files under LicenseRef-Wonder-Lantern-Community; component LICENSE and THIRD_PARTY_NOTICES scopes retained",
       "local_changes": "Z7 sound config, fallback, callback, Setup identity, page hierarchy and layout corrections"
     }
   },

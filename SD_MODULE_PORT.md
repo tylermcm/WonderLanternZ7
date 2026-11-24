@@ -1,5 +1,10 @@
 # Z7II extension port into the original Z7
 
+**Current status — November 23, 2026:** selected LCD checkpoints now have
+[owner hardware observations and saved-file checks](DEVELOPMENT_UPDATE_2026-11-23.md).
+Photo/video proof is pending. The earlier milestones and broader experimental
+profiles below are historical or separate; they do not expand that hardware scope.
+
 November 19, 2026. The owner selected **SD-loaded modules first, then display
 features**. Work targets the original Z7 C 3.80 without the paid RAW-video upgrade,
 matching this lab's existing scope. This is independent work; source and notices

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "date": "2026-11-23",
+  "scope": "Source publication checks; no new camera test, firmware flash, binary release or photo evidence",
+  "history_review": {
+    "base": "a99e5da7c41dd5931c35faa7287fa04dcc847ebc",
+    "reviewed_tip": "c8a7064e83dbc3d34c97a6611fb2e63283782882",
+    "outgoing_commits": 172,
+    "reviewed_blobs": 1603,
+    "private_or_binary_paths": 0,
+    "credential_patterns": 0,
+    "long_embedded_hex_string_findings": 0
+  },
+  "tests": {
+    "root_python": 101,
+    "emulator_python": 23,
+    "renderer_contracts": 351,
+    "isp_contracts": 398,
+    "firmware_free_qemu_smoke_passed": true
+  },
+  "component_publication": {
+    "reviewed_files": 46,
+    "passed": true,
+    "manifest_refreshed_after_review": true
+  },
+  "documentation": {
+    "local_links_checked": 66,
+    "missing_links": 0,
+    "hardware_claims_scoped_to_owner_reports_and_journal_checks": true,
+    "photo_video_proof_pending": true,
+    "upstream_credits_and_licenses_retained": true
+  },
+  "limits": [
+    "No physical camera validation performed by this publication check",
+    "No sanitizer run in the native Windows check",
+    "Existing checkpoint fixtures do not establish all lifecycles, installation acceptance or recovery"
+  ]
+}

@@ -1,5 +1,10 @@
 # Autonomous original-Z7 module and display work
 
+**Current status — November 23, 2026:** selected LCD checkpoints now have
+[owner hardware observations and saved-file checks](DEVELOPMENT_UPDATE_2026-11-23.md).
+Photo/video proof is pending. The earlier milestones and broader experimental
+profiles below are historical or separate; they do not expand that hardware scope.
+
 The owner asked on November 19, 2026 to keep building while they are at work.
 Continue autonomously within the selected order: SD-loaded modules, then display
 features. The active goal remains open until the software work and relevant

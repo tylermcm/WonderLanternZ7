@@ -14,8 +14,11 @@ bounded arithmetic, ownership admission and cleanup. Its audit supplies text
 descriptor processing and glyph rendering; native text pixels remain unproved.
 
 This is an independent, modified adaptation for **original Nikon Z7 C 3.80**.
-It is not a Nikon, Wonder Lantern, or JKWTCN release. It currently contains a
-firmware-independent loading core, not an installed camera module host.
+It is not a Nikon, Wonder Lantern, or JKWTCN release. It contains a
+firmware-independent loading core and independently bound
+original-Z7 host/display adapters. Selected owner camera trials are recorded in
+[the November 23 hardware status](../DEVELOPMENT_UPDATE_2026-11-23.md); this does
+not establish every feature, safe installation or recovery.
 
 The module format, CRC algorithm, relocation approach, linker layout and LLVM
 build command derive from [JKWTCN/z7ii-extensions](https://github.com/JKWTCN/z7ii-extensions),
@@ -41,7 +44,9 @@ filesystem/task/cache instruction checks and assisted QEMU no-card startup are
 documented in `Z7_MODULE_HOST_RESEARCH.md`. The independent display-hook API and
 grid/histogram module are documented in `Z7_DISPLAY_MODULE_RESEARCH.md`, with
 native menu/grid emulator observations and an unresolved histogram rendering
-gap. Physical card/cache behavior and camera display integration remain unverified.
+gap. Selected physical loading/LCD/journal observations are now recorded in that
+hardware status. Complete cache correctness, all display/capture lifecycles
+and recovery remain unverified.
 
 `examples/battery_display_probe.c` and `plugins/battery_percent.c` adapt the transparent-rectangle preparation
 from upstream `sdk/battery_percent.h` under the same preserved MIT license,

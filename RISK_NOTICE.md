@@ -30,6 +30,14 @@ Nothing in this notice excludes liability that cannot lawfully be excluded.
 This notice supplements the applicable component licenses; it does not replace
 their terms or promise that a disclaimer is enforceable in every jurisdiction.
 
+## Current hardware notice
+
+The [November 23 development update](DEVELOPMENT_UPDATE_2026-11-23.md) records
+limited owner tests of the original-Z7 LCD checkpoint and physical settings-file
+checks. Photo/video documentation is pending. Those observations do not certify
+all features, other cameras, installation safety, save-interruption durability
+or emergency recovery. The published grid-preview prerelease remains separate.
+
 ## Narrow experimental scope
 
 This preview targets the **original Nikon Z7, C 3.80, without the paid RAW-video

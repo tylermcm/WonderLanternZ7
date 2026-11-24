@@ -10,7 +10,34 @@ Independent, modified research workspace for the **original Nikon Z7 C 3.80**.
 This is not an official Nikon or Wonder Lantern release. Component licenses,
 credits and notices are preserved; see [UPSTREAMS.json](UPSTREAMS.json).
 
-## Experimental 3x3 grid preview
+## Latest development update — November 23, 2026
+
+**Owner hardware-tested LCD checkpoint on one original Z7 C 3.80.** Selected
+SD-loader/worker, rear-LCD battery, Custom pages/DISP and saved-grid tests now
+have owner reports. Read-only card inspection verified a saved Center cross
+record and preservation of the older settings files. **Photo/video proof is
+pending; this is limited owner verification, not certification of the full
+port, other bodies, safe installation or emergency recovery.**
+
+There is still a brief wrong-grid display after battery removal before the
+saved grid appears. Controls remain responsive in the owner's report. EVF,
+movie/external output, full capture/sleep/wake behavior and interrupted-save
+recovery are not cleared by this LCD trial. Earlier checkpoints froze inputs;
+read the [risk notice](RISK_NOTICE.md) before considering any build or update.
+
+Read the [development update and hardware verification scope](DEVELOPMENT_UPDATE_2026-11-23.md)
+for working milestones, remaining issues and the evidence. This is a **source
+update**, with no firmware or generated module BIN download. The older preview
+below does not contain these LCD checkpoints.
+
+**Upstream credit:** this port builds on
+[JKWTCN's Z7II extensions](https://github.com/JKWTCN/z7ii-extensions), including
+the module framework and custom-DISP concepts. The original-Z7 adaptation is
+independent work; the upstream MIT copyright/license and all other component
+licenses remain intact. See [CREDITS.md](CREDITS.md) and
+[UPSTREAMS.json](UPSTREAMS.json).
+
+## Earlier published 3x3 grid preview
 
 [Experimental source/patcher prerelease v0.1.0-grid-preview.1](https://github.com/tylermcm/WonderLanternZ7/releases/tag/v0.1.0-grid-preview.1)
 
@@ -36,18 +63,19 @@ consumers, wake behavior, extended use and failure recovery need further review.
 
 ## Other lab experiments
 
-The [Z7II-to-Z7 SD module port](SD_MODULE_PORT.md) starts from JKWTCN's new
-extension framework. The [original-Z7 host probe](Z7_MODULE_HOST_RESEARCH.md)
-now compiles as Thumb, loads a C module through modeled filesystem services,
-and boots in assisted QEMU with bounded unavailable-file handling. Real-card
-loading and physical cache coherence remain unverified. It is an emulator-only
-experiment underpinning the first display modules.
+The [Z7II-to-Z7 SD module port](SD_MODULE_PORT.md) adapts JKWTCN's extension
+framework for the original Z7. The host and incremental LCD modules now have
+selected owner camera trials in addition to instruction fixtures and assisted
+QEMU work. The [current hardware status](DEVELOPMENT_UPDATE_2026-11-23.md)
+supersedes older emulator-only milestones in the research notes; it does not
+clear every profile or establish full cache correctness and recovery.
 
-The [first display module](Z7_DISPLAY_MODULE_RESEARCH.md) now adds a native
-six-choice grid menu through the SD-module host. Native-key menu and rendered
-grid checks pass in assisted QEMU. Histogram/horizon integration preserves the
-native restrictions; its live-view fixture gap is recorded separately. This
-candidate remains emulator-only.
+The [display module research](Z7_DISPLAY_MODULE_RESEARCH.md) covers the native
+six-choice grid menu and display hooks. The latest
+[grid-persistence checkpoint](LCD_GRID_PERSISTENCE_REVIEW.md) saves grid shape
+in separate versioned journals while preserving the older settings files.
+Center cross has owner restart/battery-removal observations and physical
+journal readback; additional-shape/second-slot hardware validation is pending.
 
 The [configurable DISP work](z7-native-modules/DISPLAY_SETTINGS.md) now includes
 four presets, native base-page selection, six separate information groups and
@@ -56,8 +84,9 @@ widgets. Scoped policy and captured-pixel checks preserve shared warnings and
 native restoration on the standard page. A no-focal control isolates native ADL
 edge settling; combined focal/horizon restoration now passes with exact qualified
 native frames. The [native information-page contracts](Z7_INFORMATION_APP_RESEARCH.md)
-are independently bound; its custom-DISP integration, highlights, portrait,
-persistence and broader lifecycle remain under development.
+are independently bound. The custom information-page integration, highlights,
+portrait and broader lifecycle remain under development. Selected LCD
+preference persistence now has the limited hardware results linked above.
 
 An initial [focal-length overlay](FOCAL_LENGTH_RESEARCH.md) now displays whole
 and fractional millimeters on custom LCD landscape pages, independently of Other
@@ -68,7 +97,8 @@ An [automatic LCD-photo battery module](Z7_BATTERY_DISPLAY_RESEARCH.md) now
 adds bounded native sampling, compact percentage text, warning-color preservation
 and stock-icon restoration. It is a separate SD-module profile with an initial
 on/off build setting. Assisted-emulator checks include a labeled GUI icon fixture;
-physical telemetry and the remaining lifecycle/output paths are unverified.
+rear-LCD on/off and preference retention have owner camera reports. Physical
+calibration accuracy and the remaining lifecycle/output paths are unverified.
 
 The optional [additional-grid lab candidate](GRID_LAYOUTS_RESEARCH.md) adds
 Golden ratio, Center cross and 6x6 alongside 4x4, 3x3 and Off. Menu, drawing
@@ -121,7 +151,7 @@ capture timing, recording, recovery or compatibility with other camera models.
 - [UPSTREAMS.json](UPSTREAMS.json): original repository and commit provenance.
 - `evidence/`: source-only validation summary; no firmware or camera screenshots.
 
-The two component directories are vendored source snapshots, **not submodules**.
+The three component directories are vendored source snapshots, **not submodules**.
 Their upstream licenses and notices remain in place. This repository is a modified
 research workspace and does not claim to be an official WonderLantern release.
 

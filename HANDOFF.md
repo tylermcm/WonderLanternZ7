@@ -1,5 +1,33 @@
 # Laptop handoff — October 20, 2026
 
+## Source publication prepared at owner request - November 23, 2026
+
+Owner explicitly requests push with warnings, hardware verification notice and
+prominent Z7II upstream credit; photo proof can follow later. No new camera test,
+module staging or firmware release is implied. Source branch contains172commits
+since remote main a99e5da; remote/main refreshed and still that tip at preparation.
+README now leads with scoped owner-tested LCD status and known brief wrong-grid
+startup transition after battery removal. DEVELOPMENT_UPDATE_2026-11-23.md
+separates owner observations, physical journal readback and offline checks;
+photo/video documentation pending, full compatibility/recovery unverified.
+CREDITS.md prominently names JKWTCN/z7ii-extensions pinned50a22b2/MIT and credits
+WonderLantern/qemu GPL plus totwoto02 MIT/community-license sound file scopes.
+Component notices/copyright retained; stale emulator-only milestones marked
+historical. Old v0.1.0-grid-preview remains a separate earlier release, noBIN.
+
+All1603 outgoing historical blobs reviewed: no private/binary paths, credential
+patterns or long embedded hex strings. Current source manifest tobe refreshed/
+verified before commit. Component z7-qemu publication manifest was stale for five
+prior-source changes; reviewed those diffs/notices/tests and refreshed it. Native
+checks nowpass101root+23QEMUPython,351GPU+398ISP, firmwarefreeQMPsmoke; component
+publication46files pass,66 documentation links resolve. No sanitizer/newhardware
+check. Source-safe evidence/20261123-source-publication-checks.json. Private full
+history scan/log in .private/source-publication. Plan normal fast-forward push
+HEAD:main after finalindexreview; doNOTforce. VerifyremoteSHA afterpush. No new
+release/tag/message or binaryupload requested. Keep private firmware, artifacts,
+keys, journal backups, camera screenshots and generatedgraph ignored.
+Pendinghardware6x6/second-v3-slot test remains pending; do not claim ownerpassed it.
+
 ## Center cross v3 physical journal verified; oldCFG intact - November 22, 2026
 
 Owner connected card for read-only verification. Same Sony identity, activef848e62d
