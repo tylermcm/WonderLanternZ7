@@ -241,7 +241,7 @@ independently checked. Firmware/module/host/QEMU bytes stayed unchanged; the
 harness now services file calls while the menu task runs freely. Earlier
 native-delay waits starved queued repaint work; an experimental firmware rebind
 change was rejected and reverted. See source evidence
-`evidence/20261120-persistence-menu-restart.json` and root HANDOFF.md.
+`evidence/20261120-persistence-menu-restart.json` and the [public development update](../DEVELOPMENT_UPDATE_2026-11-23.md).
 
 Basic unsaved/save-retry presentation is implemented and scoped above; broader
 current-profile pixel/lifecycle validation and all blocked-state visuals remain open. No physical card,
@@ -1220,7 +1220,7 @@ baseline restoration, page visibility, stale queued edits, first migration save
 and restart loading are exercised. The settings controller emits the expected
 native label slots; menu raster and physical camera pixels remain unverified.
 Native transaction41 and cleanup27/ownership36 regressions also pass with this
-variant. See `evidence/20261120-highlight-preferences.json` and root HANDOFF.md.
+variant. See `evidence/20261120-highlight-preferences.json` and the [public development update](../DEVELOPMENT_UPDATE_2026-11-23.md).
 
 ## Native-update-driven EVF highlight diagnostic
 
@@ -1243,7 +1243,7 @@ parameter tails remain undefined and are normalized when retained/restored.
 This is an intermediate experimental port. Automatic output transitions without
 a new native update still require producer binding; physical output mapping,
 engine lifetime, EVF pixels and orientation remain unverified. Existing preference
-profile bytes remain unchanged when the EVF option is absent. See root HANDOFF.md
+profile bytes remain unchanged when the EVF option is absent. See the [public development update](../DEVELOPMENT_UPDATE_2026-11-23.md)
 and `evidence/20261120-highlight-evf.json` for exact validation scope.
 
 ## Cache-driven LCD/EVF highlight handoff
@@ -1286,4 +1286,4 @@ other writers, index ABA, engine allocation lifetime and physical pixels remain
 open. Snapshot validation does not make later application atomic with writers.
 The full display-port goal also retains orientation/portrait, native Info mirror,
 real histogram producer, lifecycle and final installation/recovery assessment.
-See root HANDOFF.md and `evidence/20261120-highlight-handoff.json` for validation.
+See the [public development update](../DEVELOPMENT_UPDATE_2026-11-23.md) and `evidence/20261120-highlight-handoff.json` for validation.

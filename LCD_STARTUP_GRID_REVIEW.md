@@ -47,7 +47,7 @@ No firmware update or installed-image readback is part of this comparison.
 ## Validation scope
 
 The exact-candidate evidence and final counts are listed in the frozen package
-manifest and current HANDOFF. Checks exercise native invalidation, actual page
+manifest and published validation records. Checks exercise native invalidation, actual page
 setters, grid geometry, LCD menu/persistence paths, native status dispatch and
 exclusive-instruction absence. Native property/GUI/filesystem boundaries are
 supplied. These do not model physical cached grid presentation or scanout.

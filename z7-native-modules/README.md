@@ -6,7 +6,7 @@ supported focal display and settings persistence on the existing API44 host.
 Custom Info/histogram, zebras, portrait and unsupported-output extensions are
 deferred. Unsupported v1 preferences are filtered on load/edit; compact menus
 omit their controls. The candidate still needs native visual/lifecycle checks
-and an exact installation/recovery review. See the latest root HANDOFF.md.
+and an exact installation/recovery review. See the [public development update](../DEVELOPMENT_UPDATE_2026-11-23.md).
 
 This component implements [the SD-module port](../SD_MODULE_PORT.md).
 The intended installation has two parts: an installed original-Z7 firmware

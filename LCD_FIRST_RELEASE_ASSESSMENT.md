@@ -241,5 +241,5 @@ The frozen pre-approval bundle retains emulator-only identities, offline review
 limits and installation_cleared=false. Owner approval/staging is recorded
 separately; camera update acceptance, completion and hardware results remain
 unobserved. Card staging does not establish a successful camera update.
-[AGENTS.md](AGENTS.md) requires explicit user authorization and this concrete
+The project safety policy requires explicit user authorization and this concrete
 installation/recovery assessment before flashing.

@@ -785,7 +785,7 @@ contention, stale-token release, reused owner addresses and exhaustion. It is
 not included in the feature host and does not fix the native race yet. Future
 integration must preserve foreign request completion/reentry, avoid native
 mutex wait cycles and define exhaustion shutdown. See the source-only scoped
-record `evidence/20261120-highlight-ordering-lane.json` and root HANDOFF.md.
+record `evidence/20261120-highlight-ordering-lane.json` and the [public development update](../DEVELOPMENT_UPDATE_2026-11-23.md).
 
 ```powershell
 .venv\Scripts\python.exe tools/audit_z7_highlight_lane.py --stock-main .private/builds/20261021-silent-property-01/stock-main.bin --output .private/evidence/highlight-lane-new
@@ -829,7 +829,7 @@ native disabled parameters and an invalidated lease. `passed=true` in that
 result means the counterexample reproduced. It does not mean ordering is safe.
 Foreign request coordination must preserve completion/reentry and resolve the
 native mutex wait graph; it cannot be inferred from the owned-only tests.
-See `evidence/20261120-owned-frame-coordination.json` and root HANDOFF.md.
+See `evidence/20261120-owned-frame-coordination.json` and the [public development update](../DEVELOPMENT_UPDATE_2026-11-23.md).
 
 ## Native warning transactions API72
 
@@ -885,7 +885,7 @@ callback code, counter states and scheduling. Complete indirect native caller/
 writer closure, native math/task wait graph, engine allocation lifetime and
 pre-cold boot sequencing remain unproved. Physical pixels, camera update
 acceptance and recovery require separate hardware validation and authorization.
-See `evidence/20261120-native-warning-transactions.json` and root HANDOFF.md.
+See `evidence/20261120-native-warning-transactions.json` and the [public development update](../DEVELOPMENT_UPDATE_2026-11-23.md).
 
 ## Configurable pattern and threshold
 

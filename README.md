@@ -123,7 +123,8 @@ Those are **not included in the grid preview's generated image**. Automatic
 shutter sound still has the reported live-view repetition defect; its
 [port audit hold](PORT_AUDIT.md) remains. Do not substitute older presets or the
 held 90-record journal prototype for the preview's `--native-choice` build.
-For continuing development, read [HANDOFF.md](HANDOFF.md).
+For current hardware status and remaining work, read the
+[development update](DEVELOPMENT_UPDATE_2026-11-23.md).
 
 Earlier assisted-emulator runs passed 21 general UI checks and 17 sound-submenu
 checks for each sound-capable preset. Those results establish selected emulator
@@ -135,7 +136,7 @@ capture timing, recording, recovery or compatibility with other camera models.
 - `z7-qemu/`: complete source overlay and tools, with local changes included.
 - `z7-firmware-extensions/`: complete patcher source, including all sound fixes.
 - `tools/`: local build, validation, setup and launch helpers.
-- [HANDOFF.md](HANDOFF.md): laptop setup, results, next steps and known gaps.
+- [DEVELOPMENT_UPDATE_2026-11-23.md](DEVELOPMENT_UPDATE_2026-11-23.md): current hardware scope, results and remaining work.
 - [SOUND_MENU_FIX.md](SOUND_MENU_FIX.md): fault analysis and corrected addresses.
 - [AUDIO_PLAYBACK_FIX.md](AUDIO_PLAYBACK_FIX.md): WAV specification check and corrected Z7 playback admission.
 - [FLASH_ASSESSMENT.md](FLASH_ASSESSMENT.md): private EG preparation, updater evidence and hardware recovery limits.

@@ -46,3 +46,50 @@ secrets/
 
 # Local working notes
 /BUILD_PROGRESS.md
+/HANDOFF*.md
+/AFK_BUILD_CHECKPOINT.md
+/REDDIT_POST_DRAFT.md
+/AGENTS.md
+/local-notes/
+
+# Machine-specific agent/editor configuration
+.agents/
+.codex/
+.claude/
+.cursor/
+.vscode/
+.idea/
+.vs/
+*.code-workspace
+
+# OS metadata and temporary/backup files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+~$*
+
+# Dependency caches, coverage reports and generated output
+.cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage/
+node_modules/
+/build/
+/dist/
+*.pyo
+*.obj
+*.pdb
+*.ilk
+*.so
+*.dylib
+*.dat
+*.DAT
