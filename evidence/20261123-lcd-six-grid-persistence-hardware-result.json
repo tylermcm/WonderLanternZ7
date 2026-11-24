@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "date": "2026-11-23",
+  "module_sha256": "f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e",
+  "owner_response": "Yes, it passed",
+  "question": "Did the pending 6x6 test keep 6x6 after at least 20 seconds powered off, with normal controls?",
+  "six_by_six_save_restore_owner_pass": true,
+  "normal_controls_owner_pass": true,
+  "second_slot_bytes_inspected": false,
+  "earlier_center_record_preservation_verified": false,
+  "card_changed_by_agent_this_turn": false,
+  "firmware_flashed_this_turn": false
+}
