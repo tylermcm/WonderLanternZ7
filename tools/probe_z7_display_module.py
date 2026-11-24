@@ -846,6 +846,33 @@ def main():
             capture('custom-settings-overview')
             row(0x125, 8)
             capture('display-settings-entry')
+            if module['configuration'].get('settings_category_entry'):
+                def prefix_style():
+                    pool = int.from_bytes(camera.remote.memory(0xa18367a4 + 36, 4), 'little')
+                    slots = int.from_bytes(camera.remote.memory(pool + 12, 4), 'little')
+                    prefix = int.from_bytes(camera.remote.memory(slots + 8 * 28 + 3 * 4, 4), 'little')
+                    check('category-prefix-widget-exists', bool(prefix))
+                    words = struct.unpack('<18I', camera.remote.memory(prefix, 72))
+                    pool_words = struct.unpack('<4I', camera.remote.memory(pool, 16))
+                    primary = pool_words[2]
+                    reserved = pool_words[1] & 0xffff
+                    observation = dict(prefix=list(words), primary=[])
+                    for index in (8, reserved + 8):
+                        pointer = int.from_bytes(camera.remote.memory(primary + index * 4, 4), 'little')
+                        observation['primary'].append(list(struct.unpack('<18I', camera.remote.memory(pointer, 72))) if pointer else [])
+                    header = int.from_bytes(camera.remote.memory(0xa18367a4 + 12, 4), 'little')
+                    observation['header_focus'] = int.from_bytes(camera.remote.memory(header + 0x30, 4), 'little') if header else None
+                    result.setdefault('category_observations', []).append(observation)
+                    save()
+                    return dict(label=words[2], kind=words[3], foreground_mode=words[13], color=words[14])
+                selected = prefix_style()
+                check('h-selected-dark-rose', selected == dict(label=46, kind=2, foreground_mode=2, color=0xa00040ff))
+                key('left', lambda: on_page(1)); capture('display-settings-unfocused')
+                idle = prefix_style()
+                check('h-unfocused-bright-rose', idle == dict(label=46, kind=2, foreground_mode=2, color=0xff5599ff))
+                key('right', lambda: on_page(0x125)); row(0x125, 8)
+                capture('display-settings-refocused')
+                check('h-selection-color-restored', prefix_style() == selected)
             key('right', lambda: on_page(0))
             capture('display-settings-root')
             check('direct-entry-opens-owned-page', on_page(0))

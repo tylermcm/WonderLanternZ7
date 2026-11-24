@@ -351,6 +351,11 @@ See the [separate-entry review](../LCD_SETTINGS_ROOT_REVIEW.md) for exact hashes
 offline checks and the pending hardware scope. It does not change the host or
 the saved-settings format.
 
+The follow-up `--settings-category` profile adds a rose-pink **h** in the native
+category prefix column. Its [separate review](../LCD_SETTINGS_CATEGORY_REVIEW.md)
+records the exact module, selected/unfocused pixel checks and pending hardware
+scope. Earlier plain-entry and grid-entry builds remain byte-identical.
+
 The optional `--variant display-settings` profile adds a seventh **Display
 settings** row to Custom Settings d9, Framing grid display. It retains the six
 grid choices and their stored values. The new row opens the owned settings page

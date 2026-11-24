@@ -1,5 +1,9 @@
 # Separate Display settings entry — November 23, 2026
 
+The optional [rose-pink h refinement](LCD_SETTINGS_CATEGORY_REVIEW.md) has its own
+exact candidate and visual checks. This document identifies the earlier plain
+entry; its binary remains preserved.
+
 This optional module moves **Display settings** from Framing grid display to a
 separate entry in the **Custom Setting Menu** overview. Scroll past **g Movie**
 to reach it. Back returns to that overview. Framing grid display retains only

@@ -16,11 +16,13 @@ def main():
     profiles.add_argument('--startup-grid',action='store_true',help='Build the persistence comparison with initial grid invalidation limited to actual deltas')
     profiles.add_argument('--grid-persistence',action='store_true',help='Save grid shape in separate Z7DSP v3 preference journals; legacy Z7CFG is read-only fallback')
     profiles.add_argument('--settings-root',action='store_true',help='Experimental separate Display settings entry in Custom Settings overview, with v3 persistence')
+    profiles.add_argument('--settings-category',action='store_true',help='Experimental colored h category for the separate Display settings entry')
     a=p.parse_args();out=require_private_output(a.output)
-    grid_persistence=a.grid_persistence or a.settings_root
+    settings_root=a.settings_root or a.settings_category
+    grid_persistence=a.grid_persistence or settings_root
     startup=a.startup_grid or grid_persistence
     persistent=a.persistent or startup
-    source=ROOT/'z7-native-modules/plugins'/('lcd_settings_root_checkpoint.c' if a.settings_root else 'lcd_grid_persistence_checkpoint.c' if grid_persistence else 'lcd_startup_grid_checkpoint.c' if startup else 'lcd_persistence_checkpoint.c' if persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
+    source=ROOT/'z7-native-modules/plugins'/('lcd_settings_category_checkpoint.c' if a.settings_category else 'lcd_settings_root_checkpoint.c' if settings_root else 'lcd_grid_persistence_checkpoint.c' if grid_persistence else 'lcd_startup_grid_checkpoint.c' if startup else 'lcd_persistence_checkpoint.c' if persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
     packet,meta=build(source,zig=ZIG.resolve(),function_details=functions)
     again,other=build(source,zig=ZIG.resolve(),function_details=other_functions)
     assert packet==again and meta==other and functions==other_functions
@@ -39,11 +41,11 @@ def main():
         assert all(n in meta['symbols'] for n in ('persistence_worker','persistence_prepare','z7_settings_files_write'))
     else:
         assert not any(n.startswith(('persistence_','z7_persistence_','z7_settings_files_')) for n in meta['symbols'])
-    meta.update(kind='original-Z7-LCD-settings-root-checkpoint' if a.settings_root else 'original-Z7-LCD-grid-persistence-checkpoint' if grid_persistence else 'original-Z7-LCD-startup-grid-checkpoint' if startup else 'original-Z7-LCD-persistence-checkpoint' if persistent else 'original-Z7-LCD-volatile-checkpoint',module_sha256=hashlib.sha256(packet).hexdigest(),file_bytes=len(packet),
+    meta.update(kind='original-Z7-LCD-settings-root-checkpoint' if settings_root else 'original-Z7-LCD-grid-persistence-checkpoint' if grid_persistence else 'original-Z7-LCD-startup-grid-checkpoint' if startup else 'original-Z7-LCD-persistence-checkpoint' if persistent else 'original-Z7-LCD-volatile-checkpoint',module_sha256=hashlib.sha256(packet).hexdigest(),file_bytes=len(packet),
                 source_inputs_sha256=inputs,function_details=functions,api_minimum_bytes=44,reproducible=True,
                 dependency_scope='Conservative recursive quoted includes, including inactive conditional dependencies',
                 do_not_stage=True,hardware_test_authorized=False,firmware_image=False,
-                configuration=dict(persistent_settings=persistent,worker_registration_enabled=persistent,initial_grid_delta_only=startup,grid_layout_persistence=grid_persistence,settings_root_entry=a.settings_root),
+                configuration=dict(persistent_settings=persistent,worker_registration_enabled=persistent,initial_grid_delta_only=startup,grid_layout_persistence=grid_persistence,settings_root_entry=settings_root,settings_category_entry=a.settings_category),
                 scope=('LCD preferences including grid shape, separate Z7DSP slots/v3 payload; legacy Z7CFG read-only fallback' if grid_persistence else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; v1 preference journal, RAM-only grid layout' if persistent else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; all preferences volatile'))
     out.mkdir(parents=True)
     (out/'Z7APP.BIN').write_bytes(packet)

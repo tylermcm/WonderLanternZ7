@@ -8,11 +8,12 @@ import hashlib
 import json
 import struct
 from pathlib import Path
-from unicorn.arm_const import UC_ARM_REG_R0, UC_ARM_REG_R1
+from unicorn.arm_const import UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_SP
 from audit_z7_display_persistence import PersistenceFixture
 from audit_z7_lcd_grid_persistence import NEW
 from audit_z7_settings_files import PATHS
 from build_z7_module_host import STATE
+from audit_splash_image import MEM
 from prepare_flash_review import require_private_output
 
 ROOT_OBJECT, GRID, OWNED = 0xa18367a4, 0xa1836f8c, 0xa1833548
@@ -20,9 +21,30 @@ ROOT_OBJECT, GRID, OWNED = 0xa18367a4, 0xa1836f8c, 0xa1833548
 
 class RootFixture(PersistenceFixture):
     def hook(self, u, address, size, context):
-        if address == 0x103fbb5c and u.reg_read(UC_ARM_REG_R1) == 45:
-            self.entry_label = self.cstring(u.reg_read(UC_ARM_REG_R0))
+        if address == 0x103fbb5c and u.reg_read(UC_ARM_REG_R1) in (45, 46):
+            if u.reg_read(UC_ARM_REG_R1) == 45:
+                self.entry_label = self.cstring(u.reg_read(UC_ARM_REG_R0))
+            else:
+                self.category_label = self.cstring(u.reg_read(UC_ARM_REG_R0))
             self.ret(0)
+        elif getattr(self, 'category_fixture', False) and address == 0x104ec724:
+            self.native_decorate_object = u.reg_read(UC_ARM_REG_R0); self.ret(77)
+        elif getattr(self, 'category_fixture', False) and address == 0x103fcf3a:
+            self.prefix_lookup = (u.reg_read(UC_ARM_REG_R1), u.reg_read(UC_ARM_REG_R2))
+            self.ret(int(self.prefix_exists))
+        elif getattr(self, 'category_fixture', False) and address == 0x103fcf5c:
+            self.prefix_gets += 1; self.ret(MEM + 0x30000)
+        elif getattr(self, 'category_fixture', False) and address == 0x103fb340:
+            o = u.reg_read(UC_ARM_REG_R0)
+            self.write(o + 8, u.reg_read(UC_ARM_REG_R1)); self.write(o + 12, u.reg_read(UC_ARM_REG_R2))
+            self.font_binds += 1; self.ret(1)
+        elif getattr(self, 'category_fixture', False) and address == 0x104e983a:
+            self.ret(0)
+        elif getattr(self, 'category_fixture', False) and address == 0x10384968:
+            self.native_prefix_paints += 1; self.ret(13)
+        elif getattr(self, 'category_fixture', False) and address == 0x104bd406:
+            self.theme_arguments = (u.reg_read(UC_ARM_REG_R0), u.reg_read(UC_ARM_REG_R2))
+            u.mem_write(u.reg_read(UC_ARM_REG_R1), struct.pack('<2I', 2, 0x123456ff)); self.ret(0)
         elif address == 0x10404c42:
             self.open_request = (u.reg_read(UC_ARM_REG_R0), u.reg_read(UC_ARM_REG_R1))
             self.ret(1)
@@ -67,6 +89,7 @@ def main():
     check('resident-load', f.call(h['symbols']['z7_module_load_once'], STATE) == 8)
     f.base = f.words()[12]; f.setword(40, 8)
     symbols = m['symbols']
+    category = m['configuration'].get('settings_category_entry', False)
 
     def call(name, *args):
         return f.call(f.base + symbols[name], *args)
@@ -78,11 +101,13 @@ def main():
           all(w[i] == original_words[i] for i in range(11) if i not in (4, 10)))
     check('all-eight-native-rows-preserved', bytes(f.u.mem_read(meta[3], 8 * 28)) == original_controls)
     check('all-eight-native-event-map-pointers-preserved', bytes(f.u.mem_read(meta[4], 32)) == original_maps)
-    check('native-callbacks-except-constructor-preserved', bytes(f.u.mem_read(w[4] + 4, 28)) == original_callbacks[4:])
+    callbacks = bytes(f.u.mem_read(w[4], 32))
+    changed = (0, 4) if category else (0,)
+    check('other-native-callbacks-preserved', all(callbacks[i*4:i*4+4] == original_callbacks[i*4:i*4+4] for i in range(8) if i not in changed))
     check('eight-row-viewport-nine-total', meta[5] == 0x00080009)
     check('native-layout-and-geometry-preserved', all(meta[i] == original_meta[i] for i in (0, 1, 2, 6)))
     control = struct.unpack('<7I', f.u.mem_read(meta[3] + 8 * 28, 28))
-    check('new-row-label-style-and-control', (control[0], control[4], control[6]) == (45, 0x1209, 0x7c00))
+    check('new-row-label-style-and-control', (control[0], control[4], control[6]) == (45, 0x1a09 if category else 0x1209, 0x7c00))
     events = struct.unpack('<72I', f.u.mem_read(f.read(meta[4] + 32), 18 * 16))
     old_events = struct.unpack('<72I', original_events)
     before_io = list(f.file_events)
@@ -106,6 +131,32 @@ def main():
     check('new-row-not-in-grid', b'Display settings' not in bytes(f.u.mem_read(f.base + symbols['names'], 6 * 16)))
     call('sm_back_event')
     check('root-back-uses-native-parent-stack', f.back_request == 0x3a1)
+    if category:
+        check('h-label-and-blank-value-column', f.category_label == 'h' and control[5] == 0)
+        f.category_fixture = True
+        f.prefix_exists = False; f.prefix_gets = f.font_binds = f.native_prefix_paints = 0
+        pool, primary, prefix, row = (MEM+0x20000, MEM+0x21000, MEM+0x30000, MEM+0x31000)
+        f.write(ROOT_OBJECT+36, pool); f.write(pool+8, primary)
+        f.u.mem_write(pool+4, struct.pack('<H', 4)); f.write(primary+(4+8)*4, row)
+        check('decorate-preserves-native-return', call('sm_root_decorate', ROOT_OBJECT) == 77)
+        check('absent-prefix-not-allocated', f.prefix_gets == 0 and f.prefix_lookup == (8, 3))
+        f.prefix_exists = True
+        call('sm_root_decorate', ROOT_OBJECT)
+        check('existing-prefix-bound-to-h', (f.read(prefix+8), f.read(prefix+12)) == (46, 2))
+        check('owned-prefix-painter-published', f.read(prefix+0x4c) == (f.base+symbols['sm_root_prefix_paint']) | 1)
+        binds = f.font_binds; call('sm_root_decorate', ROOT_OBJECT)
+        check('bound-font-not-recreated-each-decoration', f.font_binds == binds)
+        # Native theme is a supplied boundary here; actual rendering and theme
+        # resolution execute in the QEMU pixel probe.
+        f.write(row+0x38, 1)
+        f.write(ROOT_OBJECT+12, MEM+0x32000); f.write(MEM+0x32030, 1)
+        for focused, color in ((0, 0xff5599ff), (1, 0xa00040ff), (0, 0xff5599ff)):
+            f.write(row+0x30, focused)
+            check('native-painter-return-'+str(f.native_prefix_paints), call('sm_root_prefix_paint', prefix) == 13)
+            check('rose-color-'+str(f.native_prefix_paints), (f.read(prefix+0x34),f.read(prefix+0x38)) == (2,color))
+            check('native-row-background-'+str(f.native_prefix_paints), (f.read(prefix+0x3c),f.read(prefix+0x40)) == (2,0x123456ff) and f.theme_arguments == (1,1))
+        check('category-styling-no-file-io', f.file_events == before_io)
+        f.write(ROOT_OBJECT+36, 0)
     # Re-run preflight against restored stock identity, varying only one input.
     for offset, value in ((0, 0), (4, 0), (12, 1), (36, 1), (16, 0), (40, 0)):
         f.u.mem_write(ROOT_OBJECT, original)

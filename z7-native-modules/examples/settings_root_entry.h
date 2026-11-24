@@ -6,9 +6,53 @@
 static uint32_t sm_root_meta[7], sm_root_callbacks[8];
 static uint32_t sm_root_controls[9][7], sm_root_maps[9], sm_root_events[18][4];
 
+#ifdef Z7_SETTINGS_CATEGORY_ENTRY
+static uint32_t sm_root_prefix_paint(uint32_t prefix)
+{
+    uint32_t pool = W(SM_ROOT_OBJECT + 36);
+    if (pool && W(pool + 8)) {
+        /* Read the existing primary row widget, without allocating one. */
+        uint32_t reserved = *(volatile uint16_t *)(uintptr_t)(pool + 4);
+        uint32_t row = W(W(pool + 8) + (reserved + 8) * 4);
+        if (row) {
+            /* Match the menu row's general-widget theme, not the separate
+             * regular-text theme (whose background is the value-column fill).
+             * This is the same resolver used by the native row font path. */
+            uint32_t background[2];
+            F(0x104bd407u, void, uint32_t, uint32_t *, uint32_t, uint32_t,
+              uint32_t, uint32_t)(1, background, W(row + 0x38), W(row + 0x30),
+                                W(row + 0x2c), 0);
+            W(prefix + 0x34) = 2;
+            uint32_t header = W(SM_ROOT_OBJECT + 12);
+            W(prefix + 0x38) = W(row + 0x30) && header && W(header + 0x30) ?
+                              0xa00040ffu : 0xff5599ffu;
+            W(prefix + 0x3c) = background[0]; W(prefix + 0x40) = background[1];
+        }
+    }
+    return F(0x10384969u, uint32_t, uint32_t)(prefix);
+}
+static uint32_t sm_root_decorate(uint32_t object)
+{
+    uint32_t result = F(0x104ec725u, uint32_t, uint32_t)(object);
+    if (object != SM_ROOT_OBJECT || !W(object + 36)) return result;
+    /* Decorate only an existing native prefix widget; never allocate a hidden
+     * row or index past the native viewport geometry from this callback. */
+    if (!F(0x103fcf3bu, uint32_t, uint32_t, uint32_t, uint32_t)(W(object + 36), 8, 3)) return result;
+    uint32_t prefix = F(0x103fcf5du, uint32_t, uint32_t, uint32_t, uint32_t)(W(object + 36), 8, 3);
+    if (!prefix) return result;
+    if (W(prefix + 8) != 46 || W(prefix + 12) != 2) sm_bind_text(prefix, 46);
+    W(prefix + 0x4c) = (uint32_t)(uintptr_t)sm_root_prefix_paint;
+    W(prefix + 0x44) = 1;
+    return result;
+}
+#endif
+
 static uint32_t sm_root_enter(uint32_t object)
 {
     F(0x103fbb5du, void, const char *, uint32_t, uint32_t)("Display settings", 45, 0);
+#ifdef Z7_SETTINGS_CATEGORY_ENTRY
+    F(0x103fbb5du, void, const char *, uint32_t, uint32_t)("h", 46, 0);
+#endif
     return F(0x104ec719u, uint32_t, uint32_t)(object);
 }
 
@@ -47,6 +91,12 @@ static uint32_t sm_root_prepare(void)
     sm_root_controls[8][4] = 0x1209;
     sm_root_controls[8][5] = 0;
     sm_root_controls[8][6] = 0x7c00;
+#ifdef Z7_SETTINGS_CATEGORY_ENTRY
+    sm_root_controls[8][4] = 0x1a09;
+    /* The value column stays blank. The owned decorator binds h separately. */
+    sm_root_controls[8][5] = 0;
+    sm_root_callbacks[4] = (uint32_t)(uintptr_t)sm_root_decorate;
+#endif
     sm_root_maps[8] = (uint32_t)(uintptr_t)sm_root_events;
     sm_root_meta[3] = (uint32_t)(uintptr_t)sm_root_controls;
     sm_root_meta[4] = (uint32_t)(uintptr_t)sm_root_maps;

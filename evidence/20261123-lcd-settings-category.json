@@ -1,0 +1,209 @@
+{
+  "schema": 1,
+  "date": "2026-11-23",
+  "module_sha256": "e37714672d16def1ba173edfec2ee0feefc0c48bf7a00f1422bc5c3c5641c02f",
+  "module_bytes": 22384,
+  "host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "category": "h Display settings",
+  "colors": {
+    "idle_rgb": "#FF5599",
+    "selected_rgb": "#A00040"
+  },
+  "native_prefix_column_pixels": 36,
+  "earlier_profiles_byte_identical": true,
+  "reproducible": true,
+  "qemu": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "module-loaded-and-callbacks-committed",
+        "passed": true
+      },
+      {
+        "name": "grid-menu-published-on-gui-path",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x1",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "category-prefix-widget-exists",
+        "passed": true
+      },
+      {
+        "name": "h-selected-dark-rose",
+        "passed": true
+      },
+      {
+        "name": "category-prefix-widget-exists",
+        "passed": true
+      },
+      {
+        "name": "h-unfocused-bright-rose",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "category-prefix-widget-exists",
+        "passed": true
+      },
+      {
+        "name": "h-selection-color-restored",
+        "passed": true
+      },
+      {
+        "name": "direct-entry-opens-owned-page",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x0",
+        "passed": true
+      },
+      {
+        "name": "back-restores-custom-settings-overview",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x127",
+        "passed": true
+      },
+      {
+        "name": "grid-has-six-choices-without-settings-row",
+        "passed": true
+      },
+      {
+        "name": "menu-navigation-does-not-change-grid",
+        "passed": true
+      },
+      {
+        "name": "row-on-page-0x125",
+        "passed": true
+      },
+      {
+        "name": "separate-entry-reopens-after-grid-menu",
+        "passed": true
+      },
+      {
+        "name": "same-live-module-retained",
+        "passed": true
+      }
+    ],
+    "frames": 9
+  },
+  "compiled_contracts": {
+    "passed": true,
+    "count": 69,
+    "checks": [
+      "resident-load",
+      "overview-object-only-callback-and-metadata-pointers-change",
+      "all-eight-native-rows-preserved",
+      "all-eight-native-event-map-pointers-preserved",
+      "other-native-callbacks-preserved",
+      "eight-row-viewport-nine-total",
+      "native-layout-and-geometry-preserved",
+      "new-row-label-style-and-control",
+      "native-event-preserved-0",
+      "native-event-preserved-1",
+      "native-event-preserved-2",
+      "native-event-preserved-3",
+      "native-event-preserved-4",
+      "activation-map-0x239",
+      "activation-resets-root-view-0x239",
+      "activation-opens-owned-page-0x239",
+      "native-event-preserved-6",
+      "native-event-preserved-7",
+      "activation-map-0x252",
+      "activation-resets-root-view-0x252",
+      "activation-opens-owned-page-0x252",
+      "native-event-preserved-9",
+      "activation-map-0x25f",
+      "activation-resets-root-view-0x25f",
+      "activation-opens-owned-page-0x25f",
+      "native-event-preserved-11",
+      "native-event-preserved-12",
+      "native-event-preserved-13",
+      "native-event-preserved-14",
+      "native-event-preserved-15",
+      "native-event-preserved-16",
+      "native-event-preserved-17",
+      "plain-display-settings-label",
+      "entry-and-navigation-no-file-io",
+      "grid-six-rows-only",
+      "new-row-not-in-grid",
+      "root-back-uses-native-parent-stack",
+      "h-label-and-blank-value-column",
+      "decorate-preserves-native-return",
+      "absent-prefix-not-allocated",
+      "existing-prefix-bound-to-h",
+      "owned-prefix-painter-published",
+      "bound-font-not-recreated-each-decoration",
+      "native-painter-return-0",
+      "rose-color-1",
+      "native-row-background-1",
+      "native-painter-return-1",
+      "rose-color-2",
+      "native-row-background-2",
+      "native-painter-return-2",
+      "rose-color-3",
+      "native-row-background-3",
+      "category-styling-no-file-io",
+      "reject-conflicting-overview-0",
+      "rejection-preserves-overview-0",
+      "reject-conflicting-overview-4",
+      "rejection-preserves-overview-4",
+      "reject-conflicting-overview-12",
+      "rejection-preserves-overview-12",
+      "reject-conflicting-overview-36",
+      "rejection-preserves-overview-36",
+      "reject-conflicting-overview-16",
+      "rejection-preserves-overview-16",
+      "reject-conflicting-overview-40",
+      "rejection-preserves-overview-40",
+      "occupied-overview-rejects-module-load",
+      "failed-load-no-menu-publication-0xa18367a4",
+      "failed-load-no-menu-publication-0xa1836f8c",
+      "failed-load-no-menu-publication-0xa1833548"
+    ]
+  },
+  "pixel_checks": {
+    "passed": true,
+    "checks": [
+      "original-eight-rows-full-rgb-identical",
+      "display-settings-entry-no-prefix-background-patch",
+      "display-settings-entry-rose-glyph-present",
+      "display-settings-entry-value-column-blank",
+      "display-settings-unfocused-no-prefix-background-patch",
+      "display-settings-unfocused-rose-glyph-present",
+      "display-settings-unfocused-value-column-blank",
+      "refocus-restores-full-rgb-frame",
+      "back-restores-full-rgb-frame",
+      "owned-settings-page-full-rgb-identical"
+    ],
+    "count": 10,
+    "module_sha256": "e37714672d16def1ba173edfec2ee0feefc0c48bf7a00f1422bc5c3c5641c02f",
+    "physical_display_verified": false,
+    "source_images_private": true
+  },
+  "repository_tests": 103,
+  "hardware_tested": false,
+  "card_written": false,
+  "firmware_flashed": false,
+  "limits": [
+    "Assisted QEMU uses supplied module/settings filesystem boundaries",
+    "Instruction checks supply GUI, property, theme and filesystem boundaries",
+    "Physical touch, power lifecycle and recovery not established",
+    "Current change affects menu presentation only; no new persistence format"
+  ]
+}
