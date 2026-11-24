@@ -5499,7 +5499,7 @@ boundaries are supplied. No hardware battery telemetry or overlay is proven.
 ## Autonomous continuation and native-kernel module load — November 19, 2026
 
 The owner asked to keep building until finished while they are at work. Follow
-`BUILD_PROGRESS.md` and the active goal: module framework then display ports,
+The local working notes and the active goal: module framework then display ports,
 with no physical card/camera staging or flash. The existing source-only/privacy,
 licensing and exact-candidate assessment rules remain in force.
 

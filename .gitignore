@@ -43,3 +43,6 @@ firmware/
 dumps/
 captures/
 secrets/
+
+# Local working notes
+/BUILD_PROGRESS.md
