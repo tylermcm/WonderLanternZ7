@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "date": "2026-11-23",
+  "module_sha256": "f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e",
+  "owner_response": "works as intended",
+  "requested_test": "Standard Virtual horizon ON, wait Saved, normal power-off 20seconds, restart; confirm setting ON, visible level, retained6x6 and normal controls",
+  "requested_sequence_owner_pass": true,
+  "scope": "Overall owner pass; no separate per-observation descriptions or captured pixels",
+  "physical_journal_readback_pending": true,
+  "card_changed_by_agent_this_turn": false,
+  "firmware_flashed_this_turn": false
+}

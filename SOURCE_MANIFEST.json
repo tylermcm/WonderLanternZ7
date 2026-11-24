@@ -338,6 +338,7 @@
     "evidence/20261123-lcd-grid-second-journal-readback.json": "74b64691309c73911e8409ab24782a64437eda5ae67fc8903ba8d01b40262ba4",
     "evidence/20261123-lcd-preset-persistence-01.json": "b2e21e1703c0348b5ba3bbd48ebe1df26d47b0688b9155990dd3159317e816bd",
     "evidence/20261123-lcd-six-grid-persistence-hardware-result.json": "ed552b5a7a5809af038313e0cd18f5d7d9faaf231a42ebeb30ceba2b8b09d673",
+    "evidence/20261123-lcd-standard-horizon-hardware-result.json": "6ca86b234b54a3bcfdf00de54aaaa1516e11679bcd66ad93e1f5d00a6d124ce8",
     "evidence/20261123-source-publication-checks.json": "e22407ef9ff7d869edc762ad7a4106db0aee6d0610a51112108e7cf09f218c83",
     "requirements-lab.txt": "6cfd62ce64f636f224640096298fb629575b2e67081dc000efa87c9c4f377745",
     "tests/test_battery_bar_fixture.py": "90ae45a8f0b72d88eb1fe612be4880f48c42af637eda721537262e3fa446290b",
