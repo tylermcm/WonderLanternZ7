@@ -1,4 +1,8 @@
-# WonderLantern Z7 lab
+# WonderLantern Z7 — Nikon Z7 Firmware Extensions
+
+Experimental, source-only firmware extensions for the **original Nikon Z7
+(C 3.80)**: custom framing grids, rear-LCD battery percentage, configurable
+LCD DISP presets and saved display settings.
 
 **EXPERIMENTAL CAMERA FIRMWARE RESEARCH. A failed or incorrect flash can
 permanently brick a camera, destroy data, or require paid repair/replacement.
@@ -9,6 +13,24 @@ recovery is provided. Read [RISK_NOTICE.md](RISK_NOTICE.md).**
 Independent, modified research workspace for the **original Nikon Z7 C 3.80**.
 This is not an official Nikon or Wonder Lantern release. Component licenses,
 credits and notices are preserved; see [UPSTREAMS.json](UPSTREAMS.json).
+
+## Nikon Z7 LCD features and compatibility
+
+These are development checkpoints, separate from the older released grid preview.
+Hardware observations below are limited to the project owner's original Z7.
+
+| Feature | Current status |
+| --- | --- |
+| Custom framing grids: 4x4, 3x3, Golden ratio, Center cross, 6x6 and Off | Selected layouts owner-tested; all five shapes have offline geometry checks. |
+| Rear-LCD battery percentage | Owner-tested ON/OFF and preference retention, with saved-record checks. |
+| Four configurable LCD DISP presets | Custom pages retention, menu navigation and DISP cycling owner-tested; individual information/focal controls still have limited hardware coverage. |
+| Saved grid shape and display settings | Center cross restored after shutdown and battery removal; v3 record verified and older settings files preserved. Further shape/second-slot checks remain pending. |
+
+**Target:** original Nikon Z7 C 3.80, without the paid RAW-video upgrade.
+Z7 II, other firmware versions and other body/service configurations are not
+validated by this port. EVF, movie and external-output behavior are outside the
+current LCD hardware-verification scope. See the
+[full hardware status and known issues](DEVELOPMENT_UPDATE_2026-11-23.md).
 
 ## Latest development update — November 23, 2026
 
@@ -36,6 +58,39 @@ the module framework and custom-DISP concepts. The original-Z7 adaptation is
 independent work; the upstream MIT copyright/license and all other component
 licenses remain intact. See [CREDITS.md](CREDITS.md) and
 [UPSTREAMS.json](UPSTREAMS.json).
+
+## Frequently asked questions
+
+### Is WonderLantern Z7 custom firmware for the original Nikon Z7?
+
+It is an experimental firmware-extension research project for the original Z7
+on C 3.80. The current work includes an installed module host and SD-loaded LCD
+extensions. It is independent of Nikon and the upstream projects; installation
+and recovery are not guaranteed safe.
+
+### Does it work on a Nikon Z7 II?
+
+This repository targets the original Z7. The separate
+[JKWTCN Z7II extensions project](https://github.com/JKWTCN/z7ii-extensions)
+provides the upstream framework and feature concepts credited here. Native
+addresses, hosts and module packages are model-specific and are not interchangeable.
+
+### Has it been tested on a real camera?
+
+The owner has tested selected LCD checkpoints on one original Z7. Some saved
+settings have also been decoded from the card and checked for
+integrity. [The hardware report](DEVELOPMENT_UPDATE_2026-11-23.md) distinguishes
+those observations from offline tests. Photo/video proof is pending; a brief
+wrong-grid display after battery removal remains open.
+
+### Can I download a ready-to-flash Nikon Z7 firmware BIN here?
+
+No stock or modified Nikon firmware or generated module binaries are distributed
+with the current source update. The older source/patcher prerelease below is a
+separate preview. Read the [risk notice](RISK_NOTICE.md),
+[Windows build guide](WINDOWS_BUILD.md) and the
+[exact LCD checkpoint assessment](LCD_GRID_PERSISTENCE_REVIEW.md) before
+considering a local build with your own matching official firmware.
 
 ## Earlier published 3x3 grid preview
 
