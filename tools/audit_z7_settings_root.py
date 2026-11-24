@@ -20,8 +20,20 @@ ROOT_OBJECT, GRID, OWNED = 0xa18367a4, 0xa1836f8c, 0xa1833548
 
 
 class RootFixture(PersistenceFixture):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.root_label_writes = []
+        for slot in (45,46):
+            self.u.mem_write(0xa2019e78+slot*12, struct.pack('<3I',0,0xa291f000+(slot-45)*64,0))
+
     def hook(self, u, address, size, context):
         if address == 0x103fbb5c and u.reg_read(UC_ARM_REG_R1) in (45, 46):
+            slot = u.reg_read(UC_ARM_REG_R1)
+            text = self.cstring(u.reg_read(UC_ARM_REG_R0))
+            record = 0xa2019e78+slot*12
+            u.mem_write(self.read(record+4), text.encode()+b'\0')
+            self.write(record,len(text)); self.write(record+8,0)
+            self.root_label_writes.append((slot,text))
             if u.reg_read(UC_ARM_REG_R1) == 45:
                 self.entry_label = self.cstring(u.reg_read(UC_ARM_REG_R0))
             else:
@@ -90,6 +102,8 @@ def main():
     f.base = f.words()[12]; f.setword(40, 8)
     symbols = m['symbols']
     category = m['configuration'].get('settings_category_entry', False)
+    label_refresh = m['configuration'].get('settings_label_refresh', False)
+    check('loader-does-not-register-root-labels', not f.root_label_writes)
 
     def call(name, *args):
         return f.call(f.base + symbols[name], *args)
@@ -146,6 +160,22 @@ def main():
         check('owned-prefix-painter-published', f.read(prefix+0x4c) == (f.base+symbols['sm_root_prefix_paint']) | 1)
         binds = f.font_binds; call('sm_root_decorate', ROOT_OBJECT)
         check('bound-font-not-recreated-each-decoration', f.font_binds == binds)
+        if label_refresh:
+            writes = list(f.root_label_writes)
+            check('initial-main-name-bound', (f.read(row+8),f.read(row+12)) == (45,2))
+            check('steady-paints-do-not-rewrite-labels', len(writes) == 2)
+            record = 0xa2019e78+45*12
+            f.write(record,0); f.u.mem_write(f.read(record+4),b'\0')
+            call('sm_root_decorate', ROOT_OBJECT)
+            check('erased-shared-name-repaired', f.read(record)==16 and f.cstring(f.read(record+4))=='Display settings')
+            check('erased-name-rebinds-one-cache-only', f.font_binds==binds+1 and f.root_label_writes==writes+[(45,'Display settings')])
+            binds=f.font_binds; call('sm_root_decorate', ROOT_OBJECT)
+            check('repaired-name-does-not-churn-font-cache',f.font_binds==binds)
+            # A recreated row at the same address must be refreshed on entry,
+            # even if the shared registry text itself was already correct.
+            call('sm_root_enter',ROOT_OBJECT); before=f.font_binds
+            call('sm_root_decorate',ROOT_OBJECT)
+            check('reentry-rebinds-name-and-prefix-once',f.font_binds==before+2)
         # Native theme is a supplied boundary here; actual rendering and theme
         # resolution execute in the QEMU pixel probe.
         f.write(row+0x38, 1)

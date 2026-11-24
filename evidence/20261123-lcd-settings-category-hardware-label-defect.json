@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "date": "2026-11-23",
+  "module_sha256": "e37714672d16def1ba173edfec2ee0feefc0c48bf7a00f1422bc5c3c5641c02f",
+  "owner_report": "on camera it appears only as h, no display settings text. it appears after selecting it, but then disappears again after the memory drop out after around 10 seconds of being off",
+  "clarification": "After opening it and pressing Back",
+  "hardware_issue_reported": true,
+  "hardware_pass": false,
+  "release_cleared": false,
+  "scope": "Name label missing on reported cold restart; opening and returning restores it",
+  "limits": [
+    "Physical root cause not established",
+    "No evidence that stored display settings were lost",
+    "No new freeze or unresponsive controls reported in this message"
+  ],
+  "card_changed_by_agent": false,
+  "firmware_flashed": false
+}

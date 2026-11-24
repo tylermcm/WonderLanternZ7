@@ -47,6 +47,7 @@ def main():
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--module', type=Path, required=True)
     parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-root', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'), required=True)
+    parser.add_argument('--root-label-loss-fixture', action='store_true', help='Explicit GUI-side empty-name/cache fault, with old/new control; settings-root only')
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--battery-source-fixture', action='store_true', help='Supply typed bar inputs at the native converter; LCD candidate battery-auto only, not physical telemetry')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
@@ -71,6 +72,8 @@ def main():
     parser.add_argument('--battery-text-trial', action='store_true', help='Diagnostic native text object with supplied 63 percent; inspect view only')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
+    if args.root_label_loss_fixture and args.view != 'settings-root':
+        parser.error('Root label-loss fixture requires settings-root view')
     if args.focal_horizon and args.view != 'focal':
         parser.error('Focal horizon requires focal view')
     if args.focal_horizon_control and (args.view != 'focal' or args.focal_horizon):
@@ -839,6 +842,38 @@ def main():
             check('native-menu-disable-restores-stock-battery-region', restored.crop((2, 552, 112, 622)).tobytes() == baseline.crop((2, 552, 112, 622)).tobytes())
             result['settings_battery_integration'] = dict(supplied_setting_word=False, supplied_percentage=False,
                 native_snapshot_percent=battery_word('percent'), full_frame_restored=restored.tobytes() == baseline.tobytes(), hardware_telemetry=False)
+        elif args.view == 'settings-root' and args.root_label_loss_fixture:
+            key('left', lambda: on_page(1)); row(1, 3)
+            key('right', lambda: on_page(0x125)); row(0x125, 8)
+            capture('name-before-fault')
+            def root_name():
+                length, pointer, font = struct.unpack('<3I', camera.remote.memory(0xa2019e78 + 45 * 12, 12))
+                return camera.remote.memory(pointer, min(length, 50)).decode('ascii')
+            check('initial-entry-name-visible', root_name() == 'Display settings')
+            pool = int.from_bytes(camera.remote.memory(0xa18367a4 + 36, 4), 'little')
+            reserved = int.from_bytes(camera.remote.memory(pool + 4, 2), 'little')
+            pointers = int.from_bytes(camera.remote.memory(pool + 8, 4), 'little')
+            widget = int.from_bytes(camera.remote.memory(pointers + (reserved + 8) * 4, 4), 'little')
+            camera.call(checkpoint(), 'Explicitly clear shared name label, diagnostic only',
+                        0x103fbb5c, bytes(32), [('scratch', 0), 45, 0])
+            native('Invalidate diagnostic stale name cache', 0x104e983a, [widget])
+            native('Bind the empty diagnostic name', 0x103fb340, [widget, 45, 2])
+            capture('name-after-injected-loss')
+            # Opening and returning recreates the row while the shared label
+            # was empty. Test the actual pixels, not just the registry text.
+            key('right', lambda: on_page(0)); capture('opened-after-label-loss')
+            key('left', lambda: on_page(0x125)); capture('name-after-open-back')
+            repaired = bool(module['configuration'].get('settings_label_refresh'))
+            def name_pixels(name):
+                return Image.open(output/(name+'.png')).convert('RGB').crop((114,68,560,104))
+            initial_name = name_pixels('name-before-fault')
+            restored_name = name_pixels('name-after-open-back')
+            check('shared-registry-reseeded-on-back', root_name() == 'Display settings' and on_page(0x125))
+            check('new-build-repairs-recreated-row-pixels' if repaired else 'old-build-reproduces-cached-blank-name',
+                  restored_name.tobytes() == initial_name.tobytes() if repaired else len(set(restored_name.getdata())) == 1)
+            result['label_loss_fixture'] = dict(explicit_shared_label_clear=True,
+                explicit_native_font_cache_invalidation=True, repaired_recreated_row=repaired,
+                physical_cold_start_cause_established=False)
         elif args.view == 'settings-root':
             grid_before = camera.remote.memory(0xa24f182c, 4)
             key('left', lambda: on_page(1)); row(1, 3)

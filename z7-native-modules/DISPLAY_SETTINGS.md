@@ -356,6 +356,12 @@ category prefix column. Its [separate review](../LCD_SETTINGS_CATEGORY_REVIEW.md
 records the exact module, selected/unfocused pixel checks and pending hardware
 scope. Earlier plain-entry and grid-entry builds remain byte-identical.
 
+The first h module subsequently showed a missing name after cold restart on the
+owner's camera. The opt-in `--settings-label-refresh` profile adds GUI-side label
+repair and a one-time font-cache refresh; see its [review](../LCD_SETTINGS_LABEL_REVIEW.md).
+Controlled label-loss tests establish offline recovery, not a physical cold-start
+pass. The previous module remains preserved as the failing comparison.
+
 The optional `--variant display-settings` profile adds a seventh **Display
 settings** row to Custom Settings d9, Framing grid display. It retains the six
 grid choices and their stored values. The new row opens the owned settings page

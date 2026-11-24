@@ -1,13 +1,20 @@
 # Rose-pink h category — November 23, 2026
 
+**Hardware defect reported:** the owner sees only **h** after a cold restart;
+the name appears after opening the item and pressing Back. This candidate does
+not pass hardware acceptance. See the [owner report](evidence/20261123-lcd-settings-category-hardware-label-defect.json).
+The [GUI label/cache repair](LCD_SETTINGS_LABEL_REVIEW.md) has a separate exact
+candidate and controlled old-versus-new validation.
+
 The optional **h Display settings** entry continues the Custom Setting Menu's
 colored category lettering. It uses the existing native 36-pixel prefix column,
 a native text widget, rose-pink `#FF5599` when unfocused, and dark rose `#A00040`
 on the yellow selection highlight. The native menu-row theme supplies the
 background. The value column stays blank.
 
-This is an emulator-tested SD-module candidate. It has not been staged or
-verified on a physical camera. No firmware update is needed or authorized here.
+This SD-module candidate passed the emulator checks below and was subsequently
+staged. The hardware report exposed a label lifecycle gap those original checks
+did not cover. No firmware update is needed or authorized here.
 
 ## Exact candidate
 
