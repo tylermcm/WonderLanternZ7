@@ -24,7 +24,7 @@ Hardware observations below are limited to the project owner's original Z7.
 | Custom framing grids: 4x4, 3x3, Golden ratio, Center cross, 6x6 and Off | Selected layouts owner-tested; all five shapes have offline geometry checks. |
 | Rear-LCD battery percentage | Owner-tested ON/OFF and preference retention, with saved-record checks. |
 | Four configurable LCD DISP presets | Custom pages retention, menu navigation and DISP cycling owner-tested; individual information/focal controls still have limited hardware coverage. |
-| Saved grid shape and display settings | Center cross restored after shutdown and battery removal; v3 record verified and older settings files preserved. Further shape/second-slot checks remain pending. |
+| Saved grid shape and display settings | Center cross and 6x6 restored after shutdown; Center cross also after battery removal. Both v3 slots verified, with prior record and older files preserved. Broader preset hardware checks remain pending. |
 
 **Target:** original Nikon Z7 C 3.80, without the paid RAW-video upgrade.
 Z7 II, other firmware versions and other body/service configurations are not
@@ -36,8 +36,8 @@ current LCD hardware-verification scope. See the
 
 **Owner hardware-tested LCD checkpoint on one original Z7 C 3.80.** Selected
 SD-loader/worker, rear-LCD battery, Custom pages/DISP and saved-grid tests now
-have owner reports. Read-only card inspection verified a saved Center cross
-record and preservation of the older settings files. **Photo/video proof is
+have owner reports. Read-only card inspection verified Center cross
+and 6x6 records and preservation of the older settings files. **Photo/video proof is
 pending; this is limited owner verification, not certification of the full
 port, other bodies, safe installation or emergency recovery.**
 
@@ -129,8 +129,9 @@ The [display module research](Z7_DISPLAY_MODULE_RESEARCH.md) covers the native
 six-choice grid menu and display hooks. The latest
 [grid-persistence checkpoint](LCD_GRID_PERSISTENCE_REVIEW.md) saves grid shape
 in separate versioned journals while preserving the older settings files.
-Center cross has owner restart/battery-removal observations and physical
-journal readback; additional-shape/second-slot hardware validation is pending.
+Center cross and 6x6 have owner restart observations and physical journal
+readbacks; Center cross also returns after battery removal. Broader preset
+hardware validation remains pending.
 
 The [configurable DISP work](z7-native-modules/DISPLAY_SETTINGS.md) now includes
 four presets, native base-page selection, six separate information groups and

@@ -41,8 +41,10 @@ The owner has already reported Center cross restoration after shutdown and
 battery removal, with a valid physical v3 slot0 readback and unchanged older
 settings files. A brief wrong-grid transition after battery removal remains open.
 
-The owner has now confirmed 6x6 retention after at least20seconds off with
+The owner has now confirmed 6x6 retention after at least 20 seconds off with
 normal controls. Read-only second-slot and prior-slot/legacy preservation checks
-are still pending before calling the physical two-slot test complete.
+now pass: valid
+6x6 generation1 in slot1, with the original Center cross generation0 and both
+legacy files unchanged. See the [physical second-slot report](evidence/20261123-lcd-grid-second-journal-readback.json).
 Broader preset-setting hardware checks and capture/lifecycle validation remain
 separate steps. No new flash or automatic card replacement is needed for them.

@@ -23,7 +23,7 @@ emergency recovery procedure. Read [RISK_NOTICE.md](RISK_NOTICE.md).**
 | Rear-LCD battery percentage | The owner enabled and disabled the percentage and confirmed both settings survived normal shutdown/restart. Read-only card checks found valid records matching the reported ON/OFF sequence. Current scope is the rear LCD. |
 | Custom pages / DISP | The owner reported Custom pages retained its setting after restart and DISP cycling worked. Menu navigation and responsiveness were also tried. This is not a separate visual verification of every preset, information group or focal overlay. |
 | Grid selection | The owner reported working 3x3, Center cross, 6x6 and Off selections in the incremental LCD tests. All five shapes also have offline geometry checks; that is a separate kind of evidence. |
-| Saved grid shape | On the latest checkpoint, the owner confirmed the selected grid returns after normal shutdown and after battery removal. Card readback verified an 80-byte v3 record containing **Center cross**, with valid journal/payload CRCs. Both older settings files were byte-for-byte unchanged. The next 6x6/second-slot physical check is still pending. |
+| Saved grid shape | On the latest checkpoint, the owner confirmed the selected grid returns after normal shutdown and after battery removal. Center cross and 6x6 both returned after normal shutdown; Center cross also returned after battery removal. Physical readback verified valid v3 records in both slots (Center cross generation0, 6x6 generation1), with the earlier record and both older settings files unchanged. |
 
 The latest module checkpoint is identified by SHA-256
 `f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e`
@@ -33,7 +33,8 @@ other profiles, older hosts, later builds or different cameras.
 
 Source-safe records include the
 [grid hardware report](evidence/20261122-lcd-grid-persistence-hardware-result.json),
-[physical grid journal readback](evidence/20261122-lcd-grid-journal-readback.json),
+[physical first grid journal readback](evidence/20261122-lcd-grid-journal-readback.json),
+[physical second grid journal readback](evidence/20261123-lcd-grid-second-journal-readback.json),
 [battery journal readback](evidence/20261122-lcd-battery-journal-readback.json) and
 [second battery journal inspection](evidence/20261122-lcd-battery-second-journal-readback.json).
 These are text records of observations and checks, not photographic proof.
@@ -43,9 +44,9 @@ These are text records of observations and checks, not photographic proof.
 - After battery removal, the wrong grid can appear for a split second before
   the saved grid appears. The owner reports normal controls throughout. The
   visual transition's cause has not been physically measured or established.
-- Only Center cross has physical v3 journal readback in this update. A second
-  saved shape, second-slot preservation and broader preset persistence still
-  need their remaining camera checks.
+- Center cross and 6x6 now have physical v3 journal readbacks and two-slot
+  preservation checks. Other shapes and broader preset persistence still need
+  their remaining camera checks.
 - EVF, movie, external-output and full capture/shutdown/sleep/wake lifecycles
   are not cleared by the LCD checkpoint. Portrait, zebras, the custom information
   page and broader histogram/highlight work remain outside this first LCD scope.
