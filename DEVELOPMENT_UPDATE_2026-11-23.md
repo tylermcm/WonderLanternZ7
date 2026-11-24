@@ -24,6 +24,7 @@ emergency recovery procedure. Read [RISK_NOTICE.md](RISK_NOTICE.md).**
 | Custom pages / DISP | The owner reported Custom pages retained its setting after restart and DISP cycling worked. Menu navigation and responsiveness were also tried. This is not a separate visual verification of every preset, information group or focal overlay. |
 | Grid selection | The owner reported working 3x3, Center cross, 6x6 and Off selections in the incremental LCD tests. All five shapes also have offline geometry checks; that is a separate kind of evidence. |
 | Saved grid shape | On the latest checkpoint, the owner confirmed the selected grid returns after normal shutdown and after battery removal. Center cross and 6x6 both returned after normal shutdown; Center cross also returned after battery removal. Physical readback verified valid v3 records in both slots (Center cross generation0, 6x6 generation1), with the earlier record and both older settings files unchanged. |
+| Basic shooting / playback / restart | The owner reported an overall pass of the combined test: DISP cycling, conditional focal-display check, autofocus, a few single photos, playback/photo zoom, return to shooting and saved configuration after 20 seconds off. Individual observations and lens/zoom details were not separately described; this is a representative smoke test. |
 
 The latest module checkpoint is identified by SHA-256
 `f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e`
@@ -35,6 +36,7 @@ Source-safe records include the
 [grid hardware report](evidence/20261122-lcd-grid-persistence-hardware-result.json),
 [physical first grid journal readback](evidence/20261122-lcd-grid-journal-readback.json),
 [physical second grid journal readback](evidence/20261123-lcd-grid-second-journal-readback.json),
+[combined owner smoke test](evidence/20261123-lcd-combined-smoke-hardware-result.json),
 [battery journal readback](evidence/20261122-lcd-battery-journal-readback.json) and
 [second battery journal inspection](evidence/20261122-lcd-battery-second-journal-readback.json).
 These are text records of observations and checks, not photographic proof.
@@ -44,11 +46,14 @@ These are text records of observations and checks, not photographic proof.
 - After battery removal, the wrong grid can appear for a split second before
   the saved grid appears. The owner reports normal controls throughout. The
   visual transition's cause has not been physically measured or established.
-- Center cross and 6x6 now have physical v3 journal readbacks and two-slot
-  preservation checks. Other shapes and broader preset persistence still need
-  their remaining camera checks.
-- EVF, movie, external-output and full capture/shutdown/sleep/wake lifecycles
-  are not cleared by the LCD checkpoint. Portrait, zebras, the custom information
+- Center cross and 6x6 have physical v3 journal readbacks and two-slot
+  preservation checks. The core combined LCD smoke test also has an owner pass.
+  Hardware coverage remains representative; 277 additional instruction checks
+  cover preset edits/reset/save/reload combinations without requiring a separate
+  camera restart for every toggle.
+- Basic single-photo/playback and normal restart have an overall owner pass.
+  EVF, movie, external output, burst/long exposure and full sleep/wake/interrupted
+  shutdown lifecycles are not cleared by that smoke test. Portrait, zebras, the custom information
   page and broader histogram/highlight work remain outside this first LCD scope.
 - The separate Golden-ratio spiral experiment still has reported electronic-level
   lag, especially in the EVF. Its older result is not validation of this profile.

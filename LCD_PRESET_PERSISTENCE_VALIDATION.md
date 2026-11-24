@@ -35,7 +35,7 @@ lifecycles, shutdown durability or camera recovery. These checks supplement
 the earlier grid/codec/storage tests; they do not expand the owner hardware
 verification scope in the [public hardware report](DEVELOPMENT_UPDATE_2026-11-23.md).
 
-## Remaining hardware gates
+## Hardware observations and remaining scope
 
 The owner has already reported Center cross restoration after shutdown and
 battery removal, with a valid physical v3 slot0 readback and unchanged older
@@ -46,11 +46,14 @@ normal controls. Read-only second-slot and prior-slot/legacy preservation checks
 now pass: valid
 6x6 generation1 in slot1, with the original Center cross generation0 and both
 legacy files unchanged. See the [physical second-slot report](evidence/20261123-lcd-grid-second-journal-readback.json).
-Broader preset-setting hardware checks and capture/lifecycle validation remain
-separate steps. No new flash or automatic card replacement is needed for them.
+The representative combined LCD/basic shooting/playback/restart smoke test now
+has an [overall owner pass](evidence/20261123-lcd-combined-smoke-hardware-result.json).
+This closes the core LCD smoke gate; broader lifecycle coverage remains separate.
 
 The Standard Virtual horizon ON/restart gate also has an overall owner pass.
 [Physical journal inspection](evidence/20261123-lcd-standard-horizon-journal-readback.json)
 verified generation2 with Standard grid+horizon and retained6x6; the prior record
-and older settings files remained unchanged. Individual information/focal controls
-and broader capture/lifecycle gates remain separate.
+and older settings files remained unchanged. The combined owner pass includes the
+conditional focal-display step; the lens
+model, zoom applicability and individual observations were not separately described.
+No exhaustive hardware permutation or telemetry-accuracy claim is made.

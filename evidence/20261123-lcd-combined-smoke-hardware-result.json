@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "date": "2026-11-23",
+  "module_sha256": "f848e62de232776a27fef9f481452d590901ff5fb95de2c564fe6e46611cc00e",
+  "owner_response": "evrything works as intended",
+  "combined_lcd_smoke_owner_pass": true,
+  "requested_sequence": [
+    "Cycle four DISP pages and return to Standard; check responsiveness, 6x6 and horizon",
+    "Enable Standard focal length; check reporting lens value and zoom if applicable",
+    "Autofocus, take a few single photos, playback, zoom photo and return to shooting",
+    "Wait Saved, normal shutdown for 20 seconds, restart; check focal display, 6x6 and horizon configuration"
+  ],
+  "individual_observations_separately_described": false,
+  "lens_model_and_zoom_applicability_not_specified": true,
+  "scope": "Overall owner pass of representative combined LCD/basic shooting/playback/restart sequence on one camera",
+  "photo_video_proof_pending": true,
+  "limits": [
+    "Not every setting combination or lens condition individually hardware verified",
+    "No full burst/long-exposure/video/output/sleep-wake or interrupted-save/recovery validation",
+    "Known brief wrong-grid startup transition after battery removal remains open"
+  ],
+  "card_changed_by_agent_this_turn": false,
+  "firmware_flashed_this_turn": false
+}

@@ -23,8 +23,9 @@ Hardware observations below are limited to the project owner's original Z7.
 | --- | --- |
 | Custom framing grids: 4x4, 3x3, Golden ratio, Center cross, 6x6 and Off | Selected layouts owner-tested; all five shapes have offline geometry checks. |
 | Rear-LCD battery percentage | Owner-tested ON/OFF and preference retention, with saved-record checks. |
-| Four configurable LCD DISP presets | Custom pages retention, menu navigation and DISP cycling owner-tested; individual information/focal controls still have limited hardware coverage. |
-| Saved grid shape and display settings | Center cross and 6x6 restored after shutdown; Center cross also after battery removal. Both v3 slots verified, with prior record and older files preserved. Broader preset hardware checks remain pending. |
+| Four configurable LCD DISP presets | Custom pages retention, menu navigation and DISP cycling owner-tested; a combined owner smoke test also covered the conditional focal-display step. Individual lens/telemetry coverage remains limited. |
+| Saved grid shape and display settings | Center cross and 6x6 restored after shutdown; Center cross also after battery removal. Both v3 slots verified, with prior record and older files preserved. Representative combined LCD smoke test passed; exhaustive hardware combinations remain unverified. |
+| Basic shooting and playback | Combined owner smoke pass for autofocus, single photos, playback/photo zoom, return to shooting and normal restart; not a full capture/lifecycle validation. |
 
 **Target:** original Nikon Z7 C 3.80, without the paid RAW-video upgrade.
 Z7 II, other firmware versions and other body/service configurations are not
@@ -42,7 +43,8 @@ pending; this is limited owner verification, not certification of the full
 port, other bodies, safe installation or emergency recovery.**
 
 There is still a brief wrong-grid display after battery removal before the
-saved grid appears. Controls remain responsive in the owner's report. EVF,
+saved grid appears. Controls remain responsive in the owner's report; basic
+shooting/playback also has a combined owner smoke pass. EVF,
 movie/external output, full capture/sleep/wake behavior and interrupted-save
 recovery are not cleared by this LCD trial. Earlier checkpoints froze inputs;
 read the [risk notice](RISK_NOTICE.md) before considering any build or update.
@@ -130,8 +132,9 @@ six-choice grid menu and display hooks. The latest
 [grid-persistence checkpoint](LCD_GRID_PERSISTENCE_REVIEW.md) saves grid shape
 in separate versioned journals while preserving the older settings files.
 Center cross and 6x6 have owner restart observations and physical journal
-readbacks; Center cross also returns after battery removal. Broader preset
-hardware validation remains pending.
+readbacks; Center cross also returns after battery removal. The combined LCD/basic
+shooting smoke test also has an owner pass. Broader
+output/capture lifecycle validation remains outside that result.
 
 The [configurable DISP work](z7-native-modules/DISPLAY_SETTINGS.md) now includes
 four presets, native base-page selection, six separate information groups and
