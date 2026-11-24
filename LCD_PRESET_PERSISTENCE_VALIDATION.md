@@ -48,3 +48,9 @@ now pass: valid
 legacy files unchanged. See the [physical second-slot report](evidence/20261123-lcd-grid-second-journal-readback.json).
 Broader preset-setting hardware checks and capture/lifecycle validation remain
 separate steps. No new flash or automatic card replacement is needed for them.
+
+The Standard Virtual horizon ON/restart gate also has an overall owner pass.
+[Physical journal inspection](evidence/20261123-lcd-standard-horizon-journal-readback.json)
+verified generation2 with Standard grid+horizon and retained6x6; the prior record
+and older settings files remained unchanged. Individual information/focal controls
+and broader capture/lifecycle gates remain separate.
