@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "date": "2026-11-24",
+  "feature": "Optional movie LCD battery percentage with existing global switch",
+  "candidate_sha256": "cc9d6b395e148b943af550cd31be8c9b1ca4de944ee260edc6fdeef0176dd830",
+  "module_bytes": 22712,
+  "reproducible": true,
+  "movie_battery_checks": {
+    "passed": true,
+    "count": 47,
+    "scope": "Supplied movie/photo flags, native icon and telemetry; compiled callbacks/native getter/object helpers execute"
+  },
+  "histogram_renderer_checks": {
+    "passed": true,
+    "count": 170,
+    "scope": "Supplied statistics/presentation/low-level drawing boundaries"
+  },
+  "root_unit_tests": {
+    "passed": true,
+    "count": 103
+  },
+  "histogram_only_packet_byte_identical": true,
+  "source_dependencies_verified": true,
+  "gui_file_writes": 0,
+  "card_access": false,
+  "physical_movie_layout_verified": false,
+  "actual_pixels_verified": false,
+  "recording_scheduler_verified": false,
+  "hardware_tested": false,
+  "staged": false,
+  "firmware_update_required": false
+}

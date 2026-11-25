@@ -67,13 +67,20 @@ static uint32_t native_icon(uint32_t control, uint32_t object)
 }
 static uint32_t context_visible(void)
 {
-    /* LCD photo only. Existing native control visibility keeps warning and
+    /* Existing native control visibility keeps warning and
      * page/output exclusions with the stock battery updater.
+     * The opt-in movie profile still requires this exact unrotated LCD icon
+     * geometry, painter and palette; it never forces a movie icon visible.
      */
 #ifdef Z7_INFORMATION_APP_PROBE
     if (information_components_blocked()) return 0;
 #endif
-    if (z7_battery_enabled != 1 || B(0xa18237c6u) || B(0xa201d4d0u + 0x40) ||
+    if (z7_battery_enabled != 1 || B(0xa18237c6u) ||
+#ifdef Z7_BATTERY_MOVIE_LCD
+        B(0xa201d4d0u + 0x40) > 1 ||
+#else
+        B(0xa201d4d0u + 0x40) ||
+#endif
         W(0xa18b4de8u) || !pool()) return 0;
     uint32_t font = B(0xa18237e8u + 19 * 2);
     if (font > 110 || !B(0xa182158cu + font * 16 + 1) || B(0xa182158cu + font * 16 + 1) > 24) return 0;

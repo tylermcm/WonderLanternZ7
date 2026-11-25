@@ -142,6 +142,10 @@ storage checks pass; camera statistics and live histogram rendering still need
 hardware verification. See the [histogram preset trial review](LCD_HISTOGRAM_PRESETS_REVIEW.md).
 The brief cold-start grid transition is deferred while feature integration proceeds.
 
+An additional optional [movie LCD battery checkpoint](LCD_MOVIE_BATTERY_REVIEW.md)
+extends the global percentage switch to matching movie LCD icons. Instruction
+checks pass; real movie HUD layout and recording behavior remain unverified.
+
 An optional [separate Display settings entry](LCD_SETTINGS_ROOT_REVIEW.md) now
 opens from the Custom Setting Menu overview instead of the grid submenu.
 That relocation has offline menu/navigation and persistence checks; its camera
