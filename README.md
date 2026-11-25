@@ -225,6 +225,7 @@ capture timing, recording, recovery or compatibility with other camera models.
 - `z7-firmware-extensions/`: complete patcher source, including all sound fixes.
 - `tools/`: local build, validation, setup and launch helpers.
 - [DEVELOPMENT_UPDATE_2026-11-23.md](DEVELOPMENT_UPDATE_2026-11-23.md): current hardware scope, results and remaining work.
+- [DEVELOPMENT_UPDATE_2026-11-25.md](DEVELOPMENT_UPDATE_2026-11-25.md): new SD-module work (shutter sound, upside-down EXIF, AF-area shortcut), emulator-verified only, and the one-session camera field test.
 - [SOUND_MENU_FIX.md](SOUND_MENU_FIX.md): fault analysis and corrected addresses.
 - [AUDIO_PLAYBACK_FIX.md](AUDIO_PLAYBACK_FIX.md): WAV specification check and corrected Z7 playback admission.
 - [FLASH_ASSESSMENT.md](FLASH_ASSESSMENT.md): private EG preparation, updater evidence and hardware recovery limits.
