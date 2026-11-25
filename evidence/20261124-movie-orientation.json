@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "count": 177,
+  "probe_sha256": "2c4cd7fdbd146f35155ff0962298fc8d226b6137617f63437e2db64b301010b2",
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "native_track_builder": "0x102A9C2C",
+  "native_matrix_offset": "0x109",
+  "file_task_hooks_installed": false,
+  "completed_track_headers_verified": false,
+  "physical_orientation_verified": false,
+  "scope": "Movie file-pose policy and original-Z7 native matrix emission spans (MIT).\n\nCompiled independent latches/matrices execute. Original track-writer prefix and\nits matrix-copy instruction span execute with supplied context storage. Native\nmux task/file I/O, completed headers and real orientation remain unverified.\n",
+  "schema": 1,
+  "date": "2026-11-24",
+  "file_pose_policy_implemented": true,
+  "native_matrix_spans_execute": true,
+  "camera_access": false
+}

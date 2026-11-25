@@ -85,9 +85,9 @@
       "id": "video-rotation",
       "name": "Automatic video orientation",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/video-rotation.md",
-      "status": "not_ported",
-      "remaining": "Original-Z7 container writer/orientation bindings needed",
-      "local_review": null,
+      "status": "research",
+      "remaining": "Per-file pose/matrix policy and native writer matrix spans verified; mux open/split/close binding, full headers and real movie orientation pending",
+      "local_review": "MOVIE_ORIENTATION_RESEARCH.md",
       "hardware_parity_verified": false
     },
     {

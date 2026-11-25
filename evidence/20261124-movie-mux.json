@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "passed": true,
+  "count": 270,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "control_pointer_slot": "0xa1815030",
+  "file_record_base": "0x3f0",
+  "file_record_stride": "0x88",
+  "reply_layouts": {
+    "open": {
+      "entry": "0x1027f002",
+      "offset": "0x160",
+      "stride": 8
+    },
+    "split": {
+      "entry": "0x1027ef9c",
+      "offset": "0x318",
+      "stride": 8
+    },
+    "close": {
+      "entry": "0x1027ef8e",
+      "offset": "0x370",
+      "stride": 8
+    }
+  },
+  "native_mux_task": "0x1027E796",
+  "native_file_limit_verified": false,
+  "context_field_offset_verified": true,
+  "registration_callback_offset": "0x2c",
+  "registration_root": "0xA1F532F8",
+  "callback_slot": "0xA1F53324",
+  "callback_installed": false,
+  "camera_access": false,
+  "physical_files": false,
+  "scope": "Original-Z7 mux record/reply getter and registration contracts (MIT).\n\nOriginal getter instructions execute with supplied mux pointer, file count and\nrecord storage. No mux task launch, file operation, callback replacement or\nphysical camera operation. Zero/negative native indices are not module admission.\n"
+}
