@@ -8,6 +8,10 @@
  *    Orientation 3 for capture pose 3, and logs every pose Nikon's Orientation
  *    writer sees (ring slot 4), so the session shows whether the camera records
  *    pose 3 for an upside-down exposure.
+ *  - AF-area shortcut trial (af_shortcut_runtime.h): the movie record button,
+ *    stock None in photo mode, switches AF-area to Wide-area AF (L) through the
+ *    validated setter, from the host's before-update hook. Each apply is logged
+ *    (ring slot 5). The trial assumes photo mode; test it in photo mode only.
  *  - The log header also carries the sound counters, so a silent preview can be
  *    diagnosed from the card: queued, started, rejected, finished, and native
  *    requests that passed through the intercept.
@@ -18,6 +22,8 @@
 #define Z7_EXIF_IFD_SLOT 0xa18d3410u
 #define Z7_EXIF_POSE_HOOK(pose) z7_trig_append(0xe1f00000u|(pose),4u,0,0)
 #include "photo_orientation_exif.h"
+#include "update.h"
+#include "af_shortcut_runtime.h"
 
 #ifndef Z7_SOUND_PREVIEW_TICK
 #define Z7_SOUND_PREVIEW_TICK 8u
@@ -37,6 +43,14 @@ static void z7_field_publish(void)
             z7_trig_live.reserved[i]=words[i];
             __atomic_store_n(&z7_trig_dirty,1,__ATOMIC_RELEASE);
         }
+}
+
+static struct z7_af_runtime z7_field_af;
+volatile uint32_t z7_field_af_registered;
+static void z7_field_update(void)
+{
+    uint32_t r=z7_af_runtime_step(&z7_field_af,1,0,z7_af_native_none_buttons());
+    if (r) z7_trig_append(0xaf000000u|(r<<8)|(z7_field_af.last&0xffu),5u,z7_af_get(AF_PROP_AREA),0);
 }
 
 static void z7_field_worker(void)
@@ -61,6 +75,11 @@ uint32_t z7_main(const struct z7_module_api *api)
     if (z7_sound_init_result) z7_sound_init_result|=z7_sound_install()<<1;
     z7_trig_install();
     if (z7_exif_matches()) z7_exif_install();  /* optional part: skipped, not fatal */
+    if (z7_af_area_matches()) {               /* optional part: skipped, not fatal */
+        z7_af_shortcut_reset(&z7_field_af.policy);
+        z7_af_shortcut_assign(&z7_field_af.policy,AF_BUTTON_MOVIE,AF_AREA_WIDE_L+1u);
+        z7_field_af_registered=((const struct z7_module_update_api *)api)->register_before_update(z7_field_update);
+    }
     z7_field_publish();
     return 0;
 }

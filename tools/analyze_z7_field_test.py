@@ -41,7 +41,9 @@ def analyze(blob,photos):
     elif len(matches)==1:trigger=f"{matches[0]['event']} on {matches[0]['callback']} matches {photos} photos"
     elif matches:trigger=f'{len(matches)} candidates match {photos} photos; check their timing against the session'
     else:trigger=f'no event matched {photos} distinct photo records'
-    return dict(chime=chime(log['sound']),trigger=trigger,exif=exif_verdict,exif_poses=poses,candidates=ranked,
+    af=[dict(tick=e['tick'],result={1:'set',2:'already',0:'refused',3:'failed'}.get((int(e['event'],16)>>8)&0xff),area=int(e['word0'],16))
+        for e in log['ring'] if e['slot']=='af-shortcut']
+    return dict(af_shortcut=af,chime=chime(log['sound']),trigger=trigger,exif=exif_verdict,exif_poses=poses,candidates=ranked,
                 silent_markers=[int(e['event'],16)&0xffff for e in log['ring'] if e['slot']=='silent-photography-0x576'],
                 ring_lost=log['ring_lost'],ticks=log['ticks'],sound=log['sound'])
 
@@ -54,6 +56,7 @@ def main():
     a=p.parse_args();r=analyze(a.log.read_bytes(),a.photos)
     if a.json:print(json.dumps(r,indent=2));return
     print('Chime:  ',r['chime']);print('Trigger:',r['trigger']);print('EXIF:   ',r['exif'],r['exif_poses'])
+    print('AF:     ',(', '.join(f"{x['result']} -> area {x['area']}" for x in r['af_shortcut'])) or 'no movie-button press logged')
     if r['ring_lost']:print(f"note: {r['ring_lost']} older events fell out of the 128-entry ring")
     for c in r['candidates'][:6]:
         print(('  MATCH ' if c['matches_photos'] else '        ')+f"{c['callback']:<32} {c['event']} count={c['count']} records={c['distinct_records']}")

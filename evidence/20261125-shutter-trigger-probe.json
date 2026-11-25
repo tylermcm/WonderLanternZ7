@@ -59,5 +59,13 @@
     "qemu_checks": 9,
     "adds": "upside-down photo EXIF orientation + pose log",
     "staged": false
+  },
+  "field_test_v3": {
+    "module_sha256": "22d99be12b577beefe2ef3e7fdce5fa6eac800327f9daf60dc47f8cd9b294197",
+    "bytes": 4184,
+    "offline_checks": 29,
+    "qemu_checks": 10,
+    "adds": "AF-area shortcut trial (movie button -> Wide-area L)",
+    "staged": false
   }
 }

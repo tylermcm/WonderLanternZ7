@@ -67,6 +67,9 @@ def main():
               any(e.get('component')=='sound' and e.get('operation')=='read' for e in fixture.events))
         check('three-trigger-wrappers-installed',first['slots']==first['wrappers'])
         if 'z7_exif_get' in meta['symbols']:check('exif-orientation-getter-installed',first['exif_slot']==first['exif_getter'])
+        if 'z7_field_af_registered' in meta['symbols']:
+            base=int(first['module_base'],16)
+            check('af-trial-update-hook-registered',word(base+meta['symbols']['z7_field_af_registered'])==1)
         check('nothing-queued-at-boot',first['boot_queued']==0 and first['playback']==0 and first['live']['ticks']<8)
         assert camera.remote.command(f'Z1,{FLASH_STORE:x},2')=='OK'
         timer=threading.Timer(150.0,camera.remote.request_fixture_stop);timer.daemon=True

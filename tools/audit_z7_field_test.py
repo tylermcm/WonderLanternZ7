@@ -7,6 +7,7 @@ the union of audit_z7_shutter_sound_playback.py and audit_z7_trigger_probe.py.
 No camera, no card, no capture pipeline.
 """
 import argparse,hashlib,json,struct
+from unicorn.arm_const import UC_ARM_REG_R0,UC_ARM_REG_R1
 from pathlib import Path
 from audit_z7_shutter_sound_playback import SoundFixture,WAV_PATH,wav,DISPATCH,CONTEXT,STATE_ADDR,SLOT as SOUND_SLOT
 from audit_z7_trigger_probe import ProbeFixture,SLOTS,NATIVE,LOG,PACKET
@@ -18,10 +19,26 @@ from audit_z7_exif_orientation import SLOT as EXIF_SLOT,DESCRIPTOR
 
 
 class FieldFixture(ProbeFixture,SoundFixture):
-    def __init__(self,raw,host,packet,files=None,silent=0,slot_values=NATIVE,log_faults=None,**sound):
+    def __init__(self,raw,host,packet,files=None,silent=0,slot_values=NATIVE,log_faults=None,focus=1,area=1,**sound):
         SoundFixture.__init__(self,raw,host,packet,files=files,**sound)
         self.probe_setup(slot_values,silent,log_faults,None)
         self.u.mem_write(EXIF_SLOT,struct.pack('<4I',*DESCRIPTOR))
+        for base,size in ((0xa24e0000,0x20000),(0xa1f90000,0x10000)):
+            try:self.u.mem_map(base,size)
+            except Exception:pass
+        # Stock f2 defaults (movie record = None), focus/AF-area, idle switches.
+        for addr,v in ((0xa24f1898,0x1f),(0xa24f18a8,0x26),(0xa24f18b8,8),(0xa24f18c8,3),(0xa24f18d4,0),
+                       (0xa24e33f4,focus),(0xa24e33f8,area),(0xa1f90aa4,0x200),(0xa1f90ab8,0),(0xa1f90acc,0)):
+            self.u.mem_write(addr,struct.pack('<I',v))
+        self.af_sets=[]
+    def hook(self,u,address,size,context):
+        if address==0x10070234 and self.r(UC_ARM_REG_R0)!=0x576:
+            return SoundFixture.hook(self,u,address,size,context)  # native lookup for AF/f2 keys
+        if address==0x101d61ee:
+            key,value=self.r(UC_ARM_REG_R0),self.r(UC_ARM_REG_R1);self.af_sets.append((key,value))
+            if key==0x568:u.mem_write(0xa24e33f8,struct.pack('<I',value))
+            self.ret(1);return
+        super().hook(u,address,size,context)
 
 
 def main():
@@ -125,6 +142,21 @@ def main():
     r=session(speaker=0,upside_pose=0)
     check('analyzer-rejected-chime-and-no-pose-3',r['chime'].startswith('queued but rejected') and r['exif'].startswith('no pose 3 seen'))
 
+    # AF-area shortcut trial: movie record (stock None) -> Wide-area AF (L), logged.
+    g=load();base_registered=g.read(sym(g,'z7_field_af_registered'))
+    check('af-trial-registered-before-update',base_registered==1)
+    def update(x):x.call(h['symbols']['z7_display_before_update'])
+    update(g);check('af-idle-update-no-write',not g.af_sets)
+    g.u.mem_write(0xa1f90ab8,struct.pack('<I',0x2000));update(g)
+    check('af-movie-press-sets-wide-l',g.af_sets==[(0x568,4)])
+    update(g);check('af-hold-no-repeat',len(g.af_sets)==1)
+    g.u.mem_write(0xa1f90ab8,struct.pack('<I',0));update(g)
+    g.u.mem_write(0xa1f90aa4,struct.pack('<I',0x4200));update(g)
+    check('af-fn1-with-native-function-ignored',len(g.af_sets)==1)
+    tick(g,4);ran=analyze(g.log_files[LOG],None)
+    check('af-press-logged-and-analyzed',ran['af_shortcut']==[dict(tick=ran['af_shortcut'][0]['tick'],result='set',area=4)])
+    g=load(focus=3);g.u.mem_write(0xa1f90ab8,struct.pack('<I',0x2000));update(g)
+    check('af-unmeasured-focus-mode-no-write',not g.af_sets)
     report=dict(passed=True,count=len(checks),checks=checks,module_sha256=m['module_sha256'],host_main_sha256=h['main_payload_sha256'],
                 clip_sha256=hashlib.sha256(clip).hexdigest(),camera_access=False,scope=__doc__)
     out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
