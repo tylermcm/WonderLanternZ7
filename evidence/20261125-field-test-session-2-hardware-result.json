@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "shutter-sound-field-test-v5-session-2-hardware-result",
+  "module_sha256": "73ec9f0fbb122e02ce295ba9207ade736bbd22ede2a7df1fc6c9c2da97e8d076",
+  "staged_with_owner_approval": true,
+  "restored": true,
+  "restored_module_sha256": "5e62ce53def1a8de4cf789bb4f3b03fb51791943501a11da6ca4be44b4e77349",
+  "firmware_flashed": false,
+  "photos": {
+    "single": 3,
+    "burst": 4,
+    "vertical": 1,
+    "total": 8,
+    "files": "DSC_8305-8312",
+    "exif_orientation": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      8
+    ]
+  },
+  "owner_report": {
+    "burst_frames": 4,
+    "vertical_in_playback": "shown like live view, full screen, no side bars (not rotated)",
+    "anything_unusual": false
+  },
+  "log": {
+    "version": 2,
+    "ticks": 127,
+    "writes": 42,
+    "ring_entries": null,
+    "capped": 21611,
+    "ring_dropped": 0,
+    "exif_writes": 8,
+    "chime": "played to the end"
+  },
+  "per_photo_events": {
+    "controller 0xA18D1BD8": {
+      "0x0419000B": 8,
+      "0x0419000D": 8,
+      "0x0419000E": 8
+    },
+    "consumer 0xA18D1BDC": {
+      "0x04190005": 8,
+      "0x04190003": 8,
+      "0x04190004": 16
+    },
+    "still-file 0xA18D2750": {
+      "0x041E0001": 8,
+      "0x041E0002": 8,
+      "0x041E0004": 8
+    }
+  },
+  "per_photo_order": "controller 0x0419000C(0x200)/0x0419000B/0x0419000D, consumer 0x04190004 x2 and 0x04190005, controller 0x0419000E and 0x04190007, consumer 0x04190003; about 12-17 display updates later the EXIF writer and still-file 0x041E0001/2/4",
+  "burst": "each of the 4 frames produced its own 0x0419000B..0x04190003 sequence about 5-6 updates apart; file writes followed together",
+  "trigger_candidate": "controller 0xA18D1BD8 event 0x0419000B: exactly once per photo, first in each exposure sequence, never outside photos",
+  "non_photo_events": {
+    "0x0419000C(0x100)/0x04190007/0x04190002": "playback entry or exit (3 times)"
+  },
+  "still_file_note": "still-file fired once per photo in session 2 but never in session 1 (0 calls for 7 photos); treat it as unreliable",
+  "playback": [
+    {
+      "photo": 8312,
+      "orientation": 8,
+      "lookup_turn": 1,
+      "request_rotation": 0
+    },
+    {
+      "photo": 8311,
+      "orientation": 1,
+      "lookup_turn": 0,
+      "request_rotation": 0
+    }
+  ],
+  "playback_reading": "the request block 0xA289A264 and turn cache hold the shown photo id; the lookup reports the tall photo as turn 1 but the request rotation is 0, consistent with Rotate tall OFF (decision row 0), matching the unrotated full-screen view; the worker kept ticking in playback",
+  "camera_photos_published": false
+}

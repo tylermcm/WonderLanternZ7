@@ -110,7 +110,7 @@
       "name": "Silent shutter sound",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/shutter-sound.md",
       "status": "research",
-      "remaining": "SD-module playback works on the camera (Nov 25 field test: test chime played). Per-photo trigger unsolved: still-file callback 0xA18D2750 never fired for 7 JPEG photos and no other probed event counted 7. Trigger, menu and release integration remain. October firmware-patch build stays on hold.",
+      "remaining": "SD-module playback works on the camera (Nov 25 field tests). Per-photo event found on the camera: controller callback 0xA18D1BD8 event 0x0419000B, once per photo and burst frame. Trigger module, menu and release integration remain. October firmware-patch build stays on hold.",
       "local_review": "SHUTTER_SOUND_SD_PORT.md",
       "hardware_parity_verified": false
     },
@@ -218,7 +218,7 @@
       "name": "Upside-down photo EXIF orientation",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/2b596ab/docs/inverted-playback.md",
       "status": "research",
-      "remaining": "EXIF Orientation 3 for upside-down photos works on the camera (Nov 25 field test, JPEG); not yet in the LCD release module; NEF/thumbnail unchecked. Playback chain traced (42 checks); display request 0xA289A264 accepts a half turn; playback module not built (observer data lost to a log overflow).",
+      "remaining": "EXIF Orientation 3 for upside-down photos works on the camera (Nov 25 field test, JPEG); not yet in the LCD release module; NEF/thumbnail unchecked. Playback chain traced (42 checks); display request 0xA289A264 accepts a half turn; playback request block and turn cache confirmed live on the camera (session 2); playback module not built.",
       "local_review": "EXIF_ORIENTATION_RESEARCH.md",
       "hardware_parity_verified": false
     }

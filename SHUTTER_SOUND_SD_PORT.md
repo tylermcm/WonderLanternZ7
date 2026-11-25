@@ -3,7 +3,10 @@
 Status: **playback works on the camera (November 25, 2026 field test); no photo
 trigger and no menu yet.** The test chime played from the SD module. The
 provisional still-file trigger is ruled out: its callback never fired for 7
-photos ([field result](SHUTTER_SOUND_FIELD_TEST.md#camera-result-november-25-2026)).
+photos ([field result](SHUTTER_SOUND_FIELD_TEST.md#camera-result-november-25-2026)). A second session found
+the per-photo event: controller callback `0xA18D1BD8` event `0x0419000B`, once
+per photo and per burst frame, first in each exposure
+([session 2](SHUTTER_SOUND_FIELD_TEST.md#session-2-result-v5-november-25-2026)).
 
 ## Why a new approach
 

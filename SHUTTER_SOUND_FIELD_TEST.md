@@ -1,10 +1,31 @@
 # Shutter-sound field test: one card swap, one session
 
-Status: **ran on the camera, November 25, 2026** (v4 `b76d6c4b`, staged with the
+Status: **ran on the camera twice, November 25, 2026** (session 2 result first below; session 1 v4 `b76d6c4b`, staged with the
 owner's approval, LCD module restored afterwards). Results are under
 [Camera result](#camera-result-november-25-2026) and in [the evidence file](evidence/20261125-field-test-hardware-result.json).
 
-## Session 2 (v5): prepared, not staged
+## Session 2 result (v5, November 25, 2026)
+
+Staged with the owner's approval, LCD module restored afterwards
+([evidence](evidence/20261125-field-test-session-2-hardware-result.json)).
+8 photos (3 single, a burst of 4, 1 vertical); the log v2 kept everything.
+
+- **Per-photo trigger found.** Controller callback `0xA18D1BD8` event
+  `0x0419000B` fired exactly 8 times, first in each exposure's sequence
+  (`0x0419000B`, `0x0419000D`, consumer `0x04190004`/`0x04190005`, `0x0419000E`,
+  `0x04190003`), once per burst frame, and never outside photos. The photo
+  file is written about 12–17 display updates later. `0x0419000B` is the
+  candidate shutter-sound trigger.
+- The still-file callback fired once per photo this time but never in session
+  1, so it is not relied on.
+- **Playback request confirmed live.** The request block and turn cache held the
+  id of the photo on screen (DSC_8312 vertical: turn 1, request rotation 0;
+  DSC_8311: turn 0, rotation 0). Rotation 0 for the tall photo matches the
+  unrotated full-screen view the owner saw, which is what Nikon does with Rotate
+  tall OFF. The worker kept running in playback.
+- Chime played again; nothing unusual.
+
+## Session 2 (v5): plan as staged
 
 Session 1 left two questions open, the per-photo trigger and the playback
 rotation values, because live-view events overflowed the log. Field test v5
