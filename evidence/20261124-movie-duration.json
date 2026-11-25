@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "date": "2026-11-24",
+  "feature": "Original-Z7 native ordinary-movie ceiling table experiment",
+  "candidate_main_sha256": "b8db040d43418303f4fb2ea5622e5689403349c08267b956664bc2bd149b5667",
+  "control_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "main_bytes": 33058840,
+  "reproducible": true,
+  "independently_rebuilt": true,
+  "stock_native_contract_checks": 197,
+  "candidate_native_contract_checks": 370,
+  "format_quality_inputs": 28,
+  "ordinary_ceiling_entries": 24,
+  "only_reviewed_table_span_differs": true,
+  "root_unit_tests": {
+    "passed": true,
+    "count": 103
+  },
+  "native_capacity_instructions_execute": true,
+  "incoming_card_configuration_supplied": true,
+  "card_access": false,
+  "physical_recording_verified": false,
+  "full_recorder_path_verified": false,
+  "installation_assessment_complete": false,
+  "flash_authorized": false,
+  "do_not_stage": true,
+  "scope": "Original-Z7 movie capacity and native duration ceiling contract (MIT).\n\nAll capacity, format lookup, bytes-to-time and arithmetic instructions execute.\nConfiguration, card capacity, allocation unit, reservation and quota are supplied.\nNo task hook, recorder update, hardware recording or recovery is established.\n"
+}

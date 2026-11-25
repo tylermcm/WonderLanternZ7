@@ -76,9 +76,9 @@
       "id": "movie-recording-limit",
       "name": "Extended movie recording",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/movie-recording-limit.md",
-      "status": "not_ported",
-      "remaining": "Original-Z7 recording callbacks/limits need binding",
-      "local_review": null,
+      "status": "partial",
+      "remaining": "Native ceiling experiment and differential capacity checks pass; full recorder propagation/stop/split/thermal paths and hardware long recording remain unverified",
+      "local_review": "MOVIE_DURATION_RESEARCH.md",
       "hardware_parity_verified": false
     },
     {

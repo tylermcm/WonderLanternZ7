@@ -459,7 +459,7 @@ ASSERT(SIZEOF(.bss) == 0, "Host must not contain unreserved BSS");
     return code, symbols
 
 
-def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False,touch_hooks=False,retry_read_failures=False):
+def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, parameter_hooks=False, frame_permission_hooks=False, cached_frame_permission_hooks=False, owned_frame_coordination_hooks=False, native_warning_transaction_hooks=False, native_cache_copy_hooks=False, graphics_queue_hooks=False,navigation_hooks=False,touch_hooks=False,retry_read_failures=False,extend_movie_duration=False):
     if highlight_hooks and not display_hooks:
         raise ValueError('Highlight host requires the display host profile')
     if parameter_hooks and not highlight_hooks:
@@ -485,6 +485,10 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
     if sha(container) != Z7_CONTAINER_SHA256:
         raise ValueError('Requires exact original Z7 C 3.80 container')
     plan = Plan(extract_eg(container), platform)
+    movie_duration=None
+    if extend_movie_duration:
+        from z7_movie_duration import extend_native_movie_ceiling
+        movie_duration=extend_native_movie_ceiling(plan)
     # Original AUTOOP callback binding and original APPIDLE task descriptor.
     if plan.image.words(AUTOOP_BINDING, 1) != (0x102697f5,):
         raise ValueError('Unexpected original AUTOOP callback')
@@ -557,6 +561,9 @@ def build_image(container, zig=ZIG, display_hooks=False, highlight_hooks=False, 
         source_files={str(p.relative_to(ROOT)).replace('\\', '/'): sha(p.read_bytes())
                       for p in sorted([*(COMPONENT / 'host').glob('*'), *(COMPONENT / 'sdk').glob('*')]) if p.is_file()})
     report['retry_read_failures'] = bool(retry_read_failures)
+    report['extend_movie_duration'] = bool(extend_movie_duration)
+    if movie_duration is not None:
+        report['movie_duration'] = movie_duration
     report['limitations'] += ['Boot, filesystem, cache and task contracts need scoped validation; no hardware clearance.',
                              'Separate stock-based no-feature probe; does not include the installed grid trial.']
     if highlight_hooks:
@@ -612,7 +619,8 @@ def validate_candidate(path, report_path, stock_path, zig=ZIG):
                                    actual.get('frame_permission_hooks', False), actual.get('cached_frame_permission_hooks', False),
                                    actual.get('owned_frame_coordination_hooks', False), actual.get('native_warning_transaction_hooks', False),
                                    actual.get('native_cache_copy_hooks', False),actual.get('graphics_queue_hooks',False),actual.get('navigation_hooks',False),actual.get('touch_hooks',False),
-                                   retry_read_failures=actual.get('retry_read_failures',False))
+                                   retry_read_failures=actual.get('retry_read_failures',False),
+                                   extend_movie_duration=actual.get('extend_movie_duration',False))
     if (Path(path).read_bytes() != expected[:-2] or actual != report or binascii.crc_hqx(expected, 0)):
         raise ValueError('Module host candidate or report differs from independent rebuild')
     return dict(modified=True, independently_rebuilt=True, sha256=sha(expected[:-2]),
@@ -636,6 +644,7 @@ def main():
     parser.add_argument('--navigation-hooks',action='store_true',help='Opt in to API88 resident central navigation dispatch; requires graphics API prefix')
     parser.add_argument('--touch-hooks',action='store_true',help='Opt in to API92 resident native touch producer bridge; requires navigation API prefix')
     parser.add_argument('--retry-read-failures',action='store_true',help='Experimental bounded retry after a module read failure and successful close; no camera installation')
+    parser.add_argument('--extend-movie-duration',action='store_true',help='Offline native ordinary-movie ceiling table experiment; recording and recovery unverified')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / '.private') or output.exists():
@@ -660,8 +669,8 @@ def main():
         parser.error('--navigation-hooks requires --graphics-queue-hooks')
     if args.touch_hooks and not args.navigation_hooks:
         parser.error('--touch-hooks requires --navigation-hooks')
-    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks,args.touch_hooks,retry_read_failures=args.retry_read_failures)
-    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks,args.touch_hooks,retry_read_failures=args.retry_read_failures)
+    eg, report = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks,args.touch_hooks,retry_read_failures=args.retry_read_failures,extend_movie_duration=args.extend_movie_duration)
+    repeated, second = build_image(args.source.read_bytes(), args.zig.resolve(), args.display_hooks, args.highlight_hooks, args.parameter_hooks, args.frame_permission_hooks, args.cached_frame_permission_hooks, args.owned_frame_coordination_hooks, args.native_warning_transaction_hooks, args.native_cache_copy_hooks,args.graphics_queue_hooks,args.navigation_hooks,args.touch_hooks,retry_read_failures=args.retry_read_failures,extend_movie_duration=args.extend_movie_duration)
     if eg != repeated or report != second or binascii.crc_hqx(eg, 0):
         raise RuntimeError('Host build is not deterministic or CRC failed')
     output.mkdir(parents=True)
