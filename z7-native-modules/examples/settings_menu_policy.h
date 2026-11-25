@@ -6,6 +6,12 @@
 #ifdef Z7_LCD_FIRST_RELEASE
 #include "../plugins/lcd_release_policy.h"
 #endif
+#ifdef Z7_SHUTTER_SOUND_MENU
+#if defined(Z7_LCD_INFORMATION_PAGE) || !defined(Z7_LCD_FIRST_RELEASE)
+#error The shutter-sound row uses the release root page's free seventh row
+#endif
+#include "../plugins/shutter_sound_lcd.h"
+#endif
 struct z7_display_settings z7_menu_settings;
 #ifdef Z7_SETTINGS_PERSISTENCE
 static void persistence_commit(const struct z7_display_settings *);
@@ -157,6 +163,16 @@ static uint32_t sm_action(uint32_t object)
 #ifdef Z7_LCD_FIRST_RELEASE
     row = z7_lcd_release_row(z7_settings_view,row);
 #endif
+#ifdef Z7_SHUTTER_SOUND_MENU
+    /* Sound level is not a display setting: own file, no display journal edit. */
+    if (!z7_settings_view && row == 7) {
+        z7_sl_menu_next();
+        ++z7_settings_actions;
+        sm_render(object);
+        sm_redraw_request();
+        return 0;
+    }
+#endif
     if (row >= 7 || z7_settings_preset >= 4) return 0;
     uint32_t view = z7_settings_view, p = z7_settings_preset;
 #ifdef Z7_SETTINGS_PERSISTENCE
@@ -255,6 +271,12 @@ static uint32_t sm_render(uint32_t object)
             sm_text_put(231+physical_row,"");sm_text_put(238+physical_row,"");
             continue;
         }
+#ifdef Z7_SHUTTER_SOUND_MENU
+        if (!z7_settings_view && row==7) {
+            sm_text_put(231+physical_row,"Shutter sound");sm_text_put(238+physical_row,z7_sl_value_text());
+            continue;
+        }
+#endif
 #else
     for (uint32_t row = 0; row < 7; ++row) {
 #endif

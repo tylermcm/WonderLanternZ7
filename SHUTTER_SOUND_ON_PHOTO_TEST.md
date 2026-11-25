@@ -17,6 +17,11 @@ Staged with the owner's approval; LCD module restored afterwards
   default (`ccf0d0f1`, about 4x the RMS, +12 dB, peak just under full scale);
   the first click stays available as `--level soft` and rebuilds byte for
   byte. The module is unchanged and passes its 19 checks with the louder clip.
+- **Louder click (`ccf0d0f1`), second run:** the log shows 22 exposures in
+  Silent photography, 22 sounds queued, started and finished, none busy. Still
+  a little quiet at level 5, so the volume moved into a menu setting with two
+  louder levels ([LCD_SHUTTER_SOUND_TEST.md](LCD_SHUTTER_SOUND_TEST.md);
+  [evidence](evidence/20261125-shutter-sound-louder-click-hardware-result.json)).
 - The log is recreated at every power-on, so it only kept the last power cycle
   (Silent photography off). A later build should keep one log per boot.
 

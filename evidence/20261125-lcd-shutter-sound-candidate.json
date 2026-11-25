@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "lcd-module-shutter-sound-volume-candidate",
+  "module_sha256": "92602a4a041d69911fb58a7e15b3fd211c6a6c9aa2086f1de6da24c9ffe4cb87",
+  "module_bytes": 25508,
+  "base_module_rebuilds_identically": "5e62ce53def1a8de4cf789bb4f3b03fb51791943501a11da6ca4be44b4e77349",
+  "menu": "Display settings root row 7: Shutter sound OFF/1-7, default 5, OK steps and previews",
+  "level_file": "A:/Z7SND.DAT (16 bytes, worker-written after the level is stable)",
+  "gains_q8": [
+    64,
+    102,
+    154,
+    205,
+    256,
+    362,
+    512
+  ],
+  "offline": {
+    "display_suite_checks": 277,
+    "sound_checks": 28
+  },
+  "qemu_menu_checks": 25,
+  "staged": false,
+  "camera_access": false
+}

@@ -254,6 +254,10 @@ uint32_t z7_main(const struct z7_module_api *api)
 #endif
     persistence_prepare();
 #endif
+#ifdef Z7_SHUTTER_SOUND_MENU
+    /* Cannot fail the module: a missing WAV or mismatch leaves sound off. */
+    z7_sl_prepare();
+#endif
     /* No failing operation follows these native scalar stores. Host readiness
      * and native menu pointer publication still follow successful return.
      */

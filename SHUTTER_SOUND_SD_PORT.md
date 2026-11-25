@@ -11,6 +11,10 @@ A camera-test module that plays a synthetic click on that event in Silent
 photography **worked on the camera**: on time, on every burst frame, silent
 with the mechanical shutter, but too quiet; a louder click is prepared
 ([result](SHUTTER_SOUND_ON_PHOTO_TEST.md#camera-result-november-25-2026)).
+The louder click then played on all 22 Silent-photography exposures. The sound
+is now built into the LCD module with a **Shutter sound** volume row (OFF, 1–7)
+on its settings page, saved in `Z7SND.DAT`
+([test plan](LCD_SHUTTER_SOUND_TEST.md)); not yet staged.
 
 ## Why a new approach
 

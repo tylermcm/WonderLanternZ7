@@ -136,4 +136,7 @@ static void persistence_worker(void)
 {
     persistence_menu_notify();
     persistence_save_worker();
+#ifdef Z7_SHUTTER_SOUND_MENU
+    z7_sl_worker();
+#endif
 }

@@ -26,7 +26,7 @@ static inline uint32_t z7_lcd_release_filter(struct z7_display_settings *s)
 static inline uint32_t z7_lcd_release_rows(uint32_t view)
 {
     static const uint8_t count[]={
-#ifdef Z7_LCD_INFORMATION_PAGE
+#if defined(Z7_LCD_INFORMATION_PAGE) || defined(Z7_SHUTTER_SOUND_MENU)
         7,
 #else
         6,
@@ -51,6 +51,8 @@ static inline uint32_t z7_lcd_release_row(uint32_t view,uint32_t row)
     static const uint8_t map[][7]={
 #ifdef Z7_LCD_INFORMATION_PAGE
                                  {0,1,2,3,4,5,6},
+#elif defined(Z7_SHUTTER_SOUND_MENU)
+                                 {0,1,2,3,4,6,7},  /* 7: Shutter sound */
 #else
                                  {0,1,2,3,4,6,255},
 #endif

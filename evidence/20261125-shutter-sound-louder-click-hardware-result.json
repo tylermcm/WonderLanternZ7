@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "shutter-sound-louder-click-camera-result",
+  "module_sha256": "2c176587381ab4db0f011d3d254df21f6066467d970c4ff49ea142e23ffaff1e",
+  "clip_sha256": "ccf0d0f1c88b25856bc3998c90a17a90e3eafa97c6c68fc74dbc94477088c8d0",
+  "staged_with_owner_approval": true,
+  "restored": true,
+  "firmware_flashed": false,
+  "owner_report": {
+    "volume": "a little quiet; asked for a volume setting instead of more clip iterations"
+  },
+  "log": {
+    "ticks": 129,
+    "exposures_seen": 22,
+    "in_silent": 22,
+    "queued": 22,
+    "started": 22,
+    "finished": 22,
+    "busy": 0,
+    "rejects": 0
+  },
+  "verdict": "every one of 22 Silent-photography exposures queued, started and finished a sound; level 5 of the louder click is a little quiet"
+}

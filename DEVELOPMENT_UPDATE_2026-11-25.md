@@ -70,3 +70,10 @@ checked offline (19 checks) and in the emulator (7), and not yet staged.
 **Camera result:** the click played right on time on every photo and burst
 frame in Silent photography, and not with the mechanical shutter. It was too
 quiet; a louder click is prepared ([result](SHUTTER_SOUND_ON_PHOTO_TEST.md#camera-result-november-25-2026)).
+
+The louder click then played on all 22 Silent-photography photos of a second
+run. Because level 5 was still a little quiet, the sound is now built into the
+LCD module with a **Shutter sound** volume row (OFF, 1–7, preview on OK, saved
+on the card); levels 6 and 7 are louder than before. The installed display
+module still rebuilds byte for byte, its 277 display checks pass unchanged, and
+the emulator shows the new row ([test plan](LCD_SHUTTER_SOUND_TEST.md)).

@@ -14,6 +14,9 @@
 #ifndef Z7_SOUND_CLIPS
 #define Z7_SOUND_CLIPS 1u
 #endif
+#ifndef Z7_SOUND_LEVELS
+#define Z7_SOUND_LEVELS 5u
+#endif
 
 enum {
     SND_POST=0x100a2d79u, SND_MAILBOX=0xa18852acu,
@@ -28,7 +31,7 @@ enum {
     SND_RATE=48000u, SND_MAX_FRAMES=48000u, SND_MAX_WAV=SND_MAX_FRAMES*4u+4096u,
     SND_IDLE=0, SND_QUEUED=1, SND_PLAYING=2,
     /* Native start rejects type >= 18, so a lost intercept cannot play a stock sound. */
-    SND_TYPE_PRIVATE=18u, SND_VOLUME_MAX=5u
+    SND_TYPE_PRIVATE=18u, SND_VOLUME_MAX=Z7_SOUND_LEVELS
 };
 
 /* Native record and job layouts; identical on Z7II and original Z7 (0x24 record). */
@@ -144,11 +147,21 @@ static uint32_t z7_sound_prepare(uint32_t clip, uint32_t volume)
     uint32_t bytes=z7_sound_clip_bytes[clip];
     uint32_t key=(clip<<8)|volume;
     if (z7_sound_prepared_key!=key) {
+        const int16_t *source=z7_sound_clips[clip];
+#if Z7_SOUND_LEVELS > 5
+        /* Levels 6 and 7 boost (x1.41, x2) and clip at full scale. */
+        static const int32_t gains[SND_VOLUME_MAX]={64,102,154,205,256,362,512};
+        int32_t gain=gains[volume-1];
+        for (uint32_t i=0;i<bytes/2;++i) {
+            int32_t v=(source[i]*gain)>>8;
+            z7_sound_pcm[i]=(int16_t)(v>32767 ? 32767 : v<-32768 ? -32768 : v);
+        }
+#else
         /* Q8 gains keep five distinct levels without clipping full-scale WAVs. */
         static const int32_t gains[SND_VOLUME_MAX]={64,102,154,205,256};
-        const int16_t *source=z7_sound_clips[clip];
         int32_t gain=gains[volume-1];
         for (uint32_t i=0;i<bytes/2;++i) z7_sound_pcm[i]=(int16_t)((source[i]*gain)>>8);
+#endif
         z7_sound_prepared_key=key;
     }
     /* Clean to the point of coherency before the audio DMA reads the buffer. */
