@@ -7,6 +7,9 @@ photos ([field result](SHUTTER_SOUND_FIELD_TEST.md#camera-result-november-25-202
 the per-photo event: controller callback `0xA18D1BD8` event `0x0419000B`, once
 per photo and per burst frame, first in each exposure
 ([session 2](SHUTTER_SOUND_FIELD_TEST.md#session-2-result-v5-november-25-2026)).
+A camera-test module that plays a synthetic click on that event in Silent
+photography is built and checked offline and in the emulator
+([test plan](SHUTTER_SOUND_ON_PHOTO_TEST.md)); not yet staged.
 
 ## Why a new approach
 

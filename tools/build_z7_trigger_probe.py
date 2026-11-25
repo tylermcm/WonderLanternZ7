@@ -3,7 +3,8 @@
 No camera access, no firmware image. The module plays no sound; it counts three
 capture-notification callbacks and logs them to A:\\Z7TRIG.DAT.
 --field-test builds the combined field-test module (probe plus one chime preview
-on resident-worker tick 8).
+on resident-worker tick 8). --capture-test builds the shutter-sound camera test
+(sound on capture event 0x0419000B in Silent photography, plus the probe log).
 """
 import argparse,hashlib,json,re
 from pathlib import Path
@@ -15,10 +16,13 @@ from prepare_flash_review import require_private_output
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--field-test',action='store_true')
+    variant=p.add_mutually_exclusive_group()
+    variant.add_argument('--field-test',action='store_true')
+    variant.add_argument('--capture-test',action='store_true')
     a=p.parse_args();out=require_private_output(a.output)
     if out.exists():p.error('Choose a new private output directory')
-    source=ROOT/'z7-native-modules/plugins'/('shutter_sound_field_test.c' if a.field_test else 'shutter_trigger_probe.c')
+    source=ROOT/'z7-native-modules/plugins'/('shutter_sound_field_test.c' if a.field_test else
+        'shutter_sound_capture_test.c' if a.capture_test else 'shutter_trigger_probe.c')
     functions,again_functions={},{}
     packet,m=build(source,zig=ZIG.resolve(),function_details=functions)
     again,second=build(source,zig=ZIG.resolve(),function_details=again_functions)
@@ -31,8 +35,10 @@ def main():
         for include in re.findall(r'^\s*#\s*include\s+"([^"]+)"',path.read_text(encoding='utf-8'),re.M):
             pending.append(next(q for q in (path.parent/include,SDK/include) if q.is_file()))
     m.update(module_sha256=hashlib.sha256(packet).hexdigest(),file_bytes=len(packet),reproducible=True,
-        source_inputs_sha256=inputs,function_details=functions,kind='original-Z7-shutter-sound-field-test' if a.field_test else 'original-Z7-shutter-trigger-probe',
-        plays_sound=a.field_test,boot_preview=a.field_test,photo_trigger=False,log_file='A:\\Z7TRIG.DAT',settings_writes=False,
+        source_inputs_sha256=inputs,function_details=functions,kind='original-Z7-shutter-sound-field-test' if a.field_test else
+        'original-Z7-shutter-sound-capture-test' if a.capture_test else 'original-Z7-shutter-trigger-probe',
+        plays_sound=a.field_test or a.capture_test,boot_preview=a.field_test,photo_trigger=a.capture_test,
+        trigger_event='0x0419000B on 0xA18D1BD8, Silent photography only' if a.capture_test else None,log_file='A:\\Z7TRIG.DAT',settings_writes=False,
         do_not_stage=True,hardware_test_authorized=False,firmware_image=False)
     out.mkdir(parents=True);(out/'Z7APP.BIN').write_bytes(packet)
     (out/'module.json').write_text(json.dumps(m,indent=2)+'\n',encoding='utf-8',newline='\n')

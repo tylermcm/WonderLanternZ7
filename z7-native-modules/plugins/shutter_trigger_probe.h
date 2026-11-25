@@ -106,9 +106,15 @@ static void z7_trig_record(uint32_t slot, uint32_t event, uint32_t packet)
     z7_trig_append(event,slot,word0,word1);
 }
 
+/* Optional action on a capture event, before logging (e.g. the shutter-sound
+ * trigger). Runs on the notifying task; must not block. */
+#ifndef Z7_TRIG_EVENT_HOOK
+#define Z7_TRIG_EVENT_HOOK(slot,event,packet) ((void)0)
+#endif
 #define TR_WRAPPER(n) \
 static uint32_t z7_trig_wrap##n(uint32_t event, uint32_t packet, uint32_t a2, uint32_t a3) \
 { \
+    Z7_TRIG_EVENT_HOOK(n,event,packet); \
     z7_trig_record(n,event,packet); \
     return TR_F(z7_trig_native[n],uint32_t,uint32_t,uint32_t,uint32_t,uint32_t)(event,packet,a2,a3); \
 }

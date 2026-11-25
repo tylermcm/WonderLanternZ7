@@ -62,3 +62,7 @@ A second session with a fixed log (v5) found the per-photo event for the shutter
 sound (`0x0419000B` on the capture controller callback, once per photo and
 burst frame) and confirmed on the camera that the playback request holds the
 photo being shown ([session 2](SHUTTER_SOUND_FIELD_TEST.md#session-2-result-v5-november-25-2026)).
+
+A shutter-sound camera-test module now plays a synthetic click on that event
+in Silent photography ([test plan](SHUTTER_SOUND_ON_PHOTO_TEST.md)); it is
+checked offline (19 checks) and in the emulator (7), and not yet staged.

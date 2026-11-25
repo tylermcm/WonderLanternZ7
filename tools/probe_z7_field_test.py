@@ -5,6 +5,8 @@ writes through explicit file fixtures; no physical card. Checks that both parts
 install in the real guest, then runs until the tick-8 preview reaches the
 emulator's known codec abort (any sound request does; see
 probe_z7_sound_differential.py) and decodes the exception frame.
+With the capture-test module (no boot chime) it instead runs 60 s and checks that
+nothing is queued without a photo while the log keeps being written.
 """
 import argparse,hashlib,json,struct,sys,threading,time
 from pathlib import Path
@@ -27,7 +29,8 @@ def main():
     if not out.is_relative_to(ROOT/'.private') or out.exists():p.error('Choose a new private directory')
     out.mkdir(parents=True)
     meta=json.loads((a.module/'module.json').read_text());packet=(a.module/'Z7APP.BIN').read_bytes();clip=a.clip.read_bytes()
-    assert hashlib.sha256(packet).hexdigest()==meta['module_sha256'] and meta['kind']=='original-Z7-shutter-sound-field-test'
+    assert hashlib.sha256(packet).hexdigest()==meta['module_sha256'] and meta['kind'] in ('original-Z7-shutter-sound-field-test','original-Z7-shutter-sound-capture-test')
+    capture=meta['kind']=='original-Z7-shutter-sound-capture-test'
     ui.FIRMWARE=a.build/'module-host.emulator.main.bin';ui.FIRMWARE_REPORT=a.build/'module-host.emulator.json'
     ui.STOCK_CONTAINER=ROOT/'.private/stock/Z_7_0380.bin';ui.validate_firmware=validate_candidate
     host=json.loads(ui.FIRMWARE_REPORT.read_text())
@@ -50,9 +53,9 @@ def main():
         base=struct.unpack('<64I',camera.remote.memory(STATE,256))[12];s=meta['symbols']
         row=dict(label=label,module_base=hex(base),slots=[hex(word(x)) for x in SLOTS],sound_slot=hex(word(SOUND_SLOT)),exif_slot=hex(word(EXIF_SLOT)))
         if base:
-            row.update(wrappers=[hex(base+s[f'z7_trig_wrap{i}']|1) for i in range(3)],start_handler=hex(base+s['z7_sound_start']|1),exif_getter=hex(base+s['z7_exif_get']|1),
+            row.update(wrappers=[hex(base+s[f'z7_trig_wrap{i}']|1) for i in range(3)],start_handler=hex(base+s['z7_sound_start']|1),exif_getter=hex(base+s['z7_exif_get']|1) if 'z7_exif_get' in s else None,
                        installed=word(base+s['z7_sound_installed']),playback=word(base+s['z7_sound_playback']),
-                       boot_queued=word(base+s['z7_sound_boot_queued']),live=parse(camera.remote.memory(base+s['z7_trig_live'],SIZE)))
+                       boot_queued=word(base+s['z7_sound_boot_queued']) if 'z7_sound_boot_queued' in s else 0,live=parse(camera.remote.memory(base+s['z7_trig_live'],SIZE)))
         row['log_writes']=len(fixture.files)
         result['samples'].append(row);save();return row
     def stop():
@@ -71,22 +74,34 @@ def main():
             base=int(first['module_base'],16)
             check('af-trial-update-hook-registered',word(base+meta['symbols']['z7_field_af_registered'])==1)
         check('nothing-queued-at-boot',first['boot_queued']==0 and first['playback']==0 and first['live']['ticks']<8)
-        assert camera.remote.command(f'Z1,{FLASH_STORE:x},2')=='OK'
-        timer=threading.Timer(150.0,camera.remote.request_fixture_stop);timer.daemon=True
-        camera.remote.fixture_stop_requested=False
-        camera.remote.send('c');camera.running=True;timer.start()
-        camera.receive_stop();timer.cancel();camera.running=False
-        regs=camera.remote.registers();pc=int(regs['r15'],16)
-        result['exception']=decode_exception(camera.remote.memory(int(regs['r13'],16),0x300),int(regs['r13'],16)) if pc==FLASH_STORE else None
-        camera.remote.command(f'z1,{FLASH_STORE:x},2')
-        later=sample('after-preview')
-        check('preview-queued-by-worker-on-tick-8',later['live']['ticks']>=8 and later['playback']==1 and later['boot_queued'] in (0,1))
-        check('preview-reached-known-emulator-codec-abort',bool(result['exception']) and result['exception']['faulting_pc']=='0x100cbb3e')
-        check('wrappers-still-installed',later['slots']==later['wrappers'])
-        if fixture.files:
-            log=parse(fixture.files[-1]);result['last_log']=log
-            check('log-written-with-sound-state',log['installed_mask']==7 and log['sound'] and log['sound']['wav_loaded'] and log['sound']['installed'])
-        result['log_write_completed']=bool(fixture.files)
+        if capture:
+            timer=threading.Timer(60.0,camera.remote.request_fixture_stop);timer.daemon=True
+            camera.remote.fixture_stop_requested=False
+            camera.remote.send('c');camera.running=True;timer.start()
+            camera.receive_stop();timer.cancel();camera.running=False
+            later=sample('after-60s')
+            check('no-sound-without-a-photo',later['playback']==0 and word(int(later['module_base'],16)+meta['symbols']['z7_capture_queued'])==0)
+            check('wrappers-still-installed',later['slots']==later['wrappers'] and later['sound_slot']==later['start_handler'])
+            check('log-written-with-capture-flag',bool(fixture.files) and parse(fixture.files[-1])['sound']['preview'].startswith('none') and
+                  parse(fixture.files[-1])['extra']['trigger_seen']==0)
+            result['log_write_completed']=bool(fixture.files)
+        else:
+            assert camera.remote.command(f'Z1,{FLASH_STORE:x},2')=='OK'
+            timer=threading.Timer(150.0,camera.remote.request_fixture_stop);timer.daemon=True
+            camera.remote.fixture_stop_requested=False
+            camera.remote.send('c');camera.running=True;timer.start()
+            camera.receive_stop();timer.cancel();camera.running=False
+            regs=camera.remote.registers();pc=int(regs['r15'],16)
+            result['exception']=decode_exception(camera.remote.memory(int(regs['r13'],16),0x300),int(regs['r13'],16)) if pc==FLASH_STORE else None
+            camera.remote.command(f'z1,{FLASH_STORE:x},2')
+            later=sample('after-preview')
+            check('preview-queued-by-worker-on-tick-8',later['live']['ticks']>=8 and later['playback']==1 and later['boot_queued'] in (0,1))
+            check('preview-reached-known-emulator-codec-abort',bool(result['exception']) and result['exception']['faulting_pc']=='0x100cbb3e')
+            check('wrappers-still-installed',later['slots']==later['wrappers'])
+            if fixture.files:
+                log=parse(fixture.files[-1]);result['last_log']=log
+                check('log-written-with-sound-state',log['installed_mask']==7 and log['sound'] and log['sound']['wav_loaded'] and log['sound']['installed'])
+            result['log_write_completed']=bool(fixture.files)
     finally:
         log=getattr(camera,'live_log',None)
         try:

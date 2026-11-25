@@ -29,9 +29,12 @@ def parse(blob):
                    installed=bool(head[13]>>8&0xff),wav_loaded=bool(head[13]>>16&1),
                    starts=head[14]&0xffff,rejects=head[14]>>16,finished=head[15]&0xffff,native_passthrough=head[15]>>16,
                    exif_orientation_installed=bool(head[13]>>25&1))
+        if head[13]>>26&1:sound['preview']='none (capture-trigger test, no boot chime)'
     extra=None
     if not v1:
         extra=dict(stamp=head[16],ring_dropped=head[17],capped=head[18],exif_writes=head[19],exif_inverted=head[20],playback_reports=head[21])
+        if head[13]>>26&1:  # capture-trigger test module: trigger counters
+            extra.update(trigger_seen=head[22],trigger_silent=head[23],trigger_queued=head[24],trigger_busy=head[25])
     counts_at=64 if v1 else 128;ring_at=counts_at+SLOTS*EVENTS*8
     counts=[]
     for s_ in range(SLOTS):
