@@ -93,10 +93,25 @@ stay outside the Z7's group, as found earlier, and the Z7 menu lists no custom w
 the recorded walks, including every screenshot hash. Manual focus, the
 `0x56C`/`0x579` selector rows, the setter path and movie-mode AF are still open.
 
+## Setter path (November 25, 2026)
+
+Nikon's property setter `0x104065B0` (→ `0x101D61EE`) takes a lock, stores the
+value, and sends change notifications. In assisted QEMU, calling it in the paused
+GUI task with `0x568` = 3, 2, 5 and then 4 returned success each time and stored
+each value, including Dynamic-area while in AF-S and the nonexistent 5. Opening
+Nikon's AF-area menu afterwards showed Wide-area AF (L) selected, so menu state
+follows the setter. Because the setter validates nothing,
+`z7-native-modules/plugins/af_area_native.h` enforces the menu's rules first:
+known values only, Pinpoint only in AF-S, Dynamic-area only in AF-C, nothing in
+any focus mode not yet measured (including manual focus), no write when the mode
+is already selected, and a readback after each write.
+`tools/audit_z7_af_area_apply.py` (22 checks) runs it with Nikon's real getter
+and a recorded setter, and re-checks the QEMU setter run.
+
 ## Required remaining work
 
-Native AF-area values are now measured (above). Identify the setter path,
-remaining availability rules, five physical button
+Native AF-area values and the setter path are now measured (above). Identify
+the remaining availability rules (manual focus, movie mode), five physical button
 events and native assignments through the original menus and input paths. Then
 connect GUI-side writes with readback and exclusion rules for menus, playback,
 information display, magnified view, movie mode, LCD and EVF. The existing

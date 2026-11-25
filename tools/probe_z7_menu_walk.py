@@ -3,8 +3,11 @@
 Boots the stock-equivalent host with the install-only sound module and no WAV (it
 installs nothing), presses an explicit key sequence through the original key
 event path, saves a screenshot after each key, and records which words changed
-in a RAM window between the first and last frame. Read-only observation: no
-guest memory writes, no hooks, no camera.
+in a RAM window between the first and last frame. Without --set it is read-only
+observation. --set KEY=VALUE calls Nikon's own property setter (0x104065B0) in
+the paused GUI task before the key walk, recording its return and the stored
+word; that is a deliberate guest-state change, in the isolated emulator only.
+No hooks, no camera.
 
 Keys: right left up down menu play delete i ok disp.
 """
@@ -14,6 +17,7 @@ from build_z7_module_host import ROOT,validate_candidate
 from probe_z7_module_host import HostCamera
 sys.path.insert(0,str(ROOT/'z7-qemu/tools'))
 import interactive as ui
+from probe import call_fixture
 
 CHECKPOINT=0x100531bc
 
@@ -25,6 +29,8 @@ def main():
     p.add_argument('--window',default='a24e0000:a24f0000',help='RAM window start:end (hex) to diff')
     p.add_argument('--settle',type=float,default=0.6)
     p.add_argument('--initial-wait',type=float,default=1.0)
+    p.add_argument('--set',action='append',default=[],help='KEY=VALUE (hex or decimal) through the native property setter')
+    p.add_argument('--read',action='append',default=[],help='KEY=ADDRESS to record before/after each set')
     a=p.parse_args();out=a.output.resolve()
     if not out.is_relative_to(ROOT/'.private') or out.exists():p.error('Choose a new private directory')
     out.mkdir(parents=True)
@@ -59,7 +65,19 @@ def main():
     watchdog=threading.Timer(900,stop);watchdog.daemon=True;watchdog.start()
     try:
         camera.boot()
-        advance(a.initial_wait);frame('00-start');before=snapshot()
+        advance(a.initial_wait)
+        reads={int(k,0):int(v,0) for k,v in (x.split('=') for x in a.read)}
+        def words():return {hex(k):hex(int.from_bytes(camera.remote.memory(v,4),'little')) for k,v in reads.items()}
+        result['sets']=[]
+        for item in a.set:
+            key,value=(int(x,0) for x in item.split('='))
+            prior=words()
+            if camera.running:camera.pause()
+            r=call_fixture(camera.remote,camera.run_to(CHECKPOINT),0x104065b1,bytes(8),[key,value])
+            advance(a.settle)
+            result['sets'].append(dict(key=hex(key),value=value,return_r0=r['return_r0'],before=prior,after=words()));save()
+        result['guest_writes']=bool(a.set)
+        frame('00-start');before=snapshot()
         def diff(x,y):
             return [dict(address=hex(lo+o),before=hex(struct.unpack_from('<I',x,o)[0]),after=hex(struct.unpack_from('<I',y,o)[0]))
                     for o in range(0,len(x),4) if x[o:o+4]!=y[o:o+4]]

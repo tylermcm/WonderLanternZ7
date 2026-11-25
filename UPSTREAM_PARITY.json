@@ -126,7 +126,7 @@
       "name": "AF-area shortcuts",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/af-area-shortcut.md",
       "status": "research",
-      "remaining": "Policy compiled (5 buttons/13 targets); photo AF-area property 0x568 and values (0 pinpoint,1 single,2 dynamic,3 wide-S,4 wide-L,6 auto) and focus mode 0x567 measured in the native menu (24 checks). Setter path, raw five-button input, f2 UI, persistence and hardware remain.",
+      "remaining": "Policy compiled (5 buttons/13 targets); photo AF-area property 0x568 and values (0 pinpoint,1 single,2 dynamic,3 wide-S,4 wide-L,6 auto) and focus mode 0x567 measured in the native menu (24 checks). Native setter verified in QEMU (menu follows it; it validates nothing, so af_area_native.h enforces the menu rules, 22 checks). Raw five-button input, f2 UI, persistence and hardware remain.",
       "local_review": "AF_SHORTCUT_RESEARCH.md",
       "hardware_parity_verified": false
     },

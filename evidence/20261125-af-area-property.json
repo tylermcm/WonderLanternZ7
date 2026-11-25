@@ -22,5 +22,18 @@
   "method": "read-only assisted-QEMU walks of the native Photo shooting menu plus native getter execution",
   "matches_z7ii_area_numbers": true,
   "camera_access": false,
-  "review": "AF_SHORTCUT_RESEARCH.md"
+  "review": "AF_SHORTCUT_RESEARCH.md",
+  "setter": {
+    "native": "0x104065B0 -> 0x101D61EE",
+    "validates_values": false,
+    "qemu_values_accepted": [
+      3,
+      2,
+      5,
+      4
+    ],
+    "menu_reflects_setter": true,
+    "component": "z7-native-modules/plugins/af_area_native.h",
+    "component_checks": 22
+  }
 }
