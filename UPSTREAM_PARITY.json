@@ -110,7 +110,7 @@
       "name": "Silent shutter sound",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/shutter-sound.md",
       "status": "research",
-      "remaining": "SD-module route: sound-service bindings mapped (31 checks); playback module verified offline (80 checks) and in QEMU up to the codec, which the emulator does not model; camera smoke test prepared, awaiting staging approval. Silent trigger-probe module (3 capture callbacks, card log) and a provisional still-file trigger policy built and verified offline. Both camera tests combined into one field-test module (chime + trigger log; v4 adds EXIF, AF trial and a read-only playback observer), verified offline and in QEMU. Camera playback result, per-photo trigger measurement, trigger wiring and menu remain. October firmware-patch build stays on hold.",
+      "remaining": "SD-module playback works on the camera (Nov 25 field test: test chime played). Per-photo trigger unsolved: still-file callback 0xA18D2750 never fired for 7 JPEG photos and no other probed event counted 7. Trigger, menu and release integration remain. October firmware-patch build stays on hold.",
       "local_review": "SHUTTER_SOUND_SD_PORT.md",
       "hardware_parity_verified": false
     },
@@ -128,7 +128,7 @@
       "name": "AF-area shortcuts",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/af-area-shortcut.md",
       "status": "research",
-      "remaining": "Policy compiled (5 buttons/13 targets); photo AF-area property 0x568 and values (0 pinpoint,1 single,2 dynamic,3 wide-S,4 wide-L,6 auto) and focus mode 0x567 measured in the native menu (24 checks). Native setter verified in QEMU (menu follows it; it validates nothing, so af_area_native.h enforces the menu rules, 22 checks). Button input: all five buttons verified via Nikon switch words with a polling runtime (34 checks), end-to-end AF-area change shown in QEMU. f2 assignment properties (Fn1 0x1048, Fn2 0x104C, AF-ON 0x1050, sub-selector 0x1054, movie 0x1057; None=0) measured and read (30 checks). f2 UI, persistence and hardware remain.",
+      "remaining": "Policy compiled (5 buttons/13 targets); photo AF-area property 0x568 and values (0 pinpoint,1 single,2 dynamic,3 wide-S,4 wide-L,6 auto) and focus mode 0x567 measured in the native menu (24 checks). Native setter verified in QEMU (menu follows it; it validates nothing, so af_area_native.h enforces the menu rules, 22 checks). Button input: all five buttons verified via Nikon switch words with a polling runtime (34 checks), end-to-end AF-area change shown in QEMU. f2 assignment properties (Fn1 0x1048, Fn2 0x104C, AF-ON 0x1050, sub-selector 0x1054, movie 0x1057; None=0) measured and read (30 checks). f2 UI, persistence and hardware remain. Fixed trial (movie button to Wide-area L) switched AF-area on the camera in the Nov 25 field test; target menu, saved assignments and release integration remain.",
       "local_review": "AF_SHORTCUT_RESEARCH.md",
       "hardware_parity_verified": false
     },
@@ -218,7 +218,7 @@
       "name": "Upside-down photo EXIF orientation",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/2b596ab/docs/inverted-playback.md",
       "status": "research",
-      "remaining": "Original-Z7 IFD0 table, Orientation writer and RAM descriptor 0xA18D3410 bound; pose-3 writer verified offline (12 checks) and installed in the field-test module. Camera must confirm the capture pose is 3 for upside-down photos. Playback chain traced (42 checks): turn lookup 0x103D4C10 and ROM decision table 0x11545DE4 have no half turn; the display request (0xA289A264, message 0x04160011) accepts a half turn. A read-only observer in field test v4 confirms the request on the camera; the playback module is not built.",
+      "remaining": "EXIF Orientation 3 for upside-down photos works on the camera (Nov 25 field test, JPEG); not yet in the LCD release module; NEF/thumbnail unchecked. Playback chain traced (42 checks); display request 0xA289A264 accepts a half turn; playback module not built (observer data lost to a log overflow).",
       "local_review": "EXIF_ORIENTATION_RESEARCH.md",
       "hardware_parity_verified": false
     }

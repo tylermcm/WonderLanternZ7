@@ -1,6 +1,24 @@
 # Shutter-sound field test: one card swap, one session
 
-Status: **prepared, not staged.** This replaces running the
+Status: **ran on the camera, November 25, 2026** (v4 `b76d6c4b`, staged with the
+owner's approval, LCD module restored afterwards). Results are in the next
+section and [the evidence file](evidence/20261125-field-test-hardware-result.json).
+
+## Camera result (November 25, 2026)
+
+| Question | Result |
+| --- | --- |
+| SD-module sound | **Works.** The chime played 7–10 s after power-on; the log shows it queued, started once and finished. |
+| Upside-down EXIF | **Works.** The upside-down photo was saved with Orientation 3 (the vertical one with 8, the others with 1), so the Z7 does record pose 3. |
+| AF-area shortcut trial | **Works.** The movie button switched AF-area to Wide-area AF (L). |
+| Per-photo trigger | **Unsolved.** The still-file callback `0xA18D2750` never fired for 7 JPEG Fine* photos, so the provisional still-file trigger would not work. No event on the other two callbacks counted 7. |
+| Playback rotation values | **No data.** Live-view events on the capture callbacks (about 180 per worker tick) overwrote the 128-entry log ring, taking the EXIF, AF and playback entries with them. The owner saw the vertical photo upright and the upside-down photo upside down, as expected. |
+| Stability | Nothing unusual. |
+
+The ring overflow is a probe design fault: high-rate callbacks should be
+counted, not logged one by one. The next probe keeps them out of the ring.
+
+This replaces running the
 [smoke test](SHUTTER_SOUND_CAMERA_SMOKE_TEST.md) and the
 [trigger probe](SHUTTER_TRIGGER_PROBE_TEST.md) as two separate sessions. No firmware
 update; the installed module host stays as is.

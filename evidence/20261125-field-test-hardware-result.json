@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "shutter-sound-field-test-v4-hardware-result",
+  "module_sha256": "b76d6c4ba66b5c578e0c35769cabd6adcde7754ce04ebb064a7d7408b11ec9ce",
+  "clip_sha256": "469f08a622274e2281cca78eb89c77c251fa937dbbaea5acaa8279ccc5ff52f2",
+  "staged_with_owner_approval": true,
+  "restored": true,
+  "restored_module_sha256": "5e62ce53def1a8de4cf789bb4f3b03fb51791943501a11da6ca4be44b4e77349",
+  "firmware_flashed": false,
+  "image_quality": "JPEG Fine*",
+  "photos": 7,
+  "owner_report": {
+    "chime_heard": true,
+    "chime_delay_seconds": "7-10",
+    "movie_button_switched_af_area": true,
+    "playback_vertical_upright": true,
+    "playback_upside_down_shown_upside_down": true,
+    "anything_unusual": false
+  },
+  "log": {
+    "ticks": 93,
+    "writes": 31,
+    "sound": {
+      "preview": "queued",
+      "starts": 1,
+      "rejects": 0,
+      "finished": 1,
+      "native_passthrough": 0
+    },
+    "exif_component_installed": true,
+    "trigger_wrappers_installed": 3,
+    "callback_calls": {
+      "0xA18D1BD8": 2763,
+      "0xA18D1BDC": 13741,
+      "0xA18D2750": 0
+    },
+    "callback_counts": {
+      "0xA18D1BD8": {
+        "0x04190008": 2760,
+        "0x0419000C": 2,
+        "0x04190007": 1
+      },
+      "0xA18D1BDC": {
+        "0x04190001": 2758,
+        "0x04190006": 2735,
+        "0x04190010": 2757,
+        "0x04190008": 2733,
+        "0x04190009": 2757,
+        "0x04190002": 1
+      }
+    },
+    "ring_events": 16506,
+    "ring_lost": 16378
+  },
+  "exif_orientation_read_from_photos": {
+    "upside_down": 3,
+    "vertical_grip_up": 8,
+    "landscape": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "verdicts": {
+    "sd_module_sound": "works on the camera (played to the end, owner heard it)",
+    "exif_orientation_3": "works on the camera: the upside-down photo was saved with Orientation 3, so the Z7 records pose 3",
+    "af_area_shortcut_trial": "works on the camera (owner observed the switch; its log entry was overwritten)",
+    "photo_trigger": "unsolved: the still-file callback 0xA18D2750 never fired for 7 JPEG photos, and no event on the other two callbacks counts 7; the provisional still-file trigger would not work",
+    "playback_observer": "no data: live-view callback events (about 180 per tick) overwrote the 128-entry ring, including the EXIF, AF and playback entries"
+  },
+  "lesson": "High-rate callbacks must be counted, not ring-logged; the next probe keeps per-feature logs separate.",
+  "camera_photos_published": false
+}

@@ -1,7 +1,8 @@
 # Original Z7 development update — November 25, 2026
 
 This update covers new SD-module features built and checked **offline and in an
-emulator** on November 24–25. **None of them has run on a camera yet.** The
+emulator** on November 24–25, and the first camera field test of them (end of
+this page). The
 hardware-verified scope is unchanged from the
 [November 23 update](DEVELOPMENT_UPDATE_2026-11-23.md). Read
 [RISK_NOTICE.md](RISK_NOTICE.md) before trying any build.
@@ -42,3 +43,17 @@ runs, including screenshot hashes.
 Feature designs follow JKWTCN's MIT
 [z7ii-extensions](https://github.com/JKWTCN/z7ii-extensions); original-Z7
 bindings are independent work. See [CREDITS.md](CREDITS.md).
+
+## Camera field test result (November 25, evening)
+
+The owner ran field test v4 on the camera ([results](SHUTTER_SOUND_FIELD_TEST.md#camera-result-november-25-2026)):
+
+- **SD-module sound works**: the test chime played from the card.
+- **Upside-down EXIF works**: the upside-down photo was saved with Orientation 3.
+- **AF-area shortcut trial works**: the movie button switched to Wide-area AF (L).
+- **Photo trigger unsolved**: the still-file callback never fired, so the
+  provisional trigger is ruled out.
+- **Playback observer: no data**, lost to a log overflow from live-view events.
+  In-camera upside-down playback is still not built.
+
+Nothing unusual happened; the LCD module was restored afterwards.

@@ -1,8 +1,9 @@
 # Silent shutter sound as an SD module — original-Z7 binding map
 
-Status: **playback module verified offline; camera smoke test prepared, November 25,
-2026.** It has not run on a camera, has no photo trigger and no menu yet. Nothing is
-staged.
+Status: **playback works on the camera (November 25, 2026 field test); no photo
+trigger and no menu yet.** The test chime played from the SD module. The
+provisional still-file trigger is ruled out: its callback never fired for 7
+photos ([field result](SHUTTER_SOUND_FIELD_TEST.md#camera-result-november-25-2026)).
 
 ## Why a new approach
 

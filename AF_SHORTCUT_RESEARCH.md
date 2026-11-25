@@ -6,7 +6,9 @@ five independently assigned photo buttons, press once to select and retain an
 area, native Custom controls integration and saved assignments. This independent
 MIT port credits its press-edge capture and GUI-task deferral design to JKWTCN.
 It is currently a policy component and binding investigation, **not an integrated
-camera feature**. No input callback or AF property writer has been installed.
+camera feature**. In the November 25 field test a fixed trial (movie button to
+Wide-area AF (L), photo mode) switched AF-area on the camera; there is still no
+target menu or saved assignment.
 
 ## Implemented policy component
 

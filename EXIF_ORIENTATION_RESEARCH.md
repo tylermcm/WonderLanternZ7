@@ -1,8 +1,10 @@
 # Upside-down photo EXIF orientation — original-Z7 bindings
 
-Status: **built and verified offline, November 25, 2026.** Included in the
-[shutter-sound field test](SHUTTER_SOUND_FIELD_TEST.md) so one camera session
-measures it. Not yet in the LCD release module.
+Status: **works on the camera, November 25, 2026.** In the
+[field test](SHUTTER_SOUND_FIELD_TEST.md#camera-result-november-25-2026) the
+upside-down photo was saved with EXIF Orientation 3 and a vertical photo with 8,
+so the Z7 records pose 3 and no roll-angle fallback is needed for that case.
+Not yet in the LCD release module. Thumbnail IFD and NEF were not checked.
 
 ## Problem
 
