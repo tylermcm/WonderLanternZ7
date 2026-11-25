@@ -18,6 +18,15 @@ static _Alignas(64) uint8_t movie_task_copy[MOVIE_TASK_SIZE+2+sizeof(movie_task_
 static _Alignas(64) uint8_t movie_close_copy[MOVIE_CLOSE_SIZE+2+sizeof(movie_close_calls)*2+16];
 static _Alignas(64) uint8_t movie_header_copy[MOVIE_HEADER_SIZE+sizeof(movie_header_calls)*2+16];
 volatile uint32_t z7_movie_prepared,z7_movie_installed;
+static uint32_t movie_installable(void)
+{
+    /* Necessary idle guards only. These do not prove task quiescence or make
+     * publication a camera-cleared action; this operation is offline diagnostic.
+     */
+    return !z7_movie_installed && MW(0xa1815030u)==MOVIE_CONTROL &&
+        MW(MOVIE_SLOT)==(MOVIE_TASK_NATIVE|1) && !MW(0xa181503cu) &&
+        !MW(MOVIE_CONTROL) && !MW(MOVIE_CONTROL+0x50) && !MW(MOVIE_CONTROL+0x64);
+}
 static uint32_t movie_task_address(void) { return (uint32_t)(uintptr_t)movie_task_copy+2; }
 static uint32_t movie_close_address(void) { return (uint32_t)(uintptr_t)movie_close_copy+2; }
 static uint32_t movie_header_address(void) { return (uint32_t)(uintptr_t)movie_header_copy; }
@@ -89,7 +98,23 @@ static uint32_t movie_prepare(void)
     movie_write_call(header+0x1c,stub,(uint32_t)(uintptr_t)movie_track);
     z7_movie_prepared=1;return 1;
 }
-/* Explicit diagnostic operations. No automatic native callback publication. */
+static uint32_t movie_install(void)
+{
+    if (!movie_installable() || !movie_prepare()) return 0;
+    MF(0x101e9f39u,void,void *,uint32_t)(movie_task_copy,sizeof(movie_task_copy));
+    MF(0x101e9f39u,void,void *,uint32_t)(movie_close_copy,sizeof(movie_close_copy));
+    MF(0x101e9f39u,void,void *,uint32_t)(movie_header_copy,sizeof(movie_header_copy));
+    uint32_t zero=0;
+    __asm__ volatile("dsb sy\n mcr p15,0,%0,c7,c5,0\n mcr p15,0,%0,c7,c5,6\n dsb sy\n isb" :: "r"(zero) : "memory");
+    if (!movie_installable()) return 0;
+    for (uint32_t i=0;i<11;++i) z7_movie_pose_close(movie_poses,11,i);
+    __asm__ volatile("dmb sy" ::: "memory");
+    MW(MOVIE_SLOT)=movie_task_address()|1;
+    z7_movie_installed=1;return 1;
+}
+/* Explicit offline diagnostics. Initialization never publishes a callback.
+ * Operation7 requires its own offline fixture, never arbitrary camera calls.
+ */
 __attribute__((noinline)) uint32_t z7_movie_rotation_operation(uint32_t op,uint32_t arg)
 {
     switch(op) {
@@ -100,6 +125,7 @@ __attribute__((noinline)) uint32_t z7_movie_rotation_operation(uint32_t op,uint3
     case 4:return movie_task_address();
     case 5:return movie_close_address();
     case 6:return movie_header_address();
+    case 7:return movie_install();
     default:return 0;
     }
 }

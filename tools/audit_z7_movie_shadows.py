@@ -1,13 +1,14 @@
 """Original-Z7 native shadow preparation and per-file wrappers (MIT).
 
-Compiled copies/relocation/wrappers execute. Native open/split/track completion,
-pose and file contexts are supplied. No callback installed, complete native mux
-task or physical file/recording behavior proved.
+Compiled copies/relocation/wrappers and close/header flow execute. Native file
+services, track construction, pose and contexts are supplied. Explicit offline
+publication supplies cache clean services; physical cache/task quiescence,
+complete native mux task and physical recording behavior remain unproved.
 """
 import argparse,hashlib,json,struct
 from pathlib import Path
 from capstone import Cs,CS_ARCH_ARM,CS_MODE_THUMB
-from unicorn.arm_const import UC_ARM_REG_R0
+from unicorn.arm_const import UC_ARM_REG_R0,UC_ARM_REG_R1,UC_ARM_REG_R2
 from audit_z7_module_host import HostFixture
 from audit_splash_image import MEM
 from build_z7_module_host import STATE
@@ -21,10 +22,22 @@ class MovieFixture(HostFixture):
         self.write(0xa1815030,CONTROL);self.write(SLOT,0x1027e797)
         self.file=1;self.pose=1;self.reply=0;self.context=MEM+0x10000;self.track_result=0
         self.opens=self.splits=self.tracks=self.pose_reads=0
+        self.close_running=False;self.file_services=[]
+        self.cache_cleans=[];self.busy_after_clean=False
     def write(self,a,v):self.u.mem_write(a,struct.pack('<I',v))
     def read(self,a):return int.from_bytes(self.u.mem_read(a,4),'little')
     def hook(self,u,a,size,context):
-        if a==0x1027db80:self.ret(1)
+        if a==0x101e9f38 and getattr(self,'record_code_cache',False):
+            self.cache_cleans.append((u.reg_read(UC_ARM_REG_R0),u.reg_read(UC_ARM_REG_R1)))
+            if self.busy_after_clean:self.write(0xa181503c,1)
+            self.ret(0)
+        elif self.close_running and a in (0x10170944,0x1017093e):self.ret(1)
+        elif self.close_running and a in (0x102c3c9e,0x102c6064,0x102c3f5a,0x102c3f84,0x102c4f7a,0x102c3cb6,0x102c3b62,0x102aa53c,0x102aa35c,0x102c5f20,0x102a8a9e,0x102a819a,0x102a80f4):
+            self.file_services.append((a,u.reg_read(UC_ARM_REG_R0),u.reg_read(UC_ARM_REG_R1)))
+            self.ret(1 if a in (0x102c3cb6,0x102c3b62) else 0)
+        elif self.close_running and a==0x1027dbb8:
+            self.write(u.reg_read(UC_ARM_REG_R1),0);self.write(u.reg_read(UC_ARM_REG_R2),0);self.ret(1)
+        elif a==0x1027db80:self.ret(1)
         elif a==0x1027dcae:self.ret(0)
         elif a in (0x1027e50a,0x1027de96):
             if a==0x1027e50a:self.opens+=1;offset=0x160
@@ -97,6 +110,21 @@ def main():
     check('relocated-native-task-split-event-runs-owned-wrapper',f.splits==before+1)
     op(3,f.context)
     check('task-split-event-latches-pose',bytes(f.u.mem_read(f.context+0x109,36))==struct.pack('>9i',0,65536,0,-65536,0,0,0,0,1<<30))
+    # Actual copied close and header instructions, with only external file and
+    # track builders supplied. The task's close event reaches both shadows.
+    f.context=MEM+0x34000;f.file=1;f.pose=1;f.reply=0;op(1)
+    f.u.mem_write(f.context,bytes(0x800));f.write(f.context+0x464,1)
+    record=CONTROL+0x3f0+0x88
+    f.write(CONTROL,1);f.write(CONTROL+8,10);f.write(CONTROL+0x64,1)
+    f.u.mem_write(CONTROL+0x14c,struct.pack('<5I',1,0,0,0,0))
+    f.write(record,7);f.write(record+4,8);f.write(record+0x2c,f.context)
+    f.write(0xa181503c,2);f.close_running=True;before=f.tracks
+    f.call(op(4),32)
+    f.close_running=False
+    check('task-close-runs-copied-header-and-track-wrapper',f.tracks==before+1)
+    check('task-close-uses-open-latched-pose',bytes(f.u.mem_read(f.context+0x109,36))==struct.pack('>9i',0,-65536,0,65536,0,0,0,0,1<<30))
+    check('native-close-acknowledges-and-decrements-file-count',f.read(CONTROL)==0 and f.read(CONTROL+0x370+8+4)==0)
+    check('native-close-retains-file-service-order',[e[0] for e in f.file_services]==[0x102c3c9e,0x102c6064,0x102c3f5a,0x102c3f84,0x102c4f7a,0x102c3c9e,0x102aa53c,0x102aa35c,0x102c5f20,0x102a8a9e,0x102a819a,0x102a80f4,0x102c3cb6,0x102c3b62])
     f.file=1;f.context=MEM+0x30000;f.pose=1;op(1)
     f.context=MEM+0x31000;f.pose=2;check('split-returns-native-file',op(2)==1)
     op(3,MEM+0x30000);check('split-invalidates-old-context-pose',bytes(f.u.mem_read(MEM+0x30109,36))==IDENTITY)
@@ -113,8 +141,24 @@ def main():
     f.u.mem_write(0x1027e796,original)
     check('exact-native-fingerprint-prepares-again',op(0)==1)
     f.write(SLOT,0x1027e799);check('foreign-callback-rejects-preparation',op(0)==0)
+    f.write(SLOT,0x1027e797);f.record_code_cache=True
+    for location in (0xa181503c,CONTROL,CONTROL+0x50,CONTROL+0x64):
+        for address in (0xa181503c,CONTROL,CONTROL+0x50,CONTROL+0x64):f.write(address,0)
+        f.write(location,1);old=list(f.cache_cleans)
+        check('busy-publication-rejected-'+hex(location),op(7)==0 and f.read(SLOT)==0x1027e797 and f.cache_cleans==old)
+    for address in (0xa181503c,CONTROL,CONTROL+0x50,CONTROL+0x64):f.write(address,0)
+    f.busy_after_clean=True
+    check('context-change-during-cache-clean-aborts-publication',op(7)==0 and f.read(SLOT)==0x1027e797)
+    f.busy_after_clean=False;f.write(0xa181503c,0);f.cache_cleans.clear()
+    check('explicit-offline-publication-installs-owned-task',op(7)==1 and f.read(SLOT)==(op(4)|1) and f.read(base+s['z7_movie_installed'])==1)
+    check('all-three-code-buffers-cleaned-before-publication',len(f.cache_cleans)==3 and all(n>0 for _,n in f.cache_cleans))
+    check('duplicate-publication-is-rejected',op(7)==0)
+    before=f.opens;f.file=1;f.reply=0
+    f.call(f.read(SLOT),1)
+    check('published-callback-runs-original-task-open-path',f.opens==before+1)
     result=dict(passed=True,count=len(checks),checks=checks,module_sha256=m['module_sha256'],
-        prepare_only=True,callback_installed=False,camera_access=False,physical_movie=False,
+        initialization_prepare_only=True,callback_installed_in_explicit_offline_fixture=True,
+        cache_clean_services_supplied=True,physical_task_quiescence_verified=False,camera_access=False,physical_movie=False,
         native_open_split_track_results_supplied=True,complete_native_task_verified=False,scope=__doc__)
     out.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(dict(passed=True,checks=len(checks))))

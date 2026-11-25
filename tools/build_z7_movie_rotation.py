@@ -23,6 +23,7 @@ def main():
     m.update(module_sha256=hashlib.sha256(packet).hexdigest(),file_bytes=len(packet),
         reproducible=True,source_inputs_sha256=inputs,kind='original-Z7-movie-shadow-prepare-only',
         do_not_stage=True,hardware_test_authorized=False,callback_installed=False,
+        explicit_offline_publication_operation=7,physical_task_quiescence_verified=False,
         native_open_split_track_services_verified=False,complete_native_task_verified=False)
     out.mkdir(parents=True);(out/'Z7APP.BIN').write_bytes(packet)
     (out/'module.json').write_text(json.dumps(m,indent=2)+'\n',encoding='utf-8',newline='\n')
