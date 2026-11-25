@@ -1,22 +1,27 @@
 """Decode A:\\Z7TRIG.DAT written by the shutter-sound trigger probe module (MIT).
 
 Prints per-callback event counts and the time-ordered ring (worker ticks), with
-Silent photography (property 0x576) changes. Read-only; pass a copied file.
+Silent photography (property 0x576) changes. Reads v1 logs (128-entry wrapping
+ring) and v2 logs (512-entry non-wrapping ring, capture events capped at 24 per
+kind, display-update stamps). Read-only; pass a copied file.
 """
 import argparse,json,struct
 from pathlib import Path
 
-MAGIC,VERSION,SLOTS,EVENTS,RING=0x47495254,1,3,24,128
-SIZE=64+SLOTS*EVENTS*8+RING*16
+MAGIC,VERSION,SLOTS,EVENTS,RING=0x47495254,2,3,24,512
+SIZE=128+SLOTS*EVENTS*8+RING*20
+V1_RING=128;V1_SIZE=64+SLOTS*EVENTS*8+V1_RING*16
+PER_EVENT=24
 SLOT_NAMES=('capture-controller-0xA18D1BD8','capture-consumer-0xA18D1BDC','still-file-0xA18D2750','silent-photography-0x576',
             'exif-orientation-pose','af-shortcut','playback-rotation')
 
 
 def parse(blob):
-    if len(blob)!=SIZE:raise ValueError(f'expected {SIZE} bytes, got {len(blob)}')
-    head=struct.unpack_from('<16I',blob,0)
+    v1=len(blob)==V1_SIZE
+    if len(blob) not in (SIZE,V1_SIZE):raise ValueError(f'expected {SIZE} or {V1_SIZE} bytes, got {len(blob)}')
+    head=struct.unpack_from('<32I' if not v1 else '<16I',blob,0)
     magic,version,size,sequence,ticks,mask,silent,dropped=head[:8]
-    if magic!=MAGIC or version!=VERSION or size!=SIZE:raise ValueError('not a Z7TRIG v1 log')
+    if magic!=MAGIC or version!=(1 if v1 else VERSION) or size!=len(blob):raise ValueError('not a Z7TRIG v1/v2 log')
     calls=list(head[8:11]);ring_next,writes=head[11],head[12]
     sound=None
     if head[13]>>24&1:  # field-test module: sound counters in reserved words
@@ -24,42 +29,61 @@ def parse(blob):
                    installed=bool(head[13]>>8&0xff),wav_loaded=bool(head[13]>>16&1),
                    starts=head[14]&0xffff,rejects=head[14]>>16,finished=head[15]&0xffff,native_passthrough=head[15]>>16,
                    exif_orientation_installed=bool(head[13]>>25&1))
+    extra=None
+    if not v1:
+        extra=dict(stamp=head[16],ring_dropped=head[17],capped=head[18],exif_writes=head[19],exif_inverted=head[20],playback_reports=head[21])
+    counts_at=64 if v1 else 128;ring_at=counts_at+SLOTS*EVENTS*8
     counts=[]
-    for s in range(SLOTS):
+    for s_ in range(SLOTS):
         row={}
         for i in range(EVENTS):
-            event,count=struct.unpack_from('<2I',blob,64+(s*EVENTS+i)*8)
+            event,count=struct.unpack_from('<2I',blob,counts_at+(s_*EVENTS+i)*8)
             if event or count:row[f'0x{event:08X}']=count
         counts.append(row)
-    entries=[struct.unpack_from('<4I',blob,64+SLOTS*EVENTS*8+16*i) for i in range(RING)]
-    first=max(0,ring_next-RING)
     ring=[]
-    for n in range(first,ring_next):
-        event,tick_slot,w0,w1=entries[n%RING]
-        ring.append(dict(index=n,tick=tick_slot>>8,slot=SLOT_NAMES[tick_slot&0xff] if (tick_slot&0xff)<len(SLOT_NAMES) else tick_slot&0xff,
+    if v1:
+        entries=[struct.unpack_from('<4I',blob,ring_at+16*i)+(0,) for i in range(V1_RING)]
+        first=max(0,ring_next-V1_RING);indices=range(first,ring_next)
+    else:
+        entries=[struct.unpack_from('<5I',blob,ring_at+20*i) for i in range(RING)]
+        first=0;indices=range(min(ring_next,RING))
+    for n in indices:
+        event,tick_slot,w0,w1,stamp=entries[n%len(entries)]
+        ring.append(dict(index=n,tick=tick_slot>>8,stamp=stamp,slot=SLOT_NAMES[tick_slot&0xff] if (tick_slot&0xff)<len(SLOT_NAMES) else tick_slot&0xff,
                          event=f'0x{event:08X}',word0=f'0x{w0:08X}',word1=f'0x{w1:08X}'))
-    return dict(sequence=sequence,writes=writes,ticks=ticks,installed_mask=mask,
+    return dict(version=1 if v1 else 2,sequence=sequence,writes=writes,ticks=ticks,installed_mask=mask,
                 installed=[SLOT_NAMES[i] for i in range(SLOTS) if mask>>i&1],silent_photography=silent,
                 dropped_event_kinds=dropped,calls=dict(zip(SLOT_NAMES,calls)),counts=dict(zip(SLOT_NAMES,counts)),
-                ring_total=ring_next,ring_lost=first,ring=ring,sound=sound)
+                ring_total=ring_next,ring_lost=first if v1 else max(0,ring_next-RING),ring=ring,sound=sound,extra=extra)
 
 
 def candidates(log,photos):
     """Rank (callback, event) pairs as trigger candidates for a session with a
-    known number of photos. A candidate's distinct packet records (kind bits
-    ignored, as the still-file policy does) should equal the photo count, and it
-    must not fire in ticks without a photo, which only the owner's notes can say."""
+    known number of photos. A candidate matches when its exact total count (v2
+    counts are never capped) or its distinct packet records (kind bits ignored,
+    as the still-file policy does) equal the photo count. When the log has EXIF
+    writer entries (one per saved photo), near_photos counts how many of the
+    candidate's logged stamps fall within WINDOW display updates before one."""
+    WINDOW=120
+    photo_stamps=[e['stamp'] for e in log['ring'] if e['slot']=='exif-orientation-pose' and e['stamp']]
     rows={}
     for e in log['ring']:
         if e['slot'] in ('silent-photography-0x576','exif-orientation-pose','af-shortcut','playback-rotation'):continue
-        k=(e['slot'],e['event']);r=rows.setdefault(k,dict(callback=e['slot'],event=e['event'],count=0,records=set(),ticks=[]))
-        r['count']+=1;r['records'].add(int(e['word0'],16)&0x7fffffe0);r['ticks'].append(e['tick'])
+        k=(e['slot'],e['event']);r=rows.setdefault(k,dict(callback=e['slot'],event=e['event'],count=0,records=set(),ticks=[],stamps=[]))
+        r['count']+=1;r['records'].add(int(e['word0'],16)&0x7fffffe0);r['ticks'].append(e['tick']);r['stamps'].append(e['stamp'])
+    for slot,row in log['counts'].items():
+        for event in row:
+            rows.setdefault((slot,event),dict(callback=slot,event=event,count=0,records=set(),ticks=[],stamps=[]))
     out=[]
-    for r in rows.values():
-        clusters=1+sum(1 for a,b in zip(r['ticks'],r['ticks'][1:]) if b-a>2)
-        out.append(dict(callback=r['callback'],event=r['event'],count=r['count'],distinct_records=len(r['records']-{0}),
-                        clusters=clusters,matches_photos=photos is not None and len(r['records']-{0})==photos))
-    return sorted(out,key=lambda r:(not r['matches_photos'],abs(r['distinct_records']-(photos or 0)),r['callback'],r['event']))
+    for (slot,event),r in rows.items():
+        total=log['counts'].get(slot,{}).get(event,r['count'])
+        records=len(r['records']-{0})
+        clusters=1+sum(1 for a,b in zip(r['ticks'],r['ticks'][1:]) if b-a>2) if r['ticks'] else 0
+        near=sum(1 for t in r['stamps'] if t and any(0<=p-t<=WINDOW for p in photo_stamps))
+        match=photos is not None and (total==photos or records==photos)
+        out.append(dict(callback=r['callback'],event=r['event'],count=r['count'],total=total,distinct_records=records,
+                        clusters=clusters,near_photos=near,matches_photos=match))
+    return sorted(out,key=lambda r:(not r['matches_photos'],abs(r['total']-(photos or 0)),r['callback'],r['event']))
 
 
 def main():
@@ -76,9 +100,10 @@ def main():
     if poses:print('exif poses written (3 = upside down):',poses)
     for name,row in r['counts'].items():
         print(f'{name}: {r["calls"][name]} calls',' '.join(f'{e}x{c}' for e,c in row.items()))
-    for e in r['ring']:print(f"t={e['tick']:5d} {e['slot']:<34} {e['event']} {e['word0']} {e['word1']}")
+    if r['extra']:print('v2:',', '.join(f'{k}={v}' for k,v in r['extra'].items()))
+    for e in r['ring']:print(f"t={e['tick']:5d} u={e['stamp']:7d} {e['slot']:<34} {e['event']} {e['word0']} {e['word1']}")
     for c in r.get('candidates',[]):
-        print(('MATCH ' if c['matches_photos'] else '      ')+f"{c['callback']:<34} {c['event']} count={c['count']} records={c['distinct_records']} clusters={c['clusters']}")
+        print(('MATCH ' if c['matches_photos'] else '      ')+f"{c['callback']:<34} {c['event']} total={c['total']} records={c['distinct_records']} near_photos={c['near_photos']}")
 
 
 if __name__=='__main__':main()

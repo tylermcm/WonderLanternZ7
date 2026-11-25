@@ -121,8 +121,10 @@ def main():
     check('event-table-overflow-counted-not-lost',len(log['counts']['capture-consumer-0xA18D1BDC'])==24 and log['dropped_event_kinds']==7)
     for k in range(200):fire(f,2,0x041e0002)
     tick(f,3);log=parse(f.log_files[LOG])
-    check('ring-keeps-latest-128',len(log['ring'])==128 and log['ring_lost']==log['ring_total']-128 and log['counts']['still-file-0xA18D2750']['0x041E0002']==201)
-    check('packet-outside-ram-not-read',all(e['word0']=='0x00000000' for e in log['ring'][-100:]))
+    still=[e for e in log['ring'] if e['event']=='0x041E0002']
+    check('v2-repeated-event-logged-24-times-then-counted',len(still)==24 and log['counts']['still-file-0xA18D2750']['0x041E0002']==201 and
+          log['extra']['capped']==201-24+7)  # + the 7 overflow kinds, also not logged
+    check('packet-outside-ram-not-read',all(e['word0']=='0x00000000' for e in still[1:]))
     # Bounded writes.
     g=load()
     for k in range(450):

@@ -19,8 +19,8 @@
 #define TR_F(a,r,...) ((r (*)(__VA_ARGS__))(uintptr_t)(a))
 
 enum {
-    TR_SLOTS=3u, TR_EVENTS=24u, TR_RING=128u, TR_PROPERTY_SLOT=3u,
-    TR_FILE_MAGIC=0x47495254u /* "TRIG" */, TR_FILE_VERSION=1u,
+    TR_SLOTS=3u, TR_EVENTS=24u, TR_RING=512u, TR_PROPERTY_SLOT=3u, TR_LOG_PER_EVENT=24u,
+    TR_FILE_MAGIC=0x47495254u /* "TRIG" */, TR_FILE_VERSION=2u,
     TR_WRITE_EVERY=3u, TR_MAX_WRITES=400u, TR_SILENT_PROPERTY=0x576u,
     TR_GETTER=0x1016fef3u, TR_CREATE=0x1027c0dbu, TR_WRITE=0x1027c049u,
     TR_CLOSE=0x1027bfcdu, TR_CLEAN=0x101e9f39u
@@ -34,15 +34,24 @@ static const uint32_t z7_trig_fingerprint[][2]={
 static const char z7_trig_path[]="A:\\Z7TRIG.DAT";
 
 struct z7_trig_count { uint32_t event, count; };
-struct z7_trig_entry { uint32_t event, tick_slot, word0, word1; };
+/* stamp: Z7_TRIG_STAMP() at append time (the field test counts display
+ * updates, a finer clock than worker ticks); 0 when not defined. */
+struct z7_trig_entry { uint32_t event, tick_slot, word0, word1, stamp; };
+/* v2: the ring never wraps (entries past TR_RING are counted in ring_dropped),
+ * and a capture-callback event is logged only for its first TR_LOG_PER_EVENT
+ * occurrences, so high-rate live-view events cannot push rare ones out. */
 struct z7_trig_log {
     uint32_t magic, version, bytes, sequence;
     uint32_t ticks, installed_mask, silent, dropped;
     uint32_t calls[TR_SLOTS], ring_next, writes, reserved[3];
+    uint32_t stamp, ring_dropped, capped, extra[13];
     struct z7_trig_count counts[TR_SLOTS][TR_EVENTS];
     struct z7_trig_entry ring[TR_RING];
 };
-_Static_assert(sizeof(struct z7_trig_log)==64+TR_SLOTS*TR_EVENTS*8+TR_RING*16,"log layout");
+_Static_assert(sizeof(struct z7_trig_log)==128+TR_SLOTS*TR_EVENTS*8+TR_RING*20,"log layout");
+#ifndef Z7_TRIG_STAMP
+#define Z7_TRIG_STAMP() 0u
+#endif
 
 static struct z7_trig_log z7_trig_live;
 static _Alignas(64) struct z7_trig_log z7_trig_snapshot;
@@ -58,9 +67,10 @@ static uint32_t z7_trig_matches(void)
 
 static void z7_trig_append(uint32_t event, uint32_t slot, uint32_t word0, uint32_t word1)
 {
-    uint32_t n=__atomic_fetch_add(&z7_trig_live.ring_next,1,__ATOMIC_RELAXED)%TR_RING;
+    uint32_t n=__atomic_fetch_add(&z7_trig_live.ring_next,1,__ATOMIC_RELAXED);
+    if (n>=TR_RING) { __atomic_fetch_add(&z7_trig_live.ring_dropped,1,__ATOMIC_RELAXED); return; }
     struct z7_trig_entry *e=&z7_trig_live.ring[n];
-    e->event=event; e->word0=word0; e->word1=word1;
+    e->event=event; e->word0=word0; e->word1=word1; e->stamp=Z7_TRIG_STAMP();
     e->tick_slot=(__atomic_load_n(&z7_trig_live.ticks,__ATOMIC_RELAXED)<<8)|slot;
     __atomic_store_n(&z7_trig_dirty,1,__ATOMIC_RELEASE);
 }
@@ -80,8 +90,15 @@ static void z7_trig_record(uint32_t slot, uint32_t event, uint32_t packet)
         }
         if (key==event) break;
     }
-    if (i<TR_EVENTS) __atomic_fetch_add(&row[i].count,1,__ATOMIC_RELAXED);
+    uint32_t seen=TR_LOG_PER_EVENT+1u;
+    if (i<TR_EVENTS) seen=__atomic_add_fetch(&row[i].count,1,__ATOMIC_RELAXED);
     else __atomic_fetch_add(&z7_trig_live.dropped,1,__ATOMIC_RELAXED);
+    if (seen>TR_LOG_PER_EVENT) {
+        /* Counts changed even though no entry is added: keep the file current. */
+        __atomic_fetch_add(&z7_trig_live.capped,1,__ATOMIC_RELAXED);
+        __atomic_store_n(&z7_trig_dirty,1,__ATOMIC_RELEASE);
+        return;
+    }
     uint32_t word0=0,word1=0;
     if (packet && !(packet&3u) && packet>=0xa1800000u && packet<0xb0000000u) {
         word0=TR_W(packet); word1=TR_W(packet+4);
@@ -108,6 +125,7 @@ static uint32_t z7_trig_write(void)
     uint8_t *to=(uint8_t *)&z7_trig_snapshot;
     for (uint32_t i=0;i<sizeof(z7_trig_snapshot);++i) to[i]=from[i];
     z7_trig_snapshot.sequence=++z7_trig_live.sequence;
+    z7_trig_snapshot.stamp=Z7_TRIG_STAMP();
     z7_trig_snapshot.writes=++z7_trig_live.writes;
     uint32_t fd=TR_F(TR_CREATE,uint32_t,const char *,uint32_t)(z7_trig_path,0);
     if ((int32_t)fd<0) return fd;

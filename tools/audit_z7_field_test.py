@@ -186,6 +186,40 @@ def main():
     ran=analyze(g.log_files[LOG],None)
     check('playback-analyzed',ran['playback_verdict'].startswith('a tall photo was shown') and
           [(x['rotation'],x['request']['number']) for x in ran['playback'] if x['request']['number']]==[(3,42),(0,43)])
+    # v2 log: a live-view flood (as on the Nov 25 camera run) must not push out
+    # photo, AF or playback entries; display-update stamps order them.
+    g=load();update_fn=h['symbols']['z7_display_before_update']
+    table=g.call(g.read(EXIF_SLOT));writer=struct.unpack('<I',bytes(g.u.mem_read(table+16*9+12,4)))[0]
+    for _ in range(5):g.call(update_fn)
+    for _ in range(600):g.call(g.read(SLOTS[1]),0x04190001,0,0,0)
+    g.u.mem_write(0xa18d7000+0x24fd,bytes([3]));g.u.mem_write(0xa18d8200,struct.pack('<3I',0,0xa18d7000,0))
+    for _ in range(7):g.call(update_fn)
+    g.call(g.read(SLOTS[0]),0x0419000c,0,0,0);g.call(writer,0xa18d8300,0xa18d8200,0)
+    for _ in range(600):g.call(g.read(SLOTS[1]),0x04190001,0,0,0)
+    g.u.mem_write(0xa1f90ab8,struct.pack('<I',0x2000));g.call(update_fn)
+    show(g,tall,1,1);tick(g,3)
+    flood=parse(g.log_files[LOG])
+    kinds=[(e['slot'],e['event']) for e in flood['ring']]
+    check('v2-log-format',flood['version']==2 and len(g.log_files[LOG])==10944)
+    check('v2-live-view-flood-capped-at-24',kinds.count(('capture-consumer-0xA18D1BDC','0x04190001'))==24 and
+          flood['counts']['capture-consumer-0xA18D1BDC']['0x04190001']==1200 and flood['extra']['capped']==1176)
+    check('v2-rare-entries-survive-flood',('capture-controller-0xA18D1BD8','0x0419000C') in kinds and
+          ('exif-orientation-pose','0xE1F00003') in kinds and any(k[0]=='af-shortcut' for k in kinds) and
+          any(k[0]=='playback-rotation' and k[1]=='0x9B000101' for k in kinds))
+    st={e['slot']:e['stamp'] for e in flood['ring'] if e['slot'] in ('exif-orientation-pose','capture-controller-0xA18D1BD8')}
+    check('v2-entries-carry-update-stamps',st['capture-controller-0xA18D1BD8']==12 and st['exif-orientation-pose']==12 and flood['extra']['stamp']>=13)
+    check('v2-exif-writer-counted-in-header',flood['extra']['exif_writes']==1 and flood['extra']['exif_inverted']==1)
+    ranked=analyze(g.log_files[LOG],1)
+    top=ranked['candidates'][0]
+    check('v2-analyzer-ranks-rare-event-near-photo',top['event']=='0x0419000C' and top['matches_photos'] and top['near_photos']==1)
+    g=load()
+    for rep in range(24):
+        for kind in range(22):
+            for slot in range(3):g.call(g.read(SLOTS[slot]),0x04190100+kind,0,0,0)
+    tick(g,3);full=parse(g.log_files[LOG])
+    check('v2-ring-stops-instead-of-wrapping',len(full['ring'])==512 and full['ring'][0]['event']=='0x04190100' and
+          full['ring'][0]['slot']=='capture-controller-0xA18D1BD8' and full['extra']['ring_dropped']==full['ring_total']-512 and
+          full['ring_total']==24*22*3+2)  # + silent marker + first playback report
     report=dict(passed=True,count=len(checks),checks=checks,module_sha256=m['module_sha256'],host_main_sha256=h['main_payload_sha256'],
                 clip_sha256=hashlib.sha256(clip).hexdigest(),camera_access=False,scope=__doc__)
     out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')

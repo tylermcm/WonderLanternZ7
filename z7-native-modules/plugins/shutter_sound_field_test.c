@@ -21,6 +21,10 @@
  *    requests that passed through the intercept.
  * No photo-triggered sound. Never writes any other file.
  */
+#include <stdint.h>
+/* Display-update counter: a finer clock than worker ticks for the log stamps. */
+static volatile uint32_t z7_field_updates;
+#define Z7_TRIG_STAMP() z7_field_updates
 #include "shutter_trigger_probe.h"
 #include "shutter_sound_playback.h"
 #define Z7_EXIF_IFD_SLOT 0xa18d3410u
@@ -49,12 +53,20 @@ static void z7_field_publish(void)
             z7_trig_live.reserved[i]=words[i];
             __atomic_store_n(&z7_trig_dirty,1,__ATOMIC_RELEASE);
         }
+    /* v2 extra words: EXIF writer calls and inversions, playback reports. */
+    uint32_t extra[3]={z7_exif_writes,z7_exif_inverted,z7_pb_reports};
+    for (uint32_t i=0;i<3;++i)
+        if (z7_trig_live.extra[i]!=extra[i]) {
+            z7_trig_live.extra[i]=extra[i];
+            __atomic_store_n(&z7_trig_dirty,1,__ATOMIC_RELEASE);
+        }
 }
 
 static struct z7_af_runtime z7_field_af;
 volatile uint32_t z7_field_af_registered;
 static void z7_field_update(void)
 {
+    __atomic_add_fetch(&z7_field_updates,1,__ATOMIC_RELAXED);
     uint32_t r=z7_af_runtime_step(&z7_field_af,1,0,z7_af_native_none_buttons());
     if (r) z7_trig_append(0xaf000000u|(r<<8)|(z7_field_af.last&0xffu),5u,z7_af_get(AF_PROP_AREA),0);
 }

@@ -83,9 +83,9 @@ def main():
     print('AF:     ',(', '.join(f"{x['result']} -> area {x['area']}" for x in r['af_shortcut'])) or 'no movie-button press logged')
     print('Play:   ',r['playback_verdict'])
     for x in r['playback']:print(f"   tick {x['tick']}: rotation {x['rotation']} turn {x['turn']} request #{x['request']['number']} kind {x['request']['kind']} cache #{x['cache']['number']}")
-    if r['ring_lost']:print(f"note: {r['ring_lost']} older events fell out of the 128-entry ring")
+    if r['ring_lost']:print(f"note: {r['ring_lost']} events did not fit in the log ring")
     for c in r['candidates'][:6]:
-        print(('  MATCH ' if c['matches_photos'] else '        ')+f"{c['callback']:<32} {c['event']} count={c['count']} records={c['distinct_records']}")
+        print(('  MATCH ' if c['matches_photos'] else '        ')+f"{c['callback']:<32} {c['event']} total={c['total']} records={c['distinct_records']} near_photos={c['near_photos']}")
 
 
 if __name__=='__main__':main()

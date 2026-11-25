@@ -1,8 +1,53 @@
 # Shutter-sound field test: one card swap, one session
 
 Status: **ran on the camera, November 25, 2026** (v4 `b76d6c4b`, staged with the
-owner's approval, LCD module restored afterwards). Results are in the next
-section and [the evidence file](evidence/20261125-field-test-hardware-result.json).
+owner's approval, LCD module restored afterwards). Results are under
+[Camera result](#camera-result-november-25-2026) and in [the evidence file](evidence/20261125-field-test-hardware-result.json).
+
+## Session 2 (v5): prepared, not staged
+
+Session 1 left two questions open, the per-photo trigger and the playback
+rotation values, because live-view events overflowed the log. Field test v5
+(`73ec9f0f…`, 4,696 bytes) fixes the
+log, version 2:
+
+- Each capture-callback event is logged for its first 24 occurrences only, then
+  just counted, so live-view events (about 180 per worker tick) cannot push out
+  rare ones. Counts stay exact.
+- The log never wraps: it holds 512 entries and counts any further ones.
+- Every entry carries a display-update stamp, a finer clock than worker ticks,
+  so a candidate photo event can be lined up with the EXIF writer, which runs
+  once per saved photo.
+
+The chime, EXIF fix, AF trial and playback observer are unchanged. The card
+keeps `SHUTTER1.WAV`; the session-1 log is renamed `Z7TRIG-SESSION1.DAT`.
+
+### Session 2 steps (about 3 minutes)
+
+1. Power on and wait 15 seconds in photo-mode live view (the chime plays again).
+2. Take **3 single photos**, about 5 seconds apart.
+3. Continuous low: take a burst of about **3** frames.
+4. Back on single frame, hold the camera **vertically** and take **one** photo.
+5. Press **Play** (it shows the vertical photo). After 5 seconds, half-press the
+   shutter to go back to live view and wait **10 seconds**.
+6. Press **Play**, press **left** once, wait 5 seconds, half-press, and wait
+   **10 seconds** in live view.
+7. Power off and bring the card back.
+
+The module only runs while live view is up, which is why steps 5 and 6 return
+to live view: it then reads the rotation Nikon kept for the last photo shown.
+Report the burst length; the analysis uses `--photos` 3 + burst + 1.
+
+### Verified before the camera (v5)
+
+- Offline, 42 checks: the 35 v4 checks plus a recreated session-1 flood (1,200
+  live-view events), after which the rare capture event, the EXIF pose, the AF
+  switch and the playback entry are all still in the log with correct stamps;
+  exact counts; the EXIF writer counted in the header; the analyzer ranking the
+  rare event that falls just before the photo; and a full log that stops at
+  512 entries instead of wrapping. The trigger-probe audit (25 checks) passes
+  with the shared v2 log.
+- Assisted QEMU, 10 checks, and the v2 log the real guest wrote parses.
 
 ## Camera result (November 25, 2026)
 
