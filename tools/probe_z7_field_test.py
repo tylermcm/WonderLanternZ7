@@ -17,6 +17,7 @@ import interactive as ui
 
 SLOTS=(0xa18d1bd8,0xa18d1bdc,0xa18d2750)
 SOUND_SLOT=0xa188d278
+EXIF_SLOT=0xa18d3410
 
 
 def main():
@@ -47,9 +48,9 @@ def main():
     def word(addr):return int.from_bytes(camera.remote.memory(addr,4),'little')
     def sample(label):
         base=struct.unpack('<64I',camera.remote.memory(STATE,256))[12];s=meta['symbols']
-        row=dict(label=label,module_base=hex(base),slots=[hex(word(x)) for x in SLOTS],sound_slot=hex(word(SOUND_SLOT)))
+        row=dict(label=label,module_base=hex(base),slots=[hex(word(x)) for x in SLOTS],sound_slot=hex(word(SOUND_SLOT)),exif_slot=hex(word(EXIF_SLOT)))
         if base:
-            row.update(wrappers=[hex(base+s[f'z7_trig_wrap{i}']|1) for i in range(3)],start_handler=hex(base+s['z7_sound_start']|1),
+            row.update(wrappers=[hex(base+s[f'z7_trig_wrap{i}']|1) for i in range(3)],start_handler=hex(base+s['z7_sound_start']|1),exif_getter=hex(base+s['z7_exif_get']|1),
                        installed=word(base+s['z7_sound_installed']),playback=word(base+s['z7_sound_playback']),
                        boot_queued=word(base+s['z7_sound_boot_queued']),live=parse(camera.remote.memory(base+s['z7_trig_live'],SIZE)))
         row['log_writes']=len(fixture.files)
@@ -65,6 +66,7 @@ def main():
         check('wav-read-and-sound-installed',first['installed']==1 and first['sound_slot']==first['start_handler'] and
               any(e.get('component')=='sound' and e.get('operation')=='read' for e in fixture.events))
         check('three-trigger-wrappers-installed',first['slots']==first['wrappers'])
+        if 'z7_exif_get' in meta['symbols']:check('exif-orientation-getter-installed',first['exif_slot']==first['exif_getter'])
         check('nothing-queued-at-boot',first['boot_queued']==0 and first['playback']==0 and first['live']['ticks']<8)
         assert camera.remote.command(f'Z1,{FLASH_STORE:x},2')=='OK'
         timer=threading.Timer(150.0,camera.remote.request_fixture_stop);timer.daemon=True

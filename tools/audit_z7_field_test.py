@@ -13,12 +13,14 @@ from audit_z7_trigger_probe import ProbeFixture,SLOTS,NATIVE,LOG,PACKET
 from build_z7_module_host import STATE
 from prepare_flash_review import require_private_output
 from read_z7_trigger_log import parse
+from audit_z7_exif_orientation import SLOT as EXIF_SLOT,DESCRIPTOR
 
 
 class FieldFixture(ProbeFixture,SoundFixture):
     def __init__(self,raw,host,packet,files=None,silent=0,slot_values=NATIVE,log_faults=None,**sound):
         SoundFixture.__init__(self,raw,host,packet,files=files,**sound)
         self.probe_setup(slot_values,silent,log_faults,None)
+        self.u.mem_write(EXIF_SLOT,struct.pack('<4I',*DESCRIPTOR))
 
 
 def main():
@@ -52,7 +54,7 @@ def main():
     check('only-shutter1-read-and-nothing-written-at-load',[e[0] for e in f.file_events]==['open','read','close'] and not f.log_events)
     tick(f,3)
     first=log(f)
-    check('first-log-carries-sound-state',first['sound']==dict(preview='not yet',installed=True,wav_loaded=True,starts=0,rejects=0,finished=0,native_passthrough=0))
+    check('first-log-carries-sound-state',first['sound']==dict(preview='not yet',installed=True,wav_loaded=True,starts=0,rejects=0,finished=0,native_passthrough=0,exif_orientation_installed=True))
     tick(f,4)
     check('no-preview-before-tick-8',not f.sends)
     tick(f)
@@ -70,10 +72,22 @@ def main():
     # Counters publish after each tick's write, so they reach the card on the next
     # write window (ticks 9 and 12 here).
     tick(f,4);later=log(f)
-    check('log-shows-preview-started-and-finished',later['sound']==dict(preview='queued',installed=True,wav_loaded=True,starts=1,rejects=0,finished=1,native_passthrough=1))
+    check('log-shows-preview-started-and-finished',later['sound']==dict(preview='queued',installed=True,wav_loaded=True,starts=1,rejects=0,finished=1,native_passthrough=1,exif_orientation_installed=True))
     check('log-shows-trigger-event',later['counts']['still-file-0xA18D2750']=={'0x041E0002':1})
     tick(f,30)
     check('preview-never-repeats',len(f.sends)==1)
+    # Upside-down EXIF orientation: pose 3 writes 3, other poses use Nikon's writer; every pose is logged.
+    check('exif-getter-installed',f.read(EXIF_SLOT)==(sym(f,'z7_exif_get')|1))
+    table=f.call(f.read(EXIF_SLOT));writer=struct.unpack('<I',bytes(f.u.mem_read(table+16*9+12,4)))[0]
+    capture,meta,entry=0xa18d7000,0xa18d8200,0xa18d8300
+    values=[]
+    for pose in (0,3,2):
+        f.u.mem_write(capture+0x24fd,bytes([pose]));f.u.mem_write(meta,struct.pack('<3I',0,capture,0));f.u.mem_write(entry,bytes(12))
+        f.call(writer,entry,meta,0);values.append(struct.unpack('<6H',bytes(f.u.mem_read(entry,12)))[4])
+    check('exif-orientation-values',values==[1,3,6])
+    tick(f,3)
+    poses=[int(e['event'],16)&0xffff for e in log(f)['ring'] if e['slot']=='exif-orientation-pose']
+    check('exif-poses-logged',poses==[0,3,2])
     g=load({})
     tick(g,11)
     check('no-wav-probe-still-logs',g.read(SOUND_SLOT)==0x1006bc47 and all(g.read(s)&1 for s in SLOTS) and

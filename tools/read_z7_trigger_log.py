@@ -8,7 +8,8 @@ from pathlib import Path
 
 MAGIC,VERSION,SLOTS,EVENTS,RING=0x47495254,1,3,24,128
 SIZE=64+SLOTS*EVENTS*8+RING*16
-SLOT_NAMES=('capture-controller-0xA18D1BD8','capture-consumer-0xA18D1BDC','still-file-0xA18D2750','silent-photography-0x576')
+SLOT_NAMES=('capture-controller-0xA18D1BD8','capture-consumer-0xA18D1BDC','still-file-0xA18D2750','silent-photography-0x576',
+            'exif-orientation-pose')
 
 
 def parse(blob):
@@ -18,10 +19,11 @@ def parse(blob):
     if magic!=MAGIC or version!=VERSION or size!=SIZE:raise ValueError('not a Z7TRIG v1 log')
     calls=list(head[8:11]);ring_next,writes=head[11],head[12]
     sound=None
-    if head[13]>>24==1:  # field-test module: sound counters in reserved words
+    if head[13]>>24&1:  # field-test module: sound counters in reserved words
         sound=dict(preview={0:'not yet',1:'queued',2:'refused (service busy)',4:'no clip installed'}.get(head[13]&0xff,head[13]&0xff),
                    installed=bool(head[13]>>8&0xff),wav_loaded=bool(head[13]>>16&1),
-                   starts=head[14]&0xffff,rejects=head[14]>>16,finished=head[15]&0xffff,native_passthrough=head[15]>>16)
+                   starts=head[14]&0xffff,rejects=head[14]>>16,finished=head[15]&0xffff,native_passthrough=head[15]>>16,
+                   exif_orientation_installed=bool(head[13]>>25&1))
     counts=[]
     for s in range(SLOTS):
         row={}
@@ -34,7 +36,7 @@ def parse(blob):
     ring=[]
     for n in range(first,ring_next):
         event,tick_slot,w0,w1=entries[n%RING]
-        ring.append(dict(index=n,tick=tick_slot>>8,slot=SLOT_NAMES[tick_slot&0xff] if (tick_slot&0xff)<4 else tick_slot&0xff,
+        ring.append(dict(index=n,tick=tick_slot>>8,slot=SLOT_NAMES[tick_slot&0xff] if (tick_slot&0xff)<5 else tick_slot&0xff,
                          event=f'0x{event:08X}',word0=f'0x{w0:08X}',word1=f'0x{w1:08X}'))
     return dict(sequence=sequence,writes=writes,ticks=ticks,installed_mask=mask,
                 installed=[SLOT_NAMES[i] for i in range(SLOTS) if mask>>i&1],silent_photography=silent,
@@ -49,7 +51,7 @@ def candidates(log,photos):
     must not fire in ticks without a photo, which only the owner's notes can say."""
     rows={}
     for e in log['ring']:
-        if e['slot']=='silent-photography-0x576':continue
+        if e['slot'] in ('silent-photography-0x576','exif-orientation-pose'):continue
         k=(e['slot'],e['event']);r=rows.setdefault(k,dict(callback=e['slot'],event=e['event'],count=0,records=set(),ticks=[]))
         r['count']+=1;r['records'].add(int(e['word0'],16)&0x7fffffe0);r['ticks'].append(e['tick'])
     out=[]
@@ -70,6 +72,8 @@ def main():
     if a.json:print(json.dumps(r,indent=2));return
     print(f"log #{r['sequence']} after {r['ticks']} worker ticks; installed: {', '.join(r['installed']) or 'none'}")
     if r['sound']:print('sound:',', '.join(f'{k}={v}' for k,v in r['sound'].items()))
+    poses=[int(e['event'],16)&0xffff for e in r['ring'] if e['slot']=='exif-orientation-pose']
+    if poses:print('exif poses written (3 = upside down):',poses)
     for name,row in r['counts'].items():
         print(f'{name}: {r["calls"][name]} calls',' '.join(f'{e}x{c}' for e,c in row.items()))
     for e in r['ring']:print(f"t={e['tick']:5d} {e['slot']:<34} {e['event']} {e['word0']} {e['word1']}")

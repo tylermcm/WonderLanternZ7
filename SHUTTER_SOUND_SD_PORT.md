@@ -194,6 +194,9 @@ If the probe picks a different event, only the policy's event and key change.
    combined into one field-test module (`shutter_sound_field_test.c`): chime on
    worker tick 8 plus the trigger log, with sound counters in the log header.
    One camera session: [SHUTTER_SOUND_FIELD_TEST.md](SHUTTER_SOUND_FIELD_TEST.md).
+   The same module also carries the upside-down photo EXIF fix
+   ([EXIF_ORIENTATION_RESEARCH.md](EXIF_ORIENTATION_RESEARCH.md)) so the session
+   measures it too.
    Staging waits for the owner's approval.
 3. **Trigger:** wire playback to the signal the counts support (still-file policy
    built provisionally, above); Silent photography ON, photo mode only, no

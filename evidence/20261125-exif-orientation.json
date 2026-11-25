@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "Original-Z7 upside-down photo EXIF orientation",
+  "ifd0_table": "0x11532D94",
+  "entries": 38,
+  "orientation_entry": 9,
+  "orientation_writer": "0x102868D9",
+  "capture_pose_offset": "0x24FD",
+  "ifd_descriptor_ram": "0xA18D3410",
+  "descriptor_rom_table": "0x11533C14",
+  "descriptor_found_by": "read-only assisted QEMU RAM search",
+  "standalone_module_sha256": "3824fc5ee9d908e6f26b3a23324b41b6e945b9bd240965f352e92642a8cb8b9c",
+  "offline_checks": 12,
+  "mutation_caught": true,
+  "in_field_test": "82c5873b888cf25864bea86b3981f778cdb8978c4ee43337afbdb8196dfd9c61",
+  "pose_3_on_camera_established": false,
+  "camera_access": false,
+  "review": "EXIF_ORIENTATION_RESEARCH.md"
+}

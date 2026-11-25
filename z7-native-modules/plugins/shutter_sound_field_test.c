@@ -4,6 +4,10 @@
  *    intercept and queues one preview on resident-worker tick 8.
  *  - Trigger probe: wraps the three capture callbacks and logs events to
  *    A:\Z7TRIG.DAT (shutter_trigger_probe.h).
+ *  - Upside-down photo EXIF orientation (photo_orientation_exif.h): writes
+ *    Orientation 3 for capture pose 3, and logs every pose Nikon's Orientation
+ *    writer sees (ring slot 4), so the session shows whether the camera records
+ *    pose 3 for an upside-down exposure.
  *  - The log header also carries the sound counters, so a silent preview can be
  *    diagnosed from the card: queued, started, rejected, finished, and native
  *    requests that passed through the intercept.
@@ -11,6 +15,9 @@
  */
 #include "shutter_trigger_probe.h"
 #include "shutter_sound_playback.h"
+#define Z7_EXIF_IFD_SLOT 0xa18d3410u
+#define Z7_EXIF_POSE_HOOK(pose) z7_trig_append(0xe1f00000u|(pose),4u,0,0)
+#include "photo_orientation_exif.h"
 
 #ifndef Z7_SOUND_PREVIEW_TICK
 #define Z7_SOUND_PREVIEW_TICK 8u
@@ -22,7 +29,7 @@ volatile uint32_t z7_sound_init_result, z7_sound_boot_queued, z7_field_preview_t
 static void z7_field_publish(void)
 {
     uint32_t words[3]={
-        (z7_sound_boot_queued&0xffu)|((z7_sound_installed&0xffu)<<8)|((z7_sound_init_result&0xffu)<<16)|(1u<<24),
+        (z7_sound_boot_queued&0xffu)|((z7_sound_installed&0xffu)<<8)|((z7_sound_init_result&0xffu)<<16)|(1u<<24)|((z7_exif_installed&1u)<<25),
         (z7_sound_starts&0xffffu)|((z7_sound_rejects&0xffffu)<<16),
         (z7_sound_finished&0xffffu)|((z7_sound_passthrough&0xffffu)<<16)};
     for (uint32_t i=0;i<3;++i)
@@ -53,6 +60,7 @@ uint32_t z7_main(const struct z7_module_api *api)
     z7_sound_init_result=z7_sound_load(0,z7_sound_path_1) ? 1u : 0u;
     if (z7_sound_init_result) z7_sound_init_result|=z7_sound_install()<<1;
     z7_trig_install();
+    if (z7_exif_matches()) z7_exif_install();  /* optional part: skipped, not fatal */
     z7_field_publish();
     return 0;
 }

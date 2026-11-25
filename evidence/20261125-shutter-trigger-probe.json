@@ -51,5 +51,13 @@
     "preview_worker_tick": 8,
     "staged": false,
     "plan": "SHUTTER_SOUND_FIELD_TEST.md"
+  },
+  "field_test_v2": {
+    "module_sha256": "82c5873b888cf25864bea86b3981f778cdb8978c4ee43337afbdb8196dfd9c61",
+    "bytes": 3544,
+    "offline_checks": 20,
+    "qemu_checks": 9,
+    "adds": "upside-down photo EXIF orientation + pose log",
+    "staged": false
   }
 }
