@@ -5,6 +5,10 @@
     "commit": "f298964fdf6b0d20df0d3c6cad48a74aa5f5c339",
     "release": "v0.1.0-preview.35",
     "observed_date": "2026-11-24",
+    "newer_observed_2026_11_25": [
+      "2b596ab fix: release inverted photo EXIF orientation (inverted playback, portrait menu, filtered playback)",
+      "7af6933 fix: release full-frame custom wide-area AF"
+    ],
     "source": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/README.en.md"
   },
   "scope": "Feature parity target; research, builds, offline checks and camera verification are distinct. No headline feature is marked complete from emulator results alone.",
@@ -104,7 +108,7 @@
       "name": "Silent shutter sound",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/shutter-sound.md",
       "status": "research",
-      "remaining": "SD-module route: sound-service bindings mapped (31 checks); playback module verified offline (80 checks) and in QEMU up to the codec, which the emulator does not model; camera smoke test prepared, awaiting staging approval. Camera playback result, per-photo trigger measurement, trigger wiring and menu remain. October firmware-patch build stays on hold.",
+      "remaining": "SD-module route: sound-service bindings mapped (31 checks); playback module verified offline (80 checks) and in QEMU up to the codec, which the emulator does not model; camera smoke test prepared, awaiting staging approval. Silent trigger-probe module (3 capture callbacks, card log) and a provisional still-file trigger policy built and verified offline. Camera playback result, per-photo trigger measurement, trigger wiring and menu remain. October firmware-patch build stays on hold.",
       "local_review": "SHUTTER_SOUND_SD_PORT.md",
       "hardware_parity_verified": false
     },

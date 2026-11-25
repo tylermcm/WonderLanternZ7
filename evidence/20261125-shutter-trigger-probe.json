@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "Original-Z7 shutter-sound trigger probe (silent event logger) and provisional still-file trigger",
+  "capture_callbacks": [
+    {
+      "slot": "0xA18D1BD8",
+      "native": "0x101426A9"
+    },
+    {
+      "slot": "0xA18D1BDC",
+      "native": "0x1014708D"
+    },
+    {
+      "slot": "0xA18D2750",
+      "native": "0x104DB211"
+    }
+  ],
+  "trigger_probe": {
+    "module_sha256": "45978f2097cbff148c26a9bf346066526906d75ce37e365afb7eee06b2c801eb",
+    "bytes": 1164,
+    "offline_checks": 25,
+    "mutations_caught": 3,
+    "qemu_checks": 5,
+    "qemu_idle_callback_events": 0,
+    "qemu_log_captured": true,
+    "log": "A:/Z7TRIG.DAT, 3264 bytes, <=400 writes per power-on"
+  },
+  "still_trigger": {
+    "module_sha256": "707639622191c0f0ea004bfb0fcdf3744d3f7c4390947a75421586b14cd60eb3",
+    "offline_checks": 20,
+    "mutations_caught": 2,
+    "provisional": true,
+    "camera_ready": false
+  },
+  "z7ii_event_shift_hypothesis": "0x041A000F -> 0x0419000F not confirmed: no literal, capture consumer default case",
+  "camera_access": false,
+  "staged": false,
+  "plans": [
+    "SHUTTER_TRIGGER_PROBE_TEST.md",
+    "SHUTTER_SOUND_SD_PORT.md"
+  ]
+}

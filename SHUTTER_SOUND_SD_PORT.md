@@ -142,18 +142,62 @@ input ready). **Neither ID exists in the Z7 firmware.** Candidate Z7 signals:
   is the closest analogue to upstream; not yet identified.
 
 Per-photo cardinality cannot be proven in QEMU, which does not complete a capture.
-It needs a camera measurement, which an SD module can do safely: count candidate
-events without playing sound or writing files, and show the counts.
+
+### Step 2: trigger probe module (built, not on camera)
+
+The family shift seen in the sound service (`0x0419xxxx` on Z7II, `0x0418xxxx` on
+Z7) suggests upstream's RAW-ready `0x041A000F` maps to `0x0419000F` here. That ID
+doesn't appear as a literal either, and the capture consumer's event switch sends
+it to its default case, so the guess isn't confirmed. Registration code
+(`0x100752D2`/`0x100752DE`, called from `0x10147BB8`/`0x10147BBE`) fills two
+callback words on the capture-controller object `0xA18D1B98`; the other two stay
+empty. A read-only QEMU dump (`tools/probe_z7_capture_slots.py`) confirms the live
+values:
+
+| Slot | Live handler | Calling convention |
+| --- | --- | --- |
+| `0xA18D1BD8` | `0x101426A9` | `(event, packet)`, no stack arguments |
+| `0xA18D1BDC` | `0x1014708D` | `(event, packet)`, no stack arguments |
+| `0xA18D2750` | `0x104DB211` | `(event, packet)`, no stack arguments |
+
+`z7-native-modules/plugins/shutter_trigger_probe.c` wraps all three. Each wrapper
+counts the event, keeps the packet's first two words, and calls Nikon's handler
+with the same arguments and result. The worker logs counts, the last 128 events
+with timestamps, and Silent photography changes to `A:\Z7TRIG.DAT`
+(`tools/read_z7_trigger_log.py` decodes it). Offline audit
+(`tools/audit_z7_trigger_probe.py`): 25 checks, three mutations caught. In
+assisted QEMU (`tools/probe_z7_trigger_probe.py`) the module loads, all three
+wrappers install into the live slots and stay there while the guest runs, and no
+callback fires in the idle emulated view. One run captured a complete, parseable
+`Z7TRIG.DAT` written by the worker through Nikon's file functions; the emulated
+worker is slow, so other runs paused before that first write finished.
+The camera measurement is in [SHUTTER_TRIGGER_PROBE_TEST.md](SHUTTER_TRIGGER_PROBE_TEST.md).
+
+### Step 3 groundwork: provisional still-file trigger (built, not for the camera yet)
+
+`z7-native-modules/plugins/shutter_sound_trigger.h` holds the policy for the
+still-file candidate; `shutter_sound_still_trigger.c` wires it to the playback
+module (`tools/build_z7_shutter_sound.py --still-trigger`). On `0x041E0002` it
+reads the packet's record and keys on slot, group and number (kind ignored), so a
+JPEG+NEF pair sounds once. It plays only in Silent photography, remembers the
+last 8 records, skips a frame while a sound is still playing, and always calls
+Nikon's handler with the same arguments. Offline audit
+(`tools/audit_z7_still_trigger.py`): 20 checks through Nikon's sound service;
+two mutations (key mask, silent gate) are caught. It stays off the camera until
+the trigger probe shows this event is once per photo and absent in live view.
+If the probe picks a different event, only the policy's event and key change.
+
 
 ## Plan
 
 1. **Playback module:** built and verified offline (above). Camera smoke test
    prepared in [SHUTTER_SOUND_CAMERA_SMOKE_TEST.md](SHUTTER_SOUND_CAMERA_SMOKE_TEST.md);
    staging waits for the owner's approval.
-2. **Event counter (camera, no sound):** count trigger candidates per photo, single
-   and burst, and in idle live view, half-press, menus and playback.
-3. **Trigger:** wire playback to the signal the counts support; Silent photography
-   ON, photo mode only, no retrigger while playing; menu for clip, volume, Preview.
+2. **Event counter (camera, no sound):** trigger probe built and verified offline;
+   camera session prepared in [SHUTTER_TRIGGER_PROBE_TEST.md](SHUTTER_TRIGGER_PROBE_TEST.md).
+3. **Trigger:** wire playback to the signal the counts support (still-file policy
+   built provisionally, above); Silent photography ON, photo mode only, no
+   retrigger while playing; then a menu for clip, volume and Preview.
 
 Credit: design follows JKWTCN's MIT shutter-sound implementation; original-Z7
 bindings are independent work.

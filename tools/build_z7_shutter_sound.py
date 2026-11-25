@@ -1,7 +1,8 @@
 """Build the private original-Z7 shutter-sound playback trial module (MIT).
 
 No camera access, no firmware image. --boot-preview builds the variant that queues
-one preview of A:\\SHUTTER1.WAV at module init (a playback smoke test).
+one preview of A:\\SHUTTER1.WAV on the eighth resident-worker tick (a playback
+smoke test). --still-trigger builds the PROVISIONAL still-file trigger variant.
 """
 import argparse,hashlib,json,re
 from pathlib import Path
@@ -13,10 +14,13 @@ from prepare_flash_review import require_private_output
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--boot-preview',action='store_true')
+    variant=p.add_mutually_exclusive_group()
+    variant.add_argument('--boot-preview',action='store_true')
+    variant.add_argument('--still-trigger',action='store_true')
     a=p.parse_args();out=require_private_output(a.output)
     if out.exists():p.error('Choose a new private output directory')
-    name='shutter_sound_boot_preview.c' if a.boot_preview else 'shutter_sound_module.c'
+    name=('shutter_sound_boot_preview.c' if a.boot_preview else
+          'shutter_sound_still_trigger.c' if a.still_trigger else 'shutter_sound_module.c')
     source=ROOT/'z7-native-modules/plugins'/name
     functions,again_functions={},{}
     packet,m=build(source,zig=ZIG.resolve(),function_details=functions)
@@ -30,12 +34,12 @@ def main():
         for include in re.findall(r'^\s*#\s*include\s+"([^"]+)"',path.read_text(encoding='utf-8'),re.M):
             pending.append(next(q for q in (path.parent/include,SDK/include) if q.is_file()))
     m.update(module_sha256=hashlib.sha256(packet).hexdigest(),file_bytes=len(packet),reproducible=True,
-        source_inputs_sha256=inputs,function_details=functions,kind='original-Z7-shutter-sound-playback-trial',
-        boot_preview=a.boot_preview,photo_trigger=False,settings_writes=False,
+        source_inputs_sha256=inputs,function_details=functions,kind='original-Z7-shutter-sound-still-trigger-provisional' if a.still_trigger else 'original-Z7-shutter-sound-playback-trial',
+        boot_preview=a.boot_preview,photo_trigger=a.still_trigger,settings_writes=False,
         do_not_stage=True,hardware_test_authorized=False,firmware_image=False)
     out.mkdir(parents=True);(out/'Z7APP.BIN').write_bytes(packet)
     (out/'module.json').write_text(json.dumps(m,indent=2)+'\n',encoding='utf-8',newline='\n')
-    print(json.dumps(dict(bytes=len(packet),sha256=m['module_sha256'],boot_preview=a.boot_preview,reproducible=True)))
+    print(json.dumps(dict(bytes=len(packet),sha256=m['module_sha256'],boot_preview=a.boot_preview,still_trigger=a.still_trigger,reproducible=True)))
 
 
 if __name__=='__main__':main()
