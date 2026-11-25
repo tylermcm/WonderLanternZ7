@@ -14,6 +14,8 @@ uint32_t z7_af_shortcut_operation(uint32_t op, uint32_t a, uint32_t b, uint32_t 
     case 2: return z7_af_runtime_step(&z7_af_rt,a,b,c);
     case 3: return z7_af_buttons_now();
     case 4: return z7_af_rt.applied|(z7_af_rt.refused<<8)|(z7_af_rt.last<<16);
+    case 5: return z7_af_native_none_buttons();
+    case 6: return z7_af_runtime_step(&z7_af_rt,a,b,z7_af_native_none_buttons());
     default: return 0;
     }
 }

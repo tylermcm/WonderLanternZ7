@@ -134,6 +134,24 @@ photo-context drop, native-None exclusion, availability by focus mode, the
 unverified buttons being ignored, and non-Z7 targets. Polling can miss a press
 shorter than one GUI update; that is measured on the camera.
 
+## f2 assignments (November 25, 2026)
+
+Changing each button's function in Nikon's f2 Custom control assignment menu in
+assisted QEMU changed one word each; Nikon's getter maps them to these properties:
+
+| Button | Property | Storage | Values seen |
+| --- | --- | --- | --- |
+| Fn1 | `0x1048` | `0xA24F1898` | White balance `0x1F`, Image quality/size `0x25` |
+| AF-ON | `0x1050` | `0xA24F18B8` | AF-ON `0x08`, Select center focus point `0x27` |
+| Sub-selector center | `0x1054` | `0xA24F18C8` | AE/AF lock `0x03`, AE lock only `0x04` |
+| Movie record | `0x1057` | `0xA24F18D4` | **None `0x00`**, AE lock (Hold) `0x06` |
+
+The codes look like one shared function enum (the AE-lock variants are 3, 4
+and 6 across two different buttons), and the movie button's stock None is 0;
+that None is also 0 for the other buttons is assumed, not observed. The runtime now reads these with `z7_af_native_none_buttons()`, so a
+shortcut acts only on a button the owner has set to None, as upstream requires.
+Fn2's property was not measured. The runtime audit grows to 30 checks.
+
 ## Required remaining work
 
 Native AF-area values and the setter path are now measured (above). Identify

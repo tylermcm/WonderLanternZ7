@@ -55,5 +55,31 @@
     },
     "runtime": "z7-native-modules/plugins/af_shortcut_runtime.h",
     "runtime_checks": 25
+  },
+  "f2_assignments": {
+    "Fn1": "0x1048",
+    "AF_ON": "0x1050",
+    "sub_selector_center": "0x1054",
+    "movie_record": "0x1057",
+    "none_value": 0,
+    "observed": {
+      "0x1048": [
+        "0x1F WB",
+        "0x25 QUAL"
+      ],
+      "0x1050": [
+        "0x08 AF-ON",
+        "0x27 select center point"
+      ],
+      "0x1054": [
+        "0x03 AE/AF lock",
+        "0x04 AE lock only"
+      ],
+      "0x1057": [
+        "0x00 None",
+        "0x06 AE lock hold"
+      ]
+    },
+    "runtime_checks": 30
   }
 }

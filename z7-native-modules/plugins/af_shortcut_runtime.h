@@ -25,6 +25,21 @@ static const uint32_t z7_af_button_word[Z7_AF_BUTTONS]={AF_SW0,AF_SW0,AF_SW2,AF_
 static const uint32_t z7_af_button_mask[Z7_AF_BUTTONS]={0x4000u,0x200000u,0x4000u,0x8000u,0x2000u};
 #define Z7_AF_VERIFIED_BUTTONS ((1u<<AF_BUTTON_FN1)|(1u<<AF_BUTTON_AF_ON)|(1u<<AF_BUTTON_SS_CENTER))
 
+/* f2 Custom control assignment properties, measured by changing each in Nikon's
+ * menu in assisted QEMU: Fn1 0x1048, AF-ON 0x1050, sub-selector center 0x1054,
+ * movie record 0x1057 (Fn2 not measured). One shared function enum; None = 0. */
+static const uint32_t z7_af_button_property[Z7_AF_BUTTONS]={0x1048u,0x1050u,0u,0x1054u,0x1057u};
+#define AF_ASSIGN_NONE 0u
+
+/* Buttons whose native f2 assignment is None: only these may act. */
+static uint32_t z7_af_native_none_buttons(void)
+{
+    uint32_t none=0;
+    for (uint32_t i=0;i<Z7_AF_BUTTONS;++i)
+        if (z7_af_button_property[i] && z7_af_get(z7_af_button_property[i])==AF_ASSIGN_NONE) none|=1u<<i;
+    return none;
+}
+
 /* Z7 logical targets: target = AF-area value + 1 for the six measured modes. */
 #define Z7_AF_TARGET_AREA(t) ((t)-1u)
 #define Z7_AF_Z7_TARGETS ((1u<<0)|(1u<<1)|(1u<<2)|(1u<<3)|(1u<<4)|(1u<<6))
