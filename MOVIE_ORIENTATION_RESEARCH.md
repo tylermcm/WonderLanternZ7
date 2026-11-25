@@ -79,7 +79,7 @@ code buffers, issues ARM cache/barrier instructions and rechecks those guards
 before publication. This is not a proven task-quiescence protocol. The diagnostic
 remains separate from the cumulative display candidates and must not be staged.
 
-184 checks verify every relocated direct call, native bytes/literal pools,
+250 checks verify every relocated direct call, native bytes/literal pools,
 alignment, unchanged live callback, all ten file slots and four poses, pose
 retention after later orientation changes, split-context replacement, failed
 open/unknown-pose invalidation, native track failure preservation and fingerprint
@@ -90,8 +90,23 @@ the file count. Underlying file operations, pose readings, completion results,
 track construction and cache-clean services are supplied in that fixture.
 Publication checks cover busy-state rejection, state changes during cache clean,
 all three buffer clean requests, duplicate rejection and an open event through
-the published pointer. This does not construct or validate a complete native
-movie header/file. See [the shadow record](evidence/20261124-movie-shadows.json).
+the published pointer.
+
+The expanded audit executes the **complete original video-track constructor**
+and its endian/atom/memory helpers for two supplied container-kind values and
+three dimensions (1920x1080, 3840x2160 and 1280x720). Each is compared with the
+wrapper at all four poses: 24 wrapped cases. The native `trak`/`tkhd` tags,
+92-byte track header, identity matrix and 16.16 dimensions are checked. The full
+48 KiB supplied context/buffer arena matches the unwrapped native reference
+except for the intended 36-byte track matrix. The wrapper retains the pose from
+open even when the later supplied camera pose changes.
+
+Those dimensions are constructor inputs, not evidence of supported recording
+formats. Sample descriptions/tables and pointers are fixture inputs; no sensor,
+encoder, actual file open or completed playable movie is exercised. Separate
+failure/control cases still supply the track return. This does not validate a
+complete movie container, file split or player result. See
+[the shadow record](evidence/20261124-movie-shadows.json).
 
 ## Remaining integration
 

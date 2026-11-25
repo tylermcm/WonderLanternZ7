@@ -1,9 +1,10 @@
 """Original-Z7 native shadow preparation and per-file wrappers (MIT).
 
 Compiled copies/relocation/wrappers and close/header flow execute. Native file
-services, track construction, pose and contexts are supplied. Explicit offline
-publication supplies cache clean services; physical cache/task quiescence,
-complete native mux task and physical recording behavior remain unproved.
+services, pose and contexts are supplied. The native track constructor executes
+in 24 positive cases; separate error/control cases supply its result. Explicit
+offline publication supplies cache clean services. Physical cache/quiescence,
+complete movie files and physical recording remain unproved.
 """
 import argparse,hashlib,json,struct
 from pathlib import Path
@@ -13,6 +14,7 @@ from audit_z7_module_host import HostFixture
 from audit_splash_image import MEM
 from build_z7_module_host import STATE
 from prepare_flash_review import require_private_output
+from movie_track_fixture import initialize_track_context,track_image
 
 ROOT=0xa1f532f8;CONTROL=ROOT+0x40;SLOT=ROOT+0x2c
 IDENTITY=struct.pack('>9i',65536,0,0,0,65536,0,0,0,1<<30)
@@ -24,6 +26,7 @@ class MovieFixture(HostFixture):
         self.opens=self.splits=self.tracks=self.pose_reads=0
         self.close_running=False;self.file_services=[]
         self.cache_cleans=[];self.busy_after_clean=False
+        self.execute_native_track=False
     def write(self,a,v):self.u.mem_write(a,struct.pack('<I',v))
     def read(self,a):return int.from_bytes(self.u.mem_read(a,4),'little')
     def hook(self,u,a,size,context):
@@ -47,7 +50,7 @@ class MovieFixture(HostFixture):
                 self.write(CONTROL+0x3f0+0x88*self.file+0x2c,self.context)
             self.ret(self.file)
         elif a==0x101b331a:self.pose_reads+=1;self.ret(self.pose)
-        elif a==0x102a9c2c:
+        elif a==0x102a9c2c and not self.execute_native_track:
             self.tracks+=1;p=u.reg_read(UC_ARM_REG_R0)
             if not self.track_result and p:u.mem_write(p+0x109,IDENTITY)
             self.ret(self.track_result)
@@ -125,6 +128,24 @@ def main():
     check('task-close-uses-open-latched-pose',bytes(f.u.mem_read(f.context+0x109,36))==struct.pack('>9i',0,-65536,0,65536,0,0,0,0,1<<30))
     check('native-close-acknowledges-and-decrements-file-count',f.read(CONTROL)==0 and f.read(CONTROL+0x370+8+4)==0)
     check('native-close-retains-file-service-order',[e[0] for e in f.file_services]==[0x102c3c9e,0x102c6064,0x102c3f5a,0x102c3f84,0x102c4f7a,0x102c3c9e,0x102aa53c,0x102aa35c,0x102c5f20,0x102a8a9e,0x102a819a,0x102a80f4,0x102c3cb6,0x102c3b62])
+    f.execute_native_track=True;f.context=MEM+0x50000;f.file=1;f.reply=0
+    matrices={0:IDENTITY,1:struct.pack('>9i',0,-65536,0,65536,0,0,0,0,1<<30),
+              2:struct.pack('>9i',0,65536,0,-65536,0,0,0,0,1<<30),
+              3:struct.pack('>9i',-65536,0,0,0,-65536,0,0,0,1<<30)}
+    for kind in (0,1):
+        for width,height in ((1920,1080),(3840,2160),(1280,720)):
+            initialize_track_context(f.u,f.context,kind,width,height)
+            check(f'original-track-constructor-{kind}-{width}',f.call(0x102a9c2c,f.context)==0)
+            reference=track_image(f.u,f.context)
+            check(f'original-native-track-and-header-tags-{kind}-{width}',reference[0xd5:0xd9]==b'trak' and reference[0xdd:0xe1]==b'tkhd' and int.from_bytes(reference[0xd9:0xdd],'big')==92)
+            check(f'original-native-identity-and-dimensions-{kind}-{width}',reference[0x109:0x12d]==IDENTITY and reference[0x12d:0x135]==struct.pack('>2I',width<<16,height<<16))
+            for pose in range(4):
+                initialize_track_context(f.u,f.context,kind,width,height)
+                f.pose=pose;op(1);f.pose=(pose+1)%4
+                check(f'wrapped-native-constructor-{kind}-{width}-{pose}',op(3,f.context)==0)
+                actual=track_image(f.u,f.context)
+                check(f'only-native-track-matrix-changes-{kind}-{width}-{pose}',actual==reference[:0x109]+matrices[pose]+reference[0x12d:])
+    f.execute_native_track=False
     f.file=1;f.context=MEM+0x30000;f.pose=1;op(1)
     f.context=MEM+0x31000;f.pose=2;check('split-returns-native-file',op(2)==1)
     op(3,MEM+0x30000);check('split-invalidates-old-context-pose',bytes(f.u.mem_read(MEM+0x30109,36))==IDENTITY)
@@ -159,7 +180,9 @@ def main():
     result=dict(passed=True,count=len(checks),checks=checks,module_sha256=m['module_sha256'],
         initialization_prepare_only=True,callback_installed_in_explicit_offline_fixture=True,
         cache_clean_services_supplied=True,physical_task_quiescence_verified=False,camera_access=False,physical_movie=False,
-        native_open_split_track_results_supplied=True,complete_native_task_verified=False,scope=__doc__)
+        native_open_split_results_supplied=True,native_track_constructor_executes=True,
+        native_track_cases=24,native_track_format_contexts_supplied=True,
+        complete_native_task_verified=False,complete_movie_file_verified=False,scope=__doc__)
     out.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(dict(passed=True,checks=len(checks))))
 

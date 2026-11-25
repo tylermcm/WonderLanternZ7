@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "count": 184,
+  "count": 250,
   "module_sha256": "1de27cff07318d2ee9f9e7af28be5c19bd477e9e6f6afd2d68dba7a6ca17307d",
   "initialization_prepare_only": true,
   "callback_installed_in_explicit_offline_fixture": true,
@@ -8,9 +8,13 @@
   "physical_task_quiescence_verified": false,
   "camera_access": false,
   "physical_movie": false,
-  "native_open_split_track_results_supplied": true,
+  "native_open_split_results_supplied": true,
+  "native_track_constructor_executes": true,
+  "native_track_cases": 24,
+  "native_track_format_contexts_supplied": true,
   "complete_native_task_verified": false,
-  "scope": "Original-Z7 native shadow preparation and per-file wrappers (MIT).\n\nCompiled copies/relocation/wrappers and close/header flow execute. Native file\nservices, track construction, pose and contexts are supplied. Explicit offline\npublication supplies cache clean services; physical cache/task quiescence,\ncomplete native mux task and physical recording behavior remain unproved.\n",
+  "complete_movie_file_verified": false,
+  "scope": "Original-Z7 native shadow preparation and per-file wrappers (MIT).\n\nCompiled copies/relocation/wrappers and close/header flow execute. Native file\nservices, pose and contexts are supplied. The native track constructor executes\nin 24 positive cases; separate error/control cases supply its result. Explicit\noffline publication supplies cache clean services. Physical cache/quiescence,\ncomplete movie files and physical recording remain unproved.\n",
   "schema": 1,
   "date": "2026-11-24"
 }

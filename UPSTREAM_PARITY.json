@@ -86,7 +86,7 @@
       "name": "Automatic video orientation",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/video-rotation.md",
       "status": "research",
-      "remaining": "Relocated open/split/close/header control flow and explicit offline publication checked with supplied file/cache services; actual native header/file writes, task quiescence and hardware metadata remain pending",
+      "remaining": "Original video-track constructor executes in 24 wrapped/reference cases with exact matrix-only difference; complete native file/container writes, task quiescence and hardware metadata remain pending",
       "local_review": "MOVIE_ORIENTATION_RESEARCH.md",
       "hardware_parity_verified": false
     },
