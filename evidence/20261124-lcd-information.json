@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "date": "2026-11-24",
+  "feature": "Saved optional native full Information display as fifth photo LCD DISP page",
+  "candidate_sha256": "cec4c39bdda98fb5269bb87cb6cd15961bc78e6eca464b6a39f78477cf3f62c5",
+  "module_bytes": 26040,
+  "reproducible": true,
+  "information_default_off": true,
+  "routing_checks": {
+    "passed": true,
+    "count": 54,
+    "scope": "Native DISP admission/exit and compiled routing; app manager/state/property/render boundaries supplied"
+  },
+  "storage_checks": {
+    "passed": true,
+    "count": 57,
+    "alternating_saves": 3,
+    "cold_loads": 4,
+    "wire_version": 3,
+    "rollback_sha256": "cc9d6b395e148b943af550cd31be8c9b1ca4de944ee260edc6fdeef0176dd830",
+    "information_only_rollback_to_standard": true,
+    "scope": "Compiled menu/codec/worker and native file wrappers; in-memory transport and GUI supplied"
+  },
+  "qemu_menu_checks": {
+    "passed": true,
+    "count": 12,
+    "private_frames": 4,
+    "combined_switch_frame_visually_inspected": true,
+    "scope": "Native-key menu only; live Information display pixels not established"
+  },
+  "root_unit_tests": {
+    "passed": true,
+    "count": 103
+  },
+  "preceding_movie_battery_packet_byte_identical": true,
+  "source_dependencies_verified": true,
+  "card_access": false,
+  "hardware_tested": false,
+  "staged": false,
+  "actual_information_pixels_verified": false,
+  "physical_recovery_verified": false,
+  "firmware_update_required": false,
+  "known_limit": "Stock-emulator Information text mirroring remains unresolved; no rendering changes made",
+  "startup_grid_transition": "Deferred at owner request"
+}

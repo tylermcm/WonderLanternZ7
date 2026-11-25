@@ -49,6 +49,7 @@ def main():
     parser.add_argument('--view', choices=('menu', 'live', 'inspect', 'battery', 'battery-auto', 'clean', 'disp-input', 'disp-admission', 'disp-key', 'settings-menu', 'settings-entry', 'settings-root', 'settings-battery', 'readouts', 'disp-presets', 'gui-update', 'histogram', 'information-groups', 'focal'), required=True)
     parser.add_argument('--root-label-loss-fixture', action='store_true', help='Explicit GUI-side empty-name/cache fault, with old/new control; settings-root only')
     parser.add_argument('--histogram-preset-menu', action='store_true', help='Exercise integrated Histogram + Virtual horizon preset controls; settings-root only')
+    parser.add_argument('--information-page-menu', action='store_true', help='Exercise the opt-in full Information display and relocated battery switch; settings-root only')
     parser.add_argument('--battery-icon-fixture', action='store_true', help='Supply one native icon visibility request for the automatic GUI test')
     parser.add_argument('--battery-source-fixture', action='store_true', help='Supply typed bar inputs at the native converter; LCD candidate battery-auto only, not physical telemetry')
     parser.add_argument('--settings-battery-control', action='store_true', help='Record startup separately and enter/leave native settings while disabled before qualifying the battery baseline')
@@ -77,6 +78,8 @@ def main():
         parser.error('Root label-loss fixture requires settings-root view')
     if args.histogram_preset_menu and (args.view != 'settings-root' or args.root_label_loss_fixture):
         parser.error('Histogram preset menu requires settings-root without the label-loss fixture')
+    if args.information_page_menu and (args.view != 'settings-root' or args.root_label_loss_fixture or args.histogram_preset_menu):
+        parser.error('Information page menu requires settings-root without another menu fixture')
     if args.focal_horizon and args.view != 'focal':
         parser.error('Focal horizon requires focal view')
     if args.focal_horizon_control and (args.view != 'focal' or args.focal_horizon):
@@ -845,6 +848,29 @@ def main():
             check('native-menu-disable-restores-stock-battery-region', restored.crop((2, 552, 112, 622)).tobytes() == baseline.crop((2, 552, 112, 622)).tobytes())
             result['settings_battery_integration'] = dict(supplied_setting_word=False, supplied_percentage=False,
                 native_snapshot_percent=battery_word('percent'), full_frame_restored=restored.tobytes() == baseline.tobytes(), hardware_telemetry=False)
+        elif args.view == 'settings-root' and args.information_page_menu:
+            if not module['configuration'].get('information_page'):
+                raise ValueError('Integrated information-page profile required')
+            key('left', lambda: on_page(1)); row(1, 3)
+            key('right', lambda: on_page(0x125)); row(0x125, 8)
+            key('right', lambda: on_page(0))
+            model_address=base+module['symbols']['z7_menu_settings']
+            def setting_word(offset):
+                return int.from_bytes(camera.remote.memory(model_address+offset,4),'little')
+            meta=base+module['symbols']['sm_meta']
+            check('seven-root-controls',camera.remote.memory(meta+20,4)==struct.pack('<I',0x00070007))
+            check('information-page-default-off',setting_word(4)==15)
+            capture('information-page-default-off')
+            row(0,5);key('right',lambda:setting_word(4)==31)
+            capture('information-page-enabled')
+            row(0,6);key('right',lambda:bool(setting_word(0)&2))
+            check('battery-switch-remains-independent',setting_word(4)==31)
+            capture('information-and-battery-enabled')
+            row(0,5);key('right',lambda:setting_word(4)==15)
+            check('information-off-retains-battery-switch',bool(setting_word(0)&2))
+            capture('information-disabled-battery-retained')
+            result['information_page_menu']=dict(native_keys=True,menu_only=True,
+                information_default_off=True,battery_independent=True,live_information_pixels=False)
         elif args.view == 'settings-root' and args.histogram_preset_menu:
             if not module['configuration'].get('histogram_presets'):
                 raise ValueError('Integrated histogram preset profile required')

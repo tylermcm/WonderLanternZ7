@@ -146,6 +146,10 @@ An additional optional [movie LCD battery checkpoint](LCD_MOVIE_BATTERY_REVIEW.m
 extends the global percentage switch to matching movie LCD icons. Instruction
 checks pass; real movie HUD layout and recording behavior remain unverified.
 
+The optional [Information DISP page checkpoint](LCD_INFORMATION_PAGE_REVIEW.md)
+adds Nikon's full information screen as a saved fifth LCD page, default OFF.
+It retains the native screen; camera appearance and lifecycle remain unverified.
+
 An optional [separate Display settings entry](LCD_SETTINGS_ROOT_REVIEW.md) now
 opens from the Custom Setting Menu overview instead of the grid submenu.
 That relocation has offline menu/navigation and persistence checks; its camera

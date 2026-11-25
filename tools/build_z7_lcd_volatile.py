@@ -20,15 +20,17 @@ def main():
     profiles.add_argument('--settings-label-refresh',action='store_true',help='Repair cold/stale name labels for the h Display settings entry on the GUI task')
     profiles.add_argument('--histogram-presets',action='store_true',help='Add guarded live histogram controls to all four saved LCD presets')
     profiles.add_argument('--movie-battery',action='store_true',help='Experimental movie LCD battery percentage, retaining histogram presets and exact native icon guards')
+    profiles.add_argument('--information-page',action='store_true',help='Add an opt-in native full Information display to the saved LCD DISP cycle, retaining movie battery/histogram work')
     a=p.parse_args();out=require_private_output(a.output)
-    histogram_presets=a.histogram_presets or a.movie_battery
+    movie_battery=a.movie_battery or a.information_page
+    histogram_presets=a.histogram_presets or movie_battery
     label_refresh=a.settings_label_refresh or histogram_presets
     settings_category=a.settings_category or label_refresh
     settings_root=a.settings_root or settings_category
     grid_persistence=a.grid_persistence or settings_root
     startup=a.startup_grid or grid_persistence
     persistent=a.persistent or startup
-    source=ROOT/'z7-native-modules/plugins'/('lcd_movie_battery_checkpoint.c' if a.movie_battery else 'lcd_histogram_checkpoint.c' if histogram_presets else 'lcd_settings_label_checkpoint.c' if label_refresh else 'lcd_settings_category_checkpoint.c' if settings_category else 'lcd_settings_root_checkpoint.c' if settings_root else 'lcd_grid_persistence_checkpoint.c' if grid_persistence else 'lcd_startup_grid_checkpoint.c' if startup else 'lcd_persistence_checkpoint.c' if persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
+    source=ROOT/'z7-native-modules/plugins'/('lcd_information_checkpoint.c' if a.information_page else 'lcd_movie_battery_checkpoint.c' if movie_battery else 'lcd_histogram_checkpoint.c' if histogram_presets else 'lcd_settings_label_checkpoint.c' if label_refresh else 'lcd_settings_category_checkpoint.c' if settings_category else 'lcd_settings_root_checkpoint.c' if settings_root else 'lcd_grid_persistence_checkpoint.c' if grid_persistence else 'lcd_startup_grid_checkpoint.c' if startup else 'lcd_persistence_checkpoint.c' if persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
     packet,meta=build(source,zig=ZIG.resolve(),function_details=functions)
     again,other=build(source,zig=ZIG.resolve(),function_details=other_functions)
     assert packet==again and meta==other and functions==other_functions
@@ -51,7 +53,7 @@ def main():
                 source_inputs_sha256=inputs,function_details=functions,api_minimum_bytes=44,reproducible=True,
                 dependency_scope='Conservative recursive quoted includes, including inactive conditional dependencies',
                 do_not_stage=True,hardware_test_authorized=False,firmware_image=False,
-                configuration=dict(persistent_settings=persistent,worker_registration_enabled=persistent,initial_grid_delta_only=startup,grid_layout_persistence=grid_persistence,settings_root_entry=settings_root,settings_category_entry=settings_category,settings_label_refresh=label_refresh,histogram_presets=histogram_presets,movie_battery=a.movie_battery),
+                configuration=dict(persistent_settings=persistent,worker_registration_enabled=persistent,initial_grid_delta_only=startup,grid_layout_persistence=grid_persistence,settings_root_entry=settings_root,settings_category_entry=settings_category,settings_label_refresh=label_refresh,histogram_presets=histogram_presets,movie_battery=movie_battery,information_page=a.information_page),
                 scope=('LCD preferences including grid shape, separate Z7DSP slots/v3 payload; legacy Z7CFG read-only fallback' if grid_persistence else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; v1 preference journal, RAM-only grid layout' if persistent else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; all preferences volatile'))
     out.mkdir(parents=True)
     (out/'Z7APP.BIN').write_bytes(packet)

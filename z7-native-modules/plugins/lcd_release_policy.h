@@ -7,7 +7,11 @@
 static inline uint32_t z7_lcd_release_filter(struct z7_display_settings *s)
 {
     if (!z7_settings_valid(s)) return 0;
+#ifdef Z7_LCD_INFORMATION_PAGE
+    s->enabled_pages &= 31u;
+#else
     s->enabled_pages &= 15u;
+#endif
     if (!s->enabled_pages) s->enabled_pages = 1;
     for (uint32_t i=0;i<4;++i) s->components[i] &= Z7_COMPONENT_GRID | Z7_COMPONENT_HORIZON
 #ifdef Z7_LCD_HISTOGRAM_PRESETS
@@ -18,7 +22,12 @@ static inline uint32_t z7_lcd_release_filter(struct z7_display_settings *s)
 }
 static inline uint32_t z7_lcd_release_rows(uint32_t view)
 {
-    static const uint8_t count[]={6,
+    static const uint8_t count[]={
+#ifdef Z7_LCD_INFORMATION_PAGE
+        7,
+#else
+        6,
+#endif
 #ifdef Z7_LCD_HISTOGRAM_PRESETS
         6,
 #else
@@ -30,7 +39,12 @@ static inline uint32_t z7_lcd_release_rows(uint32_t view)
 /* Physical compact-menu row -> existing settings action/label index. */
 static inline uint32_t z7_lcd_release_row(uint32_t view,uint32_t row)
 {
-    static const uint8_t map[4][7]={{0,1,2,3,4,6,255},
+    static const uint8_t map[4][7]={
+#ifdef Z7_LCD_INFORMATION_PAGE
+                                 {0,1,2,3,4,5,6},
+#else
+                                 {0,1,2,3,4,6,255},
+#endif
 #ifdef Z7_LCD_HISTOGRAM_PRESETS
                                  {0,1,2,3,4,6,255},
 #else

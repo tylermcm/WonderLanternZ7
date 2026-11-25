@@ -269,6 +269,14 @@ def main():
     if a.persistence_transport:
         from audit_z7_display_persistence import PersistenceFixture
         fixture_class = PersistenceFixture
+        if json.loads((a.module / 'module.json').read_text())['configuration'].get('grid_layout_persistence'):
+            from audit_z7_settings_files import PATHS
+            from audit_z7_lcd_grid_persistence import NEW
+            class GridJournalInformationFixture(PersistenceFixture):
+                def __init__(self, *args):
+                    super().__init__(*args)
+                    self.file_paths = PATHS + NEW
+            fixture_class = GridJournalInformationFixture
     result = audit((a.build / 'module-host.emulator.main.bin').read_bytes(),
                    json.loads((a.build / 'module-host.emulator.json').read_text(encoding='utf-8')),
                    (a.module / 'Z7APP.BIN').read_bytes(), json.loads((a.module / 'module.json').read_text(encoding='utf-8')), fixture_class)
