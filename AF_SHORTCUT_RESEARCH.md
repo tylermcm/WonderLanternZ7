@@ -62,9 +62,41 @@ Private native-menu observations use an isolated stock QEMU guest and original
 key paths. These are baseline UI observations, not a modified shortcut menu or
 hardware proof. Firmware, property snapshots and screenshots remain private.
 
+## AF-area mode and focus mode, measured in Nikon's menu (November 25, 2026)
+
+Read-only walks of Nikon's own Photo shooting menu in assisted QEMU
+(`tools/probe_z7_menu_walk.py`) pressed the original key events, confirmed one
+AF-area mode at a time, and diffed the property RAM after each confirmation. Each
+confirmation changed exactly one word, `0xA24E33F8`; Nikon's scalar getter
+`0x104065A4` maps property **`0x568`** (and no other key in `0x540`–`0x59F`) to it.
+Focus mode is property **`0x567`** (`0xA24E33F4`, mirrored at `0xA24F7C04`).
+
+| `0x568` value | Photo AF-area mode | Availability seen in the menu |
+| --- | --- | --- |
+| 0 | Pinpoint AF | Greyed in AF-C |
+| 1 | Single-point AF | Always |
+| 2 | Dynamic-area AF | Greyed in AF-S |
+| 3 | Wide-area AF (S) | Always |
+| 4 | Wide-area AF (L) | Always |
+| 6 | Auto-area AF | Always |
+
+| `0x567` value | Focus mode |
+| --- | --- |
+| 1 | AF-S |
+| 2 | AF-C |
+
+The values match the area numbers in upstream's Z7II shortcut table
+(`0,1,2,3,4,…,6`), so the shortcut's targets can use the same area numbers on
+the Z7, written through property `0x568`. Upstream's subtype keys `0x058A`/`0x058B`
+stay outside the Z7's group, as found earlier, and the Z7 menu lists no custom wide-area modes.
+`tools/audit_z7_af_area_property.py` (24 checks) re-checks the getter mapping and
+the recorded walks, including every screenshot hash. Manual focus, the
+`0x56C`/`0x579` selector rows, the setter path and movie-mode AF are still open.
+
 ## Required remaining work
 
-Identify native AF-area meanings, availability rules, five physical button
+Native AF-area values are now measured (above). Identify the setter path,
+remaining availability rules, five physical button
 events and native assignments through the original menus and input paths. Then
 connect GUI-side writes with readback and exclusion rules for menus, playback,
 information display, magnified view, movie mode, LCD and EVF. The existing

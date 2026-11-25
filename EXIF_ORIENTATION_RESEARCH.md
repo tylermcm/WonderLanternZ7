@@ -63,5 +63,16 @@ Not established: that the camera records pose 3 for an upside-down photo, the
 thumbnail/second IFD behavior, and NEF. One upside-down photo in the field test
 answers the first.
 
+## In-camera playback (not started)
+
+Upstream also rotates upside-down photos in playback. On the Z7, Nikon's EXIF
+*reader* table for IFD0 is at `0x11531BB8` (7 entries of `{tag word, reader}`);
+its Orientation reader `0x10283AF1` maps 1/8/6 to poses 0/1/2 and anything else,
+including 3, to 4 ("unknown"). The table address comes from a switch at
+`0x102836EC` that returns ROM addresses, and no literal or direct branch to that
+switch was found, and a read-only RAM search in assisted QEMU found no pointer
+to it either, so there is no RAM descriptor to swap as on the writer side. Whether Nikon's playback renderer can show a 180° rotation at all is also
+unknown. Both need tracing before a playback change is designed.
+
 Credit: design follows JKWTCN's MIT `photo_rotation.h`; original-Z7 bindings
 are independent work.

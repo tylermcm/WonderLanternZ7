@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "Original-Z7 photo AF-area mode and focus mode properties",
+  "af_area_property": "0x568",
+  "af_area_storage": "0xA24E33F8",
+  "af_area_values": {
+    "0": "Pinpoint AF",
+    "1": "Single-point AF",
+    "2": "Dynamic-area AF",
+    "3": "Wide-area AF (S)",
+    "4": "Wide-area AF (L)",
+    "6": "Auto-area AF"
+  },
+  "focus_mode_property": "0x567",
+  "focus_mode_values": {
+    "1": "AF-S",
+    "2": "AF-C"
+  },
+  "availability_observed": "Pinpoint greyed in AF-C; Dynamic-area greyed in AF-S (screenshots)",
+  "checks": 24,
+  "method": "read-only assisted-QEMU walks of the native Photo shooting menu plus native getter execution",
+  "matches_z7ii_area_numbers": true,
+  "camera_access": false,
+  "review": "AF_SHORTCUT_RESEARCH.md"
+}
