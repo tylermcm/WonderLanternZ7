@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "date": "2026-11-24",
+  "feature": "Original-Z7 SD-module shutter-sound playback trial (no trigger, no menu)",
+  "module": {
+    "install_only_sha256": "0508c14e8e925c699a44c6b1a7ba4668123f5afcb165bb19e19f27ef1ee23f27",
+    "install_only_bytes": 1932,
+    "boot_preview_sha256": "037e78b078f406c231e55416e79c8adf6c5990d9cd98df95a9da8b3539e6317b",
+    "boot_preview_bytes": 1996,
+    "reproducible": true,
+    "clip": "A:\\SHUTTER1.WAV, read-only, 48 kHz 16-bit mono/stereo, at most 1 s",
+    "native_fingerprints": 9
+  },
+  "host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "offline_audit": {
+    "checks": 74,
+    "passed": true,
+    "engine": "Unicorn",
+    "native_code_executed": [
+      "0x100A2D78 post",
+      "0x1006BB58 dispatcher",
+      "0x100A2D5E completion"
+    ],
+    "stubbed": [
+      "filesystem dispatcher",
+      "allocator",
+      "mailbox send 0x101F243C",
+      "speaker checks",
+      "format/tone/data/DMA setters",
+      "native start handler"
+    ],
+    "mutation_test": "tone 31->30 fails tones-native-shape"
+  },
+  "assisted_qemu": {
+    "install_only": {
+      "passed": true,
+      "checks": [
+        "module-loaded",
+        "wav-read-through-fixture",
+        "installed-into-live-start-slot",
+        "install-only-queues-nothing",
+        "idle-guest-never-starts-private-job",
+        "slot-still-installed-while-running"
+      ]
+    },
+    "no_wav_control": {
+      "passed": true,
+      "checks": [
+        "module-loaded",
+        "no-wav-no-install",
+        "no-wav-no-preview-queued"
+      ]
+    },
+    "differential": {
+      "none": {
+        "module_slot_installed": true,
+        "exception": null,
+        "faulting_pc": null
+      },
+      "stock-not-installed": {
+        "module_slot_installed": false,
+        "exception": "data-abort",
+        "faulting_pc": "0x100cbb3e"
+      },
+      "stock-passthrough": {
+        "module_slot_installed": true,
+        "exception": "data-abort",
+        "faulting_pc": "0x100cbb3e"
+      },
+      "module-private": {
+        "module_slot_installed": true,
+        "exception": "data-abort",
+        "faulting_pc": "0x100cbb3e"
+      }
+    },
+    "finding": "Every sound request, including a stock beep with the module not installed, takes the same data abort at 0x100CBB3E (null codec channel object, emulator only); playback cannot be verified in QEMU."
+  },
+  "camera_access": false,
+  "staged": false,
+  "audible_output_verified": false,
+  "photo_trigger": false,
+  "review": "SHUTTER_SOUND_SD_PORT.md"
+}

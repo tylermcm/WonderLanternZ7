@@ -1,7 +1,7 @@
 # Silent shutter sound as an SD module — original-Z7 binding map
 
-Status: **research checkpoint, November 24, 2026.** No module, hook or card file
-exists yet. Nothing here has run on a camera.
+Status: **playback module built and verified offline, November 24, 2026.** It has
+not run on a camera, has no photo trigger and no menu yet. Nothing is staged.
 
 ## Why a new approach
 
@@ -55,8 +55,72 @@ completion calls `job[1]` as the release callback.
 `tools/audit_z7_sound_service_bindings.py` re-checks these facts against the stock
 MAIN: 27 literal, call-target and instruction checks, plus 4 live-table values
 from the private stock QEMU dump (31 total, all pass). Static checks confirm what
-the code references; they do not execute it. The playback audit in step 1 below is
-where the native dispatcher and setters will actually run.
+the code references; they do not execute it. The playback audit below is where
+the native post, dispatcher and completion actually run.
+
+## Step 1: playback module
+
+Sources: `z7-native-modules/plugins/shutter_sound_playback.h` (engine),
+`shutter_sound_module.c` (install only) and `shutter_sound_boot_preview.c` (same,
+plus one preview queued at module init). Built by
+`tools/build_z7_shutter_sound.py`, twice per build to confirm the bytes reproduce.
+
+What the module does at boot:
+
+1. Reads `A:\SHUTTER1.WAV` once, read-only, through the native file functions. It
+   accepts 48 kHz 16-bit mono or stereo, at most one second. Any other file means
+   nothing is installed.
+2. Checks the first instruction words of the nine native functions it calls or
+   replaces. If any differ (other firmware), the module returns an error and the
+   host frees it. It changes nothing.
+3. Stores its handler into the start slot `0xA188D278` with one word write, and
+   only if the slot still holds the native `0x1006BC47`.
+
+The handler forwards every request that isn't the module's own job to the native
+start handler untouched. For its own job it repeats the native preconditions
+(speaker on, second check clear, service idle), then programs the setters with the
+same argument shapes the native handler builds. The record is type 18, which the
+native handler rejects, so if the intercept were ever missing the job would
+release without playing anything. This trial reads one clip and has five volume
+levels. The menu and the other four clips come with step 3.
+
+**Offline audit** (`tools/audit_z7_shutter_sound_playback.py`, 74 checks, all
+pass). It runs the original host loader, the compiled module, and Nikon's post
+function, message dispatcher and completion in Unicorn. It stubs the filesystem
+dispatcher, allocator, mailbox send, speaker checks, the four setters and the
+native start handler; it records their arguments but doesn't execute them. Covered:
+WAV decode edge cases, install and no-install paths, firmware-mismatch refusal,
+setter order and arguments, native passthrough, every rejection path releasing the
+job, busy and allocation failure. A mutation test (tone 31→30) fails as expected.
+
+**Assisted QEMU, real guest tasks** (`tools/probe_z7_shutter_sound.py`):
+
+| Run | Result |
+| --- | --- |
+| Install-only module + WAV | WAV read through the file fixture, slot holds the module handler, nothing queued, no private start in 4 s of running (6/6) |
+| Same module, no WAV | Nothing installed, slot keeps `0x1006BC47` (3/3) |
+
+**Emulator limit: playback can't be tested in QEMU.** Any sound request, Nikon's
+own beep included, crashes the emulated codec task.
+`tools/probe_z7_sound_differential.py` queued one request at the GUI checkpoint
+and decoded the exception frame:
+
+| Request | Module handler in slot | Outcome |
+| --- | --- | --- |
+| None | yes | No exception in 8 s |
+| Stock type-0 beep, module **not** installed | no (`0x1006BC47`) | Data abort |
+| Stock type-0 beep through module passthrough | yes | Same data abort |
+| Module's private preview | yes | Same data abort |
+
+All three aborts are identical: data abort at `0x100CBB3E` (`ldrb r2,[r0,#4]`,
+r0 = 0) in codec-channel function `0x100CBB3A`, called from `0x100CEA0E` with
+channel 0's object pointer, which is null in emulation. Nikon's exception reporter
+`0x100545EC` then sends the flash chip its CFI autoselect (ID read) commands
+(`AAA←AA, 554←55, AAA←90`), which QEMU refuses as a flash write and stops. The
+null object is probably due to the unmodeled audio codec (QEMU logs repeated I2C
+NACKs at address `0x1D`); that part is not proven. Because the stock beep fails
+identically with the module out of the path, the abort is an emulator gap, not a
+module fault. The setters and DMA can only be verified on a camera.
 
 ## Trigger: still open
 
@@ -78,10 +142,9 @@ events without playing sound or writing files, and show the counts.
 
 ## Plan
 
-1. **Playback module:** load `SHUTTER1..5.WAV` from the card at boot, queue a job
-   with event `0x0418001E`, intercept only that job in slot `0xA188D278`, program
-   PCM with the setters above, and leave all native requests on the original
-   handler. Offline audit executes the native dispatcher, setters and completion.
+1. **Playback module:** built and verified offline (above). Next is a camera smoke
+   test of the boot-preview build: one clip at power-on, then normal camera use.
+   This needs the owner's approval and swaps the module file on the card.
 2. **Event counter (camera, no sound):** count trigger candidates per photo, single
    and burst, and in idle live view, half-press, menus and playback.
 3. **Trigger:** wire playback to the signal the counts support; Silent photography
