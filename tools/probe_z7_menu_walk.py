@@ -20,6 +20,8 @@ import interactive as ui
 from probe import call_fixture
 
 CHECKPOINT=0x100531bc
+# Extra buttons through Nikon's AutoOperation table (AF_SHORTCUT_RESEARCH.md).
+ui.KEYS.update({'fn1':59,'af-on':27,'ss-center':51});ui.LABELS.update({'fn1':'Fn1','af-on':'AF-ON','ss-center':'Sub-selector center'})
 
 
 def main():
@@ -28,16 +30,18 @@ def main():
     p.add_argument('--keys',required=True,help='Comma-separated key names')
     p.add_argument('--window',default='a24e0000:a24f0000',help='RAM window start:end (hex) to diff')
     p.add_argument('--settle',type=float,default=0.6)
+    p.add_argument('--profile',choices=('menu','shooting'),default='menu')
     p.add_argument('--initial-wait',type=float,default=1.0)
     p.add_argument('--set',action='append',default=[],help='KEY=VALUE (hex or decimal) through the native property setter')
     p.add_argument('--read',action='append',default=[],help='KEY=ADDRESS to record before/after each set')
+    p.add_argument('--module-symbol',action='append',default=[],help='Module variable to record at the end')
     a=p.parse_args();out=a.output.resolve()
     if not out.is_relative_to(ROOT/'.private') or out.exists():p.error('Choose a new private directory')
     out.mkdir(parents=True)
     keys=[k for k in a.keys.split(',') if k]
     assert all(k in ui.KEYS for k in keys),keys
     meta=json.loads((a.module/'module.json').read_text());packet=(a.module/'Z7APP.BIN').read_bytes()
-    assert hashlib.sha256(packet).hexdigest()==meta['module_sha256'] and not meta['boot_preview']
+    assert hashlib.sha256(packet).hexdigest()==meta['module_sha256'] and not meta.get('boot_preview')
     ui.FIRMWARE=a.build/'module-host.emulator.main.bin';ui.FIRMWARE_REPORT=a.build/'module-host.emulator.json'
     ui.STOCK_CONTAINER=ROOT/'.private/stock/Z_7_0380.bin';ui.validate_firmware=validate_candidate
     host=json.loads(ui.FIRMWARE_REPORT.read_text())
@@ -48,7 +52,7 @@ def main():
         def __init__(self,port):super().__init__(port,fixture)
     ui.Remote=BoundRemote
     HostCamera.module_fixture=fixture;HostCamera.module_result_address=host['symbols']['z7_module_result'];HostCamera.module_waited=False
-    camera=HostCamera(0,profile='menu')
+    camera=HostCamera(0,profile=a.profile)
     lo,hi=(int(x,16) for x in a.window.split(':'))
     result=dict(keys=keys,window=a.window,frames=[],assisted_qemu=True,camera_access=False,guest_writes=False)
     def save():(out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
@@ -64,7 +68,7 @@ def main():
         if camera.proc and camera.proc.poll() is None:camera.proc.terminate()
     watchdog=threading.Timer(900,stop);watchdog.daemon=True;watchdog.start()
     try:
-        camera.boot()
+        camera.boot_shooting() if a.profile=='shooting' else camera.boot()
         advance(a.initial_wait)
         reads={int(k,0):int(v,0) for k,v in (x.split('=') for x in a.read)}
         def words():return {hex(k):hex(int.from_bytes(camera.remote.memory(v,4),'little')) for k,v in reads.items()}
@@ -89,6 +93,10 @@ def main():
             if k=='ok':
                 now=snapshot();result['after_ok'].append(dict(frame=f'{n:02d}-{k}',changed=diff(last,now)[:64]));last=now;save()
         advance(1.0);after=snapshot()
+        result['final_reads']=words();result['module_values']={}
+        base=struct.unpack('<64I',camera.remote.memory(0xa9700000,256))[12]
+        for name in a.module_symbol:
+            result['module_values'][name]=hex(int.from_bytes(camera.remote.memory(base+meta['symbols'][name],4),'little')) if base else None
         changed=[]
         for off in range(0,len(before),4):
             x,y=struct.unpack_from('<I',before,off)[0],struct.unpack_from('<I',after,off)[0]

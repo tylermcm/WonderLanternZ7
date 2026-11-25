@@ -81,5 +81,13 @@
       ]
     },
     "runtime_checks": 30
+  },
+  "emulator_demo": {
+    "module": "af_shortcut_demo.c",
+    "fn1_assignment_set_to_none": true,
+    "update_passes": 388,
+    "af_area_before": "0x1",
+    "af_area_after": "0x4",
+    "screen_icon_refresh_observed": false
   }
 }

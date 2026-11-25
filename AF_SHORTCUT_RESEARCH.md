@@ -152,6 +152,17 @@ that None is also 0 for the other buttons is assumed, not observed. The runtime 
 shortcut acts only on a button the owner has set to None, as upstream requires.
 Fn2's property was not measured. The runtime audit grows to 30 checks.
 
+## Emulator end-to-end demo (November 25, 2026)
+
+`z7-native-modules/plugins/af_shortcut_demo.c` (emulator only, fixed assignment
+Fn1 -> Wide-area AF (L)) runs the runtime from the host's before-update hook. In
+assisted QEMU booted to the shooting screen, Fn1's f2 assignment was set to None
+through Nikon's setter, then Fn1 was pressed through the AutoOperation path. The
+module ran 388 update passes, took the press, and `0x568` read back 4 (Wide-area
+L); the result was "set". The emulated shooting screen's AF-area icon did not
+visibly change in the captured frames, so the on-screen refresh is not yet shown;
+the property change is. Run: `tools/probe_z7_menu_walk.py --profile shooting`.
+
 ## Required remaining work
 
 Native AF-area values and the setter path are now measured (above). Identify
