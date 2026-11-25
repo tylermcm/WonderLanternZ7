@@ -1,6 +1,7 @@
 # Shutter-sound trigger probe: camera measurement
 
-Status: **prepared, not staged.** Run after the playback smoke test
+Status: **superseded by the one-session [field test](SHUTTER_SOUND_FIELD_TEST.md),** which
+includes this probe. Prepared, not staged. Run after the playback smoke test
 ([SHUTTER_SOUND_CAMERA_SMOKE_TEST.md](SHUTTER_SOUND_CAMERA_SMOKE_TEST.md)) and its
 restore. No firmware update; the installed module host stays as is.
 

@@ -17,6 +17,11 @@ def parse(blob):
     magic,version,size,sequence,ticks,mask,silent,dropped=head[:8]
     if magic!=MAGIC or version!=VERSION or size!=SIZE:raise ValueError('not a Z7TRIG v1 log')
     calls=list(head[8:11]);ring_next,writes=head[11],head[12]
+    sound=None
+    if head[13]>>24==1:  # field-test module: sound counters in reserved words
+        sound=dict(preview={0:'not yet',1:'queued',2:'refused (service busy)',4:'no clip installed'}.get(head[13]&0xff,head[13]&0xff),
+                   installed=bool(head[13]>>8&0xff),wav_loaded=bool(head[13]>>16&1),
+                   starts=head[14]&0xffff,rejects=head[14]>>16,finished=head[15]&0xffff,native_passthrough=head[15]>>16)
     counts=[]
     for s in range(SLOTS):
         row={}
@@ -34,7 +39,7 @@ def parse(blob):
     return dict(sequence=sequence,writes=writes,ticks=ticks,installed_mask=mask,
                 installed=[SLOT_NAMES[i] for i in range(SLOTS) if mask>>i&1],silent_photography=silent,
                 dropped_event_kinds=dropped,calls=dict(zip(SLOT_NAMES,calls)),counts=dict(zip(SLOT_NAMES,counts)),
-                ring_total=ring_next,ring_lost=first,ring=ring)
+                ring_total=ring_next,ring_lost=first,ring=ring,sound=sound)
 
 
 def candidates(log,photos):
@@ -64,6 +69,7 @@ def main():
     if a.photos is not None:r['candidates']=candidates(r,a.photos)
     if a.json:print(json.dumps(r,indent=2));return
     print(f"log #{r['sequence']} after {r['ticks']} worker ticks; installed: {', '.join(r['installed']) or 'none'}")
+    if r['sound']:print('sound:',', '.join(f'{k}={v}' for k,v in r['sound'].items()))
     for name,row in r['counts'].items():
         print(f'{name}: {r["calls"][name]} calls',' '.join(f'{e}x{c}' for e,c in row.items()))
     for e in r['ring']:print(f"t={e['tick']:5d} {e['slot']:<34} {e['event']} {e['word0']} {e['word1']}")

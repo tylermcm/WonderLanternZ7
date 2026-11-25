@@ -24,7 +24,8 @@
     "qemu_checks": 5,
     "qemu_idle_callback_events": 0,
     "qemu_log_captured": true,
-    "log": "A:/Z7TRIG.DAT, 3264 bytes, <=400 writes per power-on"
+    "log": "A:/Z7TRIG.DAT, 3264 bytes, <=400 writes per power-on",
+    "module_sha256_after_header_refactor": "9ea9a221fa1eacbb6301c049dff40e731253db1df717d37cde01fb6769178116"
   },
   "still_trigger": {
     "module_sha256": "707639622191c0f0ea004bfb0fcdf3744d3f7c4390947a75421586b14cd60eb3",
@@ -39,5 +40,16 @@
   "plans": [
     "SHUTTER_TRIGGER_PROBE_TEST.md",
     "SHUTTER_SOUND_SD_PORT.md"
-  ]
+  ],
+  "field_test": {
+    "module_sha256": "843e480fa95ac817d886606ceb2286680bfeaaa8838dd68e5cc72d694b92836a",
+    "bytes": 3160,
+    "clip_sha256": "469f08a622274e2281cca78eb89c77c251fa937dbbaea5acaa8279ccc5ff52f2",
+    "offline_checks": 17,
+    "qemu_checks": 8,
+    "qemu_log_captured": true,
+    "preview_worker_tick": 8,
+    "staged": false,
+    "plan": "SHUTTER_SOUND_FIELD_TEST.md"
+  }
 }

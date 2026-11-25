@@ -1,6 +1,7 @@
 # Shutter-sound camera smoke test
 
-Status: **prepared, not staged.** Nothing is on the card until the owner approves
+Status: **superseded by the one-session [field test](SHUTTER_SOUND_FIELD_TEST.md);** kept as a
+fallback. Prepared, not staged. Nothing is on the card until the owner approves
 staging. No firmware update is involved: the installed module host stays as is.
 
 ## What this tests

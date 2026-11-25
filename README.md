@@ -229,7 +229,7 @@ capture timing, recording, recovery or compatibility with other camera models.
 - [AUDIO_PLAYBACK_FIX.md](AUDIO_PLAYBACK_FIX.md): WAV specification check and corrected Z7 playback admission.
 - [FLASH_ASSESSMENT.md](FLASH_ASSESSMENT.md): private EG preparation, updater evidence and hardware recovery limits.
 - [SHUTTER_TRIGGER_FIX.md](SHUTTER_TRIGGER_FIX.md): capture-hook correction and diagnostics after working Preview but silent capture.
-- [SHUTTER_SOUND_SD_PORT.md](SHUTTER_SOUND_SD_PORT.md): SD-module shutter sound (no firmware patch): sound-service bindings, playback module, trigger probe; camera tests in [SHUTTER_SOUND_CAMERA_SMOKE_TEST.md](SHUTTER_SOUND_CAMERA_SMOKE_TEST.md) and [SHUTTER_TRIGGER_PROBE_TEST.md](SHUTTER_TRIGGER_PROBE_TEST.md).
+- [SHUTTER_SOUND_SD_PORT.md](SHUTTER_SOUND_SD_PORT.md): SD-module shutter sound (no firmware patch): sound-service bindings, playback module, trigger probe; one-session camera test in [SHUTTER_SOUND_FIELD_TEST.md](SHUTTER_SOUND_FIELD_TEST.md).
 - [CAPTURE_START_FIX.md](CAPTURE_START_FIX.md): normal-callback correction after the silent/mechanical diagnostic comparison.
 - [SILENT_PROPERTY_FIX.md](SILENT_PROPERTY_FIX.md): verified native Z7 silent-mode property and tests through the original getter.
 - [PORT_AUDIT.md](PORT_AUDIT.md): current flash hold and independent Z7 evidence gaps after the owner's port-safety concern.

@@ -68,3 +68,38 @@ class TriggerFileFixture:
         remote.write_memory(actual, struct.pack('<I', capacity))
         self.events.append(dict(component='trigger', operation='write', bytes=capacity))
         return 0
+
+
+class FieldFileFixture:
+    """Module file + read-only SHUTTER1.WAV + write-only trigger log, for the
+    combined field-test module. One shared module-file fixture."""
+    def __init__(self, packet, wav, size):
+        from sound_file_fixture import SoundFileFixture
+        self.sound = SoundFileFixture(packet, wav)
+        self.trigger = TriggerFileFixture(packet, size)
+        self.trigger.module = self.sound.module
+        self.module = self.sound.module
+        self.events = self.module.events
+        self.trigger.events = self.events
+        self.finished = False
+
+    files = property(lambda self: self.trigger.files)
+    handle = property(lambda self: self.trigger.handle)
+    packet = property(lambda self: self.module.packet)
+    position = property(lambda self: self.module.position)
+    opened = property(lambda self: self.module.opened)
+    closed = property(lambda self: self.module.closed)
+    module_finished = property(lambda self: self.module.finished)
+
+    def request(self, remote, pointer):
+        data = remote.memory(pointer, 168)
+        words = struct.unpack('<42I', data)
+        operation = data[0x9c]
+        if operation in (5, 13, 16):
+            p = words[4]
+            if 0x10020000 <= p < 0x12000000 or 0xa1800000 <= p < 0xc0000000:
+                if remote.memory(p, 32).split(b'\0', 1)[0] == LOG_PATH:
+                    return self.trigger.request(remote, pointer)
+        elif words[7] == LOG_FD:
+            return self.trigger.request(remote, pointer)
+        return self.sound.request(remote, pointer)

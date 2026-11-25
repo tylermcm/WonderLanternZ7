@@ -190,11 +190,11 @@ If the probe picks a different event, only the policy's event and key change.
 
 ## Plan
 
-1. **Playback module:** built and verified offline (above). Camera smoke test
-   prepared in [SHUTTER_SOUND_CAMERA_SMOKE_TEST.md](SHUTTER_SOUND_CAMERA_SMOKE_TEST.md);
-   staging waits for the owner's approval.
-2. **Event counter (camera, no sound):** trigger probe built and verified offline;
-   camera session prepared in [SHUTTER_TRIGGER_PROBE_TEST.md](SHUTTER_TRIGGER_PROBE_TEST.md).
+1. **Playback module** and 2. **event counter**: both built and verified offline,
+   combined into one field-test module (`shutter_sound_field_test.c`): chime on
+   worker tick 8 plus the trigger log, with sound counters in the log header.
+   One camera session: [SHUTTER_SOUND_FIELD_TEST.md](SHUTTER_SOUND_FIELD_TEST.md).
+   Staging waits for the owner's approval.
 3. **Trigger:** wire playback to the signal the counts support (still-file policy
    built provisionally, above); Silent photography ON, photo mode only, no
    retrigger while playing; then a menu for clip, volume and Preview.
