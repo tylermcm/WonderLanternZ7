@@ -79,7 +79,7 @@ code buffers, issues ARM cache/barrier instructions and rechecks those guards
 before publication. This is not a proven task-quiescence protocol. The diagnostic
 remains separate from the cumulative display candidates and must not be staged.
 
-250 checks verify every relocated direct call, native bytes/literal pools,
+318 checks verify every relocated direct call, native bytes/literal pools,
 alignment, unchanged live callback, all ten file slots and four poses, pose
 retention after later orientation changes, split-context replacement, failed
 open/unknown-pose invalidation, native track failure preservation and fingerprint
@@ -105,7 +105,22 @@ Those dimensions are constructor inputs, not evidence of supported recording
 formats. Sample descriptions/tables and pointers are fixture inputs; no sensor,
 encoder, actual file open or completed playable movie is exercised. Separate
 failure/control cases still supply the track return. This does not validate a
-complete movie container, file split or player result. See
+complete playable movie, file split or player result.
+
+Eight further cases execute original native sample-table finalization,
+movie-header construction and scatter serialization at two supplied container-
+kind values and four poses. Only filesystem append and flush are supplied in
+that serialization stage. The emitted metadata atom trees have exact bounded
+sizes and one 92-byte `tkhd`; matrix and dimensions are read from its emitted
+bytes. Each rotated stream differs from its unrotated native reference only in
+the intended matrix. Five append-failure injections and a flush failure return
+the original writer error instead of success. The eight generated streams stay
+private with byte counts and hashes recorded in the evidence.
+
+These are metadata-only streams with an empty supplied sample description and
+no media samples. They are not playable MOV/MP4 recordings, and do not prove
+encoder output, track timing under recording, file splitting or player behavior.
+See
 [the shadow record](evidence/20261124-movie-shadows.json).
 
 ## Remaining integration

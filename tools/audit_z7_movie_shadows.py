@@ -1,10 +1,12 @@
 """Original-Z7 native shadow preparation and per-file wrappers (MIT).
 
 Compiled copies/relocation/wrappers and close/header flow execute. Native file
-services, pose and contexts are supplied. The native track constructor executes
-in 24 positive cases; separate error/control cases supply its result. Explicit
-offline publication supplies cache clean services. Physical cache/quiescence,
-complete movie files and physical recording remain unproved.
+services, pose and contexts are supplied in control cases. The original track
+constructor executes in 24 cases; eight metadata streams additionally execute
+sample-table finalization, movie-header construction and scatter serialization
+with only append/flush supplied. Sample descriptions are empty fixture inputs.
+Publication supplies cache clean services. Physical quiescence/cache, completed
+playable movies and physical recording remain unproved.
 """
 import argparse,hashlib,json,struct
 from pathlib import Path
@@ -14,7 +16,7 @@ from audit_z7_module_host import HostFixture
 from audit_splash_image import MEM
 from build_z7_module_host import STATE
 from prepare_flash_review import require_private_output
-from movie_track_fixture import initialize_track_context,track_image
+from movie_track_fixture import initialize_track_context,track_image,initialize_movie_context
 
 ROOT=0xa1f532f8;CONTROL=ROOT+0x40;SLOT=ROOT+0x2c
 IDENTITY=struct.pack('>9i',65536,0,0,0,65536,0,0,0,1<<30)
@@ -27,10 +29,18 @@ class MovieFixture(HostFixture):
         self.close_running=False;self.file_services=[]
         self.cache_cleans=[];self.busy_after_clean=False
         self.execute_native_track=False
+        self.capture_stream=False;self.stream=[];self.fail_write_at=None
+        self.flush_result=1
     def write(self,a,v):self.u.mem_write(a,struct.pack('<I',v))
     def read(self,a):return int.from_bytes(self.u.mem_read(a,4),'little')
     def hook(self,u,a,size,context):
-        if a==0x101e9f38 and getattr(self,'record_code_cache',False):
+        if self.capture_stream and a==0x102c3ce4:
+            pointer=u.reg_read(UC_ARM_REG_R1);length=u.reg_read(UC_ARM_REG_R2)
+            assert length<=0x10000,'Unbounded native write'
+            self.stream.append(bytes(u.mem_read(pointer,length)) if length else b'')
+            self.ret(0 if len(self.stream)==self.fail_write_at else 1)
+        elif self.capture_stream and a==0x102c3f34:self.ret(self.flush_result)
+        elif a==0x101e9f38 and getattr(self,'record_code_cache',False):
             self.cache_cleans.append((u.reg_read(UC_ARM_REG_R0),u.reg_read(UC_ARM_REG_R1)))
             if self.busy_after_clean:self.write(0xa181503c,1)
             self.ret(0)
@@ -146,6 +156,46 @@ def main():
                 actual=track_image(f.u,f.context)
                 check(f'only-native-track-matrix-changes-{kind}-{width}-{pose}',actual==reference[:0x109]+matrices[pose]+reference[0x12d:])
     f.execute_native_track=False
+    # Real native sample finalization, movie header, video-track constructor and
+    # scatter writer; only append/flush are supplied at the filesystem boundary.
+    f.execute_native_track=True;f.capture_stream=True;streams={}
+    for kind in (0,1):
+        for pose in range(4):
+            initialize_movie_context(f.u,f.context,kind,1920,1080)
+            f.pose=pose;f.reply=0;op(1)
+            check(f'native-sample-table-finalization-{kind}-{pose}',f.call(0x102aa53c,f.context)==0)
+            check(f'native-movie-header-construction-{kind}-{pose}',f.call(0x102aa35c,f.context,0)==0)
+            check(f'wrapped-native-track-for-stream-{kind}-{pose}',op(3,f.context)==0)
+            f.stream=[]
+            check(f'native-scatter-writer-completes-{kind}-{pose}',f.call(0x102a819a,f.context)==0)
+            data=b''.join(f.stream);streams[kind,pose]=data
+            def atoms(lo,hi):
+                cursor=lo;found=[]
+                while cursor<hi:
+                    assert cursor+8<=hi,'Truncated native atom'
+                    size=int.from_bytes(data[cursor:cursor+4],'big');tag=data[cursor+4:cursor+8]
+                    assert 8<=size<=hi-cursor,(cursor,size,tag)
+                    found.append((tag,cursor,size))
+                    if tag in (b'moov',b'trak',b'mdia',b'minf',b'dinf',b'stbl',b'edts'):found+=atoms(cursor+8,cursor+size)
+                    cursor+=size
+                assert cursor==hi
+                return found
+            found=atoms(0,len(data));tkhd=[x for x in found if x[0]==b'tkhd']
+            check(f'native-serialized-atom-tree-{kind}-{pose}',len(tkhd)==1 and tkhd[0][2]==92 and found[0][0]==b'moov')
+            offset=tkhd[0][1]+48
+            check(f'native-serialized-file-pose-{kind}-{pose}',data[offset:offset+36]==matrices[pose])
+            check(f'native-serialized-dimensions-{kind}-{pose}',data[offset+36:offset+44]==struct.pack('>2I',1920<<16,1080<<16))
+            if pose:
+                reference=streams[kind,0]
+                check(f'serialized-stream-matrix-only-change-{kind}-{pose}',data==reference[:offset]+matrices[pose]+reference[offset+36:])
+    write_count=len(f.stream)
+    for failed in (1,3,7,20,write_count):
+        f.stream=[];f.fail_write_at=failed
+        check('native-write-failure-is-propagated-'+str(failed),f.call(0x102a819a,f.context)==5 and len(f.stream)==failed)
+    f.fail_write_at=None;f.stream=[];f.flush_result=0
+    check('native-flush-failure-is-propagated',f.call(0x102a819a,f.context)==5)
+    f.flush_result=1
+    f.capture_stream=False;f.execute_native_track=False
     f.file=1;f.context=MEM+0x30000;f.pose=1;op(1)
     f.context=MEM+0x31000;f.pose=2;check('split-returns-native-file',op(2)==1)
     op(3,MEM+0x30000);check('split-invalidates-old-context-pose',bytes(f.u.mem_read(MEM+0x30109,36))==IDENTITY)
@@ -182,7 +232,14 @@ def main():
         cache_clean_services_supplied=True,physical_task_quiescence_verified=False,camera_access=False,physical_movie=False,
         native_open_split_results_supplied=True,native_track_constructor_executes=True,
         native_track_cases=24,native_track_format_contexts_supplied=True,
+        native_metadata_stream_cases=8,native_atom_tree_verified=True,
+        filesystem_append_flush_supplied=True,empty_sample_description_supplied=True,
         complete_native_task_verified=False,complete_movie_file_verified=False,scope=__doc__)
+    artifacts=out.with_suffix('');artifacts.mkdir()
+    result['private_metadata_streams']=[]
+    for (kind,pose),data in streams.items():
+        name=f'kind{kind}-pose{pose}.bin';(artifacts/name).write_bytes(data)
+        result['private_metadata_streams'].append(dict(kind=kind,pose=pose,bytes=len(data),sha256=hashlib.sha256(data).hexdigest(),name=name))
     out.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(dict(passed=True,checks=len(checks))))
 

@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "count": 250,
+  "count": 318,
   "module_sha256": "1de27cff07318d2ee9f9e7af28be5c19bd477e9e6f6afd2d68dba7a6ca17307d",
   "initialization_prepare_only": true,
   "callback_installed_in_explicit_offline_fixture": true,
@@ -12,9 +12,71 @@
   "native_track_constructor_executes": true,
   "native_track_cases": 24,
   "native_track_format_contexts_supplied": true,
+  "native_metadata_stream_cases": 8,
+  "native_atom_tree_verified": true,
+  "filesystem_append_flush_supplied": true,
+  "empty_sample_description_supplied": true,
   "complete_native_task_verified": false,
   "complete_movie_file_verified": false,
-  "scope": "Original-Z7 native shadow preparation and per-file wrappers (MIT).\n\nCompiled copies/relocation/wrappers and close/header flow execute. Native file\nservices, pose and contexts are supplied. The native track constructor executes\nin 24 positive cases; separate error/control cases supply its result. Explicit\noffline publication supplies cache clean services. Physical cache/quiescence,\ncomplete movie files and physical recording remain unproved.\n",
+  "scope": "Original-Z7 native shadow preparation and per-file wrappers (MIT).\n\nCompiled copies/relocation/wrappers and close/header flow execute. Native file\nservices, pose and contexts are supplied in control cases. The original track\nconstructor executes in 24 cases; eight metadata streams additionally execute\nsample-table finalization, movie-header construction and scatter serialization\nwith only append/flush supplied. Sample descriptions are empty fixture inputs.\nPublication supplies cache clean services. Physical quiescence/cache, completed\nplayable movies and physical recording remain unproved.\n",
+  "private_metadata_streams": [
+    {
+      "kind": 0,
+      "pose": 0,
+      "bytes": 497,
+      "sha256": "89362efd0dd43fdd7d6d1a02c515b241142e17aa720795ca2136e3d53dfc6f93",
+      "name": "kind0-pose0.bin"
+    },
+    {
+      "kind": 0,
+      "pose": 1,
+      "bytes": 497,
+      "sha256": "1b341ff67185c73e4787347cd241ac500fc88605a3f4b6391ad394587e965f01",
+      "name": "kind0-pose1.bin"
+    },
+    {
+      "kind": 0,
+      "pose": 2,
+      "bytes": 497,
+      "sha256": "a564932be513d3d1ce1fd9a53604fc8c5ceba8307b445241e5fdf7f686737efe",
+      "name": "kind0-pose2.bin"
+    },
+    {
+      "kind": 0,
+      "pose": 3,
+      "bytes": 497,
+      "sha256": "4872227ac585b4bf94b53a6c6f2d9905ab252eb2377b27614be60db241f36210",
+      "name": "kind0-pose3.bin"
+    },
+    {
+      "kind": 1,
+      "pose": 0,
+      "bytes": 497,
+      "sha256": "9151383f4bbfbb48927244b13f201cf2586d69bc7dc83de5fadbdd6b13dd9ecd",
+      "name": "kind1-pose0.bin"
+    },
+    {
+      "kind": 1,
+      "pose": 1,
+      "bytes": 497,
+      "sha256": "29961e46d02e446d6254c02e59809be175a17990983f0a18f1f13f3cb5a79133",
+      "name": "kind1-pose1.bin"
+    },
+    {
+      "kind": 1,
+      "pose": 2,
+      "bytes": 497,
+      "sha256": "3f915470accba82854510d7f89f0e58348b0cca7220d1ae056104476b9663382",
+      "name": "kind1-pose2.bin"
+    },
+    {
+      "kind": 1,
+      "pose": 3,
+      "bytes": 497,
+      "sha256": "1cc15b55f7c1fa46e16e1e9a9a273c5e9a38815effc1dd4bfc56a3a419547b57",
+      "name": "kind1-pose3.bin"
+    }
+  ],
   "schema": 1,
   "date": "2026-11-24"
 }

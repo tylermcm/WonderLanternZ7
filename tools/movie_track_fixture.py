@@ -20,3 +20,14 @@ def initialize_track_context(cpu,context,kind=0,width=1920,height=1080):
 def track_image(cpu,context):
     """Return the entire supplied context/buffer arena for exact comparison."""
     return bytes(cpu.mem_read(context,0xc000))
+
+
+def initialize_movie_context(cpu,context,kind=0,width=1920,height=1080):
+    """Empty sample-description input for metadata-only native serialization."""
+    initialize_track_context(cpu,context,kind,width,height)
+    cpu.mem_write(context+0xc000,bytes(0x4000))
+    for i,offset in enumerate((0x67c,0x3b0,0x64c)):
+        cpu.mem_write(context+offset,struct.pack('<I',context+0xb000+i*0x1000))
+    cpu.mem_write(context+0x1e0,struct.pack('>I4s2I',16,b'stsd',0,0))
+    cpu.mem_write(context+0x4c0,struct.pack('>I',8))
+    cpu.mem_write(context+0x464,struct.pack('<I',1))
