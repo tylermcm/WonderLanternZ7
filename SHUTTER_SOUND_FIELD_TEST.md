@@ -53,19 +53,27 @@ Pause about 5 seconds between steps.
 - Whether the upside-down photo opens upright on a computer.
 - Anything unusual: freeze, error, slow start, repeated sound.
 
+After the session, one command turns the card log into answers (chime, trigger
+event, EXIF pose), with 6 photos for steps 3 to 6 if the burst was 3 frames:
+
+```powershell
+.venv\Scripts\python.exe tools/analyze_z7_field_test.py Z7TRIG.DAT --photos 6
+```
+
 If the camera freezes, take the battery out and put it back. Removing the card
 returns the camera to stock behavior.
 
 ## Verified before the camera
 
-- Offline (Unicorn), 20 checks: all three parts install; only `SHUTTER1.WAV` is read
+- Offline (Unicorn), 22 checks: all three parts install; only `SHUTTER1.WAV` is read
   and only `Z7TRIG.DAT` is written; the first log shows the sound state; the
   chime is queued on tick 8, programs Nikon's setters, finishes, and never
   repeats; a still-file event is logged and passed to Nikon with no sound; Nikon
   beeps are counted; a missing WAV, a busy service and a speaker rejection each
   show up in the log; pose 3 writes Orientation 3 while other poses use Nikon's
   writer, and every pose is logged; a firmware mismatch in the sound or probe
-  part touches nothing.
+  part touches nothing; the analyzer reads logs written by the compiled module
+  and reports the right verdicts for a good session and a failing one.
 - The component audits still apply: playback 80 checks, trigger probe 25, EXIF
   orientation 12.
 - Assisted QEMU with the exact WAV (9 checks): all three parts install in the

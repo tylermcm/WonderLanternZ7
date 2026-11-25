@@ -64,5 +64,5 @@ the event the counts support.
   the guest runs; no callback fires in the idle emulated view; one run captured a
   complete, parseable log written through Nikon's file functions.
 
-`tools/read_z7_trigger_log.py Z7TRIG.DAT --photos 5` ranks each callback and event
+`tools/read_z7_trigger_log.py Z7TRIG.DAT --photos 5` (probe-only session) ranks each callback and event
 by how many distinct photo records it saw (5 = steps 3 to 5 if the burst was 3).

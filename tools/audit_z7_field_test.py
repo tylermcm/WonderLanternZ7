@@ -13,6 +13,7 @@ from audit_z7_trigger_probe import ProbeFixture,SLOTS,NATIVE,LOG,PACKET
 from build_z7_module_host import STATE
 from prepare_flash_review import require_private_output
 from read_z7_trigger_log import parse
+from analyze_z7_field_test import analyze
 from audit_z7_exif_orientation import SLOT as EXIF_SLOT,DESCRIPTOR
 
 
@@ -101,6 +102,28 @@ def main():
         r=g.call(h['symbols']['z7_module_load_once'],STATE)
         check(f'firmware-mismatch-{patch:x}-touches-nothing',r==7 and g.read(SOUND_SLOT)==0x1006bc47 and
               all(g.read(s)==n for s,n in zip(SLOTS,NATIVE)) and not g.file_events and not g.log_events)
+
+    # After-session analyzer on logs written by the compiled module.
+    def session(speaker=1,upside_pose=3):
+        g=load(speaker=speaker);tick(g,8)
+        g.call(DISPATCH,g.sends[0][1])
+        if speaker:g.call(g.read(CONTEXT+32),0x04180023,0)
+        g.u.mem_write(STATE_ADDR,bytes(3))
+        table=g.call(g.read(EXIF_SLOT));writer=struct.unpack('<I',bytes(g.u.mem_read(table+16*9+12,4)))[0]
+        for n in range(6):
+            for _ in range(3):g.call(g.read(SLOTS[1]),0x04190001,0,0,0)  # live-view noise
+            if n==5:continue
+            pose=upside_pose if n==4 else 0
+            g.u.mem_write(0xa18d7000+0x24fd,bytes([pose]));g.u.mem_write(0xa18d8200,struct.pack('<3I',0,0xa18d7000,0))
+            g.call(writer,0xa18d8300,0xa18d8200,0)
+            for kind in (3,7):
+                g.u.mem_write(PACKET,struct.pack('<2I',(1<<29)|(9<<19)|((60+n)<<5)|kind,1));g.call(g.read(SLOTS[2]),0x041e0002,PACKET,0,0)
+        tick(g,4);return analyze(g.log_files[LOG],5)
+    r=session()
+    check('analyzer-full-session',r['chime'].startswith('played to the end') and r['trigger'].startswith('0x041E0002 on still-file') and
+          r['exif'].startswith('camera reports pose 3') and r['exif_poses']==[0,0,0,0,3])
+    r=session(speaker=0,upside_pose=0)
+    check('analyzer-rejected-chime-and-no-pose-3',r['chime'].startswith('queued but rejected') and r['exif'].startswith('no pose 3 seen'))
 
     report=dict(passed=True,count=len(checks),checks=checks,module_sha256=m['module_sha256'],host_main_sha256=h['main_payload_sha256'],
                 clip_sha256=hashlib.sha256(clip).hexdigest(),camera_access=False,scope=__doc__)
