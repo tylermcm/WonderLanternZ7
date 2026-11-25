@@ -57,6 +57,14 @@ construction and metadata serialization with empty sample descriptions and
 supplied append/flush services. Those are separate standalone-binary results;
 they do not establish playable output from this cumulative candidate.
 
+A subsequent 30-check audit on this exact cumulative binary executes the native
+event dispatcher across three supplied publication boundaries. It verifies
+callback reload on the next event, native matrix fallback for an already-fetched
+old callback, and immutable published code. It rejects automatic publication
+during initialization and exercises explicit publication afterward; automatic
+camera startup timing remains unverified. See the
+[dispatcher review](MOVIE_ORIENTATION_RESEARCH.md#native-event-dispatcher-boundary).
+
 Playable MOV/MP4 output, recording/split lifecycle stress, task quiescence,
 player compatibility, physical orientation and exact installation/recovery
 review remain pending. No camera, card or firmware update was performed.

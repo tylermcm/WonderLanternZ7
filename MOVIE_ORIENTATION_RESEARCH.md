@@ -123,6 +123,34 @@ encoder output, track timing under recording, file splitting or player behavior.
 See
 [the shadow record](evidence/20261124-movie-shadows.json).
 
+## Native event dispatcher boundary
+
+`tools/audit_z7_movie_dispatch.py` executes the unchanged original event loop at
+`0x10170840..0x1017085E`. The native loop waits for event flags, loads the callback
+from root `+0x2C`, invokes it, then repeats the wait and load. The audit fingerprints
+that span against the original C 3.80 dispatcher before running it.
+
+Thirty checks pass for the standalone binary and another thirty for the exact
+[cumulative LCD candidate](LCD_MOVIE_ORIENTATION_INTEGRATION.md). Each enumerates
+publication before the wait, before the callback load and after that load.
+Publication runs in a separate supplied CPU context; the suspended dispatch
+registers and stack are restored while the shared pointer store remains.
+The actual dispatcher and native/relocated event callbacks execute afterward.
+
+When the old pointer was already loaded, one event still reaches the native
+callback. Its file has no saved pose and the track wrapper retains the native
+identity matrix. The next event loads the owned callback. Before-load publication
+uses the owned callback immediately and preserves the exact latched matrix.
+All three published code buffers remain unchanged through dispatch.
+
+Event waits/flags, file-open results, cache clean, pose and contexts are supplied;
+this does not establish real request-queue timing, atomicity/cache visibility on
+physical hardware, task quiescence or a complete recording lifecycle. The
+cumulative case starts at supplied state 3 to reject its initializer's automatic
+attempt, then supplies idle state 0 for explicit publication. It does not prove
+automatic publication timing during a camera boot. The separate
+[dispatcher evidence](evidence/20261124-movie-dispatch.json) records both hashes.
+
 ## Remaining integration
 
 Bind and qualify the original file-task callback, control structure, file-open

@@ -86,7 +86,7 @@
       "name": "Automatic video orientation",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/video-rotation.md",
       "status": "research",
-      "remaining": "Cumulative API72 startup integration and native standalone metadata serialization verified offline; task quiescence, playable media, file lifecycle stress and hardware orientation remain pending",
+      "remaining": "Native event dispatch publication boundaries and standalone metadata serialization verified offline; physical scheduler/cache behavior, playable media, recording lifecycle stress and hardware orientation remain pending",
       "local_review": "MOVIE_ORIENTATION_RESEARCH.md",
       "hardware_parity_verified": false
     },

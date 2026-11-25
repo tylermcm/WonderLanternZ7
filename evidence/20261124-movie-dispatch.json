@@ -1,0 +1,165 @@
+{
+  "schema": 1,
+  "passed": true,
+  "reports": {
+    "standalone": {
+      "schema": 1,
+      "passed": true,
+      "count": 30,
+      "checks": [
+        "before-wait-module-initialization-succeeds",
+        "before-wait-starts-with-native-slot",
+        "before-wait-publication-succeeds",
+        "before-wait-owned-slot-published",
+        "before-wait-dispatcher-reloads-callback-per-event",
+        "before-wait-open-and-empty-event-return",
+        "before-wait-all-code-cleaned-before-dispatch",
+        "before-wait-published-code-remains-immutable",
+        "before-wait-track-wrapper-return-0",
+        "before-wait-pose-or-native-fallback-0",
+        "before-pointer-load-module-initialization-succeeds",
+        "before-pointer-load-starts-with-native-slot",
+        "before-pointer-load-publication-succeeds",
+        "before-pointer-load-owned-slot-published",
+        "before-pointer-load-dispatcher-reloads-callback-per-event",
+        "before-pointer-load-open-and-empty-event-return",
+        "before-pointer-load-all-code-cleaned-before-dispatch",
+        "before-pointer-load-published-code-remains-immutable",
+        "before-pointer-load-track-wrapper-return-0",
+        "before-pointer-load-pose-or-native-fallback-0",
+        "after-pointer-load-module-initialization-succeeds",
+        "after-pointer-load-starts-with-native-slot",
+        "after-pointer-load-publication-succeeds",
+        "after-pointer-load-owned-slot-published",
+        "after-pointer-load-dispatcher-reloads-callback-per-event",
+        "after-pointer-load-open-and-empty-event-return",
+        "after-pointer-load-all-code-cleaned-before-dispatch",
+        "after-pointer-load-published-code-remains-immutable",
+        "after-pointer-load-track-wrapper-return-0",
+        "after-pointer-load-pose-or-native-fallback-0"
+      ],
+      "module_sha256": "1de27cff07318d2ee9f9e7af28be5c19bd477e9e6f6afd2d68dba7a6ca17307d",
+      "host_main_sha256": "f77f0ced784403ffe99bd413c1ce71c07ecbd6a94e25c19919cb55a80c175b7c",
+      "original_dispatcher_sha256": "16bd05bad7b8c180a1d4da2473677d7db51b8b3fd95278fde70109eaf0ddb616",
+      "observations": [
+        {
+          "boundary": "before-wait",
+          "old_callback_once": false,
+          "events": 2,
+          "callbacks": [
+            "owned",
+            "owned"
+          ]
+        },
+        {
+          "boundary": "before-pointer-load",
+          "old_callback_once": false,
+          "events": 2,
+          "callbacks": [
+            "owned",
+            "owned"
+          ]
+        },
+        {
+          "boundary": "after-pointer-load",
+          "old_callback_once": true,
+          "events": 2,
+          "callbacks": [
+            "native",
+            "owned"
+          ]
+        }
+      ],
+      "event_wait_supplied": true,
+      "native_open_results_supplied": true,
+      "cache_clean_supplied": true,
+      "cpu_context_interleavings_supplied": true,
+      "cumulative_binary": false,
+      "physical_scheduler_verified": false,
+      "task_quiescence_verified": false,
+      "camera_access": false,
+      "scope": "Execute original mux event dispatcher across callback publication (MIT).\n\nEvent waits, native file-open results, pose and cache-clean services are supplied.\nCPU contexts are paused/restored at exact instruction boundaries to enumerate\npublication interleavings. This is not a physical scheduler or quiescence proof.\n"
+    },
+    "cumulative": {
+      "schema": 1,
+      "passed": true,
+      "count": 30,
+      "checks": [
+        "before-wait-module-initialization-succeeds",
+        "before-wait-starts-with-native-slot",
+        "before-wait-publication-succeeds",
+        "before-wait-owned-slot-published",
+        "before-wait-dispatcher-reloads-callback-per-event",
+        "before-wait-open-and-empty-event-return",
+        "before-wait-all-code-cleaned-before-dispatch",
+        "before-wait-published-code-remains-immutable",
+        "before-wait-track-wrapper-return-0",
+        "before-wait-pose-or-native-fallback-0",
+        "before-pointer-load-module-initialization-succeeds",
+        "before-pointer-load-starts-with-native-slot",
+        "before-pointer-load-publication-succeeds",
+        "before-pointer-load-owned-slot-published",
+        "before-pointer-load-dispatcher-reloads-callback-per-event",
+        "before-pointer-load-open-and-empty-event-return",
+        "before-pointer-load-all-code-cleaned-before-dispatch",
+        "before-pointer-load-published-code-remains-immutable",
+        "before-pointer-load-track-wrapper-return-0",
+        "before-pointer-load-pose-or-native-fallback-0",
+        "after-pointer-load-module-initialization-succeeds",
+        "after-pointer-load-starts-with-native-slot",
+        "after-pointer-load-publication-succeeds",
+        "after-pointer-load-owned-slot-published",
+        "after-pointer-load-dispatcher-reloads-callback-per-event",
+        "after-pointer-load-open-and-empty-event-return",
+        "after-pointer-load-all-code-cleaned-before-dispatch",
+        "after-pointer-load-published-code-remains-immutable",
+        "after-pointer-load-track-wrapper-return-0",
+        "after-pointer-load-pose-or-native-fallback-0"
+      ],
+      "module_sha256": "79e3bff2780092409fbb8f751540053a289e08afa635a49ed0c69e9aa9285293",
+      "host_main_sha256": "f77f0ced784403ffe99bd413c1ce71c07ecbd6a94e25c19919cb55a80c175b7c",
+      "original_dispatcher_sha256": "16bd05bad7b8c180a1d4da2473677d7db51b8b3fd95278fde70109eaf0ddb616",
+      "observations": [
+        {
+          "boundary": "before-wait",
+          "old_callback_once": false,
+          "events": 2,
+          "callbacks": [
+            "owned",
+            "owned"
+          ]
+        },
+        {
+          "boundary": "before-pointer-load",
+          "old_callback_once": false,
+          "events": 2,
+          "callbacks": [
+            "owned",
+            "owned"
+          ]
+        },
+        {
+          "boundary": "after-pointer-load",
+          "old_callback_once": true,
+          "events": 2,
+          "callbacks": [
+            "native",
+            "owned"
+          ]
+        }
+      ],
+      "event_wait_supplied": true,
+      "native_open_results_supplied": true,
+      "cache_clean_supplied": true,
+      "cpu_context_interleavings_supplied": true,
+      "cumulative_binary": true,
+      "physical_scheduler_verified": false,
+      "task_quiescence_verified": false,
+      "camera_access": false,
+      "scope": "Execute original mux event dispatcher across callback publication (MIT).\n\nEvent waits, native file-open results, pose and cache-clean services are supplied.\nCPU contexts are paused/restored at exact instruction boundaries to enumerate\npublication interleavings. This is not a physical scheduler or quiescence proof.\n"
+    }
+  },
+  "camera_access": false,
+  "physical_scheduler_verified": false,
+  "complete_movie_file_verified": false
+}
