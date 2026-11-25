@@ -136,6 +136,12 @@ readbacks; Center cross also returns after battery removal. The combined LCD/bas
 shooting smoke test also has an owner pass. Broader
 output/capture lifecycle validation remains outside that result.
 
+The next LCD feature checkpoint adds a saved Histogram switch to each DISP
+preset, allowing histogram, horizon and grid together. Its build, menu and
+storage checks pass; camera statistics and live histogram rendering still need
+hardware verification. See the [histogram preset trial review](LCD_HISTOGRAM_PRESETS_REVIEW.md).
+The brief cold-start grid transition is deferred while feature integration proceeds.
+
 An optional [separate Display settings entry](LCD_SETTINGS_ROOT_REVIEW.md) now
 opens from the Custom Setting Menu overview instead of the grid submenu.
 That relocation has offline menu/navigation and persistence checks; its camera

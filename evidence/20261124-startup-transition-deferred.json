@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "date": "2026-11-24",
+  "module_sha256": "5e62ce53def1a8de4cf789bb4f3b03fb51791943501a11da6ca4be44b4e77349",
+  "owner_report": "when you first boot it on after waiting 20+ seconds, i see the 3x3 for a split second before it loads the custom display screen",
+  "startup_grid_transition_still_reported": true,
+  "owner_requested_deferral": true,
+  "owner_requested_feature_integration": true,
+  "label_repair_result_not_separately_described": true,
+  "scope": "Reported cosmetic startup transition; no new complete hardware acceptance claim",
+  "camera_or_card_changed": false
+}

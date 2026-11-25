@@ -611,7 +611,8 @@ def validate_candidate(path, report_path, stock_path, zig=ZIG):
                                    actual.get('highlight_hooks', False), actual.get('parameter_hooks', False),
                                    actual.get('frame_permission_hooks', False), actual.get('cached_frame_permission_hooks', False),
                                    actual.get('owned_frame_coordination_hooks', False), actual.get('native_warning_transaction_hooks', False),
-                                   actual.get('native_cache_copy_hooks', False),actual.get('graphics_queue_hooks',False),actual.get('navigation_hooks',False),actual.get('touch_hooks',False))
+                                   actual.get('native_cache_copy_hooks', False),actual.get('graphics_queue_hooks',False),actual.get('navigation_hooks',False),actual.get('touch_hooks',False),
+                                   retry_read_failures=actual.get('retry_read_failures',False))
     if (Path(path).read_bytes() != expected[:-2] or actual != report or binascii.crc_hqx(expected, 0)):
         raise ValueError('Module host candidate or report differs from independent rebuild')
     return dict(modified=True, independently_rebuilt=True, sha256=sha(expected[:-2]),

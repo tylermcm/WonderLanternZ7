@@ -18,13 +18,15 @@ def main():
     profiles.add_argument('--settings-root',action='store_true',help='Experimental separate Display settings entry in Custom Settings overview, with v3 persistence')
     profiles.add_argument('--settings-category',action='store_true',help='Experimental colored h category for the separate Display settings entry')
     profiles.add_argument('--settings-label-refresh',action='store_true',help='Repair cold/stale name labels for the h Display settings entry on the GUI task')
+    profiles.add_argument('--histogram-presets',action='store_true',help='Add guarded live histogram controls to all four saved LCD presets')
     a=p.parse_args();out=require_private_output(a.output)
-    settings_category=a.settings_category or a.settings_label_refresh
+    label_refresh=a.settings_label_refresh or a.histogram_presets
+    settings_category=a.settings_category or label_refresh
     settings_root=a.settings_root or settings_category
     grid_persistence=a.grid_persistence or settings_root
     startup=a.startup_grid or grid_persistence
     persistent=a.persistent or startup
-    source=ROOT/'z7-native-modules/plugins'/('lcd_settings_label_checkpoint.c' if a.settings_label_refresh else 'lcd_settings_category_checkpoint.c' if settings_category else 'lcd_settings_root_checkpoint.c' if settings_root else 'lcd_grid_persistence_checkpoint.c' if grid_persistence else 'lcd_startup_grid_checkpoint.c' if startup else 'lcd_persistence_checkpoint.c' if persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
+    source=ROOT/'z7-native-modules/plugins'/('lcd_histogram_checkpoint.c' if a.histogram_presets else 'lcd_settings_label_checkpoint.c' if label_refresh else 'lcd_settings_category_checkpoint.c' if settings_category else 'lcd_settings_root_checkpoint.c' if settings_root else 'lcd_grid_persistence_checkpoint.c' if grid_persistence else 'lcd_startup_grid_checkpoint.c' if startup else 'lcd_persistence_checkpoint.c' if persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
     packet,meta=build(source,zig=ZIG.resolve(),function_details=functions)
     again,other=build(source,zig=ZIG.resolve(),function_details=other_functions)
     assert packet==again and meta==other and functions==other_functions
@@ -47,7 +49,7 @@ def main():
                 source_inputs_sha256=inputs,function_details=functions,api_minimum_bytes=44,reproducible=True,
                 dependency_scope='Conservative recursive quoted includes, including inactive conditional dependencies',
                 do_not_stage=True,hardware_test_authorized=False,firmware_image=False,
-                configuration=dict(persistent_settings=persistent,worker_registration_enabled=persistent,initial_grid_delta_only=startup,grid_layout_persistence=grid_persistence,settings_root_entry=settings_root,settings_category_entry=settings_category,settings_label_refresh=a.settings_label_refresh),
+                configuration=dict(persistent_settings=persistent,worker_registration_enabled=persistent,initial_grid_delta_only=startup,grid_layout_persistence=grid_persistence,settings_root_entry=settings_root,settings_category_entry=settings_category,settings_label_refresh=label_refresh,histogram_presets=a.histogram_presets),
                 scope=('LCD preferences including grid shape, separate Z7DSP slots/v3 payload; legacy Z7CFG read-only fallback' if grid_persistence else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; v1 preference journal, RAM-only grid layout' if persistent else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; all preferences volatile'))
     out.mkdir(parents=True)
     (out/'Z7APP.BIN').write_bytes(packet)

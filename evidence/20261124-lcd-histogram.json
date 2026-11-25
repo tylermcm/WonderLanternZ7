@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "date": "2026-11-24",
+  "feature": "Four saved LCD DISP histogram switches; histogram + horizon + grid composition",
+  "candidate_sha256": "f97ba8b4e927ba9b2f85b3d4fc0d073de61873eccdb1889da36b5a38902ad79c",
+  "module_bytes": 22712,
+  "reproducible": true,
+  "renderer_checks": {
+    "passed": true,
+    "count": 170,
+    "scope": "Compiled native paths; statistics, presentation and low-level drawing boundaries supplied"
+  },
+  "preset_checks": {
+    "passed": true,
+    "count": 96,
+    "presets": 4,
+    "alternating_saves": 5,
+    "wire_version": 3,
+    "legacy_files_unchanged": true,
+    "rollback_filter_verified": true
+  },
+  "qemu_menu_checks": {
+    "passed": true,
+    "count": 12,
+    "private_frames": 4,
+    "scope": "Native keys; combined switches and reopened preset; menu only"
+  },
+  "root_unit_tests": {
+    "passed": true,
+    "count": 103
+  },
+  "preceding_label_profile_byte_identical": true,
+  "source_dependencies_verified": true,
+  "hardware_tested": false,
+  "physical_statistics_verified": false,
+  "actual_histogram_pixels_verified": false,
+  "card_access": false,
+  "firmware_update_required": false,
+  "startup_grid_transition": "Deferred at owner request; not fixed by this checkpoint"
+}

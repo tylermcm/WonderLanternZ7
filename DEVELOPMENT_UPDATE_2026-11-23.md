@@ -82,6 +82,14 @@ separate preview. It does **not** contain this LCD checkpoint. No stock or
 modified Nikon firmware, generated module binaries, dumps, keys or camera
 screenshots are redistributed with this update.
 
+## November 24 feature checkpoint
+
+Feature integration resumes with an optional saved LCD
+histogram switch in each DISP preset, including histogram+horizon+grid together.
+The [new trial assessment](LCD_HISTOGRAM_PRESETS_REVIEW.md) records the exact
+private candidate and offline checks. Live histogram hardware verification is
+pending; the owner requested deferring the brief cold-start grid transition.
+
 ## Credit where it belongs
 
 This port builds on **[JKWTCN/z7ii-extensions](https://github.com/JKWTCN/z7ii-extensions)**,
