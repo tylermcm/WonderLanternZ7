@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "shutter-sound-on-photo-camera-result",
+  "module_sha256": "2c176587381ab4db0f011d3d254df21f6066467d970c4ff49ea142e23ffaff1e",
+  "clip_sha256": "a0712773dd609ae6effe7983c501c2daa2b9d0e1d2b9ad0c22d51fad14e8b9fa",
+  "staged_with_owner_approval": true,
+  "restored": true,
+  "restored_module_sha256": "5e62ce53def1a8de4cf789bb4f3b03fb51791943501a11da6ca4be44b4e77349",
+  "firmware_flashed": false,
+  "owner_report": {
+    "click_timing": "right on time",
+    "silent_burst": "many frames; a click on every one",
+    "silent_off_extra_click": "none heard over the mechanical shutter",
+    "volume": "very low, hardly audible",
+    "sound_character": "sounded right"
+  },
+  "log": {
+    "note": "Z7TRIG.DAT is recreated at each power-on; the card kept only the last power cycle",
+    "last_power_cycle": {
+      "silent_marker": "1 at tick 1, 0 from tick 4",
+      "exposures_seen": 7,
+      "in_silent": 0,
+      "queued": 0,
+      "busy": 0,
+      "ticks": 12,
+      "reading": "Silent photography off for all 7 exposures, so no sound was queued, as intended"
+    }
+  },
+  "verdict": {
+    "trigger_timing": "works on the camera",
+    "burst": "works on the camera (owner heard every frame)",
+    "silent_off": "no sound queued (log) and none heard",
+    "volume": "too quiet: clip RMS 0.069; louder click ccf0d0f1 (RMS 0.286, about +12 dB) prepared"
+  },
+  "follow_up": [
+    "louder click camera check",
+    "per-boot log so earlier power cycles are kept"
+  ],
+  "camera_photos_published": false
+}

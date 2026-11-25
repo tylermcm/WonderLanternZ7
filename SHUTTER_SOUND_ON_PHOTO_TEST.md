@@ -1,6 +1,26 @@
 # Shutter sound on every photo: camera test
 
-Status: **prepared, not staged.** Builds on the two
+Status: **works on the camera, November 25, 2026, but too quiet.**
+
+## Camera result (November 25, 2026)
+
+Staged with the owner's approval; LCD module restored afterwards
+([evidence](evidence/20261125-shutter-sound-on-photo-hardware-result.json)).
+
+- **Timing: right on time.** The click came at the press.
+- **Burst: a click on every frame** (many frames, not counted).
+- **Silent photography off: no extra click** heard over the mechanical
+  shutter. The card log agrees for the last power cycle: 7 exposures, none in
+  Silent photography, none queued.
+- **Volume: very low, hardly audible.** The click's RMS is about half the
+  boot chime's. `tools/make_z7_shutter_click.py` now makes a louder click by
+  default (`ccf0d0f1`, about 4x the RMS, +12 dB, peak just under full scale);
+  the first click stays available as `--level soft` and rebuilds byte for
+  byte. The module is unchanged and passes its 19 checks with the louder clip.
+- The log is recreated at every power-on, so it only kept the last power cycle
+  (Silent photography off). A later build should keep one log per boot.
+
+Builds on the two
 [field-test sessions](SHUTTER_SOUND_FIELD_TEST.md) of November 25, 2026, which
 showed that an SD module can play sound on the camera and that the capture
 controller event `0x0419000B` arrives once per photo and once per burst frame.

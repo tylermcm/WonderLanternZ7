@@ -1,7 +1,11 @@
 """Write a deterministic synthetic shutter click as SHUTTER1.WAV (MIT).
 
 Two short decaying noise transients (opening and closing curtain) 45 ms apart,
-48 kHz 16-bit mono, 0.12 s, peak about -3 dBFS. Generated from a fixed
+48 kHz 16-bit mono, 0.12 s. --level soft is the first camera-tested click
+(peak about -3 dBFS, RMS about 0.07), which the owner found too quiet on the
+camera speaker. --level loud (default) adds damped 2.2 and 3.6 kHz resonances,
+where the ear is most sensitive, and soft saturation, for about four times the
+RMS at a peak just under full scale. Generated from a fixed
 pseudo-random sequence, so the bytes are the same on every run; no recorded
 sound and no third-party audio. Short enough that a burst frame finds the
 sound service idle again. Stdlib only. Output must be a new file under .private.
@@ -23,7 +27,7 @@ def noise():
         yield (state&0xffff)/32768.0-1.0
 
 
-def samples():
+def samples(level='loud'):
     n=int(RATE*LENGTH);out=[0.0]*n;source=noise()
     for start,gain,decay in CLICKS:
         first=int(start*RATE);previous=0.0
@@ -32,11 +36,17 @@ def samples():
             raw=next(source)
             previous=0.55*previous+0.45*raw  # gentle low-pass for a duller click
             body=0.35*math.sin(2*math.pi*180*t)*math.exp(-t/(decay*2))
-            v=gain*math.exp(-t/decay)*(previous+body)
+            if level=='loud':
+                ring=math.exp(-t/(decay*2.2))*(0.9*math.sin(2*math.pi*2200*t)+0.6*math.sin(2*math.pi*3600*t))
+                v=gain*(math.exp(-t/(decay*1.6))*(previous+body)+ring)
+            else:
+                v=gain*math.exp(-t/decay)*(previous+body)
             if first+i<n:out[first+i]+=v
+    if level=='loud':
+        top=max(abs(v) for v in out);out=[math.tanh(3.0*v/top) for v in out]
     fade=int(0.004*RATE)
     for i in range(fade):out[n-1-i]*=i/fade
-    scale=PEAK/max(abs(v) for v in out)
+    scale=(0.97 if level=='loud' else PEAK)/max(abs(v) for v in out)
     return [int(round(v*scale*32767)) for v in out]
 
 
@@ -50,12 +60,14 @@ def wav(values):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True,help='New private directory')
+    p.add_argument('--level',choices=('loud','soft'),default='loud')
     a=p.parse_args();out=require_private_output(a.output)
     if out.exists():p.error('Choose a new private output directory')
-    values=samples();blob=wav(values);again=wav(samples())
+    values=samples(a.level);blob=wav(values);again=wav(samples(a.level))
     assert blob==again
     out.mkdir(parents=True);(out/'SHUTTER1.WAV').write_bytes(blob)
-    meta=dict(kind='synthetic-shutter-click',rate=RATE,channels=1,bits=16,seconds=LENGTH,frames=len(values),
+    rms=math.sqrt(sum(v*v for v in values)/len(values))/32768
+    meta=dict(kind='synthetic-shutter-click',level=a.level,rms=round(rms,4),rate=RATE,channels=1,bits=16,seconds=LENGTH,frames=len(values),
               bytes=len(blob),sha256=hashlib.sha256(blob).hexdigest(),peak=max(abs(v) for v in values),reproducible=True)
     (out/'clip.json').write_text(json.dumps(meta,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(meta))

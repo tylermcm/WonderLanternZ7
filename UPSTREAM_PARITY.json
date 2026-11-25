@@ -110,7 +110,7 @@
       "name": "Silent shutter sound",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/shutter-sound.md",
       "status": "research",
-      "remaining": "SD-module playback works on the camera (Nov 25 field tests). Per-photo event found on the camera: controller callback 0xA18D1BD8 event 0x0419000B, once per photo and burst frame. Sound-on-photo test module built (19 offline checks, 7 emulator checks), camera test prepared. Camera result, menu, sound choice and release integration remain. October firmware-patch build stays on hold.",
+      "remaining": "SD-module sound on every photo works on the camera (Nov 25: capture event 0x0419000B, Silent photography only, on time and on every burst frame) but the test click was too quiet; louder click prepared. Menu, sound choice, per-boot log and release integration remain. October firmware-patch build stays on hold.",
       "local_review": "SHUTTER_SOUND_ON_PHOTO_TEST.md",
       "hardware_parity_verified": false
     },

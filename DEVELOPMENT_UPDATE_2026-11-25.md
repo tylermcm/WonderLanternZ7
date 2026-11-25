@@ -66,3 +66,7 @@ photo being shown ([session 2](SHUTTER_SOUND_FIELD_TEST.md#session-2-result-v5-n
 A shutter-sound camera-test module now plays a synthetic click on that event
 in Silent photography ([test plan](SHUTTER_SOUND_ON_PHOTO_TEST.md)); it is
 checked offline (19 checks) and in the emulator (7), and not yet staged.
+
+**Camera result:** the click played right on time on every photo and burst
+frame in Silent photography, and not with the mechanical shutter. It was too
+quiet; a louder click is prepared ([result](SHUTTER_SOUND_ON_PHOTO_TEST.md#camera-result-november-25-2026)).
