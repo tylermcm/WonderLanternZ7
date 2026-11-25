@@ -121,9 +121,9 @@
       "id": "af-area-shortcut",
       "name": "AF-area shortcuts",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/af-area-shortcut.md",
-      "status": "not_ported",
-      "remaining": "Original-Z7 key assignment and AF-area property bindings needed",
-      "local_review": null,
+      "status": "research",
+      "remaining": "Compiled five-button/thirteen-logical-target capture policy and native lookup bounds verified; original AF meanings/input/setters, f2 UI, persistence, extended targets and cumulative/hardware integration remain",
+      "local_review": "AF_SHORTCUT_RESEARCH.md",
       "hardware_parity_verified": false
     },
     {
