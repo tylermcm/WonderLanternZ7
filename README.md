@@ -150,6 +150,11 @@ The optional [Information DISP page checkpoint](LCD_INFORMATION_PAGE_REVIEW.md)
 adds Nikon's full information screen as a saved fifth LCD page, default OFF.
 It retains the native screen; camera appearance and lifecycle remain unverified.
 
+[Upstream feature parity work](UPSTREAM_PARITY.md) now tracks all 22 headline
+Z7II features against a pinned upstream commit. The next combined
+[photo highlights lab profile](LCD_HIGHLIGHTS_INTEGRATION.md) uses a newer offline
+host and separate settings journals; it is incompatible with the installed host.
+
 An optional [separate Display settings entry](LCD_SETTINGS_ROOT_REVIEW.md) now
 opens from the Custom Setting Menu overview instead of the grid submenu.
 That relocation has offline menu/navigation and persistence checks; its camera

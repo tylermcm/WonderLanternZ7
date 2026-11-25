@@ -5,7 +5,7 @@
 #ifndef Z7_DISPLAY_SETTINGS_H
 #define Z7_DISPLAY_SETTINGS_H
 #include <stdint.h>
-#if defined(Z7_GRID_LAYOUT_PREFERENCES) && defined(Z7_HIGHLIGHT_PREFERENCES)
+#if defined(Z7_GRID_LAYOUT_PREFERENCES) && defined(Z7_HIGHLIGHT_PREFERENCES) && !defined(Z7_COMBINED_DISPLAY_PREFERENCES)
 #error Grid layout v3 and highlight v2 are separate preference profiles
 #endif
 #define Z7_SETTINGS_BYTES 64u

@@ -34,7 +34,11 @@ void z7_settings_defaults(struct z7_display_settings *s)
     s->grid_layout = 2;
 #endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
+#ifdef Z7_COMBINED_DISPLAY_PREFERENCES
+    s->highlight_pattern = 0; s->highlight_threshold = 1;
+#else
     s->highlight_pattern = 1; s->highlight_threshold = 1;
+#endif
 #endif
     for (uint32_t i = 0; i < 4; ++i) {
         s->components[i] = default_components[i]; s->information[i] = default_information[i];
@@ -69,7 +73,13 @@ uint32_t z7_settings_encode(const struct z7_display_settings *s, uint8_t *out, u
     put32(packet + 4, 3); put32(packet + 56, s->grid_layout);
 #endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
+#ifdef Z7_COMBINED_DISPLAY_PREFERENCES
+    put32(packet + 4, 4);
+    put32(packet + 56, s->grid_layout);
+    put32(packet + 60, s->highlight_pattern | (s->highlight_threshold << 2));
+#else
     put32(packet + 56, s->highlight_pattern); put32(packet + 60, s->highlight_threshold);
+#endif
 #endif
     for (uint32_t i = 0; i < 4; ++i) {
         put32(packet + 24 + i * 4, s->components[i]); put32(packet + 40 + i * 4, s->information[i]);
@@ -81,7 +91,14 @@ uint32_t z7_settings_encode(const struct z7_display_settings *s, uint8_t *out, u
 uint32_t z7_settings_decode(const uint8_t *p, uint32_t bytes, struct z7_display_settings *out)
 {
     if (!p || !out || bytes != Z7_SETTINGS_BYTES || get32(p) != 0x3143375au ||
-#ifdef Z7_GRID_LAYOUT_PREFERENCES
+#ifdef Z7_COMBINED_DISPLAY_PREFERENCES
+        (get32(p + 4) < 1 || get32(p + 4) > 4) ||
+        (get32(p + 4) == 1 && (get32(p + 56) || get32(p + 60))) ||
+        (get32(p + 4) == 2 && (get32(p + 56) > 2 || get32(p + 60) > 7)) ||
+        (get32(p + 4) == 3 && get32(p + 60)) ||
+        (get32(p + 4) == 4 && (get32(p + 60) & ~31u)) ||
+        get32(p + 8) != 0x03800007u || get32(p + 12) != crc(p)
+#elif defined(Z7_GRID_LAYOUT_PREFERENCES)
         (get32(p + 4) != 1 && get32(p + 4) != 3) ||
         (get32(p + 4) == 1 && get32(p + 56)) || get32(p + 60) ||
         get32(p + 8) != 0x03800007u || get32(p + 12) != crc(p)
@@ -96,11 +113,21 @@ uint32_t z7_settings_decode(const uint8_t *p, uint32_t bytes, struct z7_display_
     struct z7_display_settings staged;
     staged.flags = get32(p + 16); staged.enabled_pages = get32(p + 20);
 #ifdef Z7_GRID_LAYOUT_PREFERENCES
+#ifdef Z7_COMBINED_DISPLAY_PREFERENCES
+    staged.grid_layout = get32(p + 4) <= 2 ? 2 : get32(p + 56);
+#else
     staged.grid_layout = get32(p + 4) == 1 ? 2 : get32(p + 56);
 #endif
+#endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
+#ifdef Z7_COMBINED_DISPLAY_PREFERENCES
+    uint32_t version = get32(p + 4), packed = get32(p + 60);
+    staged.highlight_pattern = version == 4 ? packed & 3u : version == 2 ? get32(p + 56) : 0;
+    staged.highlight_threshold = version == 4 ? (packed >> 2) & 7u : version == 2 ? packed : 1;
+#else
     staged.highlight_pattern = get32(p + 4) == 1 ? 1 : get32(p + 56);
     staged.highlight_threshold = get32(p + 4) == 1 ? 1 : get32(p + 60);
+#endif
 #endif
     for (uint32_t i = 0; i < 4; ++i) {
         staged.components[i] = get32(p + 24 + i * 4); staged.information[i] = get32(p + 40 + i * 4);

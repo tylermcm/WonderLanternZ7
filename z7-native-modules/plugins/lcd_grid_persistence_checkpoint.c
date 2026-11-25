@@ -15,13 +15,23 @@ static void lcd_grid_selected(uint32_t value);
 
 static const char *lcd_grid_settings_path(uint32_t slot)
 {
+#ifdef Z7_COMBINED_DISPLAY_PREFERENCES
+    if (lcd_grid_legacy_paths == 2) return slot ? "A:\\Z7CFG1.DAT" : "A:\\Z7CFG0.DAT";
+    if (lcd_grid_legacy_paths == 1) return slot ? "A:\\Z7DSP1.DAT" : "A:\\Z7DSP0.DAT";
+    return slot ? "A:\\Z7EXT1.DAT" : "A:\\Z7EXT0.DAT";
+#else
     if (lcd_grid_legacy_paths) return slot ? "A:\\Z7CFG1.DAT" : "A:\\Z7CFG0.DAT";
     return slot ? "A:\\Z7DSP1.DAT" : "A:\\Z7DSP0.DAT";
+#endif
 }
 static uint32_t lcd_grid_read(void *context, uint32_t slot, uint8_t *out)
 {
     uint32_t result = z7_settings_files_read(context,slot,out);
+#ifdef Z7_COMBINED_DISPLAY_PREFERENCES
+    if (result == Z7_STORAGE_IO_ABSENT)
+#else
     if (!lcd_grid_legacy_paths && result == Z7_STORAGE_IO_ABSENT)
+#endif
         lcd_grid_absent_slots |= 1u << slot;
     return result;
 }
@@ -32,6 +42,17 @@ static uint32_t lcd_grid_load_settings(void)
     const struct z7_settings_storage_io input = {
         &z7_persistence_files, lcd_grid_read, 0
     };
+#ifdef Z7_COMBINED_DISPLAY_PREFERENCES
+    uint32_t result = Z7_STORAGE_DEFAULTS;
+    for (uint32_t stage = 0; stage < 3; ++stage) {
+        lcd_grid_legacy_paths = stage; lcd_grid_absent_slots = 0;
+        result = z7_storage_load(&input,&z7_menu_settings,&z7_persistence_info);
+        if (result != Z7_STORAGE_DEFAULTS) break;
+        if (lcd_grid_absent_slots != 3) { result = Z7_STORAGE_INVALID; break; }
+    }
+    lcd_grid_legacy_paths = 0;
+    return result;
+#else
     uint32_t result = z7_storage_load(&input,&z7_menu_settings,&z7_persistence_info);
     if (result != Z7_STORAGE_DEFAULTS) return result;
     /* Existing invalid/unknown new records must not silently fall back to
@@ -41,6 +62,7 @@ static uint32_t lcd_grid_load_settings(void)
     result = z7_storage_load(&input,&z7_menu_settings,&z7_persistence_info);
     lcd_grid_legacy_paths = 0;
     return result;
+#endif
 }
 static void lcd_grid_selected(uint32_t value)
 {

@@ -1,0 +1,223 @@
+{
+  "schema": 1,
+  "upstream": {
+    "repository": "https://github.com/JKWTCN/z7ii-extensions",
+    "commit": "f298964fdf6b0d20df0d3c6cad48a74aa5f5c339",
+    "release": "v0.1.0-preview.35",
+    "observed_date": "2026-11-24",
+    "source": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/README.en.md"
+  },
+  "scope": "Feature parity target; research, builds, offline checks and camera verification are distinct. No headline feature is marked complete from emulator results alone.",
+  "features": [
+    {
+      "id": "framing-grid",
+      "name": "Framing grid",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/framing-grid.md",
+      "status": "partial",
+      "remaining": "Center cross supplies 2x2 midlines; upstream output coverage and rounding parity remain to assess",
+      "local_review": "LCD_GRID_PERSISTENCE_REVIEW.md",
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "histogram-horizon",
+      "name": "Histogram and virtual horizon",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/histogram-horizon.md",
+      "status": "partial",
+      "remaining": "LCD candidate integrated; EVF and real statistics/pixels pending",
+      "local_review": "LCD_HISTOGRAM_PRESETS_REVIEW.md",
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "portrait-ui",
+      "name": "Portrait display",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/portrait-ui.md",
+      "status": "research",
+      "remaining": "Native geometry/input/draw foundations; complete rotating UI not integrated",
+      "local_review": "z7-native-modules/PORTRAIT_RESEARCH.md",
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "photo-highlights",
+      "name": "Photo shooting highlights",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/photo-highlights.md",
+      "status": "partial",
+      "remaining": "Combined LCD API72/v4 integration passes offline checks; host installation, physical stripes, EVF/portrait and lifecycle remain",
+      "local_review": "LCD_HIGHLIGHTS_INTEGRATION.md",
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "custom-disp",
+      "name": "Custom DISP pages",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/custom-disp.md",
+      "status": "partial",
+      "remaining": "Four presets and optional fifth native page; camera and native-list parity pending",
+      "local_review": "LCD_INFORMATION_PAGE_REVIEW.md",
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "focal-length",
+      "name": "Focal length display",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/focal-length.md",
+      "status": "partial",
+      "remaining": "LCD implementation exists; lens coverage and lifecycle pending",
+      "local_review": "FOCAL_LENGTH_RESEARCH.md",
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "battery-percent",
+      "name": "Battery percentage display",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/battery-percent.md",
+      "status": "partial",
+      "remaining": "Photo LCD owner reports; movie LCD candidate awaits hardware",
+      "local_review": "LCD_MOVIE_BATTERY_REVIEW.md",
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "movie-recording-limit",
+      "name": "Extended movie recording",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/movie-recording-limit.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 recording callbacks/limits need binding",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "video-rotation",
+      "name": "Automatic video orientation",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/video-rotation.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 container writer/orientation bindings needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "jpeg-pre-capture",
+      "name": "JPEG pre-capture",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/jpeg-pre-capture.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 capture buffer/task/file pipeline needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "shutter-sound",
+      "name": "Silent shutter sound",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/shutter-sound.md",
+      "status": "partial",
+      "remaining": "Separate Z7 sound component exists; cumulative SD release integration pending",
+      "local_review": "z7-firmware-extensions/README.md",
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "filtered-playback",
+      "name": "Filtered playback",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/filtered-playback.md",
+      "status": "not_ported",
+      "remaining": "Native playback index and filter bindings needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "af-area-shortcut",
+      "name": "AF-area shortcuts",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/af-area-shortcut.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 key assignment and AF-area property bindings needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "custom-wide-area-af",
+      "name": "Custom wide-area AF (C1/C2)",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/custom-wide-area-af.md",
+      "status": "not_ported",
+      "remaining": "AF geometry/detection capabilities need original-Z7 review",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "subject-tracking",
+      "name": "Subject tracking",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/subject-tracking.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 AF-C tracking state and input bindings needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "focus-improvements",
+      "name": "Focus improvements",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/focus-improvements.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 reacquisition behavior and optional controls needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "pixel-shift",
+      "name": "Pixel shift shooting",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/pixel-shift.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 sensor shift/capture binding and physical calibration needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "wifi-settings",
+      "name": "Wi-Fi settings",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/wifi-settings.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 radio/service capability and settings review needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "ftp-upload",
+      "name": "FTP upload",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/ftp-upload.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 file selection/network transport/service integration needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "browser-gallery",
+      "name": "Browser gallery",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/browser-gallery.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 card index/network HTTP integration needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "composition-reference",
+      "name": "Composition reference",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/composition-reference.md",
+      "status": "not_ported",
+      "remaining": "Original-Z7 image decoding/overlay/picker integration needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    },
+    {
+      "id": "menu-localization",
+      "name": "Menu localization",
+      "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/menu-localization.md",
+      "status": "not_ported",
+      "remaining": "Native language bindings and separately licensed glyph integration needed",
+      "local_review": null,
+      "hardware_parity_verified": false
+    }
+  ],
+  "auxiliary": [
+    {
+      "id": "host-module-version",
+      "name": "Host and module version display",
+      "status": "not_ported",
+      "hardware_parity_verified": false
+    }
+  ],
+  "deferred": [
+    "Brief startup grid transition, at owner's request"
+  ],
+  "camera_flash_authorized": false
+}

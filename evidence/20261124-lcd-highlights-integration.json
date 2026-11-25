@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "date": "2026-11-24",
+  "feature": "Combined LCD photo highlight stripes with v4 grid/display preferences",
+  "candidate_sha256": "aa56f2b87aedeeafbc74f57a0285d3a753ae123773908cac6a53d4a6aea6c959",
+  "module_bytes": 33364,
+  "reproducible": true,
+  "checks": {
+    "passed": true,
+    "count": 828,
+    "scope": "Combined v4 LCD grid/highlight codec, migration and native plane audit (MIT).\n\nOriginal native converter/consumer/gate/driver execute. GUI, storage, palette,\nsurfaces, engines, MMIO and task handoff are supplied. No physical camera proof.\n"
+  },
+  "root_unit_tests": {
+    "passed": true,
+    "count": 103
+  },
+  "prior_information_profile_byte_identical": true,
+  "minimum_api_bytes": 72,
+  "installed_host_compatible": false,
+  "required_offline_host_main_sha256": "f77f0ced784403ffe99bd413c1ce71c07ecbd6a94e25c19919cb55a80c175b7c",
+  "settings_version": 4,
+  "new_journals": [
+    "Z7EXT0.DAT",
+    "Z7EXT1.DAT"
+  ],
+  "legacy_namespaces_read_only": true,
+  "source_dependencies_verified": true,
+  "camera_access": false,
+  "physical_pixels": false,
+  "staged": false,
+  "host_installation_assessment_complete": false,
+  "do_not_stage": true
+}
