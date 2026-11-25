@@ -22,8 +22,10 @@ def main():
     profiles.add_argument('--movie-battery',action='store_true',help='Experimental movie LCD battery percentage, retaining histogram presets and exact native icon guards')
     profiles.add_argument('--information-page',action='store_true',help='Add an opt-in native full Information display to the saved LCD DISP cycle, retaining movie battery/histogram work')
     profiles.add_argument('--photo-highlights',action='store_true',help='Offline API72 highlight integration with combined v4 settings in separate Z7EXT journals; requires a new reviewed host')
+    profiles.add_argument('--movie-orientation',action='store_true',help='Offline cumulative API72 build with guarded movie orientation publication; task quiescence and hardware unverified')
     a=p.parse_args();out=require_private_output(a.output)
-    information_page=a.information_page or a.photo_highlights
+    photo_highlights=a.photo_highlights or a.movie_orientation
+    information_page=a.information_page or photo_highlights
     movie_battery=a.movie_battery or information_page
     histogram_presets=a.histogram_presets or movie_battery
     label_refresh=a.settings_label_refresh or histogram_presets
@@ -32,7 +34,7 @@ def main():
     grid_persistence=a.grid_persistence or settings_root
     startup=a.startup_grid or grid_persistence
     persistent=a.persistent or startup
-    source=ROOT/'z7-native-modules/plugins'/('lcd_highlights_checkpoint.c' if a.photo_highlights else 'lcd_information_checkpoint.c' if information_page else 'lcd_movie_battery_checkpoint.c' if movie_battery else 'lcd_histogram_checkpoint.c' if histogram_presets else 'lcd_settings_label_checkpoint.c' if label_refresh else 'lcd_settings_category_checkpoint.c' if settings_category else 'lcd_settings_root_checkpoint.c' if settings_root else 'lcd_grid_persistence_checkpoint.c' if grid_persistence else 'lcd_startup_grid_checkpoint.c' if startup else 'lcd_persistence_checkpoint.c' if persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
+    source=ROOT/'z7-native-modules/plugins'/('lcd_movie_orientation_checkpoint.c' if a.movie_orientation else 'lcd_highlights_checkpoint.c' if photo_highlights else 'lcd_information_checkpoint.c' if information_page else 'lcd_movie_battery_checkpoint.c' if movie_battery else 'lcd_histogram_checkpoint.c' if histogram_presets else 'lcd_settings_label_checkpoint.c' if label_refresh else 'lcd_settings_category_checkpoint.c' if settings_category else 'lcd_settings_root_checkpoint.c' if settings_root else 'lcd_grid_persistence_checkpoint.c' if grid_persistence else 'lcd_startup_grid_checkpoint.c' if startup else 'lcd_persistence_checkpoint.c' if persistent else 'lcd_volatile_checkpoint.c');functions={};other_functions={}
     packet,meta=build(source,zig=ZIG.resolve(),function_details=functions)
     again,other=build(source,zig=ZIG.resolve(),function_details=other_functions)
     assert packet==again and meta==other and functions==other_functions
@@ -48,15 +50,15 @@ def main():
             assert match is not None,(name,include)
             pending.append(match)
     if persistent:
-        assert all(n in meta['symbols'] for n in ('highlight_combined_worker' if a.photo_highlights else 'persistence_worker','persistence_prepare','z7_settings_files_write'))
+        assert all(n in meta['symbols'] for n in ('highlight_combined_worker' if photo_highlights else 'persistence_worker','persistence_prepare','z7_settings_files_write'))
     else:
         assert not any(n.startswith(('persistence_','z7_persistence_','z7_settings_files_')) for n in meta['symbols'])
     meta.update(kind='original-Z7-LCD-settings-root-checkpoint' if settings_root else 'original-Z7-LCD-grid-persistence-checkpoint' if grid_persistence else 'original-Z7-LCD-startup-grid-checkpoint' if startup else 'original-Z7-LCD-persistence-checkpoint' if persistent else 'original-Z7-LCD-volatile-checkpoint',module_sha256=hashlib.sha256(packet).hexdigest(),file_bytes=len(packet),
-                source_inputs_sha256=inputs,function_details=functions,api_minimum_bytes=72 if a.photo_highlights else 44,reproducible=True,
+                source_inputs_sha256=inputs,function_details=functions,api_minimum_bytes=72 if photo_highlights else 44,reproducible=True,
                 dependency_scope='Conservative recursive quoted includes, including inactive conditional dependencies',
                 do_not_stage=True,hardware_test_authorized=False,firmware_image=False,
-                configuration=dict(persistent_settings=persistent,worker_registration_enabled=persistent,initial_grid_delta_only=startup,grid_layout_persistence=grid_persistence,settings_root_entry=settings_root,settings_category_entry=settings_category,settings_label_refresh=label_refresh,histogram_presets=histogram_presets,movie_battery=movie_battery,information_page=information_page,photo_highlights=a.photo_highlights,combined_preferences=a.photo_highlights),
-                scope=('LCD preferences including grid shape, separate Z7DSP slots/v3 payload; legacy Z7CFG read-only fallback' if grid_persistence else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; v1 preference journal, RAM-only grid layout' if persistent else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; all preferences volatile'))
+                configuration=dict(persistent_settings=persistent,worker_registration_enabled=persistent,initial_grid_delta_only=startup,grid_layout_persistence=grid_persistence,settings_root_entry=settings_root,settings_category_entry=settings_category,settings_label_refresh=label_refresh,histogram_presets=histogram_presets,movie_battery=movie_battery,information_page=information_page,photo_highlights=photo_highlights,combined_preferences=photo_highlights,movie_orientation=a.movie_orientation),
+                scope=('Combined LCD highlights/grid/page v4 preferences in separate Z7EXT slots; DSP/CFG read-only fallback; guarded offline movie publication' if a.movie_orientation else 'Combined LCD highlights/grid/page v4 preferences in separate Z7EXT slots; DSP/CFG read-only fallback' if photo_highlights else 'LCD preferences including grid shape, separate Z7DSP slots/v3 payload; legacy Z7CFG read-only fallback' if grid_persistence else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; v1 preference journal, RAM-only grid layout' if persistent else 'Four compact LCD DISP presets, native grid/horizon/info groups/battery/focal; all preferences volatile'))
     out.mkdir(parents=True)
     (out/'Z7APP.BIN').write_bytes(packet)
     (out/'module.json').write_text(json.dumps(meta,indent=2)+'\n',encoding='utf-8',newline='\n')

@@ -112,7 +112,7 @@ static uint32_t movie_install(void)
     MW(MOVIE_SLOT)=movie_task_address()|1;
     z7_movie_installed=1;return 1;
 }
-/* Explicit offline diagnostics. Initialization never publishes a callback.
+/* Explicit offline diagnostics. Standalone initialization never publishes a callback.
  * Operation7 requires its own offline fixture, never arbitrary camera calls.
  */
 __attribute__((noinline)) uint32_t z7_movie_rotation_operation(uint32_t op,uint32_t arg)
@@ -129,8 +129,10 @@ __attribute__((noinline)) uint32_t z7_movie_rotation_operation(uint32_t op,uint3
     default:return 0;
     }
 }
+#ifndef Z7_MOVIE_ROTATION_EMBEDDED
 uint32_t z7_main(const struct z7_module_api *api)
 {
     if (!api || api->abi!=Z7_MODULE_ABI || api->target!=Z7_MODULE_TARGET || api->size<12) return 1;
     return movie_prepare()?0:1;
 }
+#endif

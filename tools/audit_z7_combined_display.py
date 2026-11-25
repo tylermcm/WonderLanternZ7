@@ -31,6 +31,13 @@ def wire(v,version=4):
 
 class CombinedFixture(TransactionFixture):
     file_paths=PATHS+NEW+EXT
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        if args[3].get('configuration',{}).get('movie_orientation'):
+            # This renderer/codec fixture does not model mux startup. Explicitly
+            # exclude optional publication; its positive/negative startup cases
+            # belong to audit_z7_lcd_movie_orientation.py.
+            self.write(0xa1815030,0)
     def preferences(self):return tuple(struct.unpack('<13I',self.u.mem_read(self.address('z7_menu_settings'),52)))
     def action(self,view,row,preset=0):
         self.write(self.address('z7_settings_view'),view);self.write(self.address('z7_settings_preset'),preset)

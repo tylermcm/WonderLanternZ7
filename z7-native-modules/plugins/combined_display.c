@@ -267,5 +267,12 @@ uint32_t z7_main(const struct z7_module_api *api)
     __asm__ volatile("dmb sy" ::: "memory");
     W(0xa1829b0cu) = (uint32_t)(uintptr_t)clean_key;
 #endif
+#ifdef Z7_MOVIE_ROTATION_EMBEDDED
+    /* All fallible display initialization and native menu publication have
+     * finished. This optional offline feature either publishes its callback
+     * or leaves the original slot intact; failure does not unload display code.
+     */
+    (void)movie_install();
+#endif
     return 0;
 }

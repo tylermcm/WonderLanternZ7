@@ -18,11 +18,16 @@ Information display. Their camera gates remain recorded in the exact reviews.
 Center cross already supplies one internal horizontal and vertical line, the
 2x2 layout; matching upstream output coverage and rounding remains to assess.
 
-The next integration is [photo highlight stripes](LCD_HIGHLIGHTS_INTEGRATION.md).
+The combined LCD integration includes [photo highlight stripes](LCD_HIGHLIGHTS_INTEGRATION.md).
 Its native warning renderer requires the experimental API72 host, so it cannot
 be loaded on the installed API44 host. The combined version-4 settings keep grid,
 page and highlight choices together in separate `Z7EXT` journals; existing
 `Z7DSP` and `Z7CFG` files remain read-only migration inputs.
+
+The [cumulative movie orientation checkpoint](LCD_MOVIE_ORIENTATION_INTEGRATION.md)
+adds guarded offline callback publication after display initialization. It passes
+startup integration checks but still lacks task-quiescence and playable-video
+verification. It is not cleared for camera use.
 
 Work proceeds through display consolidation, portrait and remaining output
 support, movie controls, sound/playback, AF/capture features, then network/gallery
