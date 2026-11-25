@@ -59,6 +59,31 @@ native matrix spans. It does not execute complete track construction, movie file
 I/O, a mux task lifecycle or a recording. No completed MOV/MP4 or player result
 is claimed. See [the source-only evidence](evidence/20261124-movie-orientation.json).
 
+## Prepared native shadows and file wrappers
+
+The prepare-only `movie_rotation_module.c` now fingerprints and copies the
+original native mux task, close path and header path, retains their PC alignment
+and literal pools, and redirects their direct calls through bounded local stubs.
+The open/split callsites reach wrappers that latch the native pose after a
+successful result. The header wrapper runs native track construction first and
+then applies the saved file's matrix, retaining native failure returns.
+
+Private reproducible module: 1,856 bytes, SHA256
+`3b3906b677095d621130d8d08e01d521b39af5a97f745cfcaa882ea8558ab94b`.
+Build with `tools/build_z7_movie_rotation.py --output` and a new private path.
+Its initializer prepares owned buffers only: **it does not publish a native
+callback**. There is no installation operation in this profile. It remains
+separate from the cumulative display candidates and must not be staged.
+
+171 checks verify every relocated direct call, native bytes/literal pools,
+alignment, unchanged live callback, all ten file slots and four poses, pose
+retention after later orientation changes, split-context replacement, failed
+open/unknown-pose invalidation, native track failure preservation and fingerprint
+rejection. Original relocated task open/split event paths execute; underlying
+file operations, pose readings, completion results and track construction are
+supplied services in that fixture. This does not execute a complete native close
+or header chain. See [the shadow record](evidence/20261124-movie-shadows.json).
+
 ## Remaining integration
 
 Bind and qualify the original file-task callback, control structure, file-open

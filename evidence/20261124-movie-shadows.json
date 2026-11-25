@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "count": 171,
+  "module_sha256": "3b3906b677095d621130d8d08e01d521b39af5a97f745cfcaa882ea8558ab94b",
+  "prepare_only": true,
+  "callback_installed": false,
+  "camera_access": false,
+  "physical_movie": false,
+  "native_open_split_track_results_supplied": true,
+  "complete_native_task_verified": false,
+  "scope": "Original-Z7 native shadow preparation and per-file wrappers (MIT).\n\nCompiled copies/relocation/wrappers execute. Native open/split/track completion,\npose and file contexts are supplied. No callback installed, complete native mux\ntask or physical file/recording behavior proved.\n",
+  "schema": 1,
+  "date": "2026-11-24"
+}
