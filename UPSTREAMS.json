@@ -11,7 +11,16 @@
       "url": "https://github.com/JKWTCN/z7ii-extensions",
       "commit": "50a22b24c50619cffa646dac386e8334659f475a",
       "license": "MIT; copyright and license retained in z7-native-modules/LICENSE and NOTICE.md",
-      "local_changes": "Independent original-Z7 loading core/ABI, host bindings, module packer and LCD display checkpoints; selected owner hardware trials and journal readback recorded in DEVELOPMENT_UPDATE_2026-11-23.md; full lifecycle, cache correctness, durability and recovery remain unverified"
+      "local_changes": "Independent original-Z7 loading core/ABI, host bindings, module packer and LCD display checkpoints; selected owner hardware trials and journal readback recorded in DEVELOPMENT_UPDATE_2026-11-23.md; full lifecycle, cache correctness, durability and recovery remain unverified",
+      "inspected_followups": [
+        {
+          "commit": "e9879e077028b20fc799b9bc13f7e585b71e9f32",
+          "url": "https://github.com/JKWTCN/z7ii-extensions/commit/e9879e077028b20fc799b9bc13f7e585b71e9f32",
+          "license": "MIT; JKWTCN copyright and component license retained",
+          "scope": "Optional original-Z7 closed-read retry policy; startup-copy padding change assessed but not transplanted",
+          "assessment": "Z7II_FIRST_BOOT_COMPARISON.md"
+        }
+      ]
     },
     "z7-firmware-extensions": {
       "url": "https://github.com/totwoto02/z7-firmware-extensions",

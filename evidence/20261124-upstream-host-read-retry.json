@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "date": "2026-11-24",
+  "upstream_commit": "e9879e077028b20fc799b9bc13f7e585b71e9f32",
+  "upstream_url": "https://github.com/JKWTCN/z7ii-extensions/commit/e9879e077028b20fc799b9bc13f7e585b71e9f32",
+  "retry_opt_in": true,
+  "default_host_unchanged": true,
+  "default_host_main_sha256": "24b2074559ca6089432011d98a72193f81e112c2621aee2aa0ed1359febfa7ce",
+  "experimental_host_main_sha256": "6489b5516f0e794599c0d559b5e650f7a500e6bba50668148794b3aec98c9aa3",
+  "host_bss_bytes": 0,
+  "module_bss_explicitly_zeroed": true,
+  "upstream_padding_edit_applied": false,
+  "worker_retry": {
+    "passed": true,
+    "count": 41,
+    "checks": [
+      "read-error-then-ok-bounded-result",
+      "read-error-then-ok-bounded-backoff",
+      "read-error-then-ok-single-resident-park",
+      "read-error-then-ok-open-close-count",
+      "read-error-then-ok-no-leaked-raw-allocation",
+      "short-read-then-ok-bounded-result",
+      "short-read-then-ok-bounded-backoff",
+      "short-read-then-ok-single-resident-park",
+      "short-read-then-ok-open-close-count",
+      "short-read-then-ok-no-leaked-raw-allocation",
+      "permanent-read-error-bounded-result",
+      "permanent-read-error-bounded-backoff",
+      "permanent-read-error-single-resident-park",
+      "permanent-read-error-open-close-count",
+      "permanent-read-error-no-leaked-raw-allocation",
+      "read-and-close-error-bounded-result",
+      "read-and-close-error-bounded-backoff",
+      "read-and-close-error-single-resident-park",
+      "read-and-close-error-open-close-count",
+      "read-and-close-error-no-leaked-raw-allocation",
+      "uncertain-close-remains-terminal",
+      "missing-bounded-result",
+      "missing-bounded-backoff",
+      "missing-single-resident-park",
+      "missing-open-close-count",
+      "missing-no-leaked-raw-allocation",
+      "bad-size-bounded-result",
+      "bad-size-bounded-backoff",
+      "bad-size-single-resident-park",
+      "bad-size-open-close-count",
+      "bad-size-no-leaked-raw-allocation",
+      "invalid-module-bounded-result",
+      "invalid-module-bounded-backoff",
+      "invalid-module-single-resident-park",
+      "invalid-module-open-close-count",
+      "invalid-module-no-leaked-raw-allocation",
+      "failed-init-bounded-result",
+      "failed-init-bounded-backoff",
+      "failed-init-single-resident-park",
+      "failed-init-open-close-count",
+      "failed-init-no-leaked-raw-allocation"
+    ],
+    "scenarios": [
+      {
+        "case": "read-error-then-ok",
+        "attempts": 3,
+        "status": 8,
+        "opens": 3,
+        "closes": 3
+      },
+      {
+        "case": "short-read-then-ok",
+        "attempts": 3,
+        "status": 8,
+        "opens": 3,
+        "closes": 3
+      },
+      {
+        "case": "permanent-read-error",
+        "attempts": 100,
+        "status": 4,
+        "opens": 100,
+        "closes": 100
+      },
+      {
+        "case": "read-and-close-error",
+        "attempts": 1,
+        "status": 5,
+        "opens": 1,
+        "closes": 1
+      },
+      {
+        "case": "missing",
+        "attempts": 100,
+        "status": 1,
+        "opens": 100,
+        "closes": 0
+      },
+      {
+        "case": "bad-size",
+        "attempts": 1,
+        "status": 2,
+        "opens": 1,
+        "closes": 1
+      },
+      {
+        "case": "invalid-module",
+        "attempts": 1,
+        "status": 6,
+        "opens": 1,
+        "closes": 1
+      },
+      {
+        "case": "failed-init",
+        "attempts": 1,
+        "status": 7,
+        "opens": 1,
+        "closes": 1
+      }
+    ],
+    "main_sha256": "6489b5516f0e794599c0d559b5e650f7a500e6bba50668148794b3aec98c9aa3",
+    "scope": "Execute bounded original-Z7 module-read retries and close handling (MIT).\n\nFilesystem/task/allocator boundaries are supplied. No camera or update writer.\n",
+    "camera_access": false,
+    "firmware_update_authorized": false,
+    "upstream_commit": "e9879e077028b20fc799b9bc13f7e585b71e9f32"
+  },
+  "repository_tests": 103,
+  "installed_host_changed": false,
+  "camera_flashed": false,
+  "installation_cleared": false,
+  "physical_cold_start_cause_established": false
+}

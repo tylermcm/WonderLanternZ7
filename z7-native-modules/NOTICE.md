@@ -165,3 +165,10 @@ Original-Z7 routing, property/packet/request bindings, API52 filtering and nativ
 update notices, epoch identities, workspace reservation and validation are local
 independent modifications. Development profiles are not Nikon or upstream releases.
 Firmware, generated images, native dumps and camera screenshots remain private.
+
+The optional `Z7_HOST_RETRY_READ_FAILURES` worker policy adapts JKWTCN's MIT
+`host/host.c` change at `e9879e077028b20fc799b9bc13f7e585b71e9f32`:
+https://github.com/JKWTCN/z7ii-extensions/commit/e9879e077028b20fc799b9bc13f7e585b71e9f32
+Copyright (c) 2026 JKWTCN; the component MIT license is retained. Original-Z7
+status/close handling, bindings and tests are independent modifications. The
+upstream startup-copy padding patch is not transplanted into this host layout.

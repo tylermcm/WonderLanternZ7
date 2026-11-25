@@ -18,6 +18,11 @@ specific adapted drawing/geometry approaches are credited in the component's
 [NOTICE.md](z7-native-modules/NOTICE.md). Copyright (c) 2026 JKWTCN; the
 [MIT license](z7-native-modules/LICENSE) is preserved.
 
+The optional original-Z7 startup read-retry policy also adapts
+[`e9879e0`](https://github.com/JKWTCN/z7ii-extensions/commit/e9879e077028b20fc799b9bc13f7e585b71e9f32),
+JKWTCN's later MIT first-boot host fix. The [comparison](Z7II_FIRST_BOOT_COMPARISON.md)
+records the independent memory-layout assessment and offline validation.
+
 The original-Z7 host bindings, camera addresses, ownership/scheduling changes,
 test tooling and incremental hardware trials are independent modifications.
 Z7II binaries and native addresses cannot be substituted for the original-Z7

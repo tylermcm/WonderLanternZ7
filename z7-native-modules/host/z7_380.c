@@ -1207,7 +1207,14 @@ void z7_module_worker(struct z7_host_state *s)
         for (uint32_t i = 0; i < Z7_HOST_RETRIES; ++i) {
             s->attempts = i + 1;
             s->status = z7_module_load_once(s);
+#ifdef Z7_HOST_RETRY_READ_FAILURES
+            /* Adapted from JKWTCN/z7ii-extensions e9879e0 (MIT). The loader
+             * reports READ_FAILED only after a successful close; CLOSE_FAILED
+             * retains the uncertain descriptor and must remain terminal. */
+            if (s->status != Z7_HOST_NO_FILE && s->status != Z7_HOST_READ_FAILED) break;
+#else
             if (s->status != Z7_HOST_NO_FILE) break;
+#endif
             if (i + 1 < Z7_HOST_RETRIES) delay(100);
         }
         z7_module_result(s);
