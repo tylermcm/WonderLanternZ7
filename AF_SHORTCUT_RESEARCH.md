@@ -108,10 +108,37 @@ is already selected, and a readback after each write.
 `tools/audit_z7_af_area_apply.py` (22 checks) runs it with Nikon's real getter
 and a recorded setter, and re-checks the QEMU setter run.
 
+## Button input (November 25, 2026)
+
+Nikon's `ID_SW` name table names each switch with its word and mask, and the
+AutoOperation table at `0x10634144` maps test-key indices to the same pairs.
+`0x101B4A60` returns the switch object `0xA1F90AA0`; Nikon's edge routine
+`0x101AE622` keeps one 0x14-byte group per word (+0 current, +4 previous, +8
+changed, +0xC pressed, +0x10 released). Groups: SW0 `0xA1F90AA4`, SW1 `0xA1F90AB8`,
+SW2 `0xA1F90ACC`.
+
+| Button | Word / mask | AO index | Pressed in assisted QEMU (`tools/probe_z7_switch_watch.py`) |
+| --- | --- | --- | --- |
+| Fn1 | SW0 `0x4000` | 59 | Set while held, cleared on release (writer `0x101AE622`) |
+| AF-ON | SW0 `0x200000` | 27 | Set while held, cleared on release |
+| Sub-selector center | SW2 `0x8000` | 51 | Set while held |
+| Fn2 | SW2 `0x4000` | 60 | No change observed |
+| Movie record | SW1 `0x2000` | 9 | No change observed |
+
+`z7-native-modules/plugins/af_shortcut_runtime.h` polls the three verified buttons
+once per GUI update, turns presses into edges, feeds `af_shortcut_policy.h`, and
+applies the target with `af_area_native.h`. Z7 targets are the six measured
+AF-area modes (target = value + 1). `tools/audit_z7_af_shortcut_runtime.py`
+(25 checks) covers press, hold, release, already-selected, busy deferral,
+photo-context drop, native-None exclusion, availability by focus mode, the
+unverified buttons being ignored, and non-Z7 targets. Polling can miss a press
+shorter than one GUI update; that is measured on the camera.
+
 ## Required remaining work
 
 Native AF-area values and the setter path are now measured (above). Identify
-the remaining availability rules (manual focus, movie mode), five physical button
+the remaining availability rules (manual focus, movie mode), Fn2 and movie-button
+input (three of five buttons verified above), physical button
 events and native assignments through the original menus and input paths. Then
 connect GUI-side writes with readback and exclusion rules for menus, playback,
 information display, magnified view, movie mode, LCD and EVF. The existing

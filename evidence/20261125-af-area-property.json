@@ -35,5 +35,25 @@
     "menu_reflects_setter": true,
     "component": "z7-native-modules/plugins/af_area_native.h",
     "component_checks": 22
+  },
+  "buttons": {
+    "switch_object": "0xA1F90AA0",
+    "edge_routine": "0x101AE622",
+    "groups": {
+      "SW0": "0xA1F90AA4",
+      "SW1": "0xA1F90AB8",
+      "SW2": "0xA1F90ACC"
+    },
+    "verified": {
+      "Fn1": "SW0 0x4000",
+      "AF-ON": "SW0 0x200000",
+      "sub-selector center": "SW2 0x8000"
+    },
+    "unverified": {
+      "Fn2": "SW2 0x4000",
+      "movie": "SW1 0x2000"
+    },
+    "runtime": "z7-native-modules/plugins/af_shortcut_runtime.h",
+    "runtime_checks": 25
   }
 }
