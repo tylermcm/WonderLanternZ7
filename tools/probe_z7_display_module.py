@@ -892,6 +892,23 @@ def main():
             preset_row(4); key('right',lambda:bool(bits()&4))
             capture('histogram-and-horizon-enabled')
             check('grid-histogram-horizon-combined',bits()==7)
+            # Preset value column, rows 0 and 2..4: pixels contrasting with the
+            # cell's own background (works for highlighted and plain rows).
+            def value_cells_lit(name):
+                image=Image.open(output/(name+'.png')).convert('RGB')
+                lit={}
+                for r in (0,2,3,4):
+                    y=88+r*52
+                    cell=list(image.crop((590,y-18,690,y+18)).get_flattened_data())
+                    background=max(set(cell),key=cell.count)
+                    lit[r]=sum(1 for px in cell if sum(abs(a-b) for a,b in zip(px,background))>150)
+                return lit
+            immediate=value_cells_lit('histogram-and-horizon-enabled')
+            capture('histogram-and-horizon-settled', settle=5)
+            settled=value_cells_lit('histogram-and-horizon-settled')
+            check('settled-preset-values-visible',all(v>20 for v in settled.values()))
+            result['preset_value_pixels']=dict(immediate=immediate,settled=settled,
+                immediate_blank_rows=[r for r,v in immediate.items() if v<=20])
             key('left',lambda:view()==0); row(0,1); key('right',lambda:view()==1)
             capture('histogram-preset-reopened')
             check('combined-components-retained-on-menu-reentry',bits()==7)

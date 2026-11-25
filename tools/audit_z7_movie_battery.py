@@ -35,7 +35,10 @@ def main():
         f.file_paths=PATHS+NEW
         check(directory.name+'-loads',f.call(h['symbols']['z7_module_load_once'],STATE)==8)
         f.base=f.words()[12];f.setword(40,8);s=m['symbols']
-        f.u.mem_write(0xa1833548+22,struct.pack('<2H',0,5))
+        # Battery percentage is root row 5, or row 6 once Information display
+        # occupies row 5 in the --information-page profile.
+        battery_row=6 if m['configuration'].get('information_page') else 5
+        f.u.mem_write(0xa1833548+22,struct.pack('<2H',0,battery_row))
         f.call(f.base+s['sm_activate'])
         check(directory.name+'-global-switch-enables-battery',f.read(f.base+s['z7_battery_enabled'])==1)
         return f,m,s
@@ -80,7 +83,8 @@ def main():
         ('alternate-layout',ICON+16,struct.pack('<I',658|(396<<16))),
         ('foreign-painter',ICON+76,struct.pack('<I',0x100202b5)),
         ('menu',0xa2c41008,struct.pack('<I',1))):exclusion(name,address,data)
-    f.u.mem_write(0xa1833548+22,struct.pack('<2H',0,5));f.call(f.base+s['sm_activate'])
+    battery_row=6 if m['configuration'].get('information_page') else 5
+    f.u.mem_write(0xa1833548+22,struct.pack('<2H',0,battery_row));f.call(f.base+s['sm_activate'])
     check('same-global-switch-disables-movie-overlay',word('enabled')==0)
     count=f.getter_calls;frame(f);paint()
     for _ in range(32):frame(f)

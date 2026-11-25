@@ -150,6 +150,11 @@ The optional [Information DISP page checkpoint](LCD_INFORMATION_PAGE_REVIEW.md)
 adds Nikon's full information screen as a saved fifth LCD page, default OFF.
 It retains the native screen; camera appearance and lifecycle remain unverified.
 
+The [consolidated camera-test candidate](LCD_CAMERA_TEST_CANDIDATE.md) packs the
+label repair, histogram presets, movie LCD battery and Information page into one
+SD module for a single camera session on the installed host. It is not yet staged
+or camera-tested.
+
 [Upstream feature parity work](UPSTREAM_PARITY.md) now tracks all 22 headline
 Z7II features against a pinned upstream commit. The next combined
 [photo highlights lab profile](LCD_HIGHLIGHTS_INTEGRATION.md) uses a newer offline
