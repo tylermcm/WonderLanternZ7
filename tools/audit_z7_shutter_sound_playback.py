@@ -110,6 +110,7 @@ class SoundFixture(HostFixture):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for n in ('host','module','boot_module','output'):p.add_argument('--'+n.replace('_','-'),type=Path,required=True)
+    p.add_argument('--clip',type=Path,help='Exact SHUTTER1.WAV intended for the card')
     a=p.parse_args();out=require_private_output(a.output)
     h=json.loads((a.host/'module-host.emulator.json').read_text());raw=(a.host/'module-host.emulator.main.bin').read_bytes()
     assert hashlib.sha256(raw).hexdigest()==h['main_payload_sha256']
@@ -125,6 +126,7 @@ def main():
     def load(files=None,packet=packet,meta=m,**kw):
         f=SoundFixture(raw,h,packet,files=files,**kw)
         f.loaded=f.call(h['symbols']['z7_module_load_once'],STATE)
+        f.setword(40,f.loaded)  # z7_module_worker stores the status before its resident ticks
         f.base=f.words()[12];f.s=meta['symbols'];return f
     def sym(f,name):return f.base+f.s[name]
     def val(f,name):return f.read(sym(f,name))
@@ -236,15 +238,40 @@ def main():
     g=load({WAV_PATH:good})
     check('invalid-clip-or-volume-refused',all(g.call(sym(g,'z7_sound_operation'),1,c,v,1)==0 for c,v in ((1,5),(0,0),(0,6))) and not g.sends)
 
-    # Boot-preview variant queues exactly one preview at init.
+    # Boot-preview variant: nothing at load; one preview on the 8th resident-worker tick.
+    TICK=8
+    def tick(f):f.call(h['symbols']['z7_module_worker_tick'])
     b=load({WAV_PATH:good},packet=bpacket,meta=bm)
-    check('boot-preview-queued-once',b.read(sym(b,'z7_sound_boot_queued'))==1 and len(b.sends)==1)
+    check('boot-preview-nothing-queued-at-load',b.loaded==8 and b.read(sym(b,'z7_sound_boot_queued'))==0 and not b.sends)
+    for _ in range(TICK-1):tick(b)
+    check('boot-preview-waits-for-worker-tick',val(b,'z7_sound_worker_ticks')==TICK-1 and not b.sends)
+    tick(b)
+    check('boot-preview-queued-on-tick',val(b,'z7_sound_boot_queued')==1 and len(b.sends)==1)
     b.call(DISPATCH,b.sends[0][1])
     check('boot-preview-plays',b.read(sym(b,'z7_sound_playback'))==2 and [c[0] for c in b.setter_calls]==['format','tones','data','dma-start'])
+    b.call(b.read(CONTEXT+32),0x04180023,0)
+    for _ in range(20):tick(b)
+    check('boot-preview-never-repeats',len(b.sends)==1 and val(b,'z7_sound_worker_ticks')==TICK and val(b,'z7_sound_playback')==0)
+    b=load({WAV_PATH:good},packet=bpacket,meta=bm);b.u.mem_write(STATE_ADDR,b'\1')
+    for _ in range(TICK+4):tick(b)
+    check('boot-preview-busy-service-refused-once',val(b,'z7_sound_boot_queued')==2 and not b.sends)
     b=load({},packet=bpacket,meta=bm)
-    check('boot-preview-silent-without-clip',b.read(sym(b,'z7_sound_boot_queued'))==0 and not b.sends)
+    for _ in range(TICK+4):tick(b)
+    check('boot-preview-silent-without-clip',b.read(sym(b,'z7_sound_boot_queued'))==0 and not b.sends and val(b,'z7_sound_worker_ticks')==0)
+    clip=None
+    if a.clip:
+        # The exact card clip, end to end through the boot-preview module.
+        clip=a.clip.read_bytes()
+        b=load({WAV_PATH:clip},packet=bpacket,meta=bm)
+        for _ in range(TICK):tick(b)
+        check('card-clip-installs',b.loaded==8 and val(b,'z7_sound_init_result')==3)
+        b.call(DISPATCH,b.sends[0][1])
+        expect=reference(clip);pcm_addr=sym(b,'z7_sound_pcm')
+        got=list(struct.unpack('<%dh'%len(expect),bytes(b.u.mem_read(pcm_addr,len(expect)*2))))
+        check('card-clip-pcm-exact-at-volume-5',got==expect and b.setter_calls[0][1][1]==len(expect)*2)
 
     report=dict(passed=True,count=len(checks),checks=checks,module_sha256=m['module_sha256'],boot_module_sha256=bm['module_sha256'],
+        clip_sha256=hashlib.sha256(clip).hexdigest() if clip else None,preview_worker_tick=TICK,
         host_main_sha256=h['main_payload_sha256'],camera_access=False,audio_hardware=False,photo_trigger=False,scope=__doc__)
     out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(dict(passed=True,checks=len(checks))))

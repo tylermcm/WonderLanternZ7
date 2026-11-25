@@ -1,7 +1,8 @@
 # Silent shutter sound as an SD module — original-Z7 binding map
 
-Status: **playback module built and verified offline, November 24, 2026.** It has
-not run on a camera, has no photo trigger and no menu yet. Nothing is staged.
+Status: **playback module verified offline; camera smoke test prepared, November 25,
+2026.** It has not run on a camera, has no photo trigger and no menu yet. Nothing is
+staged.
 
 ## Why a new approach
 
@@ -62,7 +63,8 @@ the native post, dispatcher and completion actually run.
 
 Sources: `z7-native-modules/plugins/shutter_sound_playback.h` (engine),
 `shutter_sound_module.c` (install only) and `shutter_sound_boot_preview.c` (same,
-plus one preview queued at module init). Built by
+plus one preview queued by the host's resident worker on its eighth tick, so the
+camera has finished starting before anything plays). Built by
 `tools/build_z7_shutter_sound.py`, twice per build to confirm the bytes reproduce.
 
 What the module does at boot:
@@ -84,14 +86,16 @@ native handler rejects, so if the intercept were ever missing the job would
 release without playing anything. This trial reads one clip and has five volume
 levels. The menu and the other four clips come with step 3.
 
-**Offline audit** (`tools/audit_z7_shutter_sound_playback.py`, 74 checks, all
+**Offline audit** (`tools/audit_z7_shutter_sound_playback.py`, 80 checks, all
 pass). It runs the original host loader, the compiled module, and Nikon's post
 function, message dispatcher and completion in Unicorn. It stubs the filesystem
 dispatcher, allocator, mailbox send, speaker checks, the four setters and the
 native start handler; it records their arguments but doesn't execute them. Covered:
 WAV decode edge cases, install and no-install paths, firmware-mismatch refusal,
 setter order and arguments, native passthrough, every rejection path releasing the
-job, busy and allocation failure. A mutation test (tone 31→30) fails as expected.
+job, busy and allocation failure, the deferred preview (nothing at load, one
+preview on tick 8, never repeated, skipped when busy) and the exact card WAV
+decoded sample-for-sample. A mutation test (tone 31→30) fails as expected.
 
 **Assisted QEMU, real guest tasks** (`tools/probe_z7_shutter_sound.py`):
 
@@ -99,6 +103,7 @@ job, busy and allocation failure. A mutation test (tone 31→30) fails as expect
 | --- | --- |
 | Install-only module + WAV | WAV read through the file fixture, slot holds the module handler, nothing queued, no private start in 4 s of running (6/6) |
 | Same module, no WAV | Nothing installed, slot keeps `0x1006BC47` (3/3) |
+| Boot-preview module + card WAV | Boot completes with nothing queued; the worker queues the preview on tick 8; it then reaches the known codec abort below (6/6) |
 
 **Emulator limit: playback can't be tested in QEMU.** Any sound request, Nikon's
 own beep included, crashes the emulated codec task.
@@ -142,9 +147,9 @@ events without playing sound or writing files, and show the counts.
 
 ## Plan
 
-1. **Playback module:** built and verified offline (above). Next is a camera smoke
-   test of the boot-preview build: one clip at power-on, then normal camera use.
-   This needs the owner's approval and swaps the module file on the card.
+1. **Playback module:** built and verified offline (above). Camera smoke test
+   prepared in [SHUTTER_SOUND_CAMERA_SMOKE_TEST.md](SHUTTER_SOUND_CAMERA_SMOKE_TEST.md);
+   staging waits for the owner's approval.
 2. **Event counter (camera, no sound):** count trigger candidates per photo, single
    and burst, and in idle live view, half-press, menus and playback.
 3. **Trigger:** wire playback to the signal the counts support; Silent photography

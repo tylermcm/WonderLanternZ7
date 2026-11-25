@@ -79,5 +79,16 @@
   "staged": false,
   "audible_output_verified": false,
   "photo_trigger": false,
-  "review": "SHUTTER_SOUND_SD_PORT.md"
+  "review": "SHUTTER_SOUND_SD_PORT.md",
+  "smoke_test": {
+    "date": "2026-11-25",
+    "boot_preview_sha256": "b87e8a5a830ea85a17da08717aa7c34208cac89356a8f8026d34a10237839866",
+    "boot_preview_bytes": 2060,
+    "clip_sha256": "469f08a622274e2281cca78eb89c77c251fa937dbbaea5acaa8279ccc5ff52f2",
+    "preview_worker_tick": 8,
+    "offline_checks": 80,
+    "qemu_boot_preview_checks": 6,
+    "staged": false,
+    "plan": "SHUTTER_SOUND_CAMERA_SMOKE_TEST.md"
+  }
 }

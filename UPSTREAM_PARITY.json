@@ -104,7 +104,7 @@
       "name": "Silent shutter sound",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/shutter-sound.md",
       "status": "research",
-      "remaining": "SD-module route: sound-service bindings mapped (31 checks); playback module built and verified offline (74 checks) and in QEMU up to the codec, which the emulator does not model. Camera playback test, per-photo trigger measurement, trigger wiring and menu remain. October firmware-patch build stays on hold.",
+      "remaining": "SD-module route: sound-service bindings mapped (31 checks); playback module verified offline (80 checks) and in QEMU up to the codec, which the emulator does not model; camera smoke test prepared, awaiting staging approval. Camera playback result, per-photo trigger measurement, trigger wiring and menu remain. October firmware-patch build stays on hold.",
       "local_review": "SHUTTER_SOUND_SD_PORT.md",
       "hardware_parity_verified": false
     },
