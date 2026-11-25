@@ -63,16 +63,38 @@ Not established: that the camera records pose 3 for an upside-down photo, the
 thumbnail/second IFD behavior, and NEF. One upside-down photo in the field test
 answers the first.
 
-## In-camera playback (not started)
+## In-camera playback (traced, not built)
 
-Upstream also rotates upside-down photos in playback. On the Z7, Nikon's EXIF
-*reader* table for IFD0 is at `0x11531BB8` (7 entries of `{tag word, reader}`);
-its Orientation reader `0x10283AF1` maps 1/8/6 to poses 0/1/2 and anything else,
-including 3, to 4 ("unknown"). The table address comes from a switch at
-`0x102836EC` that returns ROM addresses, and no literal or direct branch to that
-switch was found, and a read-only RAM search in assisted QEMU found no pointer
-to it either, so there is no RAM descriptor to swap as on the writer side. Whether Nikon's playback renderer can show a 180° rotation at all is also
-unknown. Both need tracing before a playback change is designed.
+Upstream released inverted playback for the Z7II on November 25 (`94be0b3`,
+MIT). It needed three pieces: a lookup that reports a half turn for
+upside-down files, a rotation table entry for that half turn, and a graphics
+path that draws it. The original-Z7 playback chain was traced on November 25
+and checked by `tools/audit_z7_playback_rotation.py` (42 checks), which runs
+Nikon's own code in an instruction fixture.
+
+| Step | Original-Z7 code | What it does with an upside-down photo |
+| --- | --- | --- |
+| Rotation field on the image record | 2-bit field, byte `+0x16` bits 4-5 (`0x103397B0`) | Filled at capture from the pose (1→1, 2→2, else 0) and when a file is indexed from its EXIF Orientation (8→1, 6→2, else 0). Orientation 3 and pose 3 both store 0. |
+| Per-image turn lookup | `0x103D4C10`, cache at `0xA18E4DB8` | Maps the field 0→0, 1→1, 2→3, 3→0. Turn 2 (half turn) is never produced. |
+| Rotation decision | `0x10306586`, ROM table `0x11545DE4` `{0,0,0,0, 0,1,0,3}`, Rotate tall at `0xA288E248+1` | Indexes the table by Rotate tall and turn. Turn 2 gives 0 in both rows, so even a half-turn lookup would not rotate. |
+
+So, as on the Z7II, upside-down photos play back unrotated even after the EXIF
+fix above writes Orientation 3. The EXIF *reader* table noted earlier is a
+separate path (it fills the capture structure at `+0x24FD`) and is not what
+playback uses.
+
+The lookup and the decision table are in ROM and are called directly (the
+decision has 24 direct callers in the playback code), so there is no single RAM
+pointer to swap. The playback handlers that reach them are dispatched through a
+16-byte-entry table of `{handler, handler, flags, …}` that a read-only
+assisted-QEMU RAM search found live at `0xA18E4680` (copied from ROM
+`0x11F80894`; one hit in `0xA1800000-0xA1A00000`). A port would copy those
+handlers into module memory and redirect their calls, the method the movie
+rotation module already uses, so the copies use a lookup that reports turn 2
+for Orientation-3 files and a table with a half-turn entry. Upstream also
+replaced the graphics worker's half-turn draw to avoid stray edge pixels; the
+original Z7 graphics path for a 180° photo is not yet traced. No module code
+exists for playback yet, and nothing here has run on a camera.
 
 Credit: design follows JKWTCN's MIT `photo_rotation.h`; original-Z7 bindings
 are independent work.

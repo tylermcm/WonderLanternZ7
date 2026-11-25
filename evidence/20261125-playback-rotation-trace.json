@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "inverted-photo-playback-trace",
+  "rotation_field": "image record byte +0x16 bits 4-5 (0x103397B0)",
+  "turn_lookup": "0x103D4C10",
+  "turn_cache": "0xA18E4DB8",
+  "field_to_turn": {
+    "0": 0,
+    "1": 1,
+    "2": 3,
+    "3": 0
+  },
+  "rotation_decision": "0x10306586",
+  "decision_table": "0x11545DE4",
+  "decision_table_bytes": "00 00 00 00 00 01 00 03",
+  "rotate_tall_setting": "0xA288E248+1",
+  "decision_results": {
+    "0:0": 0,
+    "0:1": 0,
+    "0:2": 0,
+    "0:3": 0,
+    "1:0": 0,
+    "1:1": 1,
+    "1:2": 0,
+    "1:3": 3
+  },
+  "field_writers": {
+    "capture": "pose 1->1, 2->2, else 0 (0x1026B4BC)",
+    "file_index": "EXIF 8->1, 6->2, else 0 (0x1026B946)"
+  },
+  "playback_handler_table_ram": "0xA18E4680",
+  "playback_handler_table_rom": "0x11F80894",
+  "handler_table_found_by": "read-only assisted-QEMU RAM search of 0xA1800000-0xA1A00000, one hit",
+  "offline_checks": 42,
+  "runner": "tools/audit_z7_playback_rotation.py",
+  "module_built": false,
+  "camera_access": false,
+  "review": "EXIF_ORIENTATION_RESEARCH.md#in-camera-playback-traced-not-built"
+}

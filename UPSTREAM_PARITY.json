@@ -7,7 +7,9 @@
     "observed_date": "2026-11-24",
     "newer_observed_2026_11_25": [
       "2b596ab fix: release inverted photo EXIF orientation (inverted playback, portrait menu, filtered playback)",
-      "7af6933 fix: release full-frame custom wide-area AF"
+      "7af6933 fix: release full-frame custom wide-area AF",
+      "94be0b3 fix: release stable inverted photo playback",
+      "8aad350 feat: release in-camera pixel shift merging"
     ],
     "source": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/README.en.md"
   },
@@ -216,7 +218,7 @@
       "name": "Upside-down photo EXIF orientation",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/2b596ab/docs/inverted-playback.md",
       "status": "research",
-      "remaining": "Original-Z7 IFD0 table, Orientation writer and RAM descriptor 0xA18D3410 bound; pose-3 writer verified offline (12 checks) and installed in the field-test module. Camera must confirm the capture pose is 3 for upside-down photos; in-camera inverted playback not started.",
+      "remaining": "Original-Z7 IFD0 table, Orientation writer and RAM descriptor 0xA18D3410 bound; pose-3 writer verified offline (12 checks) and installed in the field-test module. Camera must confirm the capture pose is 3 for upside-down photos. Playback chain traced (42 checks): turn lookup 0x103D4C10 and ROM decision table 0x11545DE4 have no half turn; handler table live at 0xA18E4680 is the candidate redirection point. Playback module and the 180-degree draw path not built.",
       "local_review": "EXIF_ORIENTATION_RESEARCH.md",
       "hardware_parity_verified": false
     }
