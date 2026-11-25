@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "date": "2026-11-24",
+  "feature": "Original-Z7 sound-service bindings for an SD-module silent shutter sound",
+  "static_checks": 27,
+  "live_table_checks": 4,
+  "passed": true,
+  "stock_main_sha256": "e6df1764323fb1c287159dd3ce1c84ac93c72b96ba6eb09c070295c093fecbff",
+  "assisted_qemu_readonly_dump": true,
+  "native_code_executed": false,
+  "module_built": false,
+  "camera_access": false,
+  "z7ii_photo_events_absent": [
+    "0x041A000F",
+    "0x041B0090"
+  ],
+  "trigger_identified": false,
+  "review": "SHUTTER_SOUND_SD_PORT.md"
+}

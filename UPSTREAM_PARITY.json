@@ -103,9 +103,9 @@
       "id": "shutter-sound",
       "name": "Silent shutter sound",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/shutter-sound.md",
-      "status": "partial",
-      "remaining": "Separate Z7 sound component exists; cumulative SD release integration pending",
-      "local_review": "z7-firmware-extensions/README.md",
+      "status": "research",
+      "remaining": "SD-module route: original-Z7 sound-service bindings mapped (31 checks); playback module, per-photo trigger measurement, menu and hardware remain. October firmware-patch build stays on hold.",
+      "local_review": "SHUTTER_SOUND_SD_PORT.md",
       "hardware_parity_verified": false
     },
     {
