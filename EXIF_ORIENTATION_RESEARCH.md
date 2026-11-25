@@ -93,8 +93,29 @@ handlers into module memory and redirect their calls, the method the movie
 rotation module already uses, so the copies use a lookup that reports turn 2
 for Orientation-3 files and a table with a half-turn entry. Upstream also
 replaced the graphics worker's half-turn draw to avoid stray edge pixels; the
-original Z7 graphics path for a 180° photo is not yet traced. No module code
-exists for playback yet, and nothing here has run on a camera.
+original Z7 graphics path for a 180° photo is not yet traced.
+
+### Request path and field observer (November 25)
+
+Most of the 24 decision callers put the result in a display request and send
+it with `0x103D3854`. That sender copies the rotation (request byte `+0x22`)
+through `0x1036048E`, which accepts 0, 1, **2** and 3 and maps anything else to
+`0xFFFF`, into the PlaybackProcess request block `0xA289A264` (`+0x28`, with the
+image id at `+0`), and posts message `0x04160011` (component `0x0416` is named
+"PlaybackProcess" in Nikon's component table) to its queue. So the display
+pipeline takes a half-turn code; only the lookup and the decision table never
+produce one, as on the Z7II, where upstream's table change alone gave upright
+playback before its edge-pixel fix.
+
+The emulator cannot test this: with no card, Play does not enter playback and
+no PlaybackProcess message is posted (`tools/probe_z7_message_watch.py`, a
+read-only breakpoint/watchpoint run over 90 s after pressing Play). The
+[field test](SHUTTER_SOUND_FIELD_TEST.md) therefore carries a read-only
+observer (`plugins/playback_observer.h`) that logs the request's image id and
+rotation and the lookup cache each time they change. Viewing a tall photo
+should show rotation 1 or 3 there; the upside-down photo should show 0. That
+confirms the hook point before any module changes playback. No module code
+changes playback yet, and nothing here has run on a camera.
 
 Credit: design follows JKWTCN's MIT `photo_rotation.h`; original-Z7 bindings
 are independent work.

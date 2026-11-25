@@ -12,6 +12,10 @@
  *    stock None in photo mode, switches AF-area to Wide-area AF (L) through the
  *    validated setter, from the host's before-update hook. Each apply is logged
  *    (ring slot 5). The trial assumes photo mode; test it in photo mode only.
+ *  - Playback rotation observer (playback_observer.h): read-only; logs each
+ *    change of Nikon's playback display request rotation and turn cache
+ *    (ring slot 6), so viewing a tall and an upside-down photo shows the
+ *    values a playback rotation module would change.
  *  - The log header also carries the sound counters, so a silent preview can be
  *    diagnosed from the card: queued, started, rejected, finished, and native
  *    requests that passed through the intercept.
@@ -24,6 +28,8 @@
 #include "photo_orientation_exif.h"
 #include "update.h"
 #include "af_shortcut_runtime.h"
+#define Z7_PB_REPORT(event,request,cache) z7_trig_append((event),6u,(request),(cache))
+#include "playback_observer.h"
 
 #ifndef Z7_SOUND_PREVIEW_TICK
 #define Z7_SOUND_PREVIEW_TICK 8u
@@ -56,6 +62,7 @@ static void z7_field_update(void)
 static void z7_field_worker(void)
 {
     z7_trig_worker();
+    z7_pb_poll();
     uint32_t tick=__atomic_load_n(&z7_trig_live.ticks,__ATOMIC_RELAXED);
     if (tick==Z7_SOUND_PREVIEW_TICK && !z7_field_preview_tick) {
         z7_field_preview_tick=tick;

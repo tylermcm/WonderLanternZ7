@@ -23,7 +23,7 @@ class FieldFixture(ProbeFixture,SoundFixture):
         SoundFixture.__init__(self,raw,host,packet,files=files,**sound)
         self.probe_setup(slot_values,silent,log_faults,None)
         self.u.mem_write(EXIF_SLOT,struct.pack('<4I',*DESCRIPTOR))
-        for base,size in ((0xa24e0000,0x20000),(0xa1f90000,0x10000)):
+        for base,size in ((0xa24e0000,0x20000),(0xa1f90000,0x10000),(0xa2890000,0x10000)):
             try:self.u.mem_map(base,size)
             except Exception:pass
         # Stock f2 defaults (movie record = None), focus/AF-area, idle switches.
@@ -157,6 +157,35 @@ def main():
     check('af-press-logged-and-analyzed',ran['af_shortcut']==[dict(tick=ran['af_shortcut'][0]['tick'],result='set',area=4)])
     g=load(focus=3);g.u.mem_write(0xa1f90ab8,struct.pack('<I',0x2000));update(g)
     check('af-unmeasured-focus-mode-no-write',not g.af_sets)
+    # Read-only playback observer: Nikon's display request and turn cache (slot 6).
+    g=load()
+    for base in (0xa2890000,):
+        try:g.u.mem_map(base,0x10000)
+        except Exception:pass
+    REQ,CACHE=0xa289a264,0xa18e4db8
+    def show(f,image_id,rotation,turn):
+        f.u.mem_write(REQ,struct.pack('<I',image_id));f.u.mem_write(REQ+0x28,struct.pack('<H',rotation))
+        f.u.mem_write(CACHE,bytes([turn]));f.u.mem_write(CACHE+0x1c,struct.pack('<I',image_id))
+    def pb_entries(f):return [e for e in parse(f.log_files[LOG])['ring'] if e['slot']=='playback-rotation']
+    tall=(1<<29)|(100<<19)|(42<<5)|3;upside=(1<<29)|(100<<19)|(43<<5)|3
+    tick(g,3);idle=len(pb_entries(g))
+    check('playback-observer-logs-initial-state-once',idle==1)
+    show(g,tall,3,3);before=bytes(g.u.mem_read(REQ,0x40))+bytes(g.u.mem_read(CACHE,0x20))
+    tick(g,3);show(g,upside,0,0);tick(g,3)
+    after=pb_entries(g)
+    check('playback-observer-logs-each-change',[(int(e['event'],16),int(e['word0'],16)) for e in after[idle:]]==[(0x9b000303,tall),(0x9b000000,upside)])
+    tick(g,3)
+    check('playback-observer-quiet-without-change',len(pb_entries(g))==len(after))
+    g2=load();
+    try:g2.u.mem_map(0xa2890000,0x10000)
+    except Exception:pass
+    show(g2,tall,3,3);snap=bytes(g2.u.mem_read(REQ,0x40))+bytes(g2.u.mem_read(CACHE,0x20));tick(g2,6)
+    check('playback-observer-writes-no-camera-ram',bytes(g2.u.mem_read(REQ,0x40))+bytes(g2.u.mem_read(CACHE,0x20))==snap)
+    for n in range(60):show(g2,tall+(n<<5),n&1,0);tick(g2,1)
+    check('playback-observer-bounded',val(g2,'z7_pb_reports')==48)
+    ran=analyze(g.log_files[LOG],None)
+    check('playback-analyzed',ran['playback_verdict'].startswith('a tall photo was shown') and
+          [(x['rotation'],x['request']['number']) for x in ran['playback'] if x['request']['number']]==[(3,42),(0,43)])
     report=dict(passed=True,count=len(checks),checks=checks,module_sha256=m['module_sha256'],host_main_sha256=h['main_payload_sha256'],
                 clip_sha256=hashlib.sha256(clip).hexdigest(),camera_access=False,scope=__doc__)
     out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')

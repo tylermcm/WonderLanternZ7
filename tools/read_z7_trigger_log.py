@@ -9,7 +9,7 @@ from pathlib import Path
 MAGIC,VERSION,SLOTS,EVENTS,RING=0x47495254,1,3,24,128
 SIZE=64+SLOTS*EVENTS*8+RING*16
 SLOT_NAMES=('capture-controller-0xA18D1BD8','capture-consumer-0xA18D1BDC','still-file-0xA18D2750','silent-photography-0x576',
-            'exif-orientation-pose','af-shortcut')
+            'exif-orientation-pose','af-shortcut','playback-rotation')
 
 
 def parse(blob):
@@ -36,7 +36,7 @@ def parse(blob):
     ring=[]
     for n in range(first,ring_next):
         event,tick_slot,w0,w1=entries[n%RING]
-        ring.append(dict(index=n,tick=tick_slot>>8,slot=SLOT_NAMES[tick_slot&0xff] if (tick_slot&0xff)<6 else tick_slot&0xff,
+        ring.append(dict(index=n,tick=tick_slot>>8,slot=SLOT_NAMES[tick_slot&0xff] if (tick_slot&0xff)<len(SLOT_NAMES) else tick_slot&0xff,
                          event=f'0x{event:08X}',word0=f'0x{w0:08X}',word1=f'0x{w1:08X}'))
     return dict(sequence=sequence,writes=writes,ticks=ticks,installed_mask=mask,
                 installed=[SLOT_NAMES[i] for i in range(SLOTS) if mask>>i&1],silent_photography=silent,
@@ -51,7 +51,7 @@ def candidates(log,photos):
     must not fire in ticks without a photo, which only the owner's notes can say."""
     rows={}
     for e in log['ring']:
-        if e['slot'] in ('silent-photography-0x576','exif-orientation-pose','af-shortcut'):continue
+        if e['slot'] in ('silent-photography-0x576','exif-orientation-pose','af-shortcut','playback-rotation'):continue
         k=(e['slot'],e['event']);r=rows.setdefault(k,dict(callback=e['slot'],event=e['event'],count=0,records=set(),ticks=[]))
         r['count']+=1;r['records'].add(int(e['word0'],16)&0x7fffffe0);r['ticks'].append(e['tick'])
     out=[]

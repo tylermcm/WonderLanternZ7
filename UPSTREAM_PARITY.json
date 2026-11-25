@@ -110,7 +110,7 @@
       "name": "Silent shutter sound",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/shutter-sound.md",
       "status": "research",
-      "remaining": "SD-module route: sound-service bindings mapped (31 checks); playback module verified offline (80 checks) and in QEMU up to the codec, which the emulator does not model; camera smoke test prepared, awaiting staging approval. Silent trigger-probe module (3 capture callbacks, card log) and a provisional still-file trigger policy built and verified offline. Both camera tests combined into one field-test module (chime + trigger log), verified offline and in QEMU. Camera playback result, per-photo trigger measurement, trigger wiring and menu remain. October firmware-patch build stays on hold.",
+      "remaining": "SD-module route: sound-service bindings mapped (31 checks); playback module verified offline (80 checks) and in QEMU up to the codec, which the emulator does not model; camera smoke test prepared, awaiting staging approval. Silent trigger-probe module (3 capture callbacks, card log) and a provisional still-file trigger policy built and verified offline. Both camera tests combined into one field-test module (chime + trigger log; v4 adds EXIF, AF trial and a read-only playback observer), verified offline and in QEMU. Camera playback result, per-photo trigger measurement, trigger wiring and menu remain. October firmware-patch build stays on hold.",
       "local_review": "SHUTTER_SOUND_SD_PORT.md",
       "hardware_parity_verified": false
     },
@@ -218,7 +218,7 @@
       "name": "Upside-down photo EXIF orientation",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/2b596ab/docs/inverted-playback.md",
       "status": "research",
-      "remaining": "Original-Z7 IFD0 table, Orientation writer and RAM descriptor 0xA18D3410 bound; pose-3 writer verified offline (12 checks) and installed in the field-test module. Camera must confirm the capture pose is 3 for upside-down photos. Playback chain traced (42 checks): turn lookup 0x103D4C10 and ROM decision table 0x11545DE4 have no half turn; handler table live at 0xA18E4680 is the candidate redirection point. Playback module and the 180-degree draw path not built.",
+      "remaining": "Original-Z7 IFD0 table, Orientation writer and RAM descriptor 0xA18D3410 bound; pose-3 writer verified offline (12 checks) and installed in the field-test module. Camera must confirm the capture pose is 3 for upside-down photos. Playback chain traced (42 checks): turn lookup 0x103D4C10 and ROM decision table 0x11545DE4 have no half turn; the display request (0xA289A264, message 0x04160011) accepts a half turn. A read-only observer in field test v4 confirms the request on the camera; the playback module is not built.",
       "local_review": "EXIF_ORIENTATION_RESEARCH.md",
       "hardware_parity_verified": false
     }

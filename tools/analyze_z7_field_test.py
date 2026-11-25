@@ -5,6 +5,8 @@ Answers the session's three questions from the card log alone:
   2. Which callback event is one-per-photo? (candidate ranking by distinct photo
      records, see read_z7_trigger_log.candidates)
   3. Does the camera report pose 3 for the upside-down photo? (EXIF pose log)
+  4. Did the movie button switch AF-area? 5. What rotation did playback request
+     for the photos viewed? (read-only playback observer)
 Read-only; pass a copied file. --json for machine output.
 """
 import argparse,json
@@ -32,6 +34,27 @@ def exif(log):
     return poses,'no pose 3 seen: an upside-down photo was recorded with another pose (roll angles needed)'
 
 
+def image(id_):
+    return dict(id=f'0x{id_:08X}',folder=id_>>19&0x3ff,number=id_>>5&0x3fff,kind=id_&15)
+
+
+def playback(log):
+    """Playback observer (ring slot 6): Nikon's display-request rotation and
+    turn cache while photos were shown. Rotation 1 or 3 for a tall photo
+    confirms the request is the one a playback rotation module would change."""
+    rows=[]
+    for e in log['ring']:
+        if e['slot']!='playback-rotation':continue
+        ev=int(e['event'],16)
+        rows.append(dict(tick=e['tick'],rotation=ev&0xff,turn=ev>>8&0xff,request=image(int(e['word0'],16)),cache=image(int(e['word1'],16))))
+    shown=[r for r in rows if r['request']['id']!='0x00000000']
+    if not rows:verdict='no playback values logged (not installed, or no photo was played back)'
+    elif any(r['rotation'] in (1,3) for r in shown):verdict='a tall photo was shown with rotation 1/3: the request carries the display rotation'
+    elif shown:verdict='photos were shown but none with rotation 1/3 (Rotate tall off, or no tall photo viewed)'
+    else:verdict='request stayed empty: no photo was played back, or playback did not use this request'
+    return rows,verdict
+
+
 def analyze(blob,photos):
     log=parse(blob)
     ranked=candidates(log,photos) if photos is not None else []
@@ -43,7 +66,8 @@ def analyze(blob,photos):
     else:trigger=f'no event matched {photos} distinct photo records'
     af=[dict(tick=e['tick'],result={1:'set',2:'already',0:'refused',3:'failed'}.get((int(e['event'],16)>>8)&0xff),area=int(e['word0'],16))
         for e in log['ring'] if e['slot']=='af-shortcut']
-    return dict(af_shortcut=af,chime=chime(log['sound']),trigger=trigger,exif=exif_verdict,exif_poses=poses,candidates=ranked,
+    pb_rows,pb_verdict=playback(log)
+    return dict(playback=pb_rows,playback_verdict=pb_verdict,af_shortcut=af,chime=chime(log['sound']),trigger=trigger,exif=exif_verdict,exif_poses=poses,candidates=ranked,
                 silent_markers=[int(e['event'],16)&0xffff for e in log['ring'] if e['slot']=='silent-photography-0x576'],
                 ring_lost=log['ring_lost'],ticks=log['ticks'],sound=log['sound'])
 
@@ -57,6 +81,8 @@ def main():
     if a.json:print(json.dumps(r,indent=2));return
     print('Chime:  ',r['chime']);print('Trigger:',r['trigger']);print('EXIF:   ',r['exif'],r['exif_poses'])
     print('AF:     ',(', '.join(f"{x['result']} -> area {x['area']}" for x in r['af_shortcut'])) or 'no movie-button press logged')
+    print('Play:   ',r['playback_verdict'])
+    for x in r['playback']:print(f"   tick {x['tick']}: rotation {x['rotation']} turn {x['turn']} request #{x['request']['number']} kind {x['request']['kind']} cache #{x['cache']['number']}")
     if r['ring_lost']:print(f"note: {r['ring_lost']} older events fell out of the 128-entry ring")
     for c in r['candidates'][:6]:
         print(('  MATCH ' if c['matches_photos'] else '        ')+f"{c['callback']:<32} {c['event']} count={c['count']} records={c['distinct_records']}")

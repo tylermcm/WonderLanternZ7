@@ -36,5 +36,19 @@
   "runner": "tools/audit_z7_playback_rotation.py",
   "module_built": false,
   "camera_access": false,
-  "review": "EXIF_ORIENTATION_RESEARCH.md#in-camera-playback-traced-not-built"
+  "review": "EXIF_ORIENTATION_RESEARCH.md#in-camera-playback-traced-not-built",
+  "request_sender": "0x103D3854",
+  "rotation_converter": "0x1036048E accepts 0..3, else 0xFFFF",
+  "request_block": "0xA289A264 (+0 image id, +0x28 rotation)",
+  "request_message": "0x04160011 to component 0x0416 PlaybackProcess",
+  "emulator_playback": "not reachable: no card; tools/probe_z7_message_watch.py saw no 0x0416 posts in 90 s after Play",
+  "field_observer": {
+    "header": "z7-native-modules/plugins/playback_observer.h",
+    "module_sha256": "b76d6c4ba66b5c578e0c35769cabd6adcde7754ce04ebb064a7d7408b11ec9ce",
+    "module_bytes": 4376,
+    "field_audit_checks": 35,
+    "qemu_checks": 10,
+    "writes_camera_ram": false,
+    "staged": false
+  }
 }
