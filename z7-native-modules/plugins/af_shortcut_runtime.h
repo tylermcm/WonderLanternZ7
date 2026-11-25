@@ -8,10 +8,9 @@
  * group per switch word: +0 current, +4 previous, +8 changed, +0xC pressed,
  * +0x10 released (edge routine 0x101AE622). Group words: SW0 0xA1F90AA4,
  * SW1 0xA1F90AB8, SW2 0xA1F90ACC. Pressing through Nikon's AutoOperation path in
- * assisted QEMU set Fn1 (SW0 0x4000), AF-ON (SW0 0x200000) and the sub-selector
- * center (SW2 0x8000) while held. Fn2 (SW2 0x4000) and the movie button
- * (SW1 0x2000) are named by Nikon's ID_SW table but were not observed changing,
- * so they are not enabled here. Polling at GUI rate can miss a press shorter than
+ * assisted QEMU set Fn1 (SW0 0x4000), AF-ON (SW0 0x200000), the sub-selector
+ * center (SW2 0x8000), Fn2 (SW2 0x4000) and the movie button (SW1 0x2000) while
+ * held (Fn2 and movie only from the shooting screen; the menu masks them). Polling at GUI rate can miss a press shorter than
  * one GUI update; that bound is measured on the camera, not assumed.
  */
 #ifndef Z7_AF_SHORTCUT_RUNTIME_H
@@ -23,12 +22,12 @@ enum { AF_SW0=0xa1f90aa4u, AF_SW1=0xa1f90ab8u, AF_SW2=0xa1f90accu };
 enum { AF_BUTTON_FN1=0, AF_BUTTON_AF_ON=1, AF_BUTTON_FN2=2, AF_BUTTON_SS_CENTER=3, AF_BUTTON_MOVIE=4 };
 static const uint32_t z7_af_button_word[Z7_AF_BUTTONS]={AF_SW0,AF_SW0,AF_SW2,AF_SW2,AF_SW1};
 static const uint32_t z7_af_button_mask[Z7_AF_BUTTONS]={0x4000u,0x200000u,0x4000u,0x8000u,0x2000u};
-#define Z7_AF_VERIFIED_BUTTONS ((1u<<AF_BUTTON_FN1)|(1u<<AF_BUTTON_AF_ON)|(1u<<AF_BUTTON_SS_CENTER))
+#define Z7_AF_VERIFIED_BUTTONS 0x1fu
 
 /* f2 Custom control assignment properties, measured by changing each in Nikon's
- * menu in assisted QEMU: Fn1 0x1048, AF-ON 0x1050, sub-selector center 0x1054,
- * movie record 0x1057 (Fn2 not measured). One shared function enum; None = 0. */
-static const uint32_t z7_af_button_property[Z7_AF_BUTTONS]={0x1048u,0x1050u,0u,0x1054u,0x1057u};
+ * menu in assisted QEMU: Fn1 0x1048, Fn2 0x104C, AF-ON 0x1050, sub-selector center
+ * 0x1054, movie record 0x1057. One shared function enum; None = 0. */
+static const uint32_t z7_af_button_property[Z7_AF_BUTTONS]={0x1048u,0x1050u,0x104cu,0x1054u,0x1057u};
 #define AF_ASSIGN_NONE 0u
 
 /* Buttons whose native f2 assignment is None: only these may act. */

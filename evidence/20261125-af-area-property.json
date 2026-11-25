@@ -47,14 +47,13 @@
     "verified": {
       "Fn1": "SW0 0x4000",
       "AF-ON": "SW0 0x200000",
-      "sub-selector center": "SW2 0x8000"
+      "sub-selector center": "SW2 0x8000",
+      "Fn2": "SW2 0x4000 (shooting screen)",
+      "movie": "SW1 0x2000 (shooting screen)"
     },
-    "unverified": {
-      "Fn2": "SW2 0x4000",
-      "movie": "SW1 0x2000"
-    },
+    "unverified": {},
     "runtime": "z7-native-modules/plugins/af_shortcut_runtime.h",
-    "runtime_checks": 25
+    "runtime_checks": 34
   },
   "f2_assignments": {
     "Fn1": "0x1048",
@@ -78,9 +77,14 @@
       "0x1057": [
         "0x00 None",
         "0x06 AE lock hold"
+      ],
+      "0x104C": [
+        "0x26 AF/[+]",
+        "0x19 flash mode/comp"
       ]
     },
-    "runtime_checks": 30
+    "runtime_checks": 30,
+    "Fn2": "0x104C"
   },
   "emulator_demo": {
     "module": "af_shortcut_demo.c",

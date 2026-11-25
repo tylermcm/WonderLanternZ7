@@ -46,8 +46,10 @@ def main():
     check('qemu-fn1-sets-sw0-0x4000',w('switch-watch-02')['fn1']['after_call']==['0x4200','0x0','0x0'])
     check('qemu-af-on-sets-sw0-0x200000',w('switch-watch-af-on')['af-on']['after_call']==['0x200200','0x0','0x0'])
     check('qemu-ss-center-sets-sw2-0x8000',w('switch-watch-ss-center')['ss-center']['after_call']==['0x200','0x0','0x8000'])
-    check('qemu-fn2-and-movie-unobserved',w('switch-watch-fn2')['fn2']['after_call']==['0x200','0x0','0x0'] and
+    check('qemu-fn2-and-movie-masked-in-menu',w('switch-watch-fn2')['fn2']['after_call']==['0x200','0x0','0x0'] and
           w('switch-watch-movie')['movie']['after_call']==['0x200','0x0','0x0'])
+    check('qemu-fn2-sets-sw2-0x4000-in-shooting',w('switch-watch-shoot-fn2')['fn2']['after_call']==['0x200','0x0','0x4000'])
+    check('qemu-movie-sets-sw1-0x2000-in-shooting',w('switch-watch-shoot-movie')['movie']['after_call']==['0x200','0x2000','0x0'])
     def load(**kw):
         f=RuntimeFixture(raw,h,packet,**kw);f.loaded=f.call(h['symbols']['z7_module_load_once'],STATE)
         f.base=f.words()[12];return f
@@ -72,7 +74,7 @@ def main():
     f.switches(0,0,0);op(f,2,1,0,ALL)
     n=len(f.sets)
     f.switches(0,0x2000,0x4000)
-    check('fn2-and-movie-bits-ignored',op(f,2,1,0,ALL)==0 and len(f.sets)==n and op(f,3)==0)
+    check('fn2-and-movie-unassigned-do-nothing',op(f,2,1,0,ALL)==0 and len(f.sets)==n and op(f,3)==(1<<FN2)|(1<<MOVIE))
     f.switches(0,0,0);op(f,2,1,0,ALL)
     f.switches(0x4000,0,0)
     check('not-native-none-refused',op(f,2,1,0,ALL&~1)==0 and len(f.sets)==n)
@@ -91,21 +93,25 @@ def main():
         g=load(focus=1,area=1);assert op(g,1,FN1,t)==1;g.switches(0x4000,0,0)
         check(f'target-{t}-not-a-z7-mode',op(g,2,1,0,ALL)==0 and not g.sets)
     # Native f2 assignments read through Nikon's getter (storage from the f2 menu walks).
-    ASSIGN={0x1048:0xa24f1898,0x1050:0xa24f18b8,0x1054:0xa24f18c8,0x1057:0xa24f18d4}
+    ASSIGN={0x1048:0xa24f1898,0x104c:0xa24f18a8,0x1050:0xa24f18b8,0x1054:0xa24f18c8,0x1057:0xa24f18d4}
     walk=json.loads((a.watches/'f2-walk-04'/'result.json').read_text())
     check('qemu-f2-walk-assignment-words',[[(c['address'],c['before'],c['after']) for c in x['changed']] for x in walk['after_ok'] if x['changed']]==
           [[('0xa24f18b8','0x8','0x27')],[('0xa24f18c8','0x3','0x4')],[('0xa24f18d4','0x0','0x6')]])
     def assign(g,values):
         for key,v in values.items():g.u.mem_write(ASSIGN[key],struct.pack('<I',v))
-    g=load(focus=1,area=1);assign(g,{0x1048:0x1f,0x1050:8,0x1054:3,0x1057:0})
+    w5=json.loads((a.watches/'f2-walk-05'/'result.json').read_text())
+    check('qemu-f2-walk-fn2-word',[[(c['address'],c['before'],c['after']) for c in x['changed']] for x in w5['after_ok'] if x['changed']]==[[('0xa24f18a8','0x26','0x19')]])
+    g=load(focus=1,area=1);assign(g,{0x1048:0x1f,0x104c:0x26,0x1050:8,0x1054:3,0x1057:0})
     check('stock-defaults-only-movie-is-none',op(g,5)==1<<MOVIE)
     assign(g,{0x1048:0,0x1054:0});check('none-assignments-read',op(g,5)==(1<<FN1)|(1<<SS)|(1<<MOVIE))
-    op(g,1,FN1,5);op(g,1,AF_ON,7)
+    op(g,1,FN1,5);op(g,1,AF_ON,7);op(g,1,MOVIE,2)
     g.switches(0x200000,0,0);check('af-on-with-native-function-not-taken',op(g,6,1,0)==0 and not g.sets)
     g.switches(0,0,0);op(g,6,1,0);g.switches(0x4000,0,0)
     check('fn1-set-to-none-acts',op(g,6,1,0)==1 and g.sets==[(0x568,4)])
+    g.switches(0,0,0);op(g,6,1,0);g.switches(0,0x2000,0)
+    check('movie-button-stock-none-acts',op(g,6,1,0)==1 and g.sets[-1]==(0x568,1))
     report=dict(passed=True,count=len(checks),checks=checks,module_sha256=hashlib.sha256(packet).hexdigest(),host_main_sha256=h['main_payload_sha256'],
-                verified_buttons=['Fn1','AF-ON','sub-selector center'],unverified_buttons=['Fn2','movie record'],camera_access=False,scope=__doc__)
+                verified_buttons=['Fn1','Fn2','AF-ON','sub-selector center','movie record'],menu_masks=['Fn2','movie record'],camera_access=False,scope=__doc__)
     out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(dict(passed=True,checks=len(checks))))
 

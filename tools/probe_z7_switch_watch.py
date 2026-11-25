@@ -25,6 +25,7 @@ def main():
     for n in ('build','module','output'):p.add_argument('--'+n,type=Path,required=True)
     p.add_argument('--buttons',default='fn1,af-on,fn2,ss-center,movie')
     p.add_argument('--hits',type=int,default=24)
+    p.add_argument('--profile',choices=('menu','shooting'),default='menu')
     a=p.parse_args();out=a.output.resolve()
     if not out.is_relative_to(ROOT/'.private') or out.exists():p.error('Choose a new private directory')
     out.mkdir(parents=True)
@@ -40,7 +41,7 @@ def main():
         def __init__(self,port):super().__init__(port,fixture)
     ui.Remote=BoundRemote
     HostCamera.module_fixture=fixture;HostCamera.module_result_address=host['symbols']['z7_module_result'];HostCamera.module_waited=False
-    camera=HostCamera(0,profile='menu')
+    camera=HostCamera(0,profile=a.profile)
     result=dict(buttons={},assisted_qemu=True,camera_access=False,switch_object=hex(SWITCH))
     def save():(out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
     def words():return [hex(int.from_bytes(camera.remote.memory(w,4),'little')) for w in WORDS]
@@ -48,7 +49,7 @@ def main():
         if camera.proc and camera.proc.poll() is None:camera.proc.terminate()
     watchdog=threading.Timer(900,stop);watchdog.daemon=True;watchdog.start()
     try:
-        camera.boot()
+        camera.boot_shooting() if a.profile=='shooting' else camera.boot()
         if camera.running:camera.pause()
         camera.continue_guest();time.sleep(3);camera.pause()
         result['idle']=words();save()

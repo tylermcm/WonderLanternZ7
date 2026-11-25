@@ -122,16 +122,16 @@ SW2 `0xA1F90ACC`.
 | Fn1 | SW0 `0x4000` | 59 | Set while held, cleared on release (writer `0x101AE622`) |
 | AF-ON | SW0 `0x200000` | 27 | Set while held, cleared on release |
 | Sub-selector center | SW2 `0x8000` | 51 | Set while held |
-| Fn2 | SW2 `0x4000` | 60 | No change observed |
-| Movie record | SW1 `0x2000` | 9 | No change observed |
+| Fn2 | SW2 `0x4000` | 60 | Set while held (shooting screen only; masked in menus) |
+| Movie record | SW1 `0x2000` | 9 | Set while held (shooting screen only; masked in menus) |
 
-`z7-native-modules/plugins/af_shortcut_runtime.h` polls the three verified buttons
+`z7-native-modules/plugins/af_shortcut_runtime.h` polls all five buttons
 once per GUI update, turns presses into edges, feeds `af_shortcut_policy.h`, and
 applies the target with `af_area_native.h`. Z7 targets are the six measured
 AF-area modes (target = value + 1). `tools/audit_z7_af_shortcut_runtime.py`
-(25 checks) covers press, hold, release, already-selected, busy deferral,
-photo-context drop, native-None exclusion, availability by focus mode, the
-unverified buttons being ignored, and non-Z7 targets. Polling can miss a press
+(34 checks) covers press, hold, release, already-selected, busy deferral,
+photo-context drop, native-None exclusion, availability by focus mode, and
+non-Z7 targets. Polling can miss a press
 shorter than one GUI update; that is measured on the camera.
 
 ## f2 assignments (November 25, 2026)
@@ -142,6 +142,7 @@ assisted QEMU changed one word each; Nikon's getter maps them to these propertie
 | Button | Property | Storage | Values seen |
 | --- | --- | --- | --- |
 | Fn1 | `0x1048` | `0xA24F1898` | White balance `0x1F`, Image quality/size `0x25` |
+| Fn2 | `0x104C` | `0xA24F18A8` | AF/[+] `0x26`, Flash mode/compensation `0x19` |
 | AF-ON | `0x1050` | `0xA24F18B8` | AF-ON `0x08`, Select center focus point `0x27` |
 | Sub-selector center | `0x1054` | `0xA24F18C8` | AE/AF lock `0x03`, AE lock only `0x04` |
 | Movie record | `0x1057` | `0xA24F18D4` | **None `0x00`**, AE lock (Hold) `0x06` |
@@ -150,7 +151,7 @@ The codes look like one shared function enum (the AE-lock variants are 3, 4
 and 6 across two different buttons), and the movie button's stock None is 0;
 that None is also 0 for the other buttons is assumed, not observed. The runtime now reads these with `z7_af_native_none_buttons()`, so a
 shortcut acts only on a button the owner has set to None, as upstream requires.
-Fn2's property was not measured. The runtime audit grows to 30 checks.
+The runtime audit grows to 34 checks.
 
 ## Emulator end-to-end demo (November 25, 2026)
 
@@ -166,8 +167,7 @@ the property change is. Run: `tools/probe_z7_menu_walk.py --profile shooting`.
 ## Required remaining work
 
 Native AF-area values and the setter path are now measured (above). Identify
-the remaining availability rules (manual focus, movie mode), Fn2 and movie-button
-input (three of five buttons verified above), physical button
+the remaining availability rules (manual focus, movie mode), physical button
 events and native assignments through the original menus and input paths. Then
 connect GUI-side writes with readback and exclusion rules for menus, playback,
 information display, magnified view, movie mode, LCD and EVF. The existing
