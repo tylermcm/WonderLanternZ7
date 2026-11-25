@@ -65,6 +65,14 @@ during initialization and exercises explicit publication afterward; automatic
 camera startup timing remains unverified. See the
 [dispatcher review](MOVIE_ORIENTATION_RESEARCH.md#native-event-dispatcher-boundary).
 
+The exact cumulative binary also passes 64 dispatcher-to-metadata lifecycle
+checks: eight sequential file-slot reuse cycles, including open/split/close,
+all four poses, actual native metadata serialization, native close-to-idle and
+record-context cleanup. File operations, requests, empty descriptions and kernel
+boundaries remain supplied. Actual file splitting, playable output, negative-I/O
+lifecycle and physical scheduling remain pending. See the
+[lifecycle scope](MOVIE_ORIENTATION_RESEARCH.md#dispatcher-to-metadata-lifecycle-checkpoint).
+
 Playable MOV/MP4 output, recording/split lifecycle stress, task quiescence,
 player compatibility, physical orientation and exact installation/recovery
 review remain pending. No camera, card or firmware update was performed.

@@ -86,7 +86,7 @@
       "name": "Automatic video orientation",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/video-rotation.md",
       "status": "research",
-      "remaining": "Native event dispatch publication boundaries and standalone metadata serialization verified offline; physical scheduler/cache behavior, playable media, recording lifecycle stress and hardware orientation remain pending",
+      "remaining": "Cumulative native dispatcher-to-metadata cycles verified with supplied file operations/contexts; actual file splitting, negative-I/O lifecycle, playable media and physical scheduling/orientation remain pending",
       "local_review": "MOVIE_ORIENTATION_RESEARCH.md",
       "hardware_parity_verified": false
     },

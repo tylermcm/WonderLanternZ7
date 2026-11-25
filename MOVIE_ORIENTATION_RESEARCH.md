@@ -151,14 +151,38 @@ attempt, then supplies idle state 0 for explicit publication. It does not prove
 automatic publication timing during a camera boot. The separate
 [dispatcher evidence](evidence/20261124-movie-dispatch.json) records both hashes.
 
+## Dispatcher-to-metadata lifecycle checkpoint
+
+`tools/audit_z7_movie_lifecycle.py` connects the preceding dispatcher to the
+copied native open/split/close paths and real metadata construction. Both the
+standalone `1de27cff...` and cumulative `79e3bff...` binaries pass 64 checks each.
+Eight sequential cycles reuse file slot 1: four open/close cycles and four
+open/split/close cycles, covering all four latched poses. Native task transitions
+execute without forcing the state before split or close. Closing returns to idle,
+decrements the file count to zero and clears the native record's context.
+
+Close executes the copied header, actual sample-table finalizer, movie-header
+and track constructors, scatter serializer and native error helpers. Its eight
+metadata streams per binary have bounded atom trees, the exact expected matrix
+and a successful native header return. Later supplied pose changes do not alter
+the latched pose. Published code stays immutable, and every event reaches the
+owned callback through the real dispatcher. The generated streams remain private;
+their hashes are in [the lifecycle evidence](evidence/20261124-movie-lifecycle.json).
+
+Open/split file operations and their results, command data, context allocations,
+empty sample descriptions, external file operations, mutex/event services, pose
+and cache clean are supplied boundaries. The split case replaces the context
+through the supplied split result; it does not exercise actual file splitting
+or writing the preceding file. These are successful metadata-only cycles, not
+full recorder, negative-I/O lifecycle, playable-video or physical timing proof.
+
 ## Remaining integration
 
-Bind and qualify the original file-task callback, control structure, file-open
-and split replies, context lifetime and close paths. Any relocated native code
-needs its own exact bytes, literal/call relocation and executable-cache checks.
-Then connect the pose ledger and native writer under the file task, preserving
-completion, errors, container writes and buffer lifetimes. A header written after
-close must still have the correct file's saved pose.
+Replace the supplied open/split/context boundaries with the original file
+lifecycle, retaining completion, error reporting and buffer lifetimes. Exercise
+negative-I/O close paths with their real error-state side effects. Add actual
+encoded samples and complete playable containers, verify player orientation and
+qualify automatic startup publication with native scheduling/cache visibility.
 
 Only after that integration and its offline checks can a concrete host/module
 installation and recovery assessment be prepared. No camera, card, installed
