@@ -140,6 +140,15 @@ static void z7_sound_release(uint32_t event, struct z7_sound_job *job)
         ++z7_sound_rejects;
 }
 static const struct z7_sound_record z7_sound_pcm_record={1,31,0,0,0,0,1,SND_TYPE_PRIVATE,z7_sound_done};
+#ifdef Z7_SOUND_TONE_OVERRIDE
+/* Experimental: the record/tone-setter value Nikon accepts as 0..37 for its own
+ * sounds; this engine and upstream always send 31. Its effect on PCM playback is
+ * what the sound lab measures by ear. Clamped to Nikon's accepted range. */
+volatile uint32_t z7_sound_tone=31u;
+#define Z7_SOUND_TONE() (z7_sound_tone<=37u ? z7_sound_tone : 31u)
+#else
+#define Z7_SOUND_TONE() 31u
+#endif
 static struct z7_sound_job z7_sound_job_slot={.record=&z7_sound_pcm_record,.release=z7_sound_release};
 
 static uint32_t z7_sound_prepare(uint32_t clip, uint32_t volume)
@@ -149,8 +158,12 @@ static uint32_t z7_sound_prepare(uint32_t clip, uint32_t volume)
     if (z7_sound_prepared_key!=key) {
         const int16_t *source=z7_sound_clips[clip];
 #if Z7_SOUND_LEVELS > 5
-        /* Levels 6 and 7 boost (x1.41, x2) and clip at full scale. */
-        static const int32_t gains[SND_VOLUME_MAX]={64,102,154,205,256,362,512};
+        /* Levels 6 and up boost (x1.41, x2, ...) and clip at full scale. */
+        static const int32_t gains[SND_VOLUME_MAX]={64,102,154,205,256,362,512
+#if Z7_SOUND_LEVELS > 7
+            ,724,1024  /* experimental x2.83, x4 */
+#endif
+        };
         int32_t gain=gains[volume-1];
         for (uint32_t i=0;i<bytes/2;++i) {
             int32_t v=(source[i]*gain)>>8;
@@ -186,10 +199,18 @@ static uint32_t z7_sound_start(uint32_t message)
     uint32_t bytes=z7_sound_prepare(clip,volume);
     const volatile uint32_t *from=(const volatile uint32_t *)job->record;
     for (uint32_t i=0;i<9;++i) SND_W(SND_CONTEXT+4*i)=from[i];
+#ifdef Z7_SOUND_TONE_OVERRIDE
+    uint32_t tone=Z7_SOUND_TONE();
+    SND_W(SND_CONTEXT+4)=tone;
+#endif
     SND_W(SND_STATE+4)=SND_W(SND_STATE+8)=SND_W(SND_STATE+12)=0;
     /* Same argument shapes as the native start handler builds on its stack. */
     const uint32_t format[2]={0x01010502u,bytes};
+#ifdef Z7_SOUND_TONE_OVERRIDE
+    const uint32_t tones[8]={2,1,tone,0,0,0,0,0};
+#else
     const uint32_t tones[8]={2,1,31,0,0,0,0,0};
+#endif
     const uint32_t data[6]={(uint32_t)(uintptr_t)z7_sound_pcm,bytes,1,0,0,0};
     const uint32_t start[3]={2,SND_DMA_DONE,0};
     if (SND_F(SND_FORMAT,uint32_t,const uint32_t *,uint32_t)(format,message)!=1 ||

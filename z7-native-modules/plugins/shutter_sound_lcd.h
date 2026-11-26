@@ -17,18 +17,46 @@
 #ifndef Z7_SHUTTER_SOUND_LCD_H
 #define Z7_SHUTTER_SOUND_LCD_H
 #include <stdint.h>
+#ifdef Z7_SOUND_LAB
+/* EXPERIMENTAL sound lab: extra digital levels 8 (x2.83) and 9 (x4), and the
+ * driver tone value at level 5, all on the same row with a preview each, so the
+ * owner can find the speaker's ceiling by ear. Saved as Z7SND.DAT version 2,
+ * which the release module ignores (it then uses level 5). */
+#define Z7_SOUND_LEVELS 9u
+#define Z7_SOUND_TONE_OVERRIDE 1
+#else
 #define Z7_SOUND_LEVELS 7u
+#endif
 #include "../plugins/shutter_sound_playback.h"
 
+#ifdef Z7_SOUND_LAB
+struct z7_sl_choice { const char *text; uint8_t volume, tone; };
+static const struct z7_sl_choice z7_sl_lab[]={
+    {"OFF",0,31},{"1",1,31},{"2",2,31},{"3",3,31},{"4",4,31},{"5",5,31},{"6",6,31},{"7",7,31},
+    {"8",8,31},{"9",9,31},
+    {"5 T0",5,0},{"5 T16",5,16},{"5 T24",5,24},{"5 T28",5,28},{"5 T34",5,34},{"5 T37",5,37}};
+#define SL_COUNT (sizeof(z7_sl_lab)/sizeof(z7_sl_lab[0]))
+#define SL_VOLUME(i) (z7_sl_lab[i].volume)
+#define SL_APPLY(i) __atomic_store_n(&z7_sound_tone,(uint32_t)z7_sl_lab[i].tone,__ATOMIC_RELEASE)
+#define SL_RECORD_VERSION 2u
+#else
+#define SL_COUNT 8u
+#define SL_VOLUME(i) (i)
+#define SL_APPLY(i) ((void)(i))
+#define SL_RECORD_VERSION 1u
+#endif
+
 enum {
-    SL_LEVELS=7u, SL_DEFAULT=5u, SL_MAGIC=0x444e5337u /* "7SND" */, SL_VERSION=1u,
+    SL_LEVELS=SL_COUNT-1u, SL_DEFAULT=5u, SL_MAGIC=0x444e5337u /* "7SND" */, SL_VERSION=SL_RECORD_VERSION,
     SL_SLOT=0xa18d1bd8u, SL_NATIVE=0x101426a9u, SL_EXPOSURE=0x0419000bu,
     SL_GETTER=0x1016fef3u, SL_SILENT=0x576u,
     SL_CREATE=0x1027c0dbu, SL_WRITE=0x1027c049u
 };
 static const char z7_sl_wav_path[]="A:\\SHUTTER1.WAV";
 static const char z7_sl_path[]="A:\\Z7SND.DAT";
+#ifndef Z7_SOUND_LAB
 static const char *const z7_sl_text[SL_LEVELS+1]={"OFF","1","2","3","4","5","6","7"};
+#endif
 volatile uint32_t z7_sl_level=SL_DEFAULT, z7_sl_saved=SL_DEFAULT, z7_sl_loaded, z7_sl_installed;
 volatile uint32_t z7_sl_seen, z7_sl_queued, z7_sl_busy, z7_sl_previews, z7_sl_saves, z7_sl_errors, z7_sl_result;
 static uint32_t z7_sl_observed=SL_DEFAULT, z7_sl_quiet, z7_sl_retry;
@@ -49,7 +77,8 @@ static uint32_t z7_sl_controller(uint32_t event, uint32_t packet, uint32_t a2, u
         __atomic_add_fetch(&z7_sl_seen,1,__ATOMIC_RELAXED);
         uint32_t level=__atomic_load_n(&z7_sl_level,__ATOMIC_ACQUIRE);
         if (level && level<=SL_LEVELS && SND_F(SL_GETTER,uint32_t,uint32_t)(SL_SILENT)==1u) {
-            if (z7_sound_enqueue(0,level,0)) __atomic_add_fetch(&z7_sl_queued,1,__ATOMIC_RELAXED);
+            SL_APPLY(level);
+            if (z7_sound_enqueue(0,SL_VOLUME(level),0)) __atomic_add_fetch(&z7_sl_queued,1,__ATOMIC_RELAXED);
             else __atomic_add_fetch(&z7_sl_busy,1,__ATOMIC_RELAXED);
         }
     }
@@ -87,12 +116,22 @@ static void z7_sl_menu_next(void)
 {
     uint32_t level=(__atomic_load_n(&z7_sl_level,__ATOMIC_RELAXED)+1u)%(SL_LEVELS+1u);
     __atomic_store_n(&z7_sl_level,level,__ATOMIC_RELEASE);
+#ifdef Z7_SOUND_LAB
+    if (!level) return;
+    SL_APPLY(level);
+    if (z7_sound_enqueue(0,SL_VOLUME(level),1)) __atomic_add_fetch(&z7_sl_previews,1,__ATOMIC_RELAXED);
+#else
     if (level && z7_sound_enqueue(0,level,1)) __atomic_add_fetch(&z7_sl_previews,1,__ATOMIC_RELAXED);
+#endif
 }
 static const char *z7_sl_value_text(void)
 {
     uint32_t level=__atomic_load_n(&z7_sl_level,__ATOMIC_ACQUIRE);
+#ifdef Z7_SOUND_LAB
+    return level<=SL_LEVELS ? z7_sl_lab[level].text : "--";
+#else
     return level<=SL_LEVELS ? z7_sl_text[level] : "--";
+#endif
 }
 
 /* Resident worker only. Saves a level that has been stable for two ticks;

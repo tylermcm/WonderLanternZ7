@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "shutter-sound-lab-candidate",
+  "experimental": true,
+  "module_sha256": "aed2459cb60801572b02fcae46b23027979068a00039ccae9e23f601c83f8097",
+  "module_bytes": 25732,
+  "finding": "Nikon start path sets format, tone (0-37 accepted), data and DMA only; no per-sound volume. Tone 31 (used here and upstream) is the unknown knob.",
+  "settings": [
+    "OFF",
+    "1-7 (tone 31)",
+    "8 x2.83",
+    "9 x4",
+    "5 with tone 0/16/24/28/34/37"
+  ],
+  "offline": {
+    "display_suite_checks": 277,
+    "lab_checks": 27
+  },
+  "qemu_menu_checks": 25,
+  "staged": false,
+  "camera_access": false
+}
