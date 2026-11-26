@@ -121,5 +121,16 @@ should show rotation 1 or 3 there; the upside-down photo should show 0. That
 confirms the hook point before any module changes playback. No module code
 changes playback yet, and nothing here has run on a camera.
 
+### Playback module (November 25, experimental)
+
+The field observer confirmed the request block on the camera. The display
+request is message `0x04160009` (not `0x11`, which only acknowledges), handled
+synchronously by `0x10314912` through the PlaybackProcess queue handler, whose
+pointer `0x10315F5D` sits in RAM at `0xA289C1D8` (set by `0x101F2414`; one hit in
+an emulator RAM search). `plugins/inverted_playback.h` wraps it and sets rotation
+2 for photos it remembered as upside down at capture (EXIF writer pose 3 paired
+with the next still-file record, saved in `Z7INV.DAT`). Test plan:
+[LCD_INVERTED_PLAYBACK_TEST.md](LCD_INVERTED_PLAYBACK_TEST.md).
+
 Credit: design follows JKWTCN's MIT `photo_rotation.h`; original-Z7 bindings
 are independent work.

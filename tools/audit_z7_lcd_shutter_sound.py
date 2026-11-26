@@ -24,7 +24,7 @@ from audit_z7_settings_files import PATHS,NOT_FOUND
 from build_z7_module_host import STATE
 from prepare_flash_review import require_private_output
 
-WAV='A:\\SHUTTER1.WAV';LEVEL='A:\\Z7SND.DAT'
+WAV='A:\\SHUTTER1.WAV';LEVEL='A:\\Z7SND.DAT';INVERTED='A:\\Z7INV.DAT'
 SLOT,NATIVE,EXPOSURE=0xa18d1bd8,0x101426a9,0x0419000b
 START_SLOT,MAILBOX,SND_STATE=0xa188d278,0xa18852ac,0xa188d190
 GAINS=(64,102,154,205,256,362,512,724,1024)
@@ -41,9 +41,12 @@ class SoundAware(PersistenceFixture):
         self.u.mem_write(MAILBOX,struct.pack('<I',0x1234));self.u.mem_write(SND_STATE,bytes(4))
         self.u.mem_write(SLOT,struct.pack('<I',NATIVE))  # stock boot value, as measured on the camera
         self.u.mem_write(EXIF_SLOT,struct.pack('<4I',*EXIF_DESCRIPTOR))  # live IFD0 descriptor (stock values)
-        for base in (0xa21a0000,0xa2970000):  # sound context and a message page
+        self.u.mem_write(0xa18d2750,struct.pack('<I',0x104db211))  # still-file handler (stock)
+        self.ip_native=[];self.still_native=[]
+        for base in (0xa21a0000,0xa2970000,0xa2890000):  # sound context, message page, playback request/queue
             try:self.u.mem_map(base,0x10000)
             except Exception:pass
+        self.u.mem_write(0xa289c1d8,struct.pack('<I',0x10315f5d))  # PlaybackProcess handler (stock, measured in QEMU)
     def r(self,reg):return self.u.reg_read(reg)
     def call(self,address,*args):
         # The sound engine adds about 580 KB of BSS that the host loader clears
@@ -65,7 +68,7 @@ class SoundAware(PersistenceFixture):
         if self.files_enabled and address==0x1027beae:
             p=self.r(UC_ARM_REG_R0);words=struct.unpack('<42I',u.mem_read(p,168));op=bytes(u.mem_read(p+0x9c,1))[0]
             path=self.cstring(words[4]) if op in (5,13) else None
-            if path in (WAV,LEVEL) or (op in (6,8,9) and words[7] in self.sound_handles):
+            if path in (WAV,LEVEL,INVERTED) or (op in (6,8,9) and words[7] in self.sound_handles):
                 result=0
                 if op in (5,13):
                     self.sound_events.append(('open' if op==5 else 'create',path))
@@ -94,6 +97,10 @@ class SoundAware(PersistenceFixture):
             self.ret(self.silent);return
         if address==NATIVE-1:
             self.native.append(tuple(self.u.reg_read(r) for r in (UC_ARM_REG_R0,UC_ARM_REG_R1)));self.ret(0x600);return
+        if address==0x10315f5c:
+            self.ip_native.append(tuple(self.u.reg_read(r) for r in (UC_ARM_REG_R0,UC_ARM_REG_R1)));self.ret(0x700);return
+        if address==0x104db210:
+            self.still_native.append(tuple(self.u.reg_read(r) for r in (UC_ARM_REG_R0,UC_ARM_REG_R1)));self.ret(0x602);return
         if address==0x100cf90a:
             u.mem_write(self.r(UC_ARM_REG_R0),b'\1');self.ret(0);return
         if address==0x100cf98c:self.ret(0);return
@@ -158,7 +165,7 @@ def main():
     f=load({WAV:clip})
     check('wav-loaded-and-installed',word(f,'z7_sl_installed')==1 and f.read(SLOT)==((f.base+symbols['z7_sl_controller'])|1)
           and f.read(START_SLOT)==((f.base+symbols['z7_sound_start'])|1))
-    check('no-level-file-means-level-5-and-no-write',word(f,'z7_sl_level')==5 and [e[:2] for e in f.sound_events]==[('open',LEVEL),('open',WAV),('read',WAV),('close',WAV)])
+    check('no-level-file-means-level-5-and-no-write',word(f,'z7_sl_level')==5 and [e[:2] for e in f.sound_events if e[1]!=INVERTED]==[('open',LEVEL),('open',WAV),('read',WAV),('close',WAV)])
     lab=labels(f)
     check('root-row-7-shows-shutter-sound-5',lab.get(237)=='Shutter sound' and lab.get(244)=='5' and lab.get(236)=='Battery percentage')
     check('root-other-rows-unchanged',[lab.get(231+i) for i in range(5)]==['Custom pages','Standard','Minimal','Composition','Exposure'])
@@ -235,6 +242,61 @@ def main():
         g.u.mem_write(EXIF_SLOT,struct.pack('<4I',0x10000001,0x1028bb8b,0,0))
         check('exif-foreign-descriptor-left-alone-and-module-loads',g.call(h['symbols']['z7_module_load_once'],STATE)==8 and
               g.read(EXIF_SLOT)==0x10000001 and g.read(g.words()[12]+symbols['z7_exif_installed'])==0)
+    # Upside-down playback (experimental builds that include it).
+    if m['configuration'].get('inverted_playback'):
+        REQ,HSLOT,SSLOT,INV='0xa289a264',0xa289c1d8,0xa18d2750,INVERTED
+        REQ=0xa289a264
+        def inv_file(keys):
+            v=(0x564e4937^(1<<8)^len(keys)^0x5a5a5a5a)&0xffffffff;full=list(keys)+[0]*(256-len(keys))
+            for k in full:v=(((v<<5)|(v>>27))&0xffffffff)^k
+            return struct.pack('<4I',0x564e4937,1,len(keys),v)+struct.pack('<256I',*full)
+        def shot(g,pose,record):
+            table=g.call(g.read(EXIF_SLOT));writer=struct.unpack('<I',bytes(g.u.mem_read(table+16*9+12,4)))[0]
+            g.u.mem_write(0xa18d7000+0x24fd,bytes([pose]));g.u.mem_write(0xa18d8200,struct.pack('<3I',0,0xa18d7000,0))
+            g.call(writer,0xa18d8300,0xa18d8200,0)
+            pk=0xa18d8400;g.u.mem_write(pk,struct.pack('<2I',record,1))
+            return g.call(g.read(SSLOT),0x041e0002,pk,0,0)
+        def show(g,image,rotation,command=0x04160009):
+            g.u.mem_write(REQ,struct.pack('<I',image));g.u.mem_write(REQ+0x28,struct.pack('<H',rotation))
+            msg=0xa2970200;g.u.mem_write(msg,struct.pack('<7I',0,0,0,0x103d1821,command,REQ,msg))
+            r=g.call(g.read(HSLOT),msg,0x11,0x22,0x33)
+            return r,struct.unpack('<H',bytes(g.u.mem_read(REQ+0x28,2)))[0]
+        rec=lambda n,kind=0:(108<<19)|(n<<5)|kind
+        g=load({WAV:clip})
+        check('ip-wrappers-installed',g.read(HSLOT)==((g.base+symbols['z7_ip_handler'])|1) and g.read(SSLOT)==((g.base+symbols['z7_ip_still'])|1)
+              and word(g,'z7_ip_handler_installed')==1 and word(g,'z7_ip_still_installed')==1 and word(g,'z7_ip_loaded')==0)
+        r1=shot(g,0,rec(8500));r2=shot(g,3,rec(8501));r3=g.call(g.read(SSLOT),0x041e0002,0xa18d8400,0,0)
+        g.u.mem_write(0xa18d8400,struct.pack('<2I',rec(8501,1),1));g.call(g.read(SSLOT),0x041e0002,0xa18d8400,0,0)
+        r4=shot(g,0,rec(8502))
+        keys=[struct.unpack('<I',g.u.mem_read(g.base+symbols['z7_ip_keys']+4*i,4))[0] for i in range(word(g,'z7_ip_count'))]
+        check('ip-only-upside-down-photo-remembered',keys==[rec(8501)&0x7fffffe0] and word(g,'z7_ip_marked')==1)
+        check('ip-still-file-native-always-runs',r1==r2==r4==0x602 and len(g.still_native)==5 and g.still_native[0]==(0x041e0002,0xa18d8400))
+        r,rot=show(g,rec(8501),0)
+        check('ip-upside-down-photo-turned-half',rot==2 and r==0x700 and g.ip_native[-1]==(0xa2970200,0x11) and word(g,'z7_ip_rotated')==1)
+        r,rot=show(g,rec(8500),0);check('ip-normal-photo-unchanged',rot==0 and word(g,'z7_ip_rotated')==1)
+        r,rot=show(g,rec(8501),1);check('ip-native-tall-rotation-kept',rot==1)
+        r,rot=show(g,rec(8501),0,0x04160011);check('ip-other-messages-untouched',rot==0 and r==0x700 and len(g.ip_native)==4)
+        for _ in range(3):g.call(h['symbols']['z7_module_worker_tick'])
+        check('ip-worker-saves-list',g.sound_files.get(INVERTED)==inv_file([rec(8501)&0x7fffffe0]) and word(g,'z7_ip_saves')==1)
+        for _ in range(4):g.call(h['symbols']['z7_module_worker_tick'])
+        check('ip-no-rewrite-without-change',word(g,'z7_ip_saves')==1)
+        g2=load({WAV:clip,INVERTED:inv_file([rec(8501)&0x7fffffe0])})
+        r,rot=show(g2,rec(8501,0),0);check('ip-reload-turns-remembered-photo',word(g2,'z7_ip_loaded')==1 and rot==2)
+        g3=load({WAV:clip,INVERTED:bytes(1)*1040});check('ip-damaged-list-ignored',word(g3,'z7_ip_loaded')==2 and word(g3,'z7_ip_count')==0)
+        g4=load({WAV:clip});[shot(g4,p,rec(8600+i)) for i,p in enumerate((3,0,3))]
+        k4=[struct.unpack('<I',g4.u.mem_read(g4.base+symbols['z7_ip_keys']+4*i,4))[0] for i in range(word(g4,'z7_ip_count'))]
+        check('ip-burst-pairs-in-order',k4==[rec(8600)&0x7fffffe0,rec(8602)&0x7fffffe0])
+        SoundAware.sound_files={WAV:clip}
+        g5=SoundAware(raw,h,packet,dict(journal));g5.file_paths=PATHS+NEW;g5.u.mem_write(HSLOT,bytes(1)*4)
+        assert g5.call(h['symbols']['z7_module_load_once'],STATE)==8;g5.base=g5.words()[12];g5.setword(40,8)
+        check('ip-handler-absent-at-load-not-installed',g5.read(HSLOT)==0 and g5.read(g5.base+symbols['z7_ip_handler_installed'])==0)
+        g5.u.mem_write(HSLOT,struct.pack('<I',0x10315f5d));g5.call(h['symbols']['z7_module_worker_tick'])
+        check('ip-worker-installs-late',g5.read(HSLOT)==((g5.base+symbols['z7_ip_handler'])|1))
+        g5.u.mem_write(HSLOT,struct.pack('<I',0x10000001));g6=g5
+        SoundAware.sound_files={WAV:clip}
+        g6=SoundAware(raw,h,packet,dict(journal));g6.file_paths=PATHS+NEW;g6.u.mem_write(HSLOT,struct.pack('<I',0x10000001))
+        assert g6.call(h['symbols']['z7_module_load_once'],STATE)==8;g6.base=g6.words()[12];g6.setword(40,8);g6.call(h['symbols']['z7_module_worker_tick'])
+        check('ip-foreign-handler-left-alone',g6.read(HSLOT)==0x10000001)
     report=dict(passed=True,count=len(checks),checks=checks,display_suite_checks=suite['checks'],module_sha256=m['module_sha256'],
                 host_main_sha256=h['main_payload_sha256'],clip_sha256=hashlib.sha256(clip).hexdigest(),camera_access=False,scope=__doc__)
     out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')

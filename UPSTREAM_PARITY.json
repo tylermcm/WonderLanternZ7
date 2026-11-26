@@ -218,7 +218,7 @@
       "name": "Upside-down photo EXIF orientation",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/2b596ab/docs/inverted-playback.md",
       "status": "research",
-      "remaining": "EXIF Orientation 3 for upside-down photos works on the camera (Nov 25 field test, JPEG); built into the everyday LCD module (751954d4), which writes Orientation 3 on the camera and is installed; NEF/thumbnail unchecked. Playback chain traced (42 checks); display request 0xA289A264 accepts a half turn; playback request block and turn cache confirmed live on the camera (session 2); playback module not built.",
+      "remaining": "EXIF Orientation 3 for upside-down photos works on the camera (Nov 25 field test, JPEG); built into the everyday LCD module (751954d4), which writes Orientation 3 on the camera and is installed; NEF/thumbnail unchecked. Playback chain traced (42 checks); display request 0xA289A264 accepts a half turn; playback request block and turn cache confirmed live on the camera (session 2); playback module not built. Experimental playback build (7702d094) turns photos remembered as upside down via the PlaybackProcess handler at 0xA289C1D8; prepared, not on the camera.",
       "local_review": "LCD_EXIF_ORIENTATION_TEST.md",
       "hardware_parity_verified": false
     }

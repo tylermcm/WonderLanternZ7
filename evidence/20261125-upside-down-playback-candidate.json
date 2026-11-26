@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "upside-down-playback-candidate",
+  "experimental": true,
+  "module_sha256": "7702d094bac27555f00f4c2d056c6eb4c860bab659eb1f5bcee02767ed6fc996",
+  "module_bytes": 27308,
+  "bindings": {
+    "display_request": "0xA289A264 (+0 id, +0x28 rotation)",
+    "message": "0x04160009 handled synchronously by 0x10314912",
+    "handler_slot": "0xA289C1D8 holds 0x10315F5D (PlaybackProcess queue handler, set by 0x101F2414; RAM search hit in QEMU)",
+    "still_file": "0xA18D2750 event 0x041E0002 record pairs with the EXIF writer pose",
+    "list_file": "A:/Z7INV.DAT"
+  },
+  "scope": "Only photos taken upside down with this module; JPEG measured; JPEG+NEF pairing unverified",
+  "offline": {
+    "display_suite_checks": 277,
+    "checks": 56
+  },
+  "qemu_menu_checks": 25,
+  "staged": false,
+  "camera_access": false
+}

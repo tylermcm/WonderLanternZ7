@@ -32,7 +32,13 @@ static void highlight_gui_publish(void);
 #ifdef Z7_SETTINGS_PERSISTENCE
 #ifdef Z7_LCD_EXIF_ORIENTATION
 #define Z7_EXIF_IFD_SLOT 0xa18d3410u
+#ifdef Z7_INVERTED_PLAYBACK
+#include "inverted_playback.h"
+#define Z7_EXIF_POSE_HOOK(pose) z7_ip_pose(pose)
+#endif
 #include "photo_orientation_exif.h"
+#elif defined(Z7_INVERTED_PLAYBACK)
+#error Upside-down playback needs the EXIF orientation component
 #endif
 #include "worker.h"
 #endif
@@ -266,6 +272,10 @@ uint32_t z7_main(const struct z7_module_api *api)
     /* Upside-down photos get EXIF Orientation 3 (camera-verified Nov 25, 2026).
      * A firmware or descriptor mismatch leaves Nikon's writer in place. */
     if (z7_exif_matches()) (void)z7_exif_install();
+#endif
+#ifdef Z7_INVERTED_PLAYBACK
+    /* Optional, cannot fail the module: wraps two native handlers when stock. */
+    z7_ip_prepare();
 #endif
     /* No failing operation follows these native scalar stores. Host readiness
      * and native menu pointer publication still follow successful return.

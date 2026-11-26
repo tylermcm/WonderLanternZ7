@@ -139,4 +139,7 @@ static void persistence_worker(void)
 #ifdef Z7_SHUTTER_SOUND_MENU
     z7_sl_worker();
 #endif
+#ifdef Z7_INVERTED_PLAYBACK
+    z7_ip_worker();
+#endif
 }
