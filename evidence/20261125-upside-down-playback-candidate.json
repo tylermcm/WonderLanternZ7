@@ -19,5 +19,16 @@
   },
   "qemu_menu_checks": 25,
   "staged": false,
-  "camera_access": false
+  "camera_access": false,
+  "combined_with_sound_folder": {
+    "module_sha256": "8cbb9b46398d886a1a518fc674876b713548f3f3eefd0d703468117314e0d7b9",
+    "module_bytes": 28768,
+    "offline": {
+      "display_suite_checks": 277,
+      "playback_exif_checks": 20,
+      "folder_checks": 22
+    },
+    "qemu_menu_checks": 26,
+    "staged": false
+  }
 }

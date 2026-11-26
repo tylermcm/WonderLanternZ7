@@ -1,8 +1,11 @@
 # Upside-down photo playback: camera test
 
-Status: **experimental, prepared, not staged.** Your everyday module (`751954d4`:
-display features, shutter sound OFF/1–9, upside-down EXIF fix, all working on
-the camera) plus playback that shows upside-down photos the right way up.
+Status: **experimental, prepared, not staged.** Your everyday module (the
+sound-folder build `8b2b30b1`: display features, shutter sound page with volume
+and sound choice, upside-down EXIF fix, all working on the camera) plus playback
+that shows upside-down photos the right way up. Combined build `8cbb9b46`
+(the earlier `7702d094` was the same playback on the module before the sound
+folder).
 Design follows JKWTCN's MIT Z7II inverted playback; original-Z7 bindings are
 independent work ([EXIF_ORIENTATION_RESEARCH.md](EXIF_ORIENTATION_RESEARCH.md)).
 
@@ -24,8 +27,8 @@ independent work ([EXIF_ORIENTATION_RESEARCH.md](EXIF_ORIENTATION_RESEARCH.md)).
 
 | Card file | What it is |
 | --- | --- |
-| `Z7APP.BIN` | Module with playback, SHA-256 `7702d094…` |
-| `Z7APP.LCD-SOUND-EXIF.disabled` | Your current module, kept unchanged |
+| `Z7APP.BIN` | Sound folder + playback, SHA-256 `8cbb9b46…` |
+| `Z7APP.LCD-SOUND-FOLDER.disabled` | Your current module, kept unchanged |
 | `Z7INV.DAT` | Created after your first upside-down photo |
 
 ## Steps (about 2 minutes)

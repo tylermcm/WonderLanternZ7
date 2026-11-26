@@ -162,69 +162,71 @@ def main():
         for _ in range(n):f.call(h['symbols']['z7_module_worker_tick'])
     def finish(f):f.u.mem_write(SND_STATE,bytes(4));f.write(f.base+symbols['z7_sound_playback'],0)
 
-    # 2. Sound with the exact click.
-    f=load({WAV:clip})
-    check('wav-loaded-and-installed',word(f,'z7_sl_installed')==1 and f.read(SLOT)==((f.base+symbols['z7_sl_controller'])|1)
-          and f.read(START_SLOT)==((f.base+symbols['z7_sound_start'])|1))
-    check('no-level-file-means-level-5-and-no-write',word(f,'z7_sl_level')==5 and [e[:2] for e in f.sound_events if e[1]!=INVERTED]==[('open',LEVEL),('open',WAV),('read',WAV),('close',WAV)])
-    lab=labels(f)
-    check('root-row-7-shows-shutter-sound-5',lab.get(237)=='Shutter sound' and lab.get(244)=='5' and lab.get(236)=='Battery percentage')
-    check('root-other-rows-unchanged',[lab.get(231+i) for i in range(5)]==['Custom pages','Standard','Minimal','Composition','Exposure'])
-    revision=word(f,'z7_settings_revision');files=list(f.file_events);model=bytes(f.u.mem_read(f.base+symbols['z7_menu_settings'],44))
-    press(f,6)
-    check('ok-steps-to-6-and-previews',word(f,'z7_sl_level')==6 and len(f.sends)==1 and word(f,'z7_sl_previews')==1)
-    check('sound-row-touches-no-display-state',word(f,'z7_settings_revision')==revision and f.file_events==files and
-          bytes(f.u.mem_read(f.base+symbols['z7_menu_settings'],44))==model and word(f,'z7_settings_view')==0)
-    check('row-value-repainted',labels(f).get(244)=='6')
-    finish(f)
-    for want in range(7,levels+1):
-        press(f,6);finish(f)
-        check(f'steps-to-{want}',word(f,'z7_sl_level')==want and len(f.sends)==want-5 and labels(f).get(244)==str(want))
-    press(f,6)
-    check('wraps-to-off-without-preview',word(f,'z7_sl_level')==0 and len(f.sends)==levels-5 and labels(f).get(244)=='OFF')
-    for _ in range(4):press(f,6);finish(f)
-    check('cycles-back-to-4',word(f,'z7_sl_level')==4)
-    ticks(f,1);check('no-write-while-unstable',not any(e[0]=='create' for e in f.sound_events))
-    ticks(f,4)
-    check('worker-saves-level-file',f.sound_files.get(LEVEL)==level_record(4) and word(f,'z7_sl_saves')==1)
-    check('display-journal-untouched-by-sound-save',all(e[1] in NEW for e in f.file_events if e[0] in ('create','write')) and
-          not any(e[0]=='create' for e in f.file_events))
-    ticks(f,6);check('no-rewrite-without-change',sum(1 for e in f.sound_events if e[0]=='create')==1)
-    g=load({WAV:clip,LEVEL:f.sound_files[LEVEL]})
-    check('reload-restores-level',word(g,'z7_sl_level')==4 and word(g,'z7_sl_loaded')==1 and labels(g).get(244)=='4')
-    g=load({WAV:clip,LEVEL:b'\0'*16})
-    check('damaged-file-keeps-default',word(g,'z7_sl_level')==5 and word(g,'z7_sl_loaded')==2)
+    # 2. Single-row volume (builds without the sound folder; the folder page has its own audit).
+    if not m['configuration'].get('sound_folder'):
+        # 2. Sound with the exact click.
+        f=load({WAV:clip})
+        check('wav-loaded-and-installed',word(f,'z7_sl_installed')==1 and f.read(SLOT)==((f.base+symbols['z7_sl_controller'])|1)
+              and f.read(START_SLOT)==((f.base+symbols['z7_sound_start'])|1))
+        check('no-level-file-means-level-5-and-no-write',word(f,'z7_sl_level')==5 and [e[:2] for e in f.sound_events if e[1]!=INVERTED]==[('open',LEVEL),('open',WAV),('read',WAV),('close',WAV)])
+        lab=labels(f)
+        check('root-row-7-shows-shutter-sound-5',lab.get(237)=='Shutter sound' and lab.get(244)=='5' and lab.get(236)=='Battery percentage')
+        check('root-other-rows-unchanged',[lab.get(231+i) for i in range(5)]==['Custom pages','Standard','Minimal','Composition','Exposure'])
+        revision=word(f,'z7_settings_revision');files=list(f.file_events);model=bytes(f.u.mem_read(f.base+symbols['z7_menu_settings'],44))
+        press(f,6)
+        check('ok-steps-to-6-and-previews',word(f,'z7_sl_level')==6 and len(f.sends)==1 and word(f,'z7_sl_previews')==1)
+        check('sound-row-touches-no-display-state',word(f,'z7_settings_revision')==revision and f.file_events==files and
+              bytes(f.u.mem_read(f.base+symbols['z7_menu_settings'],44))==model and word(f,'z7_settings_view')==0)
+        check('row-value-repainted',labels(f).get(244)=='6')
+        finish(f)
+        for want in range(7,levels+1):
+            press(f,6);finish(f)
+            check(f'steps-to-{want}',word(f,'z7_sl_level')==want and len(f.sends)==want-5 and labels(f).get(244)==str(want))
+        press(f,6)
+        check('wraps-to-off-without-preview',word(f,'z7_sl_level')==0 and len(f.sends)==levels-5 and labels(f).get(244)=='OFF')
+        for _ in range(4):press(f,6);finish(f)
+        check('cycles-back-to-4',word(f,'z7_sl_level')==4)
+        ticks(f,1);check('no-write-while-unstable',not any(e[0]=='create' for e in f.sound_events))
+        ticks(f,4)
+        check('worker-saves-level-file',f.sound_files.get(LEVEL)==level_record(4) and word(f,'z7_sl_saves')==1)
+        check('display-journal-untouched-by-sound-save',all(e[1] in NEW for e in f.file_events if e[0] in ('create','write')) and
+              not any(e[0]=='create' for e in f.file_events))
+        ticks(f,6);check('no-rewrite-without-change',sum(1 for e in f.sound_events if e[0]=='create')==1)
+        g=load({WAV:clip,LEVEL:f.sound_files[LEVEL]})
+        check('reload-restores-level',word(g,'z7_sl_level')==4 and word(g,'z7_sl_loaded')==1 and labels(g).get(244)=='4')
+        g=load({WAV:clip,LEVEL:b'\0'*16})
+        check('damaged-file-keeps-default',word(g,'z7_sl_level')==5 and word(g,'z7_sl_loaded')==2)
 
-    # Trigger.
-    g=load({WAV:clip,LEVEL:level_record(3)})
-    r=g.call(g.read(SLOT),EXPOSURE,0x44,0x22,0x33)
-    check('exposure-in-silent-plays-at-level',len(g.sends)==1 and word(g,'z7_sl_queued')==1)
-    check('native-controller-runs-same-args',r==0x600 and g.native[-1]==(EXPOSURE,0x44))
-    job=g.sends[0][1];check('queued-at-chosen-level',struct.unpack('<I',g.u.mem_read(job+20,4))[0]==3)
-    g.call(g.read(SLOT),0x04190008,0,0,0)
-    check('other-events-silent',len(g.sends)==1 and len(g.native)==2)
-    g.call(g.read(SLOT),EXPOSURE,0,0,0)
-    check('busy-counted-not-retried',len(g.sends)==1 and word(g,'z7_sl_busy')==1)
-    finish(g);g.silent=0;g.call(g.read(SLOT),EXPOSURE,0,0,0)
-    check('mechanical-shutter-no-sound',len(g.sends)==1)
-    g=load({WAV:clip,LEVEL:level_record(0)});g.call(g.read(SLOT),EXPOSURE,0,0,0)
-    check('off-never-plays',not g.sends and len(g.native)==1)
-    g=load({});
-    check('no-wav-leaves-slots-native',g.read(SLOT)==NATIVE and g.read(START_SLOT)==0x1006bc47 and word(g,'z7_sl_installed')==0)
-
-    # Boosted levels clip exactly (start path with a full-scale test tone).
-    tone=[0,16000,32767,-32768,-20000,100]*10
-    for level in range(5,levels+1):
-        g=load({WAV:wav(tone),LEVEL:level_record(level)})
+        # Trigger.
+        g=load({WAV:clip,LEVEL:level_record(3)})
+        r=g.call(g.read(SLOT),EXPOSURE,0x44,0x22,0x33)
+        check('exposure-in-silent-plays-at-level',len(g.sends)==1 and word(g,'z7_sl_queued')==1)
+        check('native-controller-runs-same-args',r==0x600 and g.native[-1]==(EXPOSURE,0x44))
+        job=g.sends[0][1];check('queued-at-chosen-level',struct.unpack('<I',g.u.mem_read(job+20,4))[0]==3)
+        g.call(g.read(SLOT),0x04190008,0,0,0)
+        check('other-events-silent',len(g.sends)==1 and len(g.native)==2)
         g.call(g.read(SLOT),EXPOSURE,0,0,0)
-        msg=0xa2970100;g.u.mem_write(msg,struct.pack('<7I',0,0,0,0,0x0418001e,g.sends[0][1],msg))
-        started=g.call(g.read(START_SLOT),msg)
-        data=next(s for a_,s in g.setters if a_==0x1006b94a);pcm=struct.unpack('<%dh'%(2*len(tone)),g.u.mem_read(data[0],4*len(tone)))
-        # The engine plays mono clips as interleaved stereo (each sample twice).
-        want=tuple(max(-32768,min(32767,(v*GAINS[level-1])>>8)) for v in tone for _ in (0,1))
-        check(f'level-{level}-pcm-exact',started==1 and data[1]==4*len(tone) and pcm==want)
-        # Safety (sound lab, Nov 25): tone above 31 stopped audio on the camera.
-        check(f'level-{level}-driver-tone-fixed-31',next(t for a_,t in g.setters if a_==0x1006b62c)[2]==31 and g.read(0xa21ab994+4)==31)
+        check('busy-counted-not-retried',len(g.sends)==1 and word(g,'z7_sl_busy')==1)
+        finish(g);g.silent=0;g.call(g.read(SLOT),EXPOSURE,0,0,0)
+        check('mechanical-shutter-no-sound',len(g.sends)==1)
+        g=load({WAV:clip,LEVEL:level_record(0)});g.call(g.read(SLOT),EXPOSURE,0,0,0)
+        check('off-never-plays',not g.sends and len(g.native)==1)
+        g=load({});
+        check('no-wav-leaves-slots-native',g.read(SLOT)==NATIVE and g.read(START_SLOT)==0x1006bc47 and word(g,'z7_sl_installed')==0)
+
+        # Boosted levels clip exactly (start path with a full-scale test tone).
+        tone=[0,16000,32767,-32768,-20000,100]*10
+        for level in range(5,levels+1):
+            g=load({WAV:wav(tone),LEVEL:level_record(level)})
+            g.call(g.read(SLOT),EXPOSURE,0,0,0)
+            msg=0xa2970100;g.u.mem_write(msg,struct.pack('<7I',0,0,0,0,0x0418001e,g.sends[0][1],msg))
+            started=g.call(g.read(START_SLOT),msg)
+            data=next(s for a_,s in g.setters if a_==0x1006b94a);pcm=struct.unpack('<%dh'%(2*len(tone)),g.u.mem_read(data[0],4*len(tone)))
+            # The engine plays mono clips as interleaved stereo (each sample twice).
+            want=tuple(max(-32768,min(32767,(v*GAINS[level-1])>>8)) for v in tone for _ in (0,1))
+            check(f'level-{level}-pcm-exact',started==1 and data[1]==4*len(tone) and pcm==want)
+            # Safety (sound lab, Nov 25): tone above 31 stopped audio on the camera.
+            check(f'level-{level}-driver-tone-fixed-31',next(t for a_,t in g.setters if a_==0x1006b62c)[2]==31 and g.read(0xa21ab994+4)==31)
 
     # Upside-down photo EXIF fix (builds that include it).
     if m['configuration'].get('exif_orientation'):
