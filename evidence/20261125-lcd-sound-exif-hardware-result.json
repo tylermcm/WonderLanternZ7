@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "lcd-sound-exif-hardware-result",
+  "module_sha256": "751954d4fcef42a4e986713b31bc37b5f04a68e19629ac66868cd78440bd4426",
+  "staged_with_owner_approval": true,
+  "installed": true,
+  "firmware_flashed": false,
+  "photo": "DCIM/108NCZ_7/DSC_8481.JPG (JPEG)",
+  "orientation_tag": 3,
+  "note": "camera clock reads 2026-10-16, so the new photo sorts among older ones by date",
+  "camera_photos_published": false
+}

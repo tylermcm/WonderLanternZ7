@@ -1,6 +1,10 @@
 # Everyday LCD module: shutter sound 1–9 plus the upside-down photo fix
 
-Status: **prepared, not staged.** This is your installed module (`fc9b315e`,
+Status: **works on the camera, November 25, 2026; installed.** The upside-down
+photo taken with this module (DSC_8481, JPEG) carries Orientation 3
+([evidence](evidence/20261125-lcd-sound-exif-hardware-result.json)).
+
+Original status: prepared, not staged. This is your installed module (`fc9b315e`,
 shutter sound with volume OFF/1–9, which works on the camera) with the
 upside-down photo EXIF fix added. That fix already worked on your camera in the
 [field test](SHUTTER_SOUND_FIELD_TEST.md#camera-result-november-25-2026): the
