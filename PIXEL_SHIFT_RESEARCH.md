@@ -75,6 +75,17 @@ The layout is the same as JKWTCN's Z7II telemetry block. Other windows:
 For step 2, "settled" can be read as state byte 1 and |error| small on every
 axis. The step size for one pixel is still unknown.
 
+## Step 2 built: one tiny move and back
+
+[LCD_VR_MOVE_TEST.md](LCD_VR_MOVE_TEST.md), build `5fe15dcc`. Once per boot it
+waits until telemetry shows stabilisation active and settled (state 1, |error|
+<= 48, confirmed 100 ms later). It then sends one `0xF1F1` with upstream's
+payload `{0,4,0,0,0,16,16,0,0,2}` (about 0.2 pixel on the Z7II scale) and
+polls telemetry every 100 ms. Whenever the move may have applied, it always
+sends the centre payload, then watches for 30 s. It uses Nikon's delay
+`0x1017081E` between polls. The D2 restore is not used, so a power cycle
+returns normal stabilisation. 25 offline checks against a simulated VR unit.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

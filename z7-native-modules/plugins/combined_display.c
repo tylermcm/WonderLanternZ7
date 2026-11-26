@@ -33,6 +33,9 @@ static void highlight_gui_publish(void);
 #ifdef Z7_VR_PROBE
 #include "vr_telemetry_probe.h"
 #endif
+#ifdef Z7_VR_MOVE
+#include "vr_move_test.h"
+#endif
 #ifdef Z7_LCD_EXIF_ORIENTATION
 #define Z7_EXIF_IFD_SLOT 0xa18d3410u
 #ifdef Z7_INVERTED_PLAYBACK

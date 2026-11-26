@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "feature": "vr-move-test-candidate",
+  "module_sha256": "5fe15dcc758cec1c7f1125583e9bb373a9af47f6c53cb5bfa262a7bf06cad989",
+  "module_bytes": 30816,
+  "base_module": "8dcee0e0 rebuilds byte for byte",
+  "move_payload": "00 04 00 00 00 10 10 00 00 02",
+  "centre_payload": "00 00 00 00 00 10 10 00 00 02",
+  "arming": "state 0x22 == 1 and |target-measured| <= 48 on all axes, confirmed 100 ms later; gives up after 600 ticks",
+  "delay": "0x1017081F",
+  "log": "A:\\Z7VRMOV.DAT, 32-byte header + 128 x 56-byte entries",
+  "d2_restore_used": false,
+  "offline": {
+    "move_checks": 25,
+    "display_suite_checks": 277,
+    "playback_checks": 22,
+    "folder_checks": 22
+  },
+  "qemu_menu_checks": 26,
+  "staged": false,
+  "camera_access": false
+}

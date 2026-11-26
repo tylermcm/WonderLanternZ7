@@ -145,4 +145,7 @@ static void persistence_worker(void)
 #ifdef Z7_VR_PROBE
     z7_vp_worker();
 #endif
+#ifdef Z7_VR_MOVE
+    z7_vm_worker();
+#endif
 }
