@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "feature": "pixel-shift-bindings-research",
+  "checks": 20,
+  "service": "0x042F BodyVrCommandService",
+  "send": "0x100F1F9F (Thumb)",
+  "request_bytes": 40,
+  "opcodes": {
+    "0xF040": "read; native reads 6 bytes at 0x1018",
+    "0xF1F1": "sensor position, 10-byte payload"
+  },
+  "upstream": "JKWTCN z7ii-extensions 8aad350 (MIT)",
+  "module_built": false,
+  "camera_access": false
+}
