@@ -138,6 +138,11 @@ enum {
 struct z7_vr_request { uint8_t mode, destination, af_mode, sub; uint32_t af, word8, wordc, frames; };
 _Static_assert(sizeof(struct z7_vr_request)==0x14,"release request");
 static const struct z7_vr_request z7_vr_request={0,1,0,0,0,0,1,1};
+/* One audible click per confirmed frame so the photographer can count them
+ * (Silent photography hides the blackout). Defined after the shutter-sound
+ * component in combined_display.c; without it, no click. */
+static uint32_t z7_vr_sound_mark(void);
+static void z7_vr_count_click(uint32_t mark);
 volatile uint32_t z7_vr_events, z7_vr_last_event, z7_vr_arg0, z7_vr_arg1, z7_vr_done;
 
 static uint32_t z7_vr_native_ok(void)
@@ -177,7 +182,7 @@ static int z7_vr_frame(uint32_t frame)
     if (r<=0) return 0;
     if (z7_vr_touched()) { z7_vm_log.flags|=VR_TOUCHED; return 0; }
     if (VM_W(VR_SLOT)) { z7_vm_log.flags|=VR_SLOT_BUSY; return 0; }
-    uint32_t photos=__atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE);
+    uint32_t photos=__atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE), mark=z7_vr_sound_mark();
     __atomic_store_n(&z7_vr_done,0u,__ATOMIC_RELEASE);
     uint32_t result=VM_F(VR_RELEASE,uint32_t,const struct z7_vr_request *,
         uint32_t (*)(uint32_t,const uint32_t *,uint32_t,uint32_t))(&z7_vr_request,z7_vr_callback);
@@ -191,6 +196,7 @@ static int z7_vr_frame(uint32_t frame)
         if (done && __atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE)>photos) {
             z7_vr_note_event(frame);
             z7_vm_record(VS_PH_FRAME,frame+1u,0,0);
+            z7_vr_count_click(mark);
             return 1;
         }
     }

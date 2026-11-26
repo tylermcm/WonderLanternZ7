@@ -104,6 +104,34 @@ static void focal_note_update(uint32_t changed);
 #undef Z7_GRID_DEFER_MASKS
 #ifdef Z7_SETTINGS_MENU_PROBE
 #include "../examples/settings_menu_policy.h"
+#ifdef Z7_PIXEL_RELEASE
+/* Pixel-shift series: one click per module-fired frame. If the shutter-sound
+ * hook already queued one for this exposure, nothing more; otherwise play the
+ * clip at the owner's level (level 5 when the sound is OFF). */
+volatile uint32_t z7_vr_clicks;
+static uint32_t z7_vr_sound_mark(void)
+{
+#ifdef Z7_SHUTTER_SOUND_MENU
+    return __atomic_load_n(&z7_sl_queued,__ATOMIC_ACQUIRE);
+#else
+    return 0;
+#endif
+}
+static void z7_vr_count_click(uint32_t mark)
+{
+#ifdef Z7_SHUTTER_SOUND_MENU
+    if (!__atomic_load_n(&z7_sound_installed,__ATOMIC_ACQUIRE) || __atomic_load_n(&z7_sl_queued,__ATOMIC_ACQUIRE)!=mark) return;
+    uint32_t level=__atomic_load_n(&z7_sl_level,__ATOMIC_ACQUIRE);
+    if (!level || level>SL_LEVELS) level=SL_DEFAULT;
+    for (uint32_t i=0;i<10u;++i) {
+        if (z7_sound_enqueue(0,SL_VOLUME(level),0)) { __atomic_add_fetch(&z7_vr_clicks,1u,__ATOMIC_RELEASE); return; }
+        z7_vm_sleep(50);
+    }
+#else
+    (void)mark;
+#endif
+}
+#endif
 #endif
 #ifdef Z7_HISTOGRAM_EXTRA_PROBE
 #include "../examples/display_histogram_policy.h"

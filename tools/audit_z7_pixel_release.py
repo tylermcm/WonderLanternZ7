@@ -19,7 +19,7 @@ from unicorn.arm_const import UC_ARM_REG_R0,UC_ARM_REG_R1
 from audit_z7_vr_restore import D2Unit,R
 from audit_z7_vr_move import CENTRE,F,LOG,SLOT,BUSY,DELAY
 from audit_z7_pixel_series import S,CORNERS,pos
-from audit_z7_lcd_shutter_sound import WAV
+from audit_z7_lcd_shutter_sound import WAV,SND_STATE
 from audit_z7_lcd_grid_persistence import NEW,v3record
 from audit_z7_settings_files import PATHS
 from build_z7_module_host import STATE
@@ -31,14 +31,15 @@ REQUEST=bytes([0,1,0,0])+struct.pack('<4I',0,0,1,1)
 
 
 class ReleaseUnit(D2Unit):
-    def __init__(self,*a,codes=None,complete='released',hold_button=False,no_press=False,touch_after=None,slot_busy=False,**k):
+    def __init__(self,*a,codes=None,complete='released',hold_button=False,no_press=False,touch_after=None,slot_busy=False,native_click=False,**k):
         super().__init__(*a,**k);self.fires=[];self.codes=list(codes or []);self.complete=complete
-        self.hold_button=hold_button;self.no_press=no_press;self.touch_after=touch_after;self.slot_busy=slot_busy;self.pending_frame=None;self.sym={}
+        self.native_click=native_click;self.hold_button=hold_button;self.no_press=no_press;self.touch_after=touch_after;self.slot_busy=slot_busy;self.pending_frame=None;self.sym={}
         for base in (0xa2380000,0xa1f90000):
             try:self.u.mem_map(base,0x10000)
             except Exception:pass
     def setup(self,base,symbols):
-        self.sym={n:base+symbols[n] for n in ('z7_vr_done','z7_vs_photos','z7_vr_last_event','z7_vr_arg0','z7_vr_arg1','z7_vr_events')}
+        self.sym={n:base+symbols[n] for n in ('z7_vr_done','z7_vs_photos','z7_vr_last_event','z7_vr_arg0','z7_vr_arg1','z7_vr_events',
+                                               'z7_vr_clicks','z7_sound_playback','z7_sl_queued','z7_sl_level')}
         self.u.mem_write(SW0,struct.pack('<I',0 if self.no_press else 0x80000000))  # photographer half-presses to arm
         self.u.mem_write(RSLOT,struct.pack('<I',0x10001 if self.slot_busy else 0))
     def w(self,n,v):self.u.mem_write(self.sym[n],struct.pack('<I',v))
@@ -50,8 +51,11 @@ class ReleaseUnit(D2Unit):
                                    button=struct.unpack('<I',bytes(u.mem_read(SW0,4)))[0]))
             code=self.codes.pop(0) if self.codes else 0
             if not code:self.pending_frame=len(self.fires)
+            if not code and self.native_click:self.w('z7_sl_queued',self.r_('z7_sl_queued')+1)   # shutter-sound hook clicked
             if self.touch_after is not None and len(self.fires)>=self.touch_after:u.mem_write(SW0,struct.pack('<I',0x40000000))
             self.ret(code);return
+        if address==DELAY and self.sym:                 # the previous click has finished playing
+            u.mem_write(SND_STATE,bytes(4));self.w('z7_sound_playback',0)
         if address==DELAY and self.r(UC_ARM_REG_R0)==100 and not self.hold_button and not self.fires:
             self.long_delays=getattr(self,'long_delays',0)+1
             if self.long_delays==2:u.mem_write(SW0,bytes(4))   # ...and lets go once armed (after the 100 ms confirm)
@@ -101,10 +105,15 @@ def main():
     check('never-fired-with-button-touched',all(x['button']==0 for x in f.fires))
     check('positions-then-centre',moves(f)==[pos(*c) for c in CORNERS]+[CENTRE])
     check('restore-once',len(f.d2_calls)==1)
+    check('one-click-per-frame',f.r_('z7_vr_clicks')==4 and len(f.sends)==4)
     tick(f,32);fl=flags(f)
     check('flags-complete',fl&V['FIRED'] and fl&S['SERIES_COMPLETE'] and fl&R['RESTORED'] and fl&F['CENTRE_FOLLOWED'] and
           not fl&(V['REFUSED']|V['FRAME_FAILED']|V['TOUCHED']|V['NOT_FREED']|V['SLOT_BUSY']))
     n=len(f.fires);tick(f,5);check('quiet-after-done',len(f.fires)==n)
+    g=load(native_click=True);tick(g)
+    check('no-extra-click-when-shutter-sound-clicked',len(g.fires)==4 and g.r_('z7_vr_clicks')==0 and len(g.sends)==0)
+    g=load();g.w('z7_sl_level',0);tick(g)
+    check('clicks-even-with-sound-off',len(g.fires)==4 and g.r_('z7_vr_clicks')==4)
     g=load(complete='done34');tick(g)
     check('done-0x04100034-also-completes',len(g.fires)==4 and moves(g)[-1]==CENTRE)
     g=load(no_press=True);tick(g,12)

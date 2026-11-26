@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-release-candidate-2",
+  "module_sha256": "3b2bb075200fc5fe256159338dfef03d6b80ee75588bfc0aa5f5727de2399800",
+  "module_bytes": 33504,
+  "changes": [
+    "arm only while the shutter is half-pressed",
+    "0x04100038 completes a frame",
+    "re-send Nikon latest D2 after a release changed it",
+    "one click per frame (shutter-sound hook click counts; else level of the owner, 5 when OFF)"
+  ],
+  "offline": {
+    "release_series_checks": 27,
+    "binding_checks": 48,
+    "display_suite_checks": 277,
+    "playback_checks": 22,
+    "folder_checks": 22
+  },
+  "qemu_menu_checks": 26,
+  "staged": false
+}
