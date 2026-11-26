@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "shutter-sound-folder-hardware-result",
+  "module_sha256": "8b2b30b11295821d099cbca4698833f78573fe0703a3024b9ce419fe96586e65",
+  "staged_with_owner_approval": true,
+  "installed": true,
+  "firmware_flashed": false,
+  "previous_kept_as": "Z7APP.LCD-SOUND-EXIF.disabled",
+  "owner_report": "everything works as intended (page, previews, chosen sound on photos, choice kept after restart)"
+}

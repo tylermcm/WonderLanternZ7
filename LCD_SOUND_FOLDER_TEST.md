@@ -1,6 +1,8 @@
 # Shutter sound folder: choose from up to ten sounds
 
-Status: **prepared, not staged.** Module `8b2b30b1`. Your everyday module with the shutter sound
+Status: **works on the camera, November 25, 2026; installed.** Module
+`8b2b30b1`; the owner reports the page, previews, the chosen sound on photos
+and the saved choice all work ([evidence](evidence/20261125-shutter-sound-folder-hardware-result.json)). Your everyday module with the shutter sound
 (OFF/1–9, working on the camera) plus a choice of sounds from a folder on the
 card. Design follows JKWTCN's MIT Z7II sound choice (`SHUTTER1`–`SHUTTER5`);
 the folder, ten slots and loading only the chosen file are this port's own.
