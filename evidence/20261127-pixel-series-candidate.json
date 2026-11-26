@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-series-dry-run-candidate",
+  "module_sha256": "b68284dceeba28b9da8b1a35095e92d0babb55fd1345a004ea0b0ba206e52c78",
+  "module_bytes": 32288,
+  "restore_only_build_sha256": "2ff19bde4e9e7bb21511b3a1f9c12a9b6277e46a601f58423b996336dc526a81",
+  "base_module": "8dcee0e0 rebuilds byte for byte; 5fe15dcc (camera-run step 2) rebuilds byte for byte",
+  "d2_restore": {
+    "sender": "0x101C63F9",
+    "buffer": "0xA235BA44 (bytes 0,1,8)",
+    "device_command": 4,
+    "requires_service_state": 1,
+    "upstream_counterpart": "0x103939A1"
+  },
+  "release_candidates_unresolved": [
+    "0x101ECFB0",
+    "0x10203D40"
+  ],
+  "series": {
+    "corners": [
+      [
+        0,
+        0
+      ],
+      [
+        21,
+        0
+      ],
+      [
+        21,
+        18
+      ],
+      [
+        0,
+        18
+      ]
+    ],
+    "trigger": "new still record via 0x041E0002 hook",
+    "shutter_fired_by_module": false,
+    "timeout_ticks": 120,
+    "max_resends": 6
+  },
+  "offline": {
+    "restore_checks": 19,
+    "series_checks": 20,
+    "binding_checks": 31,
+    "display_suite_checks": 277,
+    "playback_checks": 22,
+    "folder_checks": 22
+  },
+  "qemu_menu_checks": 26,
+  "staged": false,
+  "camera_access": false
+}

@@ -109,6 +109,55 @@ So the Z7 uses the same `0xF1F1` payload and the same -4-per-step target
 scale as the Z7II. One pixel is probably about 21/18 steps as upstream
 calibrated, but that is not yet measured on this sensor.
 
+## Step 2b found and built: the D2 restore
+
+Upstream's Z7II restore (`restore_d2`) re-sends Nikon's last VR parameters
+with `0x103939A1(selection, flags, 0)`. The Z7 counterpart is
+**`0x101C63F8(selection, flags, callback)`**:
+
+- it checks BodyVr state 1 (`0x100F3298`);
+- it copies selection bytes 0 and 1 and the flags into the command-4 buffer
+  at `0xA235B900+0x144` = `0xA235BA44` (bytes 0, 1 and 8, upstream's D2
+  layout);
+- it sends device command 4 through the protocol send `0x100B5E32`, and
+  command 5 when needed.
+
+Nikon's own VR-mode apply (`0x101C69D8`, BodyVr task event bit 4 at
+`0x101DF34C`) calls it. The position command uses a separate buffer
+(`0xA235B900+0x9C`), so the D2 buffer still holds Nikon's last parameters
+during a hold. Upstream's "duplicate filter" clear has no Z7 counterpart:
+the Z7 hook at `0x100F16D6` is an empty function. Commands are admitted by
+service state instead.
+
+Build `2ff19bde` (`--vr-restore`) adds this to the one-move test. It
+snapshots the D2 buffer before moving (no snapshot, no move), re-sends it
+after recentring, and polls until the state leaves `0x40`. 19 offline checks;
+31 static binding checks.
+
+## Step 3a built: series dry run
+
+[LCD_PIXEL_SERIES_TEST.md](LCD_PIXEL_SERIES_TEST.md), build `b68284dc`
+(`--pixel-series`). Upstream fires the shutter itself (`0x103BA6EB` with
+settings `{0x100,0,0,1,1}`). On the Z7 the candidates are `0x101ECFB0`, which
+checks property `0x11B` as upstream's capture-ready test does, and
+CaptureStateControlService `0x10203D40`, used by remote release in
+`CCaptureCameraControl` around `0x10520ED4`. Their request layouts are not
+pinned down yet. The dry run therefore leaves the shutter to the
+photographer. After each new photo (still-file hook `0x041E0002`), it steps
+the sensor through the four Bayer corners at upstream's 21/18 scale. It
+re-sends a lost hold, and recentres and restores D2 at the end. 20 offline
+checks. The run also shows whether a half-press or a native release ends the
+hold.
+
+`tools/measure_z7_pixel_shift.py` checks the result on the computer. It
+phase-correlates the full-size preview JPEG inside each NEF against the first
+photo, with sub-pixel peak fitting. Synthetic 1-pixel shifts read back as
+1.000 px, or 1.014 px after a JPEG round trip. So the four photos show
+directly whether 21/18 steps move the image one pixel on the Z7.
+
+Still open after 3a: the release call (for an unattended series), capture-idle
+and settings guards, NX Studio group tags, and the Z7 step calibration.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

@@ -109,6 +109,9 @@ static uint32_t z7_ip_still(uint32_t event, uint32_t packet, uint32_t a2, uint32
         uint32_t key=IP_W(packet)&IP_KEY;
         if (key && key!=z7_ip_last_key) {
             z7_ip_last_key=key;
+#ifdef Z7_STILL_KEY_HOOK
+            Z7_STILL_KEY_HOOK(key);
+#endif
             uint32_t tail=z7_ip_pose_tail;
             if (tail!=__atomic_load_n(&z7_ip_pose_head,__ATOMIC_ACQUIRE)) {
                 uint32_t pose=z7_ip_poses[tail%IP_POSES];

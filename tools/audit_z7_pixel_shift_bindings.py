@@ -31,6 +31,16 @@ EXPECT=[
     (0x100f271e,'movw r1, #0x1018'),             # at device address 0x1018
     (0x100f2738,'bl #0x100f1f9e'),
     (0x100f27a6,'bl #0x100f1f9e'),
+    # D2 restore (step 2b): Nikon's command-4 sender (selection, flags, callback).
+    (0x101c6400,'bl #0x100f3298'),               # only with BodyVr state 1
+    (0x101c6412,'add.w r3, r0, #0x144'),         # buffer 0xA235B900+0x144
+    (0x101c641a,'strb.w r1, [r0, #0x144]'),      # selection byte 0
+    (0x101c6420,'strb.w r1, [r0, #0x145]'),      # selection byte 1
+    (0x101c6424,'movs r1, #4'),                  # device command 4
+    (0x101c6426,'strb.w r6, [r0, #0x14c]'),      # flags at +8
+    (0x101c6430,'bl #0x100b5e32'),
+    (0x101c6a28,'bl #0x101c63f8'),               # Nikon's VR-mode apply uses it
+    (0x101df3b8,'bl #0x101c69d8'),               # from the BodyVr task (event bit 4)
 ]
 NAMES={0x042f0000:'BodyVrCommandService',0x03060000:'BodyVrService',0x02050000:'BodyVrProtocolService'}
 
@@ -59,6 +69,8 @@ def main():
             s=(h1>>10)&1;off=(s<<24)|((1-(((h2>>13)&1)^s))<<23)|((1-(((h2>>11)&1)^s))<<22)|((h1&0x3ff)<<12)|((h2&0x7ff)<<1)
             if s:off-=1<<25
             if BASE+o+4+off==SEND:callers.append(BASE+o)
+    check('d2-buffer-base-0xa235b900',struct.unpack_from('<I',raw,((0x101c6410+4)&~3)+0x3dc-BASE)[0]==0xa235b900)
+    check('position-buffer-separate-from-d2',struct.unpack_from('<I',raw,((0x100f1fe8+4)&~3)+0x138-BASE)[0]==0xa235b900)
     check('send-has-three-native-callers',[hex(c) for c in callers]==['0x100f2738','0x100f27a6','0x101c649a'])
     report=dict(passed=True,count=len(checks),checks=checks,send=hex(SEND|1),request_bytes=0x28,
                 request_fields={'0x00':'opcode','0x1c':'payload','0x24':'output'},opcodes={'0xF040':'read (native: address 0x1018, 6 bytes)','0xF1F1':'sensor position, 10-byte payload'},

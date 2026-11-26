@@ -18,8 +18,14 @@
  *     {0,0,0,0,0,16,16,0,0,2} is sent (retried), and telemetry is read again.
  *  4. WATCH: one read per tick for VM_WATCH_TICKS ticks, to see whether Nikon
  *     returns the state to normal stabilisation by itself.
- * Nikon's own D2 VR parameters are not touched; a power cycle restores normal
- * stabilisation. No capture. Everything is logged to A:\Z7VRMOV.DAT.
+ * Without Z7_VR_RESTORE, Nikon's own D2 VR parameters are not touched; a
+ * power cycle restores normal stabilisation (camera-verified build 5fe15dcc).
+ * With Z7_VR_RESTORE (step 2b), the last D2 parameters Nikon sent (command 4
+ * buffer 0xA235BA44: selection bytes 0-1, flags byte 8) are snapshotted before
+ * the move and re-sent afterwards with Nikon's own sender 0x101C63F8
+ * (selection, flags, callback) - the Z7 counterpart of upstream's restore_d2
+ * call 0x103939A1 - then telemetry is polled until the hold (state 0x40) ends.
+ * No capture. Everything is logged to A:\Z7VRMOV.DAT.
  */
 #ifndef Z7_VR_MOVE_TEST_H
 #define Z7_VR_MOVE_TEST_H
@@ -63,6 +69,12 @@ struct z7_vm_entry { uint32_t tick; uint8_t phase, poll; uint16_t status; uint8_
 _Static_assert(sizeof(struct z7_vm_entry)==56,"log entry");
 struct z7_vm_log {
     uint32_t magic, version, entries, flags, sends, refused, timeouts, writes;
+#ifdef Z7_VR_RESTORE
+    uint32_t d2, restore, restore_state, restore_event;
+#endif
+#ifdef Z7_PIXEL_SERIES
+    uint32_t frames, resends, keys[4];
+#endif
     struct z7_vm_entry entry[VM_ENTRIES];
 };
 static _Alignas(64) struct z7_vm_log z7_vm_log;
@@ -85,9 +97,16 @@ static void z7_vm_complete(uint32_t event, const uint8_t *result)
     __atomic_store_n(&z7_vm_reply,status,__ATOMIC_RELEASE);
 }
 static uint32_t z7_vm_idle(void) { return VM_W(VM_BUSY)!=1u && !VM_W(VM_CALLBACK_SLOT); }
+#ifdef Z7_PIXEL_SERIES
+#define VM_LOG_VERSION 3u
+#elif defined(Z7_VR_RESTORE)
+#define VM_LOG_VERSION 2u
+#else
+#define VM_LOG_VERSION VM_VERSION
+#endif
 static void z7_vm_save(void)
 {
-    z7_vm_log.magic=VM_MAGIC; z7_vm_log.version=VM_VERSION; ++z7_vm_log.writes;
+    z7_vm_log.magic=VM_MAGIC; z7_vm_log.version=VM_LOG_VERSION; ++z7_vm_log.writes;
     VM_F(VM_CLEAN,void,void *,uint32_t)(&z7_vm_log,sizeof(z7_vm_log));
     uint32_t fd=VM_F(VM_CREATE,uint32_t,const char *,uint32_t)(z7_vm_path,0), actual=0;
     if ((int32_t)fd<0) return;
@@ -158,6 +177,63 @@ static int z7_vm_follow(uint32_t phase, int x)
     return 0;
 }
 static int z7_vm_applied(uint32_t s) { return s!=0x100u && s!=0x101u; }
+#ifdef Z7_VR_RESTORE
+enum {
+    VM_D2=0xa235ba44u, VM_D2_SEND=0x101c63f9u, VM_SERVICE=0xa18b6030u,
+    VM_PH_RESTORE=5u, VM_PH_RESTORE_SEND=0x15u, VM_RESTORE_TRIES=3u, VM_RESTORE_POLLS=14u,
+    VM_RESTORE_SENT=1u<<11, VM_RESTORE_CALLED_BACK=1u<<12, VM_RESTORED=1u<<13,
+    VM_NO_D2=1u<<14, VM_D2_CHANGED=1u<<15
+};
+#define VM_B(a) (*(volatile uint8_t *)(uintptr_t)(a))
+static uint8_t z7_vm_selection[4];
+static uint32_t z7_vm_d2_flags;
+volatile uint32_t z7_vm_d2_called;
+static uint32_t z7_vm_d2_ok(void)
+{
+    return VM_W(VM_D2_SEND-1u)==0x4614b5f8u && VM_W(VM_D2_SEND+3u)==0x4607460eu;
+}
+/* Protocol task: completion of the D2 send. Only records that it happened. */
+static void z7_vm_d2_complete(uint32_t event)
+{
+    z7_vm_log.restore_event=event;
+    __atomic_store_n(&z7_vm_d2_called,1u,__ATOMIC_RELEASE);
+}
+static uint32_t z7_vm_d2_value(void) { return VM_B(VM_D2)|VM_B(VM_D2+1u)<<8|VM_B(VM_D2+8u)<<16; }
+/* Before the move: remember what Nikon last sent. No D2 yet (VR off): no move. */
+static uint32_t z7_vm_snapshot(void)
+{
+    uint32_t v=z7_vm_d2_value();
+    z7_vm_log.d2=v;
+    if (!(v&0xffu) || (v&0xffu)>3u || !z7_vm_d2_ok()) { z7_vm_log.flags|=VM_NO_D2; return 0; }
+    z7_vm_selection[0]=(uint8_t)v; z7_vm_selection[1]=(uint8_t)(v>>8); z7_vm_d2_flags=(v>>16)&0xffu;
+    return 1;
+}
+static uint32_t z7_vm_service_idle(void) { return VM_B(VM_SERVICE)==1u && z7_vm_idle(); }
+static void z7_vm_restore(void)
+{
+    if (z7_vm_d2_value()!=z7_vm_log.d2) z7_vm_log.flags|=VM_D2_CHANGED;   /* Nikon already re-sent */
+    else for (uint32_t i=0;i<VM_RESTORE_TRIES;++i) {
+        for (uint32_t j=0;j<50u && !z7_vm_service_idle();++j) z7_vm_sleep(20);
+        uint32_t r=z7_vm_service_idle() ?
+            VM_F(VM_D2_SEND,uint32_t,const uint8_t *,uint32_t,void (*)(uint32_t))(z7_vm_selection,z7_vm_d2_flags,z7_vm_d2_complete) : 0x100u;
+        z7_vm_record(VM_PH_RESTORE_SEND,i,r==1u ? 0u : r ? r : 0x101u,0);
+        z7_vm_log.restore=i+1u|(r&0xffu)<<8;
+        if (r==1u) { z7_vm_log.flags|=VM_RESTORE_SENT; break; }
+        z7_vm_sleep(200);
+    }
+    for (uint32_t i=0;i<VM_RESTORE_POLLS;++i) {
+        z7_vm_sleep(100);
+        uint32_t s=z7_vm_sample(VM_PH_RESTORE,i+1u);
+        if (__atomic_load_n(&z7_vm_d2_called,__ATOMIC_ACQUIRE)) z7_vm_log.flags|=VM_RESTORE_CALLED_BACK;
+        if (s==VM_PENDING) return;
+        uint32_t state=z7_vm_output[VM_STATE];
+        if (!s && state!=VM_HOLD && state!=0x88u) {
+            z7_vm_log.flags|=VM_RESTORED; z7_vm_log.restore_state=state; return;
+        }
+    }
+}
+#endif
+#ifndef Z7_PIXEL_SERIES
 /* The move itself: runs once, blocking the worker for a few seconds. */
 static void z7_vm_run(void)
 {
@@ -182,6 +258,9 @@ static void z7_vm_run(void)
         z7_vm_log.flags|=VM_CENTRE_ACK;
         if (z7_vm_follow(VM_PH_CENTRE,0)) z7_vm_log.flags|=VM_CENTRE_FOLLOWED;
     }
+#ifdef Z7_VR_RESTORE
+    z7_vm_restore();
+#endif
 }
 /* Resident worker only. */
 static void z7_vm_worker(void)
@@ -207,6 +286,9 @@ static void z7_vm_worker(void)
             if (s==VM_PENDING) { z7_vm_log.flags|=VM_DONE; z7_vm_stage=3; z7_vm_save(); return; }
         }
         if (!z7_vm_armed) { if (z7_vm_tick%30u==0u) z7_vm_save(); return; }
+#ifdef Z7_VR_RESTORE
+        if (!z7_vm_snapshot()) { z7_vm_log.flags|=VM_DONE; z7_vm_stage=3; z7_vm_save(); return; }
+#endif
         z7_vm_log.flags|=VM_ARMED;
         z7_vm_run();
         z7_vm_stage=2; z7_vm_save();
@@ -218,4 +300,5 @@ static void z7_vm_worker(void)
     if (s==VM_PENDING || ++z7_vm_watch>=VM_WATCH_TICKS) { z7_vm_log.flags|=VM_DONE; z7_vm_stage=3; }
     if (z7_vm_stage==3u || z7_vm_watch%10u==0u) z7_vm_save();
 }
+#endif /* !Z7_PIXEL_SERIES */
 #endif
