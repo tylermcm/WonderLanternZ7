@@ -26,6 +26,7 @@ from prepare_flash_review import require_private_output
 
 WAV='A:\\SHUTTER1.WAV';LEVEL='A:\\Z7SND.DAT';INVERTED='A:\\Z7INV.DAT'
 FOLDER_PREFIX='A:'+chr(92)+'SHUTTER'+chr(92)  # A:\SHUTTER\ sound folder
+DEBUGFILE='A:'+chr(92)+'Z7IPDBG.DAT'
 SLOT,NATIVE,EXPOSURE=0xa18d1bd8,0x101426a9,0x0419000b
 START_SLOT,MAILBOX,SND_STATE=0xa188d278,0xa18852ac,0xa188d190
 GAINS=(64,102,154,205,256,362,512,724,1024)
@@ -69,7 +70,7 @@ class SoundAware(PersistenceFixture):
         if self.files_enabled and address==0x1027beae:
             p=self.r(UC_ARM_REG_R0);words=struct.unpack('<42I',u.mem_read(p,168));op=bytes(u.mem_read(p+0x9c,1))[0]
             path=self.cstring(words[4]) if op in (5,13) else None
-            if path in (WAV,LEVEL,INVERTED) or (path or '').startswith(FOLDER_PREFIX) or (op in (6,8,9) and words[7] in self.sound_handles):
+            if path in (WAV,LEVEL,INVERTED,DEBUGFILE) or (path or '').startswith(FOLDER_PREFIX) or (op in (6,8,9) and words[7] in self.sound_handles):
                 result=0
                 if op in (5,13):
                     self.sound_events.append(('open' if op==5 else 'create',path))
@@ -259,11 +260,11 @@ def main():
             g.call(writer,0xa18d8300,0xa18d8200,0)
             pk=0xa18d8400;g.u.mem_write(pk,struct.pack('<2I',record,1))
             return g.call(g.read(SSLOT),0x041e0002,pk,0,0)
-        def show(g,image,rotation,command=0x04160009):
-            g.u.mem_write(REQ,struct.pack('<I',image));g.u.mem_write(REQ+0x28,struct.pack('<H',rotation))
-            msg=0xa2970200;g.u.mem_write(msg,struct.pack('<7I',0,0,0,0x103d1821,command,REQ,msg))
+        def show(g,image,rotation,command=0x04160009,block=0xa289a264):
+            g.u.mem_write(block,struct.pack('<I',image));g.u.mem_write(block+0x28,struct.pack('<H',rotation))
+            msg=0xa2970200;g.u.mem_write(msg,struct.pack('<7I',0,0,0,0x103d1821,command,block,msg))
             r=g.call(g.read(HSLOT),msg,0x11,0x22,0x33)
-            return r,struct.unpack('<H',bytes(g.u.mem_read(REQ+0x28,2)))[0]
+            return r,struct.unpack('<H',bytes(g.u.mem_read(block+0x28,2)))[0]
         rec=lambda n,kind=0:(108<<19)|(n<<5)|kind
         g=load({WAV:clip})
         check('ip-wrappers-installed',g.read(HSLOT)==((g.base+symbols['z7_ip_handler'])|1) and g.read(SSLOT)==((g.base+symbols['z7_ip_still'])|1)
@@ -278,8 +279,13 @@ def main():
         check('ip-upside-down-photo-turned-half',rot==2 and r==0x700 and g.ip_native[-1]==(0xa2970200,0x11) and word(g,'z7_ip_rotated')==1)
         r,rot=show(g,rec(8500),0);check('ip-normal-photo-unchanged',rot==0 and word(g,'z7_ip_rotated')==1)
         r,rot=show(g,rec(8501),1);check('ip-native-tall-rotation-kept',rot==1)
-        r,rot=show(g,rec(8501),0,0x04160011);check('ip-other-messages-untouched',rot==0 and r==0x700 and len(g.ip_native)==4)
+        r,rot=show(g,rec(8501),0,0x04160004,0xa289a2d4);check('ip-second-request-block-turned',rot==2 and r==0x700 and word(g,'z7_ip_rotated')==2)
+        r,rot=show(g,rec(8501),0,0x04160011,0xa2970300);check('ip-other-messages-untouched',rot==0 and r==0x700 and len(g.ip_native)==5)
         for _ in range(3):g.call(h['symbols']['z7_module_worker_tick'])
+        dbg=g.sound_files.get('A:'+chr(92)+'Z7IPDBG.DAT',b'')
+        dw=struct.unpack('<32I',dbg) if len(dbg)==128 else ()
+        check('ip-diagnostic-file-written',len(dw)==32 and dw[0]==0x47424437 and dw[3]&3==3 and dw[5]==3 and dw[6]==1 and dw[7]==2 and
+              dw[28]==5 and dw[29]==3 and dw[30]==1 and dw[31]==1)
         check('ip-worker-saves-list',g.sound_files.get(INVERTED)==inv_file([rec(8501)&0x7fffffe0]) and word(g,'z7_ip_saves')==1)
         for _ in range(4):g.call(h['symbols']['z7_module_worker_tick'])
         check('ip-no-rewrite-without-change',word(g,'z7_ip_saves')==1)

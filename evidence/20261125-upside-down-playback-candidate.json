@@ -30,5 +30,28 @@
     },
     "qemu_menu_checks": 26,
     "staged": false
+  },
+  "first_camera_try": {
+    "module_sha256": "8cbb9b46398d886a1a518fc674876b713548f3f3eefd0d703468117314e0d7b9",
+    "owner_report": "the image did not flip over",
+    "card": {
+      "Z7INV_keys": [
+        "108/8493",
+        "108/8496"
+      ],
+      "upside_down_photo": "DSC_8496 Orientation 3"
+    },
+    "diagnosis": "capture-side list correct; second display request block 0xA289A2D4 (message 0x04160004) was not handled"
+  },
+  "fixed_build": {
+    "module_sha256": "8dcee0e026017de282288635ef92ea4bf544caa81863125c6c68f0ff995d611a",
+    "module_bytes": 29152,
+    "offline": {
+      "display_suite_checks": 277,
+      "playback_exif_checks": 22,
+      "folder_checks": 22
+    },
+    "qemu_menu_checks": 26,
+    "staged": false
   }
 }

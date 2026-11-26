@@ -9,6 +9,19 @@ folder).
 Design follows JKWTCN's MIT Z7II inverted playback; original-Z7 bindings are
 independent work ([EXIF_ORIENTATION_RESEARCH.md](EXIF_ORIENTATION_RESEARCH.md)).
 
+## Camera result, first try (November 25, 2026): not turned
+
+With `8cbb9b46` the upside-down photo (DSC_8496) was remembered correctly
+(`Z7INV.DAT` held its number and the file carries Orientation 3), but playback
+did not turn it. Nikon builds display requests into **two** blocks with the
+same layout: `0xA289A264` (message `0x04160009`), which the hook handled, and
+`0xA289A2D4` (message `0x04160004`, built by `0x103D1D54`), which it did not.
+The fixed build `8dcee0e0` turns the photo in either block and writes
+`A:\Z7IPDBG.DAT` with what the hook saw (message ids and counts, which block,
+image ids, rotations, how many were turned), so the next run can be diagnosed
+from the card even if it still does not turn. If Nikon's renderer ignores a half
+turn, that file will show the rotation was set.
+
 ## How it works
 
 - Every photo Nikon shows in playback goes through one display request
