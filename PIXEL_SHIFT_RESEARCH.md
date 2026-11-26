@@ -191,6 +191,48 @@ pin down the Z7 release call (`0x101ECFB0` / `0x10203D40`, request layouts),
 then a module-fired series. The D2 snapshot from this run was `0x030301`
 (selection 1, 3; flags 3).
 
+## Step 3b built: module-fired release
+
+The release is **`0x101ECFB0(request, callback)`**, Nikon's capture API.
+Nikon's PTP InitiateCapture handlers (`0x10308DE6`, `0x10319F40`) and remote
+capture control (`0x10520FBC`) all call it. It returns 0 when it accepts, or
+one of Nikon's refusal codes (`0xA`-`0x1C`). It checks property `0x11B`, as
+upstream's capture-ready test does.
+
+The request is 0x14 bytes, as the PTP builder `0x10308C80` fills it:
+
+| Field | Meaning |
+| --- | --- |
+| byte 0 | mode |
+| byte 1 | destination override (property `0x131B`) |
+| byte 2 | AF mode |
+| word +4 | AF before release (only with property `0x1326`) |
+| word +8 | stored at `0xA18B83B8+0x30` |
+| +0xC, +0x10 | as upstream (frame count at +0x10) |
+
+The module sends `{0,1,0,0, 0,0,1,1}`, the same values as upstream's
+`{0x100,0,0,1,1}` and PTP's format-`0x3800` request. That means no AF.
+
+On acceptance the callback goes into slot `0x38` of the table `0xA238BA48`
+(`0x1005ED7C` fills only an empty slot). It is called with event
+`0x04100034` ("done": word 0 = 0 on success; Nikon's event table at
+`0x10649A80`).
+
+The shutter switch bits are in Nikon's switch-name table (name, then mask,
+in 40-byte entries): SW0 `0xA1F90AA4`, half `0x80000000`, full
+`0x40000000`, vertical-grip half/full `0x20000000`/`0x10000000`.
+
+Build `c813c457` (`--pixel-release`,
+[LCD_PIXEL_RELEASE_TEST.md](LCD_PIXEL_RELEASE_TEST.md)):
+1. arm;
+2. wait until the button has been free for 0.5 s;
+3. for each corner: hold, confirm, release, then wait for `0x04100034` and
+   the new still record;
+4. stop on any refusal, failure, timeout, busy slot or button touch;
+5. recentre, restore D2, watch.
+
+Checks: 20 offline, 48 static.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

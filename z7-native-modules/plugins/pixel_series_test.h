@@ -101,10 +101,113 @@ static void z7_vs_finish(void)
     z7_vm_log.frames=__atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE);
     z7_vm_save();
 }
+#ifdef Z7_PIXEL_RELEASE
+/* MODULE-FIRED SERIES (step 3b). The step-3a camera run showed that a
+ * photographer's half-press makes Nikon re-apply normal stabilisation and so
+ * ends the hold before the exposure. As upstream does, the module therefore
+ * fires the shutter itself, right after the position is confirmed and with no
+ * half-press:
+ *  - Release: Nikon's release API 0x101ECFB0(request, callback) - used by the
+ *    PTP InitiateCapture handlers (0x10308DE6, 0x10319F40) and the remote
+ *    capture control (0x10520FBC); 0 = accepted, else Nikon's refusal code.
+ *    Request (0x14 bytes, PTP layout): mode 0, destination override 1 (as PTP
+ *    format 0x3800), no AF (word +4 = 0), +8 = 0, +0xC = 1, +0x10 = 1 frame -
+ *    the same values as upstream's Z7II settings {0x100,0,0,1,1}.
+ *  - Completion: Nikon calls the callback from slot 0x38 of the table
+ *    0xA238BA48 (filled by 0x1005ED7C only if empty) with event 0x04100034
+ *    (word 0 = 0 on success); the new still-file record (0x041E0002 hook)
+ *    confirms the file.
+ *  - Start: after arming, once the shutter button (SW0 0xA1F90AA4 bits
+ *    0xF0000000: half/full, horizontal and vertical) has been free for 0.5 s.
+ *    Touching it during the series aborts it.
+ * Then centre, Nikon D2 restore, watch - as the dry run.
+ */
+enum {
+    VR_RELEASE=0x101ecfb1u, VR_SLOT_TABLE=0xa238ba48u, VR_SLOT=0xa238ba48u+0x38u*4u, VR_DONE=0x04100034u,
+    VR_SW0=0xa1f90aa4u, VR_SHUTTER_BITS=0xf0000000u,
+    VR_PH_FIRE=0x19u, VR_PH_EVENT=0x1au, VR_PH_FREE=0x1bu,
+    VR_FIRED=1u<<22, VR_REFUSED=1u<<23, VR_FRAME_FAILED=1u<<24, VR_TOUCHED=1u<<25, VR_NOT_FREED=1u<<26, VR_SLOT_BUSY=1u<<27
+};
+struct z7_vr_request { uint8_t mode, destination, af_mode, sub; uint32_t af, word8, wordc, frames; };
+_Static_assert(sizeof(struct z7_vr_request)==0x14,"release request");
+static const struct z7_vr_request z7_vr_request={0,1,0,0,0,0,1,1};
+volatile uint32_t z7_vr_events, z7_vr_last_event, z7_vr_arg0, z7_vr_arg1, z7_vr_done;
+
+static uint32_t z7_vr_native_ok(void)
+{
+    return VM_W(VR_RELEASE-1u)==0x4ff0e92du && VM_W(VR_RELEASE+3u)==0x468b2500u &&
+        VM_W(0x1005ed7cu)==0x46022900u && VM_W(0x10649ac0u)==VR_DONE;
+}
+static int z7_vr_ram(uint32_t p) { return p && !(p&3u) && p>=0xa1800000u && p<0xb0000000u; }
+/* Capture task: release progress. Only records; returns 0 like upstream's. */
+static uint32_t z7_vr_callback(uint32_t event, const uint32_t *arg, uint32_t c, uint32_t d)
+{
+    (void)c; (void)d;
+    uint32_t a0=0xffffffffu,a1=0xffffffffu;
+    if (z7_vr_ram((uint32_t)(uintptr_t)arg)) { a0=arg[0]; a1=arg[1]; }
+    z7_vr_arg0=a0; z7_vr_arg1=a1;
+    __atomic_store_n(&z7_vr_last_event,event,__ATOMIC_RELEASE);
+    if (event==VR_DONE) __atomic_store_n(&z7_vr_done,a0 ? 2u : 1u,__ATOMIC_RELEASE);
+    __atomic_add_fetch(&z7_vr_events,1u,__ATOMIC_RELEASE);
+    return 0;
+}
+static uint32_t z7_vr_touched(void) { return VM_W(VR_SW0)&VR_SHUTTER_BITS; }
+static void z7_vr_note_event(uint32_t frame)
+{
+    if (z7_vm_log.entries>=VM_ENTRIES) return;
+    struct z7_vm_entry *e=&z7_vm_log.entry[z7_vm_log.entries++];
+    e->tick=z7_vm_tick; e->phase=VR_PH_EVENT; e->poll=(uint8_t)frame; e->status=(uint16_t)z7_vr_last_event;
+    uint32_t v[4]={z7_vr_last_event,z7_vr_arg0,z7_vr_arg1,z7_vr_events};
+    for (uint32_t i=0;i<16u;++i) e->bytes[i]=(uint8_t)(v[i>>2]>>(8*(i&3u)));
+    for (uint32_t i=16u;i<VM_TELEMETRY_BYTES;++i) e->bytes[i]=0;
+}
+/* One frame: position, confirm, fire, wait for Nikon's completion and the file. */
+static int z7_vr_frame(uint32_t frame)
+{
+    int r=z7_vs_position(frame,VS_PH_SEND);
+    if (r<=0) { if (!r && z7_vs_resends<VS_RESENDS) { ++z7_vs_resends; z7_vm_log.resends=z7_vs_resends; r=z7_vs_position(frame,VS_PH_RESEND); } }
+    if (r<=0) return 0;
+    if (z7_vr_touched()) { z7_vm_log.flags|=VR_TOUCHED; return 0; }
+    if (VM_W(VR_SLOT)) { z7_vm_log.flags|=VR_SLOT_BUSY; return 0; }
+    uint32_t photos=__atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE);
+    __atomic_store_n(&z7_vr_done,0u,__ATOMIC_RELEASE);
+    uint32_t result=VM_F(VR_RELEASE,uint32_t,const struct z7_vr_request *,
+        uint32_t (*)(uint32_t,const uint32_t *,uint32_t,uint32_t))(&z7_vr_request,z7_vr_callback);
+    z7_vm_record(VR_PH_FIRE,frame,result,0);
+    if (result) { z7_vm_log.flags|=VR_REFUSED; return 0; }
+    z7_vm_log.flags|=VR_FIRED;
+    for (uint32_t i=0;i<300u;++i) {                /* up to 15 s */
+        z7_vm_sleep(50);
+        uint32_t done=__atomic_load_n(&z7_vr_done,__ATOMIC_ACQUIRE);
+        if (done==2u) { z7_vr_note_event(frame); z7_vm_log.flags|=VR_FRAME_FAILED; return 0; }
+        if (done && __atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE)>photos) {
+            z7_vr_note_event(frame);
+            z7_vm_record(VS_PH_FRAME,frame+1u,0,0);
+            return 1;
+        }
+    }
+    z7_vr_note_event(frame); z7_vm_log.flags|=VR_FRAME_FAILED;
+    return 0;
+}
+static void z7_vr_series(void)
+{
+    uint32_t free_polls=0;
+    for (uint32_t i=0;i<100u && free_polls<5u;++i) { z7_vm_sleep(100); free_polls=z7_vr_touched() ? 0u : free_polls+1u; }
+    z7_vm_record(VR_PH_FREE,free_polls,0,0);
+    if (free_polls<5u) { z7_vm_log.flags|=VR_NOT_FREED; z7_vs_finish(); return; }
+    uint32_t frame=0;
+    while (frame<VS_FRAMES && z7_vr_frame(frame)) ++frame;
+    if (frame==VS_FRAMES) z7_vm_log.flags|=VS_SERIES_COMPLETE;
+    z7_vs_finish();
+}
+#endif
 /* Resident worker only (replaces the one-move worker in this build). */
 static void z7_vm_worker(void)
 {
     if (z7_vm_stage==3u || !z7_vm_native_ok()) return;
+#ifdef Z7_PIXEL_RELEASE
+    if (!z7_vr_native_ok()) return;
+#endif
     ++z7_vm_tick;
     if (!z7_vm_stage) {                             /* ARM, as the one-move test */
         if (z7_vm_tick>VM_ARM_TICKS) { z7_vm_log.flags|=VM_GAVE_UP|VM_DONE; z7_vm_stage=3; z7_vm_save(); return; }
@@ -130,7 +233,11 @@ static void z7_vm_worker(void)
         z7_vs_frame=0; z7_vs_seen=0; z7_vs_wait=0;
         __atomic_store_n(&z7_vs_photos,0u,__ATOMIC_RELEASE);
         __atomic_store_n(&z7_vm_stage,4u,__ATOMIC_RELEASE);  /* count photos from here */
+#ifdef Z7_PIXEL_RELEASE
+        z7_vr_series();                             /* fires the four frames itself */
+#else
         if (z7_vs_position(0,VS_PH_SEND)<0) { z7_vs_finish(); }
+#endif
         z7_vm_save();
         return;
     }

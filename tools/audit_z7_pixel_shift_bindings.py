@@ -41,6 +41,20 @@ EXPECT=[
     (0x101c6430,'bl #0x100b5e32'),
     (0x101c6a28,'bl #0x101c63f8'),               # Nikon's VR-mode apply uses it
     (0x101df3b8,'bl #0x101c69d8'),               # from the BodyVr task (event bit 4)
+    # Module-fired release (step 3b): Nikon's release API (request, callback).
+    (0x101ecfb6,'mov fp, r1'),                   # callback kept ...
+    (0x101ed3d2,'movs r0, #0x38'),               # ... registered in slot 0x38
+    (0x101ed3d6,'bl #0x1005ed7c'),
+    (0x101ecfbc,'movw r0, #0x11b'),              # property 0x11B gate, as upstream's capture-ready
+    (0x101ed032,'ldrb r0, [r4]'),                # request byte 0: mode
+    (0x101ed100,'ldrb r1, [r4, #1]'),            # byte 1: destination override (property 0x131B)
+    (0x101ed0d0,'ldrb r0, [r4, #2]'),            # byte 2: AF mode
+    (0x101ed224,'ldr r5, [r4, #4]'),             # word +4: AF before release
+    (0x101ed28c,'ldr r0, [r4, #8]'),             # word +8
+    (0x10308de6,'bl #0x101ecfb0'),               # PTP InitiateCapture (USB)
+    (0x10319f40,'bl #0x101ecfb0'),               # PTP InitiateCapture (second transport)
+    (0x10520fbc,'bl #0x101ecfb0'),               # remote capture control
+    (0x10308cdc,'strd r6, r5, [r4, #4]'),        # PTP 0x100E builder: +4 = 1, +8 = 0
 ]
 NAMES={0x042f0000:'BodyVrCommandService',0x03060000:'BodyVrService',0x02050000:'BodyVrProtocolService'}
 
@@ -71,6 +85,12 @@ def main():
             if BASE+o+4+off==SEND:callers.append(BASE+o)
     check('d2-buffer-base-0xa235b900',struct.unpack_from('<I',raw,((0x101c6410+4)&~3)+0x3dc-BASE)[0]==0xa235b900)
     check('position-buffer-separate-from-d2',struct.unpack_from('<I',raw,((0x100f1fe8+4)&~3)+0x138-BASE)[0]==0xa235b900)
+    check('release-slot-table-0xa238ba48',struct.unpack_from('<I',raw,((0x1005ed88+4)&~3)+0x3e4-BASE)[0]==0xa238ba48)
+    check('release-done-event-0x04100034',struct.unpack_from('<2I',raw,0x10649ac0-BASE)==(0x04100034,8))
+    sw=raw[0x1063b24c-BASE:0x1063b274-BASE]
+    check('switch-release-half-sw0-0x80000000',sw[:20]==b'ID_SW0_RELEASE_HALF'+bytes(1) and struct.unpack_from('<I',sw,36)[0]==0x80000000)
+    sw=raw[0x1063b274-BASE:0x1063b29c-BASE]
+    check('switch-release-on-sw0-0x40000000',sw[:18]==b'ID_SW0_RELEASE_ON'+bytes(1) and struct.unpack_from('<I',sw,36)[0]==0x40000000)
     check('send-has-three-native-callers',[hex(c) for c in callers]==['0x100f2738','0x100f27a6','0x101c649a'])
     report=dict(passed=True,count=len(checks),checks=checks,send=hex(SEND|1),request_bytes=0x28,
                 request_fields={'0x00':'opcode','0x1c':'payload','0x24':'output'},opcodes={'0xF040':'read (native: address 0x1018, 6 bytes)','0xF1F1':'sensor position, 10-byte payload'},
