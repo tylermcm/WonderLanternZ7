@@ -6,7 +6,7 @@ and the saved level after restart all work as intended
 ([evidence](evidence/20261125-lcd-shutter-sound-hardware-result.json)). It stays
 installed; the previous module is kept as `Z7APP.LCD-LABEL-5E62.disabled`.
 
-## Update: volume OFF/1–9 (prepared, not staged)
+## Update: volume OFF/1–9 (works on the camera, November 25, 2026; installed)
 
 The [sound lab](LCD_SOUND_LAB_TEST.md) showed levels 8 (×2.83) and 9 (×4) are
 still clean on the camera, and that the driver tone value must stay at 31 (37

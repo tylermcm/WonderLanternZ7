@@ -8,5 +8,11 @@
   "installed_on_card": true,
   "previous_module_kept_as": "Z7APP.LCD-LABEL-5E62.disabled",
   "owner_report": "works exactly as intended (menu row, previews, photo clicks at the chosen level, level kept after restart)",
-  "loudness_note": "level 7 = x2 digital gain, about 11% of the click clipped, RMS about -6.6 dBFS; further digital gain mostly adds distortion"
+  "loudness_note": "level 7 = x2 digital gain, about 11% of the click clipped, RMS about -6.6 dBFS; further digital gain mostly adds distortion",
+  "volume_1_to_9": {
+    "module_sha256": "fc9b315e2f144fc6ccc3db06dde4a42d470e034020b0e94e847a9d8966690813",
+    "owner_report": "works",
+    "installed": true,
+    "previous_kept_as": "Z7APP.LCD-SHUTTER-SOUND-7.disabled"
+  }
 }
