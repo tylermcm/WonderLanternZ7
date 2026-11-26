@@ -4,7 +4,9 @@ Status: **works on the camera, November 25, 2026.** In the
 [field test](SHUTTER_SOUND_FIELD_TEST.md#camera-result-november-25-2026) the
 upside-down photo was saved with EXIF Orientation 3 and a vertical photo with 8,
 so the Z7 records pose 3 and no roll-angle fallback is needed for that case.
-Not yet in the LCD release module. Thumbnail IFD and NEF were not checked.
+Now built into the everyday LCD module with shutter sound
+([test plan](LCD_EXIF_ORIENTATION_TEST.md)); not yet staged. Thumbnail IFD and
+NEF were not checked.
 
 ## Problem
 

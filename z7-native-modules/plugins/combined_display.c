@@ -30,6 +30,10 @@ static const struct z7_module_native_warning_api *native_warning_api;
 static void highlight_gui_publish(void);
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
+#ifdef Z7_LCD_EXIF_ORIENTATION
+#define Z7_EXIF_IFD_SLOT 0xa18d3410u
+#include "photo_orientation_exif.h"
+#endif
 #include "worker.h"
 #endif
 #ifdef Z7_INFORMATION_APP_PROBE
@@ -257,6 +261,11 @@ uint32_t z7_main(const struct z7_module_api *api)
 #ifdef Z7_SHUTTER_SOUND_MENU
     /* Cannot fail the module: a missing WAV or mismatch leaves sound off. */
     z7_sl_prepare();
+#endif
+#ifdef Z7_LCD_EXIF_ORIENTATION
+    /* Upside-down photos get EXIF Orientation 3 (camera-verified Nov 25, 2026).
+     * A firmware or descriptor mismatch leaves Nikon's writer in place. */
+    if (z7_exif_matches()) (void)z7_exif_install();
 #endif
     /* No failing operation follows these native scalar stores. Host readiness
      * and native menu pointer publication still follow successful return.

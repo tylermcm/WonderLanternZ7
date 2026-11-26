@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "lcd-sound-exif-candidate",
+  "module_sha256": "751954d4fcef42a4e986713b31bc37b5f04a68e19629ac66868cd78440bd4426",
+  "module_bytes": 25900,
+  "offline": {
+    "display_suite_checks": 277,
+    "sound_and_exif_checks": 41
+  },
+  "qemu_menu_checks": 25,
+  "staged": false,
+  "camera_access": false
+}

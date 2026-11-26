@@ -28,6 +28,8 @@ WAV='A:\\SHUTTER1.WAV';LEVEL='A:\\Z7SND.DAT'
 SLOT,NATIVE,EXPOSURE=0xa18d1bd8,0x101426a9,0x0419000b
 START_SLOT,MAILBOX,SND_STATE=0xa188d278,0xa18852ac,0xa188d190
 GAINS=(64,102,154,205,256,362,512,724,1024)
+EXIF_SLOT=0xa18d3410
+EXIF_DESCRIPTOR=(0x1028bb5f,0x1028bb8b,0x1028bbaf,0x1028bbb9)
 
 
 class SoundAware(PersistenceFixture):
@@ -38,6 +40,7 @@ class SoundAware(PersistenceFixture):
         self.sends=[];self.native=[];self.setters=[];self.silent=1
         self.u.mem_write(MAILBOX,struct.pack('<I',0x1234));self.u.mem_write(SND_STATE,bytes(4))
         self.u.mem_write(SLOT,struct.pack('<I',NATIVE))  # stock boot value, as measured on the camera
+        self.u.mem_write(EXIF_SLOT,struct.pack('<4I',*EXIF_DESCRIPTOR))  # live IFD0 descriptor (stock values)
         for base in (0xa21a0000,0xa2970000):  # sound context and a message page
             try:self.u.mem_map(base,0x10000)
             except Exception:pass
@@ -215,6 +218,23 @@ def main():
         # Safety (sound lab, Nov 25): tone above 31 stopped audio on the camera.
         check(f'level-{level}-driver-tone-fixed-31',next(t for a_,t in g.setters if a_==0x1006b62c)[2]==31 and g.read(0xa21ab994+4)==31)
 
+    # Upside-down photo EXIF fix (builds that include it).
+    if m['configuration'].get('exif_orientation'):
+        g=load({WAV:clip})
+        check('exif-getter-installed',g.read(EXIF_SLOT)==((g.base+symbols['z7_exif_get'])|1) and word(g,'z7_exif_installed')==1)
+        table=g.call(g.read(EXIF_SLOT));writer=struct.unpack('<I',bytes(g.u.mem_read(table+16*9+12,4)))[0]
+        check('exif-table-is-a-copy-with-one-writer-swapped',table!=0x11532d94 and
+              bytes(g.u.mem_read(table,38*16))[:9*16]==raw[0x11532d94-0x10020000:0x11532d94-0x10020000+9*16] and writer==((g.base+symbols['z7_exif_orientation_write'])|1))
+        capture,meta,entry=0xa18d7000,0xa18d8200,0xa18d8300;values=[]
+        for pose in (0,1,2,3,4):
+            g.u.mem_write(capture+0x24fd,bytes([pose]));g.u.mem_write(meta,struct.pack('<3I',0,capture,0));g.u.mem_write(entry,bytes(12))
+            g.call(writer,entry,meta,0);values.append(struct.unpack('<6H',bytes(g.u.mem_read(entry,12)))[4])
+        check('exif-orientation-pose-0-1-2-3-4-writes-1-8-6-3-1',values==[1,8,6,3,1])
+        SoundAware.sound_files={WAV:clip}
+        g=SoundAware(raw,h,packet,dict(journal));g.file_paths=PATHS+NEW
+        g.u.mem_write(EXIF_SLOT,struct.pack('<4I',0x10000001,0x1028bb8b,0,0))
+        check('exif-foreign-descriptor-left-alone-and-module-loads',g.call(h['symbols']['z7_module_load_once'],STATE)==8 and
+              g.read(EXIF_SLOT)==0x10000001 and g.read(g.words()[12]+symbols['z7_exif_installed'])==0)
     report=dict(passed=True,count=len(checks),checks=checks,display_suite_checks=suite['checks'],module_sha256=m['module_sha256'],
                 host_main_sha256=h['main_payload_sha256'],clip_sha256=hashlib.sha256(clip).hexdigest(),camera_access=False,scope=__doc__)
     out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
