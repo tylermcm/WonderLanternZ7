@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-release-camera-1",
+  "module_sha256": "c813c4570f4bd803a69bf923310bb5a38611fa9a3264e9757830a3ba9f7bd373",
+  "restored_module": "8dcee0e0",
+  "camera_access": true,
+  "armed_at_tick": 1,
+  "armed_without_half_press": true,
+  "release_result": 0,
+  "callback_events": [
+    "0x04100038 (no argument)"
+  ],
+  "still_records_counted": 1,
+  "still_key": "0x3642780",
+  "hold_after_centre": "state 0x40 for 30 s (D2 changed by release; module did not re-send)",
+  "fixed_in": "a431a849",
+  "offline_checks": 24,
+  "open_question": "no file from this run was on the card when it came back; DSC_8502-8507 were also gone"
+}

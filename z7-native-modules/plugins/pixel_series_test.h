@@ -114,17 +114,24 @@ static void z7_vs_finish(void)
  *    format 0x3800), no AF (word +4 = 0), +8 = 0, +0xC = 1, +0x10 = 1 frame -
  *    the same values as upstream's Z7II settings {0x100,0,0,1,1}.
  *  - Completion: Nikon calls the callback from slot 0x38 of the table
- *    0xA238BA48 (filled by 0x1005ED7C only if empty) with event 0x04100034
- *    (word 0 = 0 on success); the new still-file record (0x041E0002 hook)
- *    confirms the file.
- *  - Start: after arming, once the shutter button (SW0 0xA1F90AA4 bits
- *    0xF0000000: half/full, horizontal and vertical) has been free for 0.5 s.
- *    Touching it during the series aborts it.
+ *    0xA238BA48 (filled by 0x1005ED7C only if empty), once. On the camera
+ *    (Nov 27, c813c457) it reported event 0x04100038 without an argument; the
+ *    remote-capture callback treats that as success too. 0x04100034 carries a
+ *    status word (0 = success). The new still-file record (0x041E0002 hook)
+ *    must confirm the file in either case.
+ *  - Arming needs the photographer: stabilisation active and settled is not
+ *    enough (it already is right after power-on, so c813c457 fired at boot);
+ *    the shutter button must be half-pressed (SW0 0xA1F90AA4 bit 0x80000000,
+ *    vertical grip 0x20000000) at that moment.
+ *  - Start: once the shutter button (bits 0xF0000000: half/full, horizontal
+ *    and vertical) has then been free for 0.5 s. Touching it during the series
+ *    aborts it.
  * Then centre, Nikon D2 restore, watch - as the dry run.
  */
 enum {
     VR_RELEASE=0x101ecfb1u, VR_SLOT_TABLE=0xa238ba48u, VR_SLOT=0xa238ba48u+0x38u*4u, VR_DONE=0x04100034u,
-    VR_SW0=0xa1f90aa4u, VR_SHUTTER_BITS=0xf0000000u,
+    VR_RELEASED=0x04100038u,  /* camera run c813c457: Nikon reports this one (no argument) */
+    VR_SW0=0xa1f90aa4u, VR_SHUTTER_BITS=0xf0000000u, VR_HALF_BITS=0xa0000000u,
     VR_PH_FIRE=0x19u, VR_PH_EVENT=0x1au, VR_PH_FREE=0x1bu,
     VR_FIRED=1u<<22, VR_REFUSED=1u<<23, VR_FRAME_FAILED=1u<<24, VR_TOUCHED=1u<<25, VR_NOT_FREED=1u<<26, VR_SLOT_BUSY=1u<<27
 };
@@ -148,6 +155,7 @@ static uint32_t z7_vr_callback(uint32_t event, const uint32_t *arg, uint32_t c, 
     z7_vr_arg0=a0; z7_vr_arg1=a1;
     __atomic_store_n(&z7_vr_last_event,event,__ATOMIC_RELEASE);
     if (event==VR_DONE) __atomic_store_n(&z7_vr_done,a0 ? 2u : 1u,__ATOMIC_RELEASE);
+    else if (event==VR_RELEASED) __atomic_store_n(&z7_vr_done,1u,__ATOMIC_RELEASE);  /* file still confirmed */
     __atomic_add_fetch(&z7_vr_events,1u,__ATOMIC_RELEASE);
     return 0;
 }
@@ -221,6 +229,9 @@ static void z7_vm_worker(void)
         z7_vm_last_state=state;
         if (s==VM_PENDING) { z7_vm_log.flags|=VM_DONE; z7_vm_stage=3; z7_vm_save(); return; }
         z7_vm_armed=!s && state==VM_NORMAL && z7_vm_settled(t,48);
+#ifdef Z7_PIXEL_RELEASE
+        if (!(VM_W(VR_SW0)&VR_HALF_BITS)) z7_vm_armed=0;   /* only on a deliberate half-press */
+#endif
         if (z7_vm_armed) {
             z7_vm_sleep(100);
             s=z7_vm_sample(VM_PH_ARM,1);

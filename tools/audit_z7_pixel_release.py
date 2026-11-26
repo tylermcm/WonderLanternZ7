@@ -25,21 +25,21 @@ from audit_z7_settings_files import PATHS
 from build_z7_module_host import STATE
 from prepare_flash_review import require_private_output
 
-RELEASE,RSLOT,SW0,DONE=0x101ecfb0,0xa238ba48+0x38*4,0xa1f90aa4,0x04100034
+RELEASE,RSLOT,SW0,DONE,RELEASED=0x101ecfb0,0xa238ba48+0x38*4,0xa1f90aa4,0x04100034,0x04100038
 V=dict(FIRED=1<<22,REFUSED=1<<23,FRAME_FAILED=1<<24,TOUCHED=1<<25,NOT_FREED=1<<26,SLOT_BUSY=1<<27)
 REQUEST=bytes([0,1,0,0])+struct.pack('<4I',0,0,1,1)
 
 
 class ReleaseUnit(D2Unit):
-    def __init__(self,*a,codes=None,complete='ok',hold_button=False,touch_after=None,slot_busy=False,**k):
+    def __init__(self,*a,codes=None,complete='released',hold_button=False,no_press=False,touch_after=None,slot_busy=False,**k):
         super().__init__(*a,**k);self.fires=[];self.codes=list(codes or []);self.complete=complete
-        self.hold_button=hold_button;self.touch_after=touch_after;self.slot_busy=slot_busy;self.pending_frame=None;self.sym={}
+        self.hold_button=hold_button;self.no_press=no_press;self.touch_after=touch_after;self.slot_busy=slot_busy;self.pending_frame=None;self.sym={}
         for base in (0xa2380000,0xa1f90000):
             try:self.u.mem_map(base,0x10000)
             except Exception:pass
     def setup(self,base,symbols):
         self.sym={n:base+symbols[n] for n in ('z7_vr_done','z7_vs_photos','z7_vr_last_event','z7_vr_arg0','z7_vr_arg1','z7_vr_events')}
-        self.u.mem_write(SW0,struct.pack('<I',0x80000000 if self.hold_button else 0))
+        self.u.mem_write(SW0,struct.pack('<I',0 if self.no_press else 0x80000000))  # photographer half-presses to arm
         self.u.mem_write(RSLOT,struct.pack('<I',0x10001 if self.slot_busy else 0))
     def w(self,n,v):self.u.mem_write(self.sym[n],struct.pack('<I',v))
     def r_(self,n):return struct.unpack('<I',bytes(self.u.mem_read(self.sym[n],4)))[0]
@@ -52,9 +52,12 @@ class ReleaseUnit(D2Unit):
             if not code:self.pending_frame=len(self.fires)
             if self.touch_after is not None and len(self.fires)>=self.touch_after:u.mem_write(SW0,struct.pack('<I',0x40000000))
             self.ret(code);return
+        if address==DELAY and self.r(UC_ARM_REG_R0)==100 and not self.hold_button and not self.fires:
+            self.long_delays=getattr(self,'long_delays',0)+1
+            if self.long_delays==2:u.mem_write(SW0,bytes(4))   # ...and lets go once armed (after the 100 ms confirm)
         if address==DELAY and self.pending_frame and self.complete!='none':
             self.pending_frame=None
-            self.w('z7_vr_last_event',DONE);self.w('z7_vr_events',self.r_('z7_vr_events')+1)
+            self.w('z7_vr_last_event',RELEASED if self.complete=='released' else DONE);self.w('z7_vr_events',self.r_('z7_vr_events')+1)
             if self.complete=='fail':self.w('z7_vr_arg0',7);self.w('z7_vr_done',2)
             else:
                 self.w('z7_vr_arg0',0);self.w('z7_vr_done',1);self.w('z7_vs_photos',self.r_('z7_vs_photos')+1)
@@ -102,6 +105,12 @@ def main():
     check('flags-complete',fl&V['FIRED'] and fl&S['SERIES_COMPLETE'] and fl&R['RESTORED'] and fl&F['CENTRE_FOLLOWED'] and
           not fl&(V['REFUSED']|V['FRAME_FAILED']|V['TOUCHED']|V['NOT_FREED']|V['SLOT_BUSY']))
     n=len(f.fires);tick(f,5);check('quiet-after-done',len(f.fires)==n)
+    g=load(complete='done34');tick(g)
+    check('done-0x04100034-also-completes',len(g.fires)==4 and moves(g)[-1]==CENTRE)
+    g=load(no_press=True);tick(g,12)
+    check('no-half-press-never-arms',not g.fires and not moves(g) and not g.d2_calls and all(r['opcode']==0xf040 for r in g.requests))
+    g=load(change_d2=True);tick(g)
+    check('d2-replaced-by-release-resends-latest',len(g.d2_calls)==1 and g.d2_calls[0]['selection']==bytes([1,0x11]) and g.d2_calls[0]['state']==0x40)
     # 2. Shutter button held: never fires, recentres.
     g=load(hold_button=True);tick(g);tick(g,32)
     check('held-button-no-fire',not g.fires and flags(g)&V['NOT_FREED'] and moves(g)==[] and len(g.d2_calls)==0)
@@ -131,8 +140,10 @@ def main():
     check('callback-success',g.r_('z7_vr_done')==1 and g.r_('z7_vr_arg1')==0x1234 and g.r_('z7_vr_events')==1)
     g.u.mem_write(arg,struct.pack('<2I',5,0));g.call(cb,DONE,arg,0,0)
     check('callback-failure',g.r_('z7_vr_done')==2 and g.r_('z7_vr_arg0')==5)
-    g.w('z7_vr_done',0);g.call(cb,0x04100038,0x13,0,0)
-    check('callback-other-event-bad-pointer',g.r_('z7_vr_done')==0 and g.r_('z7_vr_arg0')==0xffffffff and g.r_('z7_vr_last_event')==0x04100038)
+    g.w('z7_vr_done',0);g.call(cb,RELEASED,0x13,0,0)
+    check('callback-released-event-no-argument',g.r_('z7_vr_done')==1 and g.r_('z7_vr_arg0')==0xffffffff and g.r_('z7_vr_last_event')==RELEASED)
+    g.w('z7_vr_done',0);g.call(cb,0x04100039,0,0,0)
+    check('callback-other-event-ignored',g.r_('z7_vr_done')==0 and g.r_('z7_vr_last_event')==0x04100039)
     report=dict(passed=True,count=len(checks),checks=checks,module_sha256=m['module_sha256'],host_main_sha256=h['main_payload_sha256'],
                 request=REQUEST.hex(),camera_access=False,exposures=0,scope=__doc__)
     out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')

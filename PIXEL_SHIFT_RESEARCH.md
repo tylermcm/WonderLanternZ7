@@ -233,6 +233,33 @@ Build `c813c457` (`--pixel-release`,
 
 Checks: 20 offline, 48 static.
 
+## Step 3b first camera run: the release works; three fixes (Nov 27)
+
+`c813c457` armed at power-on, not on the photographer's half-press, because
+stabilisation is already active and settled right after start-up.
+
+- **The release worked.** It held position 0 (state `0x40`, target 0) and
+  fired: `0x101ECFB0` returned 0. Nikon called back once, with event
+  **`0x04100038`** and no argument. The still-file hook then counted a new
+  record (key `0x3642780`).
+- **The module stopped after one frame.** It waited only for `0x04100034`,
+  so after 15 s it gave up on the frame.
+- **The hold stayed on.** It recentred, but the release had replaced
+  Nikon's D2 parameters, and the module took that as "Nikon already
+  restored" and sent nothing. The hold (state `0x40`) stayed on for the
+  full 30-second watch, until power-off.
+
+Fixes in `a431a849`:
+1. Arming also requires the shutter button half-pressed (SW0 bits
+   `0xA0000000`).
+2. `0x04100038` counts as done; the still record must still confirm the
+   file.
+3. If the D2 buffer changed, the module re-sends Nikon's latest parameters,
+   as upstream re-snapshots before `restore_d2`.
+
+`8dcee0e0`, `5fe15dcc`, `2ff19bde` and `b68284dc` still rebuild byte for
+byte. 24 offline checks.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

@@ -211,8 +211,21 @@ static uint32_t z7_vm_snapshot(void)
 static uint32_t z7_vm_service_idle(void) { return VM_B(VM_SERVICE)==1u && z7_vm_idle(); }
 static void z7_vm_restore(void)
 {
-    if (z7_vm_d2_value()!=z7_vm_log.d2) z7_vm_log.flags|=VM_D2_CHANGED;   /* Nikon already re-sent */
-    else for (uint32_t i=0;i<VM_RESTORE_TRIES;++i) {
+    uint32_t send=1, now=z7_vm_d2_value();
+    if (now!=z7_vm_log.d2) {
+        z7_vm_log.flags|=VM_D2_CHANGED;   /* Nikon re-sent its parameters meanwhile */
+        send=0;
+#ifdef Z7_PIXEL_RELEASE
+        /* A native release replaces the D2 parameters but can leave the hold on
+         * (camera run c813c457): re-send Nikon's latest ones, as upstream
+         * re-snapshots before restore_d2. */
+        if ((now&0xffu)>=1u && (now&0xffu)<=3u) {
+            z7_vm_selection[0]=(uint8_t)now; z7_vm_selection[1]=(uint8_t)(now>>8); z7_vm_d2_flags=(now>>16)&0xffu;
+            z7_vm_log.d2=now; send=1;
+        }
+#endif
+    }
+    if (send) for (uint32_t i=0;i<VM_RESTORE_TRIES;++i) {
         for (uint32_t j=0;j<50u && !z7_vm_service_idle();++j) z7_vm_sleep(20);
         uint32_t r=z7_vm_service_idle() ?
             VM_F(VM_D2_SEND,uint32_t,const uint8_t *,uint32_t,void (*)(uint32_t))(z7_vm_selection,z7_vm_d2_flags,z7_vm_d2_complete) : 0x100u;
