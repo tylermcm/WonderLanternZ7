@@ -79,3 +79,5 @@ module still rebuilds byte for byte, its 277 display checks pass unchanged, and
 the emulator shows the new row ([test plan](LCD_SHUTTER_SOUND_TEST.md)).
 
 **Camera result:** the LCD module with the Shutter sound volume row works as intended on the camera: previews, clicks at the chosen level, and the level is kept after a restart.
+
+**Sound lab (camera):** digital levels up to 9 stay clean; the driver tone value acts like an output gain up to about 28-31, is quieter at 34, and at 37 stopped audio until a battery pull, so the module keeps it at 31. A volume OFF/1-9 build is prepared ([details](LCD_SOUND_LAB_TEST.md)).

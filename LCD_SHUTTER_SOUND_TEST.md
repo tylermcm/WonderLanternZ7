@@ -6,6 +6,18 @@ and the saved level after restart all work as intended
 ([evidence](evidence/20261125-lcd-shutter-sound-hardware-result.json)). It stays
 installed; the previous module is kept as `Z7APP.LCD-LABEL-5E62.disabled`.
 
+## Update: volume OFF/1–9 (prepared, not staged)
+
+The [sound lab](LCD_SOUND_LAB_TEST.md) showed levels 8 (×2.83) and 9 (×4) are
+still clean on the camera, and that the driver tone value must stay at 31 (37
+stopped audio until a battery pull). Build `fc9b315e` is this module with the
+row going `OFF`, `1`–`9`; everything else is the same, the tone is fixed at 31,
+and your saved level carries over. Previous module kept as
+`Z7APP.LCD-SHUTTER-SOUND-7.disabled`. Offline: the 277-check display suite plus
+the sound checks for all nine levels, including that every sound sends tone 31.
+Check on the camera: press OK through 8 and 9, pick a level, take a photo in
+Silent photography.
+
 Original status: This is your installed LCD module (`5e62ce53`)
 with the shutter sound built in and a volume row on its settings page. It
 follows the [shutter-sound camera tests](SHUTTER_SOUND_ON_PHOTO_TEST.md) of

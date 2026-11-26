@@ -8,7 +8,7 @@ worker in the persistence fixture, with the sound files served separately:
   2. Sound: the root page shows "Shutter sound" with its level; OK steps
      OFF/1..7 and previews each level without any display-journal I/O; the
      worker writes A:\\Z7SND.DAT only after a change, and a reload restores it;
-     a damaged file keeps level 5; the capture event 0x0419000B plays at the
+     a damaged file keeps level 5; with the 9-level build, 8 and 9 too; the capture event 0x0419000B plays at the
      chosen level only in Silent photography and never when OFF; Nikon's
      controller handler always runs; levels 6/7 boost and clip exactly.
 Supplied: filesystem, sound post and start-path setters, property getter for
@@ -27,7 +27,7 @@ from prepare_flash_review import require_private_output
 WAV='A:\\SHUTTER1.WAV';LEVEL='A:\\Z7SND.DAT'
 SLOT,NATIVE,EXPOSURE=0xa18d1bd8,0x101426a9,0x0419000b
 START_SLOT,MAILBOX,SND_STATE=0xa188d278,0xa18852ac,0xa188d190
-GAINS=(64,102,154,205,256,362,512)
+GAINS=(64,102,154,205,256,362,512,724,1024)
 
 
 class SoundAware(PersistenceFixture):
@@ -119,8 +119,9 @@ def main():
     h=json.loads((a.host/'module-host.emulator.json').read_text());raw=(a.host/'module-host.emulator.main.bin').read_bytes()
     m=json.loads((a.module/'module.json').read_text());packet=(a.module/'Z7APP.BIN').read_bytes()
     assert hashlib.sha256(raw).hexdigest()==h['main_payload_sha256'] and hashlib.sha256(packet).hexdigest()==m['module_sha256']
-    assert m['configuration']['shutter_sound'] and m['configuration']['settings_label_refresh']
+    assert m['configuration']['shutter_sound'] and m['configuration']['settings_label_refresh'] and not m['configuration'].get('sound_lab')
     clip=a.clip.read_bytes();symbols=m['symbols'];checks=[]
+    levels=m['configuration'].get('sound_levels') or 7
     def check(name,ok):
         assert ok,name
         checks.append(name)
@@ -164,10 +165,12 @@ def main():
     check('sound-row-touches-no-display-state',word(f,'z7_settings_revision')==revision and f.file_events==files and
           bytes(f.u.mem_read(f.base+symbols['z7_menu_settings'],44))==model and word(f,'z7_settings_view')==0)
     check('row-value-repainted',labels(f).get(244)=='6')
-    finish(f);press(f,6);finish(f)
-    check('steps-to-7',word(f,'z7_sl_level')==7 and len(f.sends)==2)
+    finish(f)
+    for want in range(7,levels+1):
+        press(f,6);finish(f)
+        check(f'steps-to-{want}',word(f,'z7_sl_level')==want and len(f.sends)==want-5 and labels(f).get(244)==str(want))
     press(f,6)
-    check('wraps-to-off-without-preview',word(f,'z7_sl_level')==0 and len(f.sends)==2 and labels(f).get(244)=='OFF')
+    check('wraps-to-off-without-preview',word(f,'z7_sl_level')==0 and len(f.sends)==levels-5 and labels(f).get(244)=='OFF')
     for _ in range(4):press(f,6);finish(f)
     check('cycles-back-to-4',word(f,'z7_sl_level')==4)
     ticks(f,1);check('no-write-while-unstable',not any(e[0]=='create' for e in f.sound_events))
@@ -200,7 +203,7 @@ def main():
 
     # Boosted levels clip exactly (start path with a full-scale test tone).
     tone=[0,16000,32767,-32768,-20000,100]*10
-    for level in (5,6,7):
+    for level in range(5,levels+1):
         g=load({WAV:wav(tone),LEVEL:level_record(level)})
         g.call(g.read(SLOT),EXPOSURE,0,0,0)
         msg=0xa2970100;g.u.mem_write(msg,struct.pack('<7I',0,0,0,0,0x0418001e,g.sends[0][1],msg))
@@ -209,6 +212,8 @@ def main():
         # The engine plays mono clips as interleaved stereo (each sample twice).
         want=tuple(max(-32768,min(32767,(v*GAINS[level-1])>>8)) for v in tone for _ in (0,1))
         check(f'level-{level}-pcm-exact',started==1 and data[1]==4*len(tone) and pcm==want)
+        # Safety (sound lab, Nov 25): tone above 31 stopped audio on the camera.
+        check(f'level-{level}-driver-tone-fixed-31',next(t for a_,t in g.setters if a_==0x1006b62c)[2]==31 and g.read(0xa21ab994+4)==31)
 
     report=dict(passed=True,count=len(checks),checks=checks,display_suite_checks=suite['checks'],module_sha256=m['module_sha256'],
                 host_main_sha256=h['main_payload_sha256'],clip_sha256=hashlib.sha256(clip).hexdigest(),camera_access=False,scope=__doc__)

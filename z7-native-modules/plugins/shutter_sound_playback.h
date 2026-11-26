@@ -142,10 +142,11 @@ static void z7_sound_release(uint32_t event, struct z7_sound_job *job)
 static const struct z7_sound_record z7_sound_pcm_record={1,31,0,0,0,0,1,SND_TYPE_PRIVATE,z7_sound_done};
 #ifdef Z7_SOUND_TONE_OVERRIDE
 /* Experimental: the record/tone-setter value Nikon accepts as 0..37 for its own
- * sounds; this engine and upstream always send 31. Its effect on PCM playback is
- * what the sound lab measures by ear. Clamped to Nikon's accepted range. */
+ * sounds; this engine and upstream always send 31. On the camera (Nov 25, 2026)
+ * it acted as an output gain for sample playback rising to about 28-31; 34 was
+ * quieter and 37 stopped audio until a battery pull. Never above 31. */
 volatile uint32_t z7_sound_tone=31u;
-#define Z7_SOUND_TONE() (z7_sound_tone<=37u ? z7_sound_tone : 31u)
+#define Z7_SOUND_TONE() (z7_sound_tone<=31u ? z7_sound_tone : 31u)
 #else
 #define Z7_SOUND_TONE() 31u
 #endif

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "shutter-sound-lab-hardware-result",
+  "experimental": true,
+  "module_sha256": "aed2459cb60801572b02fcae46b23027979068a00039ccae9e23f601c83f8097",
+  "staged_with_owner_approval": true,
+  "firmware_flashed": false,
+  "owner_report": {
+    "levels_1_to_9": "work well; anything louder than 9 would likely degrade the audio",
+    "tone_sweep": "5 T0 < T16 < T24 < T28 increasing loudness; T34 noticeably quieter; at T37 the sound cut out entirely and further cycles needed a battery pull"
+  },
+  "reading": {
+    "tone": "the driver tone value behaves like an output gain index for sample playback, rising to about 28-31 and failing above; 31 (used by this engine and upstream) is at or near the usable top",
+    "digital": "level 9 (x4) is the practical digital ceiling",
+    "hazard": "tone values above 31 are unsafe for sample playback: 37 stopped audio until a battery pull. The release module keeps tone fixed at 31; the lab build must not be used further"
+  },
+  "card_restored": false
+}

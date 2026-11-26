@@ -25,7 +25,12 @@
 #define Z7_SOUND_LEVELS 9u
 #define Z7_SOUND_TONE_OVERRIDE 1
 #else
-#define Z7_SOUND_LEVELS 7u
+/* Menu levels: 7 in the first release (92602a4a); 9 adds the x2.83 and x4
+ * boosts that the sound lab showed are still clean on the camera. */
+#ifndef Z7_SOUND_MENU_LEVELS
+#define Z7_SOUND_MENU_LEVELS 7u
+#endif
+#define Z7_SOUND_LEVELS Z7_SOUND_MENU_LEVELS
 #endif
 #include "../plugins/shutter_sound_playback.h"
 
@@ -40,7 +45,7 @@ static const struct z7_sl_choice z7_sl_lab[]={
 #define SL_APPLY(i) __atomic_store_n(&z7_sound_tone,(uint32_t)z7_sl_lab[i].tone,__ATOMIC_RELEASE)
 #define SL_RECORD_VERSION 2u
 #else
-#define SL_COUNT 8u
+#define SL_COUNT (Z7_SOUND_MENU_LEVELS+1u)
 #define SL_VOLUME(i) (i)
 #define SL_APPLY(i) ((void)(i))
 #define SL_RECORD_VERSION 1u
@@ -55,7 +60,11 @@ enum {
 static const char z7_sl_wav_path[]="A:\\SHUTTER1.WAV";
 static const char z7_sl_path[]="A:\\Z7SND.DAT";
 #ifndef Z7_SOUND_LAB
-static const char *const z7_sl_text[SL_LEVELS+1]={"OFF","1","2","3","4","5","6","7"};
+static const char *const z7_sl_text[SL_LEVELS+1]={"OFF","1","2","3","4","5","6","7"
+#if Z7_SOUND_MENU_LEVELS > 7
+    ,"8","9"
+#endif
+};
 #endif
 volatile uint32_t z7_sl_level=SL_DEFAULT, z7_sl_saved=SL_DEFAULT, z7_sl_loaded, z7_sl_installed;
 volatile uint32_t z7_sl_seen, z7_sl_queued, z7_sl_busy, z7_sl_previews, z7_sl_saves, z7_sl_errors, z7_sl_result;

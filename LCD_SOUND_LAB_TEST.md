@@ -1,6 +1,20 @@
 # Shutter sound lab: find the speaker's ceiling by ear
 
-Status: **experimental, prepared, not staged.** A temporary build of your LCD
+Status: **experimental; tested on the camera November 25, 2026. Do not use
+further.**
+
+## Camera result
+
+- Levels `1`–`9` work well; louder than `9` would likely degrade the sound.
+- `5 T0` → `5 T28` get progressively louder; `5 T34` is noticeably quieter;
+  at `5 T37` the sound cut out completely and the camera needed a battery pull
+  ([evidence](evidence/20261125-shutter-sound-lab-hardware-result.json)).
+- Reading: the driver tone value acts like an output gain index for sample
+  playback, topping out around 28–31; 31, which the normal module always uses,
+  is at or near the usable top. **Values above 31 are unsafe.** The normal
+  module keeps 31 fixed, and the next normal build adds levels 8 and 9 only.
+
+Original status: experimental, prepared, not staged. A temporary build of your LCD
 module with shutter sound (`92602a4a`, which
 [works on the camera](LCD_SHUTTER_SOUND_TEST.md)) whose **Shutter sound** row
 offers extra settings for listening tests. It is not a release build; go back
