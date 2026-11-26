@@ -9,6 +9,12 @@ folder).
 Design follows JKWTCN's MIT Z7II inverted playback; original-Z7 bindings are
 independent work ([EXIF_ORIENTATION_RESEARCH.md](EXIF_ORIENTATION_RESEARCH.md)).
 
+## Camera result: works (November 26, 2026)
+
+With the fixed build `8dcee0e0` the owner reports upside-down photos are shown
+the right way up in playback ([evidence](evidence/20261126-upside-down-playback-hardware-result.json)).
+The build stays installed (sound folder + EXIF fix + playback).
+
 ## Camera result, first try (November 25, 2026): not turned
 
 With `8cbb9b46` the upside-down photo (DSC_8496) was remembered correctly

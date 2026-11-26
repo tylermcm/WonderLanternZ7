@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "feature": "upside-down-playback-hardware-result",
+  "module_sha256": "8dcee0e026017de282288635ef92ea4bf544caa81863125c6c68f0ff995d611a",
+  "staged_with_owner_approval": true,
+  "installed": true,
+  "firmware_flashed": false,
+  "owner_report": "works now: upside-down photos are shown the right way up in playback",
+  "previous_try": "8cbb9b46 handled only request block 0xA289A264 and did not turn",
+  "diagnostic_file_read": false,
+  "camera_photos_published": false
+}
