@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "feature": "vr-telemetry-probe-camera",
+  "module_sha256": "e5ac084449910834abfd2bcde12ad33cd1cb42cf2cbda6db5612d5370f2de261",
+  "restored_module": "8dcee0e0",
+  "camera_access": true,
+  "sensor_moved": false,
+  "log": {
+    "rounds": 12,
+    "sends": 48,
+    "refused": 0,
+    "timeouts": 0,
+    "statuses_nonzero": 0
+  },
+  "window_0fe0": {
+    "target": "0x00-0x05 int16x3",
+    "error_target_minus_measured": "0x06-0x0B int16x3",
+    "state": "0x22 (0 idle, 1 active)",
+    "measured": "0x24-0x29 int16x3"
+  },
+  "idle_target": [
+    -770,
+    -8591,
+    -8598
+  ],
+  "active_round": {
+    "target": [
+      1950,
+      -1158,
+      -4308
+    ],
+    "measured": [
+      1976,
+      -1054,
+      -4436
+    ],
+    "error": [
+      -26,
+      -104,
+      128
+    ]
+  },
+  "window_1018": "int16x3 about 91, stable",
+  "window_1ff8": 1,
+  "window_1ff9": "alternates 0/1",
+  "layout_matches_z7ii": true
+}

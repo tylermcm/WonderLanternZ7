@@ -53,7 +53,27 @@ Completion of a BodyVr request calls the stored callback (slot `0xA18B5D88`,
 cleared afterwards) with event `0x042F0021` and a result whose first byte is the
 status; the send refuses while `0xA18B6030+0x34` is 1. The probe
 ([LCD_VR_PROBE_TEST.md](LCD_VR_PROBE_TEST.md), build `e5ac0844`) uses only
-`0xF040` reads of four windows and logs them; 16 offline checks. Not staged.
+`0xF040` reads of four windows and logs them; 16 offline checks.
+
+## Step 1 result: telemetry on the camera (Nov 26)
+
+The probe (`e5ac0844`) was staged, run and restored. The log covered 12 rounds:
+48 reads, 0 refused, 0 timeouts, every status 0. It never moved the sensor.
+Layout of the 42-byte window `0x0FE0` (signed little-endian int16, three axes):
+
+| Bytes | Meaning (Z7) | Evidence |
+| --- | --- | --- |
+| 0x00-0x05 | target position | constant `(-770, -8591, -8598)` while VR was idle (rounds 0-8, 10-11); `(1950, -1158, -4308)` in the hand-held round 9 |
+| 0x06-0x0B | servo error, target - measured | round 9: `(-26, -104, 128)`, exactly target - measured |
+| 0x22 | state byte | 0 idle, 1 in the active round |
+| 0x24-0x29 | measured position | drifts while idle (unpowered sensor), tracks the target within ~130 counts when active |
+
+The layout is the same as JKWTCN's Z7II telemetry block. Other windows:
+`0x1018/6` reads three int16 values of about 91 that stay steady.
+`0x1FF8` always reads 1. `0x1FF9` alternates 0/1.
+
+For step 2, "settled" can be read as state byte 1 and |error| small on every
+axis. The step size for one pixel is still unknown.
 
 ## Safety plan
 
