@@ -47,6 +47,14 @@ So the original Z7 has the same mechanism. Still to find before anything moves:
    always returned to normal stabilisation.
 4. The step scale for one pixel on the Z7 (calibration, as upstream did).
 
+## Step 1 built: read-only probe
+
+Completion of a BodyVr request calls the stored callback (slot `0xA18B5D88`,
+cleared afterwards) with event `0x042F0021` and a result whose first byte is the
+status; the send refuses while `0xA18B6030+0x34` is 1. The probe
+([LCD_VR_PROBE_TEST.md](LCD_VR_PROBE_TEST.md), build `e5ac0844`) uses only
+`0xF040` reads of four windows and logs them; 16 offline checks. Not staged.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

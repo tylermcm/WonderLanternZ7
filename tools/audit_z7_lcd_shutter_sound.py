@@ -27,6 +27,7 @@ from prepare_flash_review import require_private_output
 WAV='A:\\SHUTTER1.WAV';LEVEL='A:\\Z7SND.DAT';INVERTED='A:\\Z7INV.DAT'
 FOLDER_PREFIX='A:'+chr(92)+'SHUTTER'+chr(92)  # A:\SHUTTER\ sound folder
 DEBUGFILE='A:'+chr(92)+'Z7IPDBG.DAT'
+VRLOG='A:'+chr(92)+'Z7VRLOG.DAT'
 SLOT,NATIVE,EXPOSURE=0xa18d1bd8,0x101426a9,0x0419000b
 START_SLOT,MAILBOX,SND_STATE=0xa188d278,0xa18852ac,0xa188d190
 GAINS=(64,102,154,205,256,362,512,724,1024)
@@ -70,7 +71,7 @@ class SoundAware(PersistenceFixture):
         if self.files_enabled and address==0x1027beae:
             p=self.r(UC_ARM_REG_R0);words=struct.unpack('<42I',u.mem_read(p,168));op=bytes(u.mem_read(p+0x9c,1))[0]
             path=self.cstring(words[4]) if op in (5,13) else None
-            if path in (WAV,LEVEL,INVERTED,DEBUGFILE) or (path or '').startswith(FOLDER_PREFIX) or (op in (6,8,9) and words[7] in self.sound_handles):
+            if path in (WAV,LEVEL,INVERTED,DEBUGFILE,VRLOG) or (path or '').startswith(FOLDER_PREFIX) or (op in (6,8,9) and words[7] in self.sound_handles):
                 result=0
                 if op in (5,13):
                     self.sound_events.append(('open' if op==5 else 'create',path))
@@ -93,6 +94,8 @@ class SoundAware(PersistenceFixture):
                 else:
                     self.sound_events.append(('close',self.sound_handles.pop(words[7])[0]))
                 self.ret(result);return
+        if address==0x100f1f9e:  # BodyVr send (VR probe builds): report busy, nothing sent
+            self.ret(0);return
         if address==0x100a2d78:
             self.sends.append((self.r(UC_ARM_REG_R0),self.r(UC_ARM_REG_R1)));self.ret(1);return
         if address==0x1016fef2 and self.r(UC_ARM_REG_R0)==0x576:

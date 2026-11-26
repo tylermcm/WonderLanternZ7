@@ -142,4 +142,7 @@ static void persistence_worker(void)
 #ifdef Z7_INVERTED_PLAYBACK
     z7_ip_worker();
 #endif
+#ifdef Z7_VR_PROBE
+    z7_vp_worker();
+#endif
 }

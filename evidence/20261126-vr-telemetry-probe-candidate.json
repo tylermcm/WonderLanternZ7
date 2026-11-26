@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "feature": "vr-telemetry-probe-candidate",
+  "module_sha256": "e5ac084449910834abfd2bcde12ad33cd1cb42cf2cbda6db5612d5370f2de261",
+  "module_bytes": 29920,
+  "bindings": {
+    "send": "0x100F1F9F",
+    "completion_event": "0x042F0021",
+    "callback_slot": "0xA18B5D88",
+    "busy": "0xA18B6030+0x34"
+  },
+  "windows": [
+    "0x0FE0/42",
+    "0x1018/6",
+    "0x1FF8/1",
+    "0x1FF9/1"
+  ],
+  "reads_only": true,
+  "offline": {
+    "probe_checks": 16,
+    "display_suite_checks": 277,
+    "playback_checks": 22,
+    "folder_checks": 22
+  },
+  "qemu_menu_checks": 26,
+  "staged": false,
+  "camera_access": false
+}
