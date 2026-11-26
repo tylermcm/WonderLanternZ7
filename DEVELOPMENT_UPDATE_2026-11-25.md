@@ -77,3 +77,5 @@ LCD module with a **Shutter sound** volume row (OFF, 1–7, preview on OK, saved
 on the card); levels 6 and 7 are louder than before. The installed display
 module still rebuilds byte for byte, its 277 display checks pass unchanged, and
 the emulator shows the new row ([test plan](LCD_SHUTTER_SOUND_TEST.md)).
+
+**Camera result:** the LCD module with the Shutter sound volume row works as intended on the camera: previews, clicks at the chosen level, and the level is kept after a restart.

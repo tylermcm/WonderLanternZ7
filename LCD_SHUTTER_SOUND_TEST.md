@@ -1,6 +1,12 @@
 # LCD module with shutter sound and a volume setting: camera test
 
-Status: **prepared, not staged.** This is your installed LCD module (`5e62ce53`)
+Status: **works on the camera, November 25, 2026.** Staged with the owner's
+approval; the owner reports the row, previews, photo clicks at the chosen level
+and the saved level after restart all work as intended
+([evidence](evidence/20261125-lcd-shutter-sound-hardware-result.json)). It stays
+installed; the previous module is kept as `Z7APP.LCD-LABEL-5E62.disabled`.
+
+Original status: This is your installed LCD module (`5e62ce53`)
 with the shutter sound built in and a volume row on its settings page. It
 follows the [shutter-sound camera tests](SHUTTER_SOUND_ON_PHOTO_TEST.md) of
 November 25, 2026: the click played on time on every photo and burst frame in

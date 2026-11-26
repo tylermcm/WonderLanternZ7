@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "lcd-shutter-sound-volume-hardware-result",
+  "module_sha256": "92602a4a041d69911fb58a7e15b3fd211c6a6c9aa2086f1de6da24c9ffe4cb87",
+  "staged_with_owner_approval": true,
+  "firmware_flashed": false,
+  "installed_on_card": true,
+  "previous_module_kept_as": "Z7APP.LCD-LABEL-5E62.disabled",
+  "owner_report": "works exactly as intended (menu row, previews, photo clicks at the chosen level, level kept after restart)",
+  "loudness_note": "level 7 = x2 digital gain, about 11% of the click clipped, RMS about -6.6 dBFS; further digital gain mostly adds distortion"
+}
