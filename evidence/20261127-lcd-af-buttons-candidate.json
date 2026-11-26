@@ -1,0 +1,148 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "lcd-af-buttons-candidate",
+  "module_sha256": "e33474d12bd800481e9dd029f6a27443d7290a65d9c7333f4304ec745f00b530",
+  "module_bytes": 31256,
+  "base_module": "8dcee0e0 rebuilds byte for byte",
+  "menu": "root row 7 -> Extras (Shutter volume, Shutter sound, AF-area buttons, Back); AF-area buttons: Fn1, Fn2, AF-ON, Sub-selector center, Movie-record",
+  "choices": [
+    "OFF",
+    "Pinpt",
+    "Single",
+    "Dynamic",
+    "Wide-S",
+    "Wide-L",
+    "Auto"
+  ],
+  "file": "A:\\Z7AFB.DAT (16 bytes, 3 bits per button)",
+  "photo_context": "0xA201D4D0+0x40 == 0 and 0xA18237C6 == 0",
+  "offline": {
+    "af_button_checks": 40,
+    "display_suite_checks": 277
+  },
+  "qemu_menu_checks": [
+    {
+      "name": "module-loaded-and-callbacks-committed",
+      "passed": true
+    },
+    {
+      "name": "grid-menu-published-on-gui-path",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x1",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x125",
+      "passed": true
+    },
+    {
+      "name": "category-prefix-widget-exists",
+      "passed": true
+    },
+    {
+      "name": "h-selected-dark-rose",
+      "passed": true
+    },
+    {
+      "name": "category-prefix-widget-exists",
+      "passed": true
+    },
+    {
+      "name": "h-unfocused-bright-rose",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x125",
+      "passed": true
+    },
+    {
+      "name": "category-prefix-widget-exists",
+      "passed": true
+    },
+    {
+      "name": "h-selection-color-restored",
+      "passed": true
+    },
+    {
+      "name": "direct-entry-opens-owned-page",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x0",
+      "passed": true
+    },
+    {
+      "name": "shutter-sound-page-opens",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x0",
+      "passed": true
+    },
+    {
+      "name": "af-buttons-page-opens",
+      "passed": true
+    },
+    {
+      "name": "af-buttons-fn1-steps",
+      "passed": true
+    },
+    {
+      "name": "af-buttons-back-to-extras",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x0",
+      "passed": true
+    },
+    {
+      "name": "shutter-sound-page-back-to-root",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x0",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x0",
+      "passed": true
+    },
+    {
+      "name": "back-restores-custom-settings-overview",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x125",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x127",
+      "passed": true
+    },
+    {
+      "name": "grid-has-six-choices-without-settings-row",
+      "passed": true
+    },
+    {
+      "name": "menu-navigation-does-not-change-grid",
+      "passed": true
+    },
+    {
+      "name": "row-on-page-0x125",
+      "passed": true
+    },
+    {
+      "name": "separate-entry-reopens-after-grid-menu",
+      "passed": true
+    },
+    {
+      "name": "same-live-module-retained",
+      "passed": true
+    }
+  ],
+  "staged": false,
+  "camera_access": false
+}

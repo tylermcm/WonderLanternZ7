@@ -166,6 +166,28 @@ L); the result was "set". The emulated shooting screen's AF-area icon did not
 visibly change in the captured frames, so the on-screen refresh is not yet shown;
 the property change is. Run: `tools/probe_z7_menu_walk.py --profile shooting`.
 
+## Integrated into the LCD module (November 27, 2026)
+
+`z7-native-modules/plugins/af_buttons_lcd.h` (`--af-buttons`, build
+`e33474d1`) puts the runtime into the everyday LCD module:
+
+- **Menu.** The module's last root row becomes **Extras**, which holds
+  Shutter volume, Shutter sound, **AF-area buttons** and Back. AF-area
+  buttons offers Fn1, Fn2, AF-ON, sub-selector centre and movie-record, each
+  OFF / Pinpt / Single / Dynamic / Wide-S / Wide-L / Auto. Short labels fit
+  the value column; "Pinpoint" was clipped in the emulator.
+- **Saved** in its own file `A:\Z7AFB.DAT`, 16 bytes, 3 bits per button,
+  written by the worker only after a change.
+- **Runtime.** It runs from the LCD module's before-update hook, in photo
+  mode only: `0xA201D4D0+0x40 == 0`, the battery overlay's photo/movie
+  state, and not with the menu/playback flag `0xA18237C6` set. A button acts
+  only when its f2 assignment is None.
+
+`tools/audit_z7_lcd_af_buttons.py`: 40 checks after the
+unchanged 277-check display suite. Emulator: [{'name': 'module-loaded-and-callbacks-committed', 'passed': True}, {'name': 'grid-menu-published-on-gui-path', 'passed': True}, {'name': 'row-on-page-0x1', 'passed': True}, {'name': 'row-on-page-0x125', 'passed': True}, {'name': 'category-prefix-widget-exists', 'passed': True}, {'name': 'h-selected-dark-rose', 'passed': True}, {'name': 'category-prefix-widget-exists', 'passed': True}, {'name': 'h-unfocused-bright-rose', 'passed': True}, {'name': 'row-on-page-0x125', 'passed': True}, {'name': 'category-prefix-widget-exists', 'passed': True}, {'name': 'h-selection-color-restored', 'passed': True}, {'name': 'direct-entry-opens-owned-page', 'passed': True}, {'name': 'row-on-page-0x0', 'passed': True}, {'name': 'shutter-sound-page-opens', 'passed': True}, {'name': 'row-on-page-0x0', 'passed': True}, {'name': 'af-buttons-page-opens', 'passed': True}, {'name': 'af-buttons-fn1-steps', 'passed': True}, {'name': 'af-buttons-back-to-extras', 'passed': True}, {'name': 'row-on-page-0x0', 'passed': True}, {'name': 'shutter-sound-page-back-to-root', 'passed': True}, {'name': 'row-on-page-0x0', 'passed': True}, {'name': 'row-on-page-0x0', 'passed': True}, {'name': 'back-restores-custom-settings-overview', 'passed': True}, {'name': 'row-on-page-0x125', 'passed': True}, {'name': 'row-on-page-0x127', 'passed': True}, {'name': 'grid-has-six-choices-without-settings-row', 'passed': True}, {'name': 'menu-navigation-does-not-change-grid', 'passed': True}, {'name': 'row-on-page-0x125', 'passed': True}, {'name': 'separate-entry-reopens-after-grid-menu', 'passed': True}, {'name': 'same-live-module-retained', 'passed': True}] checks,
+including opening the page and stepping Fn1. Not yet on the camera. The
+on-screen AF-area icon refresh after a press is still to be seen there.
+
 ## Required remaining work
 
 Native AF-area values and the setter path are now measured (above). Identify

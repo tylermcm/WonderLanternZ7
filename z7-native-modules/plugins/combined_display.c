@@ -277,6 +277,9 @@ uint32_t z7_main(const struct z7_module_api *api)
     /* Cannot fail the module: a missing WAV or mismatch leaves sound off. */
     z7_sl_prepare();
 #endif
+#ifdef Z7_AF_BUTTONS_MENU
+    z7_ab_prepare();  /* mismatch or no file: every button OFF */
+#endif
 #ifdef Z7_LCD_EXIF_ORIENTATION
     /* Upside-down photos get EXIF Orientation 3 (camera-verified Nov 25, 2026).
      * A firmware or descriptor mismatch leaves Nikon's writer in place. */

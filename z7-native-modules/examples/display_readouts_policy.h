@@ -109,6 +109,9 @@ static uint32_t readout_release(readout_ownership words)
 }
 static void readouts_before(void)
 {
+#ifdef Z7_AF_BUTTONS_MENU
+    z7_ab_update();
+#endif
 #ifdef Z7_SETTINGS_DISP_PROBE
     readout_sync_preset();
 #endif
