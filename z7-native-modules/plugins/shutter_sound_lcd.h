@@ -48,7 +48,11 @@ static const struct z7_sl_choice z7_sl_lab[]={
 #define SL_COUNT (Z7_SOUND_MENU_LEVELS+1u)
 #define SL_VOLUME(i) (i)
 #define SL_APPLY(i) ((void)(i))
+#ifdef Z7_SOUND_FOLDER
+#define SL_RECORD_VERSION 2u  /* level | sound << 8 */
+#else
 #define SL_RECORD_VERSION 1u
+#endif
 #endif
 
 enum {
@@ -72,6 +76,15 @@ static uint32_t z7_sl_observed=SL_DEFAULT, z7_sl_quiet, z7_sl_retry;
 static _Alignas(64) uint32_t z7_sl_record[16];
 
 static uint32_t z7_sl_check(uint32_t level) { return SL_MAGIC ^ (SL_VERSION<<8) ^ (level*0x01010101u) ^ 0xa5a5a5a5u; }
+#ifdef Z7_SOUND_FOLDER
+#include "shutter_sound_folder.h"
+/* Saved state word: level in bits 0-7, sound in bits 8-15. */
+static uint32_t z7_sl_state(void)
+{
+    return __atomic_load_n(&z7_sl_level,__ATOMIC_ACQUIRE) | (__atomic_load_n(&z7_sf_selected,__ATOMIC_ACQUIRE)<<8);
+}
+static uint32_t z7_sl_v1_check(uint32_t level) { return SL_MAGIC ^ (1u<<8) ^ (level*0x01010101u) ^ 0xa5a5a5a5u; }
+#endif
 
 static uint32_t z7_sl_matches(void)
 {
@@ -106,13 +119,32 @@ static void z7_sl_prepare(void)
         uint32_t result=SND_F(SND_FILE_READ,uint32_t,uint32_t,void *,uint32_t,uint32_t *)(fd,z7_sl_record,sizeof(z7_sl_record),&actual);
         SND_F(SND_INVALIDATE,void,void *,uint32_t)(z7_sl_record,sizeof(z7_sl_record));
         uint32_t closed=SND_F(SND_FILE_CLOSE,uint32_t,uint32_t)(fd);
+#ifdef Z7_SOUND_FOLDER
+        uint32_t word=z7_sl_record[2];
+        if (!result && !closed && actual==16u && z7_sl_record[0]==SL_MAGIC &&
+            ((z7_sl_record[1]==SL_VERSION && (word&0xffu)<=SL_LEVELS && (word>>8)<SF_SOUNDS && !(word>>16) &&
+              z7_sl_record[3]==z7_sl_check(word)) ||
+             (z7_sl_record[1]==1u && word<=SL_LEVELS && z7_sl_record[3]==z7_sl_v1_check(word)))) {
+            z7_sl_level=word&0xffu; z7_sf_selected=word>>8&0xffu;  /* a version-1 file means Card */
+            z7_sl_saved=z7_sl_observed=z7_sl_record[1]==SL_VERSION ? word : 0xffffffffu;
+            z7_sl_loaded=1;
+        } else z7_sl_loaded=2;
+#else
         if (!result && !closed && actual==16u && z7_sl_record[0]==SL_MAGIC && z7_sl_record[1]==SL_VERSION &&
             z7_sl_record[2]<=SL_LEVELS && z7_sl_record[3]==z7_sl_check(z7_sl_record[2])) {
             z7_sl_level=z7_sl_saved=z7_sl_observed=z7_sl_record[2];
             z7_sl_loaded=1;
         } else z7_sl_loaded=2;  /* unreadable: keep the default, rewrite on next change */
+#endif
     }
+#ifdef Z7_SOUND_FOLDER
+    z7_sf_scan();
+    if (!(z7_sf_available>>z7_sf_selected&1u))  /* saved file gone: first available */
+        for (uint32_t i=0;i<SF_SOUNDS;++i) if (z7_sf_available>>i&1u) { z7_sf_selected=i; break; }
+    if (!z7_sf_load(z7_sf_selected) || !z7_sound_install()) return;
+#else
     if (!z7_sound_load(0,z7_sl_wav_path) || !z7_sound_install()) return;
+#endif
     if (SND_W(SL_SLOT)!=SL_NATIVE) return;
     __asm__ volatile("dmb sy" ::: "memory");
     SND_W(SL_SLOT)=(uint32_t)(uintptr_t)z7_sl_controller;
@@ -148,8 +180,14 @@ static const char *z7_sl_value_text(void)
 static void z7_sl_worker(void)
 {
     if (!z7_sl_matches()) return;
+#ifdef Z7_SOUND_FOLDER
+    if (__atomic_load_n(&z7_sound_installed,__ATOMIC_ACQUIRE)) z7_sf_worker();
+    uint32_t level=z7_sl_state();
+    if ((level&0xffu)>SL_LEVELS || level==z7_sl_saved) return;
+#else
     uint32_t level=__atomic_load_n(&z7_sl_level,__ATOMIC_ACQUIRE);
     if (level>SL_LEVELS || level==z7_sl_saved) return;
+#endif
     if (level!=z7_sl_observed) { z7_sl_observed=level; z7_sl_quiet=0; return; }
     if (z7_sl_quiet<2u) { ++z7_sl_quiet; return; }
     if (z7_sl_retry) { --z7_sl_retry; return; }

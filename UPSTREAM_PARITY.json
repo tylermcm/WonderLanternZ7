@@ -110,7 +110,7 @@
       "name": "Silent shutter sound",
       "upstream_doc": "https://github.com/JKWTCN/z7ii-extensions/blob/f298964fdf6b0d20df0d3c6cad48a74aa5f5c339/docs/shutter-sound.md",
       "status": "partial",
-      "remaining": "Works on the camera inside the LCD module (Nov 25): sound on every photo and burst frame in Silent photography, volume row with preview, level saved in Z7SND.DAT. Sound lab: digital 8/9 clean, driver tone must stay at 31 (37 stopped audio). OFF/1-9 build works on the camera and is installed. Sound choice (SHUTTER1-5), first-shot-only option and per-boot log remain. October firmware-patch build stays on hold.",
+      "remaining": "Works on the camera inside the LCD module (Nov 25): sound on every photo and burst frame in Silent photography, volume row with preview, level saved in Z7SND.DAT. Sound lab: digital 8/9 clean, driver tone must stay at 31 (37 stopped audio). OFF/1-9 build works on the camera and is installed. Sound choice from A:/SHUTTER/SOUND01-10.WAV built (8b2b30b1, prepared); first-shot-only option and per-boot log remain. October firmware-patch build stays on hold.",
       "local_review": "LCD_SHUTTER_SOUND_TEST.md",
       "hardware_parity_verified": false
     },

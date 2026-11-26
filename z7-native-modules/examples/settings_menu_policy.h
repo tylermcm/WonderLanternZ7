@@ -145,6 +145,12 @@ static uint32_t sm_back(uint32_t object)
     if (!sm_owned(object)) return 0;
     uint32_t old = z7_settings_view;
     if (!old) return F(0x104025edu, uint32_t, uint32_t)(0x3a1);
+#ifdef Z7_SOUND_FOLDER
+    if (old == 5) {
+        z7_settings_view = 0; sm_render(object); sm_focus(object, 6);
+        sm_redraw_request(); return 0;
+    }
+#endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
     if (old == 4) {
         z7_settings_view = 1; sm_render(object); sm_focus(object, 5);
@@ -165,6 +171,25 @@ static uint32_t sm_action(uint32_t object)
 #endif
 #ifdef Z7_SHUTTER_SOUND_MENU
     /* Sound level is not a display setting: own file, no display journal edit. */
+#ifdef Z7_SOUND_FOLDER
+    if (z7_settings_view == 5) {
+        if (row == 0) z7_sl_menu_next();
+        else if (row == 1) z7_sf_menu_next();
+        else if (row == 6) z7_settings_view = 0;
+        ++z7_settings_actions;
+        sm_render(object);
+        if (!z7_settings_view) sm_focus(object, 6);
+        sm_redraw_request();
+        return 0;
+    }
+    if (!z7_settings_view && row == 7) {
+        z7_settings_view = 5;
+        ++z7_settings_actions;
+        sm_render(object); sm_focus(object, 0);
+        sm_redraw_request();
+        return 0;
+    }
+#endif
     if (!z7_settings_view && row == 7) {
         z7_sl_menu_next();
         ++z7_settings_actions;
@@ -227,13 +252,16 @@ static uint32_t sm_action(uint32_t object)
 }
 static uint32_t sm_render(uint32_t object)
 {
-    if (!sm_owned(object) || z7_settings_view >
+    if (!sm_owned(object) || (z7_settings_view >
 #ifdef Z7_HIGHLIGHT_PREFERENCES
         4
 #else
         3
 #endif
-        || z7_settings_preset >= 4 || !sm_label_ownership()) return 0;
+#ifdef Z7_SOUND_FOLDER
+        && z7_settings_view != 5
+#endif
+        ) || z7_settings_preset >= 4 || !sm_label_ownership()) return 0;
     static const char *const roots[7] = {"Custom pages", "Standard", "Minimal", "Composition", "Exposure", "Information display", "Battery percentage"};
     static const char *const preset[7] = {"Page enabled", "Shooting information", "Framing grid", "Histogram", "Virtual horizon", "Photo highlights", "Reset preset"};
     static const char *const info[7] = {"Shutter speed", "Aperture", "ISO sensitivity", "Shooting mode", "Release mode", "Focus information", "More information"};
@@ -248,11 +276,18 @@ static uint32_t sm_render(uint32_t object)
     const char *const *names = !z7_settings_view ? roots : z7_settings_view == 1 ? preset : z7_settings_view == 2 ? info : extra;
 #endif
     const char *title = !z7_settings_view ? "Display settings" : z7_settings_view == 1 ? roots[z7_settings_preset + 1] : "Shooting information";
+#ifdef Z7_SOUND_FOLDER
+    static const char *const sound_rows[7] = {"Volume", "Sound", "", "", "", "", "Back"};
+    if (z7_settings_view == 5) { names = sound_rows; title = "Shutter sound"; }
+#endif
 #ifdef Z7_HIGHLIGHT_PREFERENCES
     if (z7_settings_view == 4) title = "Photo highlights";
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
     uint32_t save_status = persistence_display_status();
+#ifdef Z7_SOUND_FOLDER
+    if (z7_settings_view == 5) title = "Shutter sound"; else  /* not a display setting: no save status */
+#endif
     title = sm_persistent_title(!z7_settings_view ? "Display" :
 #ifdef Z7_HIGHLIGHT_PREFERENCES
         z7_settings_view == 4 ? "Highlights" :
@@ -276,6 +311,13 @@ static uint32_t sm_render(uint32_t object)
             sm_text_put(231+physical_row,"Shutter sound");sm_text_put(238+physical_row,z7_sl_value_text());
             continue;
         }
+#ifdef Z7_SOUND_FOLDER
+        if (z7_settings_view==5) {
+            sm_text_put(231+physical_row,names[row]);
+            sm_text_put(238+physical_row,row==0 ? z7_sl_value_text() : row==1 ? z7_sf_value_text() : "");
+            continue;
+        }
+#endif
 #endif
 #else
     for (uint32_t row = 0; row < 7; ++row) {

@@ -25,6 +25,9 @@ static inline uint32_t z7_lcd_release_filter(struct z7_display_settings *s)
 }
 static inline uint32_t z7_lcd_release_rows(uint32_t view)
 {
+#ifdef Z7_SOUND_FOLDER
+    if (view==5) return 3;
+#endif
     static const uint8_t count[]={
 #if defined(Z7_LCD_INFORMATION_PAGE) || defined(Z7_SHUTTER_SOUND_MENU)
         7,
@@ -48,6 +51,9 @@ static inline uint32_t z7_lcd_release_rows(uint32_t view)
 /* Physical compact-menu row -> existing settings action/label index. */
 static inline uint32_t z7_lcd_release_row(uint32_t view,uint32_t row)
 {
+#ifdef Z7_SOUND_FOLDER
+    if (view==5) return row==0 ? 0u : row==1 ? 1u : row==2 ? 6u : UINT32_MAX;
+#endif
     static const uint8_t map[][7]={
 #ifdef Z7_LCD_INFORMATION_PAGE
                                  {0,1,2,3,4,5,6},

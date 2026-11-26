@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "date": "2026-11-25",
+  "feature": "shutter-sound-folder-candidate",
+  "module_sha256": "8b2b30b11295821d099cbca4698833f78573fe0703a3024b9ce419fe96586e65",
+  "module_bytes": 27360,
+  "folder": "A:/SHUTTER/SOUND01-10.WAV plus A:/SHUTTER1.WAV as Card; only the selected file in memory; Z7SND.DAT v2 = level | sound<<8",
+  "menu": "Display settings > Shutter sound page: Volume, Sound, Back",
+  "offline": {
+    "display_suite_checks": 277,
+    "folder_checks": 22
+  },
+  "qemu_menu_checks": 26,
+  "staged": false,
+  "camera_access": false
+}
