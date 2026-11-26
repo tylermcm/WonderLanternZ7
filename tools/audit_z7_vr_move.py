@@ -75,7 +75,8 @@ class VrUnit(SoundAware):
                     if p['payload']==MOVE and self.drop_move:
                         u.mem_write(SLOT,bytes(4));self.ret(0);return   # reply lost; Nikon frees the slot
                     if self.follow or p['payload']==CENTRE:
-                        x,y=p['payload'][1],p['payload'][3];self.state=0x40;self.target=[-4*x,-4*y,-4*y]
+                        x,y=struct.unpack('>2h',p['payload'][:4]);self.state=0x40;self.target=[-4*x,-4*y,-4*y]
+                        if getattr(self,'byte4_huge',False) and p['payload'][4]:self.target=[5000,0,0]
                         if p['payload']==CENTRE and self.normal_after is not None:self.normal_countdown=self.normal_after
                 u.mem_write(self.reply_addr,struct.pack('<I',status));u.mem_write(SLOT,bytes(4))
             self.ret(0);return

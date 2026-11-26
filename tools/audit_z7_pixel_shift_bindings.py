@@ -55,6 +55,12 @@ EXPECT=[
     (0x10319f40,'bl #0x101ecfb0'),               # PTP InitiateCapture (second transport)
     (0x10520fbc,'bl #0x101ecfb0'),               # remote capture control
     (0x10308cdc,'strd r6, r5, [r4, #4]'),        # PTP 0x100E builder: +4 = 1, +8 = 0
+    # Restore variants (step 3c).
+    (0x101c69fe,'orr r5, r0, #0x80'),            # Nikon's VR-mode apply: flags = sel[1]|0x80
+    (0x101c6a14,'orr r5, r5, #0xc0'),            # ... or |0xC0
+    (0x101e09f2,'lsls r0, r4, #0x1b'),           # BodyVr dispatcher: event bit 4 ...
+    (0x101e09f6,'bl #0x101df34c'),               # ... runs the VR-mode apply handler
+    (0x101e0876,'bl #0x1017088c'),               # Nikon posts BodyVr events with 0x1017088C
 ]
 NAMES={0x042f0000:'BodyVrCommandService',0x03060000:'BodyVrService',0x02050000:'BodyVrProtocolService'}
 
@@ -91,6 +97,7 @@ def main():
     check('switch-release-half-sw0-0x80000000',sw[:20]==b'ID_SW0_RELEASE_HALF'+bytes(1) and struct.unpack_from('<I',sw,36)[0]==0x80000000)
     sw=raw[0x1063b274-BASE:0x1063b29c-BASE]
     check('switch-release-on-sw0-0x40000000',sw[:18]==b'ID_SW0_RELEASE_ON'+bytes(1) and struct.unpack_from('<I',sw,36)[0]==0x40000000)
+    check('bodyvr-task-0xa23826d0-mask-has-bit4',struct.unpack_from('<4I',raw,0x101e1124-BASE)==(0x364fffff,0x10062,0x101e087d,0xa23826d0))
     check('send-has-three-native-callers',[hex(c) for c in callers]==['0x100f2738','0x100f27a6','0x101c649a'])
     report=dict(passed=True,count=len(checks),checks=checks,send=hex(SEND|1),request_bytes=0x28,
                 request_fields={'0x00':'opcode','0x1c':'payload','0x24':'output'},opcodes={'0xF040':'read (native: address 0x1018, 6 bytes)','0xF1F1':'sensor position, 10-byte payload'},

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-probe-candidate",
+  "module_sha256": "d6e6db2895e466cdd9588b489738d365f3be7e48271e7f3239ee091c6b671bea",
+  "module_bytes": 34528,
+  "variants": [
+    "00000000001010000002",
+    "00130000001010000002",
+    "00000012001010000002",
+    "00000000121010000002",
+    "00000012001808000002",
+    "0000ffee001010000002",
+    "ffed0000001010000002"
+  ],
+  "fire_limit_counts": 400,
+  "restore_methods": [
+    "0x101C63F8 flags sel[1]|0x80",
+    "BodyVr event bit 4 via 0x1017088C(0xA23826D0, 0x10)",
+    "0x101C69D8(selection, callback)"
+  ],
+  "offline": {
+    "probe_checks": 17,
+    "binding_checks": 54,
+    "display_suite_checks": 277,
+    "playback_checks": 22,
+    "folder_checks": 22
+  },
+  "qemu_menu_checks": 26,
+  "staged": false
+}

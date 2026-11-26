@@ -301,6 +301,32 @@ Build `3b2bb075` ran on a tripod and was restored. The series is complete:
 **Next:** a geometry probe (one telemetry-checked frame per payload variant)
 to find the Z7's vertical axis, and the restore variants above.
 
+## Step 3c built: geometry probe and restore variants
+
+[LCD_PIXEL_PROBE_TEST.md](LCD_PIXEL_PROBE_TEST.md), build `d6e6db28`
+(`--pixel-probe`). It takes one module-fired frame per position-command
+variant:
+- reference;
+- x = 19;
+- y = 18;
+- byte 4 = 18;
+- y with bytes 5/6 = 24/8;
+- bytes 2/3 = `FF EE`;
+- bytes 0/1 = `FF ED`.
+
+Each frame fires only if every target is within +-400 counts; otherwise the
+module recentres at once and skips it.
+
+Then it tries three ways to end the hold, stopping at the first that works:
+1. D2 with flags `sel[1]|0x80`, as Nikon's apply `0x101C69D8` computes them
+   (`0x101C69FE`);
+2. BodyVr event bit 4, posted to task `0xA23826D0` with `0x1017088C`
+   (dispatcher `0x101E09F2` -> handler `0x101DF34C`; the task's wait mask is
+   `0x364FFFFF`);
+3. `0x101C69D8` itself.
+
+Checks: 17 offline, 54 static.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,
