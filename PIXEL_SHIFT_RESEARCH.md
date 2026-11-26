@@ -158,6 +158,39 @@ directly whether 21/18 steps move the image one pixel on the Z7.
 Still open after 3a: the release call (for an unattended series), capture-idle
 and settings guards, NX Studio group tags, and the Z7 step calibration.
 
+## Step 3a result: Nikon takes the sensor back on every half-press (Nov 27)
+
+The series dry run (`b68284dc`) ran on a tripod and was restored. Log: 228
+requests, all status 0, no timeouts. Four photos were counted, the series
+finished and the sensor was recentred. Stabilisation was back to normal
+within 2 s; Nikon had already re-sent its D2 parameters, so the module's own
+D2 sender was never called and is still untested.
+
+- **Every position command was followed** (state `0x40`, target exactly
+  `(0,0,0)`, `(-84,-72,-72)`, `(0,-72,-72)` at the 21/18 scale, measured
+  within about 20 counts).
+- **The hold did not survive the photographer.** It was lost 6 times (the
+  maximum number of re-sends):
+  - after about 20 s idle, the unit parked (state 0, park target
+    `(-770,-8591,-8598)`);
+  - on each half-press, normal stabilisation came back (state 1) and the
+    D2 buffer changed (`D2_CHANGED`);
+  - state 2 appeared once, around a release.
+  So the photos were exposed with normal stabilisation, not at the
+  commanded positions. Photos 1 and 2 were also counted in the same tick,
+  so the corner (21,0) was skipped.
+- **Photos.** `tools/measure_z7_pixel_shift.py` on the four JPEGs gives
+  shifts of (1.03, -1.13), (1.06, -2.65) and (1.24, -2.02) px. Correlation
+  peaks are low (0.19-0.27). That is camera movement from pressing the
+  shutter, not the Bayer pattern. There is no calibration from this run.
+
+**Conclusion.** On the Z7, as upstream's design implies, the shutter must be
+fired by the module, right after the position is confirmed and without a
+half-press. A photographer-driven series cannot hold the sensor. Next:
+pin down the Z7 release call (`0x101ECFB0` / `0x10203D40`, request layouts),
+then a module-fired series. The D2 snapshot from this run was `0x030301`
+(selection 1, 3; flags 3).
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

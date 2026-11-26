@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-series-dry-run-camera",
+  "module_sha256": "b68284dceeba28b9da8b1a35095e92d0babb55fd1345a004ea0b0ba206e52c78",
+  "restored_module": "8dcee0e0",
+  "camera_access": true,
+  "sensor_moved": true,
+  "log": {
+    "entries": 128,
+    "sends": 228,
+    "refused": 0,
+    "timeouts": 0,
+    "frames": 4,
+    "resends": 6,
+    "d2_snapshot": "0x030301"
+  },
+  "flags": [
+    "ARMED",
+    "MOVE_SENT",
+    "MOVE_ACK",
+    "MOVE_FOLLOWED",
+    "CENTRE_SENT",
+    "CENTRE_ACK",
+    "CENTRE_FOLLOWED",
+    "NORMAL_AGAIN",
+    "DONE",
+    "D2_CHANGED",
+    "SERIES_STARTED",
+    "HOLD_LOST",
+    "SERIES_COMPLETE",
+    "POSITION_MISSED",
+    "MOVED_LATE"
+  ],
+  "positions_followed": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      -84,
+      -72,
+      -72
+    ],
+    [
+      0,
+      -72,
+      -72
+    ]
+  ],
+  "hold_lost_causes": [
+    "idle park (state 0) after ~20 s",
+    "half-press restores normal VR (state 1, D2 re-sent)",
+    "state 2 near release"
+  ],
+  "module_d2_sender_called": false,
+  "normal_vr_after_series_s": 2,
+  "photo_shift_px": [
+    [
+      0,
+      0
+    ],
+    [
+      1.029,
+      -1.129
+    ],
+    [
+      1.061,
+      -2.651
+    ],
+    [
+      1.239,
+      -2.024
+    ]
+  ],
+  "photo_peaks": [
+    1.0,
+    0.269,
+    0.219,
+    0.186
+  ],
+  "conclusion": "photographer-driven series cannot hold the sensor; module-fired release required"
+}
