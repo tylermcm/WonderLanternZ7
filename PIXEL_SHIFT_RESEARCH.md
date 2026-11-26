@@ -86,6 +86,29 @@ sends the centre payload, then watches for 30 s. It uses Nikon's delay
 `0x1017081E` between polls. The D2 restore is not used, so a power cycle
 returns normal stabilisation. 25 offline checks against a simulated VR unit.
 
+## Step 2 result: the sensor moved and came back (Nov 26)
+
+The one-move test (`5fe15dcc`) was staged, run hand-held and restored. Log:
+56 requests, 0 refused, 0 timeouts, every status 0. Flags: armed, move sent,
+acknowledged and followed, centre sent, acknowledged and followed.
+Stabilisation did not return to normal on its own.
+
+- **Arming:** state 1 was first seen at tick 10. Settling was confirmed at
+  tick 15 with errors of at most 41 counts.
+- **Move** (`x = 4`): state `0x88` while ramping. The target on axes 1/2
+  went 469/-470, then 32/-33, then 0. After that the state was `0x40` (hold)
+  with target **exactly `(-16, 0, 0)`**, the Z7II scale (-4 x step). Measured
+  was -20 and -30 on the first axis, against about ±15 counts of noise in hold.
+- **Centre:** target `(0, 0, 0)`, state `0x40`. Measured stayed within about
+  20 counts for the whole 30-second watch.
+- **No automatic return:** the state stayed `0x40` for 30 s. Normal
+  stabilisation needs Nikon's D2 parameter restore (upstream `restore_d2`),
+  or a power cycle. Finding that call on the Z7 is the next research item.
+
+So the Z7 uses the same `0xF1F1` payload and the same -4-per-step target
+scale as the Z7II. One pixel is probably about 21/18 steps as upstream
+calibrated, but that is not yet measured on this sensor.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

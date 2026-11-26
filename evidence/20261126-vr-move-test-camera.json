@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "feature": "vr-move-test-camera",
+  "module_sha256": "5fe15dcc758cec1c7f1125583e9bb373a9af47f6c53cb5bfa262a7bf06cad989",
+  "restored_module": "8dcee0e0",
+  "camera_access": true,
+  "sensor_moved": true,
+  "log": {
+    "entries": 43,
+    "sends": 56,
+    "refused": 0,
+    "timeouts": 0,
+    "statuses_nonzero": 0
+  },
+  "flags": [
+    "ARMED",
+    "MOVE_SENT",
+    "MOVE_ACK",
+    "MOVE_FOLLOWED",
+    "CENTRE_SENT",
+    "CENTRE_ACK",
+    "CENTRE_FOLLOWED",
+    "DONE"
+  ],
+  "armed_tick": 15,
+  "move": {
+    "payload": "00 04 00 00 00 10 10 00 00 02",
+    "ramp_state": "0x88",
+    "hold_state": "0x40",
+    "hold_target": [
+      -16,
+      0,
+      0
+    ],
+    "measured_first_axis": [
+      -20,
+      -30
+    ]
+  },
+  "centre": {
+    "hold_target": [
+      0,
+      0,
+      0
+    ],
+    "measured_max_abs_counts": 21
+  },
+  "normal_again_within_30s": false,
+  "scale_matches_z7ii": true,
+  "next": "find the Z7 D2 VR parameter restore (upstream restore_d2)"
+}
