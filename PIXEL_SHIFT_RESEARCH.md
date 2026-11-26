@@ -260,6 +260,47 @@ Fixes in `a431a849`:
 `8dcee0e0`, `5fe15dcc`, `2ff19bde` and `b68284dc` still rebuild byte for
 byte. 24 offline checks.
 
+## Step 3b result: a module-fired four-frame series on the Z7 (Nov 27)
+
+Build `3b2bb075` ran on a tripod and was restored. The series is complete:
+102 requests, 0 refused, 0 timeouts.
+
+- **Every frame went the same way.**
+  - Position held and confirmed: state `0x40`, with the targets exactly
+    `(0,0,0)`, `(-84,0,0)`, `(-84,-72,-72)` and `(0,-72,-72)`, measured
+    within about 13 counts.
+  - `0x101ECFB0` accepted the release.
+  - Nikon reported `0x04100038`.
+  - The still record followed: `DSC_8509`-`DSC_8512`, keys `0x36427A0` to
+    `0x3642800`.
+  - It armed on the half-press, about 42 s after power-on.
+- **Image shift** (`tools/measure_z7_pixel_shift.py`, full-size NEF
+  previews, 2048 and 1024 px windows):
+
+| Frame | Command (x, y) | Image shift (px) |
+| --- | --- | --- |
+| 2 | (21, 0) | (-1.11, +0.02) |
+| 3 | (21, 18) | (-1.67 to -1.73, -0.02) |
+| 4 | (0, 18) | (-0.30 to -0.35, -0.03) |
+
+  **X works:** 21 steps move the image about 1.1 px, so about 19 steps per
+  pixel on the Z7 (the Z7II uses 21). **Y does not:** moving both
+  "vertical" actuators equally (target `(0,-72,-72)`) gave no vertical shift,
+  only a small horizontal one. The Z7's actuator geometry differs from the
+  Z7II's. The vertical direction probably needs the two actuators moved
+  differently, which upstream's payload `{0,x,0,y,0,16,16,0,0,2}` cannot
+  express without further payload bytes.
+- **The D2 re-send did not end the hold.** The module re-sent Nikon's last
+  parameters (selection 1, 3, flags 3) with `0x101C63F8`. It was accepted
+  and Nikon called back, but the state stayed `0x40` for the 30-second
+  watch. Nikon's own VR-mode apply (`0x101C69D8`) sends flags `sel[1]|0x80`
+  (or `|0xC0`) instead. Flags 3 appear to come from Nikon's variant
+  `0x101C6A38`. The next restore attempt should use the apply form, or
+  Nikon's own BodyVr event (bit 4, handler `0x101DF34C`).
+
+**Next:** a geometry probe (one telemetry-checked frame per payload variant)
+to find the Z7's vertical axis, and the restore variants above.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,
