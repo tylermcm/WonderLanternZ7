@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-deadzone-camera",
+  "module_sha256": "615cf144140deb55da86c87ef8e9fd15cf8bb62c458e7006e10ba3d97cf40132",
+  "restored_module": "8dcee0e0",
+  "camera_access": true,
+  "photos": [
+    "DSC_8530.NEF",
+    "DSC_8531.NEF",
+    "DSC_8532.NEF",
+    "DSC_8533.NEF",
+    "DSC_8534.NEF",
+    "DSC_8535.NEF",
+    "DSC_8536.NEF",
+    "DSC_8537.NEF",
+    "DSC_8538.NEF",
+    "DSC_8539.NEF",
+    "DSC_8540.NEF",
+    "DSC_8541.NEF",
+    "DSC_8542.NEF",
+    "DSC_8543.NEF",
+    "DSC_8544.NEF",
+    "DSC_8545.NEF",
+    "DSC_8546.NEF",
+    "DSC_8547.NEF",
+    "DSC_8548.NEF",
+    "DSC_8549.NEF"
+  ],
+  "log": {
+    "sends": 112,
+    "refused": 0,
+    "timeouts": 0,
+    "frames": 20,
+    "restore": "apply flags, worked"
+  },
+  "stable_reference_y_px": [
+    -1.05,
+    0.15
+  ],
+  "early_frames_offset_px": 1.0,
+  "settling_seconds_after_release": 5,
+  "moves_vs_neighbour_refs_px": {
+    "y-18": -1.03,
+    "y-36": -2.04,
+    "y-54": -3.01,
+    "y+18_from_above": 0.95,
+    "y-18_from_below": -1.01,
+    "x+20": -1.11,
+    "y+36_from_0": 1.65,
+    "y+54_from_0": [
+      2.69,
+      2.72
+    ]
+  },
+  "y_steps_per_pixel": 18,
+  "upward_shortfall_px": 0.3,
+  "zero_hysteresis_px": 0.15,
+  "fix": [
+    "longer start settle (6-8 s) or discarded first frames",
+    "approach y targets from above",
+    "keep x 20 / y 18"
+  ]
+}

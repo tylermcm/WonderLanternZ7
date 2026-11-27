@@ -545,6 +545,48 @@ one-pixel y steps.
 All targets are within 216 counts. Then the D2 apply restore. 10 offline
 checks.
 
+## Step 3e result: y works; early frames drift, upward approach falls short (Nov 27)
+
+Build `615cf144` ran and was restored. 20 module-fired frames
+(`DSC_8530`-`DSC_8549`): 112 requests, 0 refused, 0 timeouts. Each frame
+was held at its target. The apply restore worked (fourth time).
+
+**Raw colour-plane positions** (`tools/measure_z7_raw_shift.py`; the four
+planes agree within about 0.2-0.4 px):
+- The references from frame 4 on (`DSC_8533` onwards) sit at y = -1.05
+  +-0.15 px.
+- Frames 1-2 (`DSC_8530`/`8531`), 2-3.5 s after the button was released,
+  sit about **1 px** away. The body or tripod is still settling for about
+  5 s after release. That explains the earlier "y does not move" readings:
+  the drift masked or mimicked the one-pixel y step in `3b2bb075` and
+  `f4e46989`.
+
+**Each move against its stable neighbouring references:**
+
+| Move | Measured (px) | Expected (px) |
+| --- | --- | --- |
+| y -18 | -1.03 | -1 |
+| y -36 | -2.04 | -2 |
+| y -54 | -3.01 | -3 |
+| y +18, reached from +54 | +0.95 | +1 |
+| y -18, reached from -54 | -1.01 | -1 |
+| x +20 | -1.11 | -1 |
+| y +36, from 0 | +1.65 | +2 |
+| y +54, from 0 (twice) | +2.69, +2.72 | +3 |
+
+- **Y is linear at 18 steps per pixel.**
+- Upward moves (+y) from 0 fall short by about 0.3 px; the same target
+  approached from above is exact.
+- The zero position differs by about 0.15 px between arriving from above
+  (-0.95) and from below (-1.12).
+
+**For the series:**
+1. Settle about 6-8 s after the button is released, or discard the first
+   frames.
+2. Approach every y target from the same side (from above: overshoot to
+   +36 first). This removes the 0.3 px upward shortfall.
+3. Keep x 20 / y 18.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,
