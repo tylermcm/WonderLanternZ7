@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-calib-candidate",
+  "module_sha256": "7356765846e56cbb0bfc3626bc6422f42dd68a99e1d849f8871bca7be9133efa",
+  "module_bytes": 34528,
+  "steps": [
+    [
+      0,
+      0
+    ],
+    [
+      80,
+      0
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      -80,
+      0
+    ],
+    [
+      0,
+      72
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      -72
+    ],
+    [
+      40,
+      36
+    ],
+    [
+      0,
+      0
+    ]
+  ],
+  "payload_layout": "x bytes 1-2 LE int16, y bytes 3-4 LE int16",
+  "max_target_counts": 320,
+  "restore": "0x101C63F8 flags sel[1]|0x80 first (camera-verified), event bit 4 and 0x101C69D8 as fallbacks",
+  "offline": {
+    "calib_checks": 7,
+    "probe_checks": 15,
+    "binding_checks": 54,
+    "display_suite_checks": 277,
+    "playback_checks": 22,
+    "folder_checks": 22
+  },
+  "qemu_menu_checks": 26,
+  "staged": false
+}

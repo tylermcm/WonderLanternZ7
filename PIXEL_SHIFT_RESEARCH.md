@@ -372,6 +372,29 @@ are not yet trustworthy.
 repeated reference frames to measure noise, a textured target, and the
 working restore.
 
+## Step 3d built: calibration run
+
+[LCD_PIXEL_CALIB_TEST.md](LCD_PIXEL_CALIB_TEST.md), build `73567658`
+(`--pixel-calib`). Nine module-fired frames in the measured little-endian
+layout:
+
+| Frame | Steps (x, y) |
+| --- | --- |
+| 1 | (0, 0) |
+| 2 | (+80, 0) |
+| 3 | (0, 0) |
+| 4 | (-80, 0) |
+| 5 | (0, +72) |
+| 6 | (0, 0) |
+| 7 | (0, -72) |
+| 8 | (+40, +36) |
+| 9 | (0, 0) |
+
+All targets are within 320 counts. Then centre and the D2 apply restore.
+The simulated stabiliser now decodes the camera-measured layout (clamped at
++-8180), and the probe audit reproduces the camera outcome (V3, V5 and V6
+skipped). Checks: 7 calibration, 15 probe.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

@@ -230,13 +230,27 @@ static void z7_vr_series(void)
  *      handler 0x101DF34C re-applies the VR mode in Nikon's task);
  *   3. Nikon's apply 0x101C69D8(selection, callback) itself.
  */
+#ifdef Z7_PIXEL_CALIB
+/* CALIBRATION RUN (step 3d). Payload layout found by the probe (d6e6db28):
+ * x = little-endian int16 at bytes 1-2, y at bytes 3-4, target = -4 * step.
+ * Larger steps (about 2-4 px) for signal, both signs, a diagonal, and the
+ * reference repeated three times to measure the noise. All targets <= 320. */
+#define VP_XY(x,y) {0,(uint8_t)((x)&0xff),(uint8_t)(((x)>>8)&0xff),(uint8_t)((y)&0xff),(uint8_t)(((y)>>8)&0xff),16,16,0,0,2}
+enum { VP_VARIANTS=9u };
+#else
+enum { VP_VARIANTS=7u };
+#endif
 enum {
-    VP_VARIANTS=7u, VP_LIMIT=400,
+    VP_LIMIT=400,
     VP_TASK=0xa23826d0u, VP_POST=0x1017088du, VP_APPLY=0x101c69d9u,
     VP_PH_VARIANT=0x1cu, VP_PH_SKIP=0x1du, VP_PH_RESTORE=0x1eu, VP_PH_RESTORE_POLL=0x1fu,
     VP_SKIPPED=1u<<28, VP_RESTORE_WORKED=1u<<29
 };
 static const uint8_t z7_vp_variant[VP_VARIANTS][10]={
+#ifdef Z7_PIXEL_CALIB
+    VP_XY(0,0), VP_XY(80,0), VP_XY(0,0), VP_XY(-80,0), VP_XY(0,72),
+    VP_XY(0,0), VP_XY(0,-72), VP_XY(40,36), VP_XY(0,0),
+#else
     {0,0,0,0,0,16,16,0,0,2},          /* V0 reference */
     {0,19,0,0,0,16,16,0,0,2},         /* V1 x = 19 (about 1 px) */
     {0,0,0,18,0,16,16,0,0,2},         /* V2 y = 18 (repeat) */
@@ -244,6 +258,7 @@ static const uint8_t z7_vp_variant[VP_VARIANTS][10]={
     {0,0,0,18,0,24,8,0,0,2},          /* V4 y = 18 with bytes 5/6 split */
     {0,0,0xff,0xee,0,16,16,0,0,2},    /* V5 y = -18 if int16 */
     {0xff,0xed,0,0,0,16,16,0,0,2},    /* V6 x = -19 if int16 */
+#endif
 };
 volatile uint32_t z7_vp_restore_method, z7_vp_apply_called;
 static uint32_t z7_vp_native_ok(void)
