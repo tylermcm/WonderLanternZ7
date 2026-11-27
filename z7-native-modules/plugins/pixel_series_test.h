@@ -256,7 +256,16 @@ static void z7_vr_series(void)
  *      handler 0x101DF34C re-applies the VR mode in Nikon's task);
  *   3. Nikon's apply 0x101C69D8(selection, callback) itself.
  */
-#ifdef Z7_PIXEL_CALIB
+#ifdef Z7_PIXEL_DEADZONE
+/* Y DEAD-ZONE RUN (step 3e). The raw analysis of f4e46989 showed 18-step y
+ * moves shift the image by only about 0.06 px while 36/72-step y and all x
+ * moves are proportional. 20 frames: a discarded first frame (the first
+ * exposure catches the body moving), then y +-18/+-36/+54 each between
+ * references, an x 20 control, and y 18 / -18 reached from above and below
+ * (54 -> 18, -54 -> -18) to test direction dependence. All targets <= 216. */
+#define VP_XY(x,y) {0,(uint8_t)((x)&0xff),(uint8_t)(((x)>>8)&0xff),(uint8_t)((y)&0xff),(uint8_t)(((y)>>8)&0xff),16,16,0,0,2}
+enum { VP_VARIANTS=20u, VP_SETTLE_START_MS=2000u, VP_SETTLE_FRAME_MS=500u };
+#elif defined(Z7_PIXEL_CALIB)
 /* CALIBRATION RUN (step 3d). Payload layout found by the probe (d6e6db28):
  * x = little-endian int16 at bytes 1-2, y at bytes 3-4, target = -4 * step.
  * Larger steps (about 2-4 px) for signal, both signs, a diagonal, and the
@@ -273,7 +282,11 @@ enum {
     VP_SKIPPED=1u<<28, VP_RESTORE_WORKED=1u<<29
 };
 static const uint8_t z7_vp_variant[VP_VARIANTS][10]={
-#ifdef Z7_PIXEL_CALIB
+#ifdef Z7_PIXEL_DEADZONE
+    VP_XY(0,0), VP_XY(0,0), VP_XY(0,18), VP_XY(0,0), VP_XY(0,36), VP_XY(0,0), VP_XY(0,54), VP_XY(0,0),
+    VP_XY(0,-18), VP_XY(0,0), VP_XY(0,-36), VP_XY(0,0), VP_XY(20,0), VP_XY(0,0),
+    VP_XY(0,54), VP_XY(0,18), VP_XY(0,0), VP_XY(0,-54), VP_XY(0,-18), VP_XY(0,0),
+#elif defined(Z7_PIXEL_CALIB)
     VP_XY(0,0), VP_XY(80,0), VP_XY(0,0), VP_XY(-80,0), VP_XY(0,72),
     VP_XY(0,0), VP_XY(0,-72), VP_XY(40,36), VP_XY(0,0),
 #else
@@ -385,11 +398,20 @@ static void z7_vp_series(void)
     for (uint32_t i=0;i<100u && free_polls<5u;++i) { z7_vm_sleep(100); free_polls=z7_vr_touched() ? 0u : free_polls+1u; }
     z7_vm_record(VR_PH_FREE,free_polls,0,0);
     if (free_polls<5u) { z7_vm_log.flags|=VR_NOT_FREED; z7_vm_stage=2; z7_vm_save(); return; }
+#ifdef Z7_PIXEL_DEADZONE
+    for (uint32_t i=0;i<VP_SETTLE_START_MS/100u;++i) {
+        z7_vm_sleep(100);
+        if (z7_vr_touched()) { z7_vm_log.flags|=VR_TOUCHED; z7_vm_stage=2; z7_vm_save(); return; }
+    }
+#endif
     uint32_t v=0, shots=0;
     for (;v<VP_VARIANTS;++v) {
         int h=z7_vp_hold(v);
         if (h<0) break;
         if (!h) continue;
+#ifdef Z7_PIXEL_DEADZONE
+        z7_vm_sleep(VP_SETTLE_FRAME_MS);          /* let the body settle on the new position */
+#endif
         if (!z7_vp_fire(v)) break;
         ++shots;
     }

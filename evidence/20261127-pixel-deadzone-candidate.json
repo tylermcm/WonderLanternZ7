@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-deadzone-candidate",
+  "module_sha256": "615cf144140deb55da86c87ef8e9fd15cf8bb62c458e7006e10ba3d97cf40132",
+  "module_bytes": 34720,
+  "steps": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      18
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      36
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      54
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      -18
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      -36
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      20,
+      0
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      54
+    ],
+    [
+      0,
+      18
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      -54
+    ],
+    [
+      0,
+      -18
+    ],
+    [
+      0,
+      0
+    ]
+  ],
+  "settle_ms": {
+    "start": 2000,
+    "per_frame": 500
+  },
+  "offline": {
+    "deadzone_checks": 10,
+    "display_suite_checks": 277,
+    "playback_checks": 22,
+    "folder_checks": 22
+  },
+  "qemu_menu_checks": 26,
+  "staged": false
+}

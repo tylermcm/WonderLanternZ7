@@ -532,6 +532,19 @@ frame. That measures the dead zone directly, and shows whether
 approaching from one direction (or overshooting and coming back) restores
 one-pixel y steps.
 
+## Step 3e built: vertical dead-zone run
+
+[LCD_PIXEL_DEADZONE_TEST.md](LCD_PIXEL_DEADZONE_TEST.md), build `615cf144`
+(`--pixel-deadzone`). 20 module-fired frames, with a 2 s start settle and a
+0.5 s settle per frame:
+- a discarded first frame;
+- y +18/+36/+54 and -18/-36, each between references;
+- an x 20 control;
+- y +18 reached from +54, and y -18 reached from -54.
+
+All targets are within 216 counts. Then the D2 apply restore. 10 offline
+checks.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,
