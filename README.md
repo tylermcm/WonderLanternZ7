@@ -8,6 +8,8 @@ Experimental, source-only firmware extensions for the **original Nikon Z7
 - custom framing grids, rear-LCD battery percentage, configurable LCD DISP
   presets and saved display settings.
 
+**Project site:** [tylermcm.github.io/nikon-z7-extensions](https://tylermcm.github.io/nikon-z7-extensions/)
+
 **EXPERIMENTAL CAMERA FIRMWARE RESEARCH. A failed or incorrect flash can
 permanently brick a camera, destroy data, or require paid repair/replacement.
 Use entirely at your own risk. To the fullest extent permitted by law, the
