@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-raw-analysis",
+  "tool": "tools/measure_z7_raw_shift.py",
+  "library": "rawpy 0.28.0 / LibRaw 0.22.2 (installed in the project venv with owner approval)",
+  "calibration_planes_px": {
+    "x-80": [
+      4.5,
+      0.2
+    ],
+    "y+72": [
+      0.05,
+      4.2
+    ],
+    "y-72": [
+      0.05,
+      -3.9
+    ],
+    "x+40y+36": [
+      -2.0,
+      2.2
+    ]
+  },
+  "series_planes_px_vs_frame1": {
+    "f2_x20": [
+      -0.8,
+      0.6
+    ],
+    "f3_x20_y18": [
+      -1.4,
+      0.7
+    ],
+    "f4_y18": [
+      -0.2,
+      0.65
+    ]
+  },
+  "first_frame_vertical_offset_px": 0.6,
+  "y18_step_measured_px": 0.06,
+  "x20_step_measured_px": 1.2,
+  "conclusion": "small y steps barely move the image while larger y and all x steps are proportional; telemetry reports targets reached",
+  "methods_rejected": [
+    "2x2 binned raw (locks to even shifts)",
+    "Lucas-Kanade on demosaiced (too noisy here)"
+  ]
+}

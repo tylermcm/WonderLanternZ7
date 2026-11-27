@@ -481,6 +481,57 @@ raw colour channels. That also gives the merge tool. If y really has a dead
 zone, a larger step that lands on the next same-phase site (e.g. 3 px), or
 an approach from a fixed direction, would be the fix.
 
+## Raw analysis of the series (Nov 27)
+
+With rawpy 0.28 (LibRaw 0.22) installed in the project environment,
+`tools/measure_z7_raw_shift.py` measures each frame against the first on
+the four raw colour planes separately. Each plane is uniformly sampled, so
+there is no colour-filter mixing.
+
+**Calibration run**, all planes agree within about 0.1 px:
+
+| Steps | Shift (px) |
+| --- | --- |
+| x -80 | (+4.5, +0.2) |
+| y +72 | (+0.05, +4.2) |
+| y -72 | (+0.05, -3.9) |
+| (+40, +36) | (-2.0, +2.2) |
+
+**Series** (`f4e46989`, R/G/G2/B agree within about 0.1 px):
+
+| Frame | Command vs frame 1 | Shift (px) |
+| --- | --- | --- |
+| 2 | x +20 | (-0.8, +0.6) |
+| 3 | x +20, y +18 | (-1.4, +0.7) |
+| 4 | y +18 | (-0.2, +0.65) |
+
+Frame 1 is offset about 0.6 px vertically from frames 2-4. The
+calibration's first frame was offset too (about 2.3 px), so the first
+exposure still catches the body moving, despite the 2 s settle. Between
+frames 2 and 3 (y +18 only), the vertical shift is **+0.06 px**, against 1
+commanded. Between 3 and 4 (x -20) it is **+1.2 px** (expected 1).
+
+**Small y steps barely move the image**, while 36- and 72-step y moves and
+all x moves are proportional. The stabiliser's own telemetry reports every y
+target reached (within 8 counts), so the loss looks mechanical: the vertical
+actuators lifting the sensor against gravity, friction, or a dead zone.
+
+Methods that did not work:
+- 2x2-binned raw locks onto even shifts: an odd shift changes the colour mix
+  inside each window.
+- Lucas-Kanade on demosaiced images was too noisy on this scene (about
+  1 px spread).
+
+One-pixel values on single planes are half a plane sample, where planes are
+aliased, so they are indicative only. The agreement across planes and
+neighbouring frames is what supports the reading.
+
+**Next experiment:** y-only steps of 18, 36 and 54 (both signs), each with a
+reference before and after, plus an x 20 control, and a discarded first
+frame. That measures the dead zone directly, and shows whether
+approaching from one direction (or overshooting and coming back) restores
+one-pixel y steps.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,
