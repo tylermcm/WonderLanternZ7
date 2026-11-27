@@ -434,6 +434,20 @@ The Z7 matches upstream's Z7II scale (21/18) within the measurement spread.
 4. Merge on the computer, since in-camera merging and NX Studio tags are
    not ported.
 
+## First real series built
+
+[LCD_PIXEL_SHIFT_TEST.md](LCD_PIXEL_SHIFT_TEST.md), build `f4e46989`
+(`--pixel-shift`, `Z7_PIXEL_SHIFT_V1`). It takes four module-fired frames
+at the calibrated corners `(0,0)`, `(20,0)`, `(20,18)`, `(0,18)`:
+1. A 2 s settle after the button is free (touching it cancels).
+2. For each frame: confirm the position, wait 0.5 s, re-check it, release
+   (a lost hold stops without a release).
+3. One click per frame.
+4. Recentre and the D2 apply restore (flags `sel[1]|0x80`).
+
+10 offline checks. In-camera merge and NX Studio tags are not ported; the
+set is merged on the computer.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

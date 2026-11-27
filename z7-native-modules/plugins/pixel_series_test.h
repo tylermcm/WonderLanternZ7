@@ -45,15 +45,31 @@ static void z7_vs_still(uint32_t key)
 }
 #define Z7_STILL_KEY_HOOK(key) z7_vs_still(key)
 
+#ifdef Z7_PIXEL_SHIFT_V1
+/* Z7 scale measured by the calibration run 73567658 (Nov 27): about 20 steps
+ * per pixel in x and 18 in y, independent axes. */
+enum { VS_STEP_X=20, VS_STEP_Y=18, VS_SETTLE_START_MS=2000u, VS_SETTLE_FRAME_MS=500u };
+#else
+enum { VS_STEP_X=21, VS_STEP_Y=18 };   /* upstream's Z7II values */
+#endif
 static void z7_vs_target(uint32_t frame, int *x, int *y)
 {
-    *x=21*(int)z7_vs_corner[frame&3u][0]; *y=18*(int)z7_vs_corner[frame&3u][1];
+    *x=VS_STEP_X*(int)z7_vs_corner[frame&3u][0]; *y=VS_STEP_Y*(int)z7_vs_corner[frame&3u][1];
 }
 static int z7_vs_matches(const uint8_t *t, int x, int y)
 {
     return t[VM_STATE]==VM_HOLD && z7_vm_word(t)==-4*x && z7_vm_word(t+2)==-4*y &&
         z7_vm_word(t+4)==-4*y && z7_vm_settled(t,24);
 }
+#ifdef Z7_PIXEL_SHIFT_V1
+static int z7_vs_matches(const uint8_t *t, int x, int y);
+static int z7_vs_matches_now(uint32_t frame)
+{
+    int x,y; z7_vs_target(frame,&x,&y);
+    uint32_t s=z7_vm_sample(VS_PH_FOLLOW,(frame<<5)|31u);
+    return !s && z7_vs_matches(z7_vm_output,x,y);
+}
+#endif
 /* Poll every 100 ms until two reads in a row show the commanded position. */
 static int z7_vs_follow(uint32_t frame, int x, int y)
 {
@@ -181,6 +197,10 @@ static int z7_vr_frame(uint32_t frame)
     int r=z7_vs_position(frame,VS_PH_SEND);
     if (r<=0) { if (!r && z7_vs_resends<VS_RESENDS) { ++z7_vs_resends; z7_vm_log.resends=z7_vs_resends; r=z7_vs_position(frame,VS_PH_RESEND); } }
     if (r<=0) return 0;
+#ifdef Z7_PIXEL_SHIFT_V1
+    z7_vm_sleep(VS_SETTLE_FRAME_MS);              /* let the body settle on the new position */
+    if (!z7_vs_matches_now(frame)) { z7_vm_log.flags|=VS_HOLD_LOST; return 0; }
+#endif
     if (z7_vr_touched()) { z7_vm_log.flags|=VR_TOUCHED; return 0; }
     if (VM_W(VR_SLOT)) { z7_vm_log.flags|=VR_SLOT_BUSY; return 0; }
     uint32_t photos=__atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE), mark=z7_vr_sound_mark();
@@ -210,6 +230,12 @@ static void z7_vr_series(void)
     for (uint32_t i=0;i<100u && free_polls<5u;++i) { z7_vm_sleep(100); free_polls=z7_vr_touched() ? 0u : free_polls+1u; }
     z7_vm_record(VR_PH_FREE,free_polls,0,0);
     if (free_polls<5u) { z7_vm_log.flags|=VR_NOT_FREED; z7_vs_finish(); return; }
+#ifdef Z7_PIXEL_SHIFT_V1
+    for (uint32_t i=0;i<VS_SETTLE_START_MS/100u;++i) {
+        z7_vm_sleep(100);
+        if (z7_vr_touched()) { z7_vm_log.flags|=VR_TOUCHED; z7_vs_finish(); return; }
+    }
+#endif
     uint32_t frame=0;
     while (frame<VS_FRAMES && z7_vr_frame(frame)) ++frame;
     if (frame==VS_FRAMES) z7_vm_log.flags|=VS_SERIES_COMPLETE;

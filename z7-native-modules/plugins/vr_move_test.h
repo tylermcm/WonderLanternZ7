@@ -229,6 +229,11 @@ static void z7_vm_restore(void)
         }
 #endif
     }
+#ifdef Z7_PIXEL_SHIFT_V1
+    /* Camera-verified twice (d6e6db28, 73567658): only Nikon's apply flags
+     * sel[1]|0x80 end the hold; the stored flags (3) do not. */
+    z7_vm_d2_flags=(uint32_t)z7_vm_selection[1]|0x80u;
+#endif
     if (send) for (uint32_t i=0;i<VM_RESTORE_TRIES;++i) {
         for (uint32_t j=0;j<50u && !z7_vm_service_idle();++j) z7_vm_sleep(20);
         uint32_t r=z7_vm_service_idle() ?

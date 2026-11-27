@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-v1-candidate",
+  "module_sha256": "f4e46989e29645835b30f0086322e3622bd3191487a406e07809ff82d0f18b3f",
+  "module_bytes": 33632,
+  "corners_steps": [
+    [
+      0,
+      0
+    ],
+    [
+      20,
+      0
+    ],
+    [
+      20,
+      18
+    ],
+    [
+      0,
+      18
+    ]
+  ],
+  "settle_ms": {
+    "start": 2000,
+    "per_frame": 500
+  },
+  "restore": "D2 apply flags sel[1]|0x80",
+  "offline": {
+    "series_checks": 10,
+    "display_suite_checks": 277,
+    "playback_checks": 22,
+    "folder_checks": 22
+  },
+  "qemu_menu_checks": 26,
+  "staged": false
+}
