@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-v2-camera",
+  "module_sha256": "9814fb58759dc65ce5a45d770c565e346b2f7dd6a95347337e07d2e979ca130f",
+  "restored_module": "8dcee0e0",
+  "camera_access": true,
+  "photos": [
+    "DSC_8550.NEF",
+    "DSC_8551.NEF",
+    "DSC_8552.NEF",
+    "DSC_8553.NEF"
+  ],
+  "log": {
+    "sends": 84,
+    "refused": 0,
+    "timeouts": 0,
+    "frames": 4,
+    "restore": "apply flags, worked"
+  },
+  "raw_plane_shifts_px": {
+    "R": [
+      [
+        -1.16,
+        -0.02
+      ],
+      [
+        -1.16,
+        0.92
+      ],
+      [
+        0.0,
+        0.86
+      ]
+    ],
+    "G": [
+      [
+        -1.12,
+        -0.02
+      ],
+      [
+        -1.12,
+        0.9
+      ],
+      [
+        0.0,
+        0.86
+      ]
+    ],
+    "G2": [
+      [
+        -1.1,
+        -0.04
+      ],
+      [
+        -1.12,
+        0.92
+      ],
+      [
+        0.0,
+        0.92
+      ]
+    ],
+    "B": [
+      [
+        -1.08,
+        0.0
+      ],
+      [
+        -0.9,
+        0.76
+      ],
+      [
+        0.04,
+        0.74
+      ]
+    ]
+  },
+  "targets_px": [
+    [
+      -1,
+      0
+    ],
+    [
+      -1,
+      1
+    ],
+    [
+      0,
+      1
+    ]
+  ],
+  "max_error_px": 0.15,
+  "merge": {
+    "tool": "tools/merge_z7_pixel_shift.py",
+    "integer_shifts": [
+      [
+        0,
+        0
+      ],
+      [
+        -1,
+        0
+      ],
+      [
+        -1,
+        1
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "result": "halftone resolved with far less colour speckle, smoother gradients; faint vertical striping in bright flats"
+  }
+}

@@ -598,6 +598,45 @@ planes agree within about 0.2-0.4 px):
 Unchanged: the calibrated x 20 / y 18 corners, the 0.5 s settle with a
 re-check, one click per frame, and the D2 apply restore. 11 offline checks.
 
+## Series v2 result: a working pixel-shift set and the first merge (Nov 27)
+
+Build `9814fb58` ran and was restored. 84 requests, 0 refused, 0 timeouts.
+Each frame was approached from above, re-confirmed at its target and
+released. The apply restore worked (fifth time).
+
+**Raw colour-plane shifts of `DSC_8550`-`DSC_8553` against the first frame**
+(R/G/G2/B agree within about 0.1 px):
+
+| Frame | Target (px) | Measured (px) |
+| --- | --- | --- |
+| 2 | (-1, 0) | (-1.12, -0.02) |
+| 3 | (-1, +1) | (-1.12, +0.90) |
+| 4 | (0, +1) | (0.00, +0.86) |
+
+Every frame lands within about 0.15 px of its target. That is a usable Z7
+pixel-shift set: across the four frames, each pixel site is sampled through
+a red, two green and a blue filter. The small residuals suggest fine-tuning
+to about x 18 / y 20 steps, which is within the spread of the earlier runs.
+
+**Merge.** `tools/merge_z7_pixel_shift.py` (rawpy/numpy) combines the four
+raw frames at their integer shifts into one full-colour image with no
+demosaicing:
+- R once, G averaged from two samples, B once per pixel;
+- camera white balance and LibRaw's camera-to-sRGB matrix;
+- per-channel level matched to LibRaw's own conversion of the first frame;
+- writes a 16-bit `merged.tif`, a `single.tif` reference and side-by-side
+  crops.
+
+Against the single frame:
+- printed halftone dots are resolved with far less colour speckle;
+- letter edges are cleaner;
+- out-of-focus gradients are visibly smoother, with less chroma noise.
+
+A faint vertical striping remains in bright flat areas, most likely the
+0.12 px residual x misregistration. Not yet done: sub-pixel registration
+in the merge, NX Studio tags, an in-camera merge, a menu entry, and 16-shot
+mode.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,
