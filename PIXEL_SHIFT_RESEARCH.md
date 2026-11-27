@@ -395,6 +395,45 @@ The simulated stabiliser now decodes the camera-measured layout (clamped at
 +-8180), and the probe audit reproduces the camera outcome (V3, V5 and V6
 skipped). Checks: 7 calibration, 15 probe.
 
+## Step 3d result: the Z7 step scale (Nov 27)
+
+Build `73567658` ran and was restored. All 9 frames were module-fired
+(`DSC_8517`-`DSC_8525`): 60 requests, 0 refused, 0 timeouts. Each was
+held at its exact target before the release (x +-320, y +-288,
+`(-160,-144,-144)`). The D2 apply restore (flags `sel[1]|0x80`) ended the
+hold at once, the second time on the camera.
+
+**Image shift** (refined tool, 2048 and 3072 px windows agree to 0.04 px).
+Each frame is measured against its neighbouring references. The references
+(frames 3, 6, 9) agree within about 0.4 px but sit about 2.3 px below
+frame 1: the first frame, 0.5 s after the button was released, caught the
+camera still settling. That likely explains why y looked horizontal in the
+`3b2bb075` series.
+
+| Steps (x, y) | Shift (px) | Steps per pixel |
+| --- | --- | --- |
+| (+80, 0) | (-3.72, -0.02) | x 21.5 |
+| (-80, 0) | (+4.75, ~0) | x 16.8 |
+| (0, +72) | (-0.04, +3.88) | y 18.6 |
+| (0, -72) | (+0.01, -4.04) | y 17.8 |
+| (+40, +36) | (-1.89, +1.98) | x 21, y 18 |
+
+- **X:** about **20 steps per pixel** (mean of the three x measurements:
+  4.08 px per 80). +x moves the image to the left.
+- **Y:** about **18 steps per pixel** (3.96 px per 72). +y moves the image
+  down. **Y works vertically.**
+- **x and y are independent** (the diagonal adds up).
+
+The Z7 matches upstream's Z7II scale (21/18) within the measurement spread.
+
+**For the real series:**
+1. Wait about 2 s after the button is released, then let each frame settle
+   before releasing.
+2. Corner steps: x = 20, y = 18.
+3. Restore with the apply flags.
+4. Merge on the computer, since in-camera merging and NX Studio tags are
+   not ported.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,
