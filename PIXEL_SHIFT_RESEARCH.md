@@ -327,6 +327,51 @@ Then it tries three ways to end the hold, stopping at the first that works:
 
 Checks: 17 offline, 54 static.
 
+## Step 3c result: payload layout, restore found, y still uncertain (Nov 27)
+
+Build `d6e6db28` ran and was restored. 252 requests, 0 refused, 0 timeouts.
+4 of 7 variants were photographed (`DSC_8513`-`DSC_8516`); 3 were skipped by
+the +-400 guard.
+
+**Payload layout** (from the targets the stabiliser accepted):
+
+| Bytes | Meaning |
+| --- | --- |
+| 1-2 | **x, little-endian int16** (`ED FF` = 237 -> target -948; `00 FF` = -256 -> +1024) |
+| 3-4 | **y, little-endian int16** (`EE 00` = 238 -> -952 on both vertical actuators) |
+| 4 = 18 | y = 4608, clamped at the end of travel (**about +-8180 counts**). This was the big movement the owner saw; it lasted under 100 ms before the guard recentred. |
+| 0 | did not affect the targets |
+| 5/6 (24/8 instead of 16/16) | did not change the targets; the two vertical actuators always get the same y |
+
+So negative steps are `x = FF..` / `y = FF..` in little-endian. Upstream's
+`{0,x,0,y,...}` only works for 0-255.
+
+**Restore found.** Method 1 worked at once: Nikon's D2 sender `0x101C63F8`
+with the apply flags `sel[1]|0x80` (selection 1, 3, flags `0x83`). The state
+went `0x40` -> 1 (normal) within 100 ms and stayed normal. The earlier
+re-send with flags 3 does not end the hold.
+
+**Image shift**, measured with the refined tool (upsampled
+cross-correlation, 1/50 px, verified on synthetic shifts to about 0.01 px):
+
+| Run | Command | dx, dy (px) |
+| --- | --- | --- |
+| probe | x = 19 | -0.86, -0.02 |
+| probe | y = 18 | 0.00, +0.48 |
+| probe | y = 18, bytes 5/6 split | +0.02, +0.60 |
+| series | x = 21 | -1.16, +0.02 |
+| series | x = 21, y = 18 | -1.56, -0.04 |
+| series | y = 18 | -0.28, -0.04 |
+
+X is consistent at about 0.045-0.055 px per step (roughly 18-22 steps per
+pixel). Y moved the image vertically in the probe but not in the series. With
+correlation peaks of only 0.18-0.30 on the preview JPEGs, sub-pixel values
+are not yet trustworthy.
+
+**Next:** a calibration run with larger steps (2-4 px) for a better signal,
+repeated reference frames to measure noise, a textured target, and the
+working restore.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

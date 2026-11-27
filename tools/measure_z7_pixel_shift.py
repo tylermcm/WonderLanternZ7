@@ -2,8 +2,8 @@
 
 For each NEF (or JPEG) given, takes the largest embedded JPEG preview (Nikon
 stores a full-size one), converts it to grey, and measures its translation
-against the first photo by phase correlation with sub-pixel peak fitting, in a
-central window. For a working Z7 series (corners (0,0), (21,0), (21,18),
+against the first photo by phase correlation, refined by upsampled
+cross-correlation (1/50 px), in a central window. For a working Z7 series (corners (0,0), (21,0), (21,18),
 (0,18) steps) the photos should differ by about one pixel per step from the
 first: (0,0), (1,0), (1,1), (0,1) in sign-dependent directions. Preview JPEGs
 are full resolution but compressed, so expect a few hundredths of a pixel of
@@ -87,6 +87,23 @@ def phase_shift(a, b):
     return float(dx), float(dy), float(c[py, px])
 
 
+def refine_shift(a, b, dx, dy, factor=50, span=1.5):
+    """Upsampled cross-correlation around (dx, dy) (matrix-multiply DFT,
+    Guizar-Sicairos et al. 2008): accurate to 1/factor px, no parabolic bias."""
+    fa, fb = np.fft.fft2(a), np.fft.fft2(b)
+    r = fb * np.conj(fa)
+    r /= np.abs(r) + 1e-12
+    h, w = r.shape
+    n = int(np.ceil(span * factor)) * 2 + 1
+    ox, oy = np.arange(n) / factor - span + dx, np.arange(n) / factor - span + dy
+    ky, kx = np.fft.fftfreq(h), np.fft.fftfreq(w)
+    ey = np.exp(2j * np.pi * np.outer(oy, ky))
+    ex = np.exp(2j * np.pi * np.outer(kx, ox))
+    c = (ey @ r @ ex).real
+    iy, ix = np.unravel_index(np.argmax(c), c.shape)
+    return float(ox[ix]), float(oy[iy])
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('photos', nargs='+', type=Path)
@@ -96,7 +113,12 @@ def main(argv=None):
     base = window(load_grey(a.photos[0]), a.window)
     rows = []
     for i, f in enumerate(a.photos):
-        dx, dy, peak = (0.0, 0.0, 1.0) if i == 0 else phase_shift(base, window(load_grey(f), a.window))
+        if i == 0:
+            dx, dy, peak = 0.0, 0.0, 1.0
+        else:
+            other = window(load_grey(f), a.window)
+            dx, dy, peak = phase_shift(base, other)
+            dx, dy = refine_shift(base, other, round(dx), round(dy))
         rows.append(dict(photo=f.name, dx=round(dx, 3), dy=round(dy, 3), peak=round(peak, 4)))
         print(f'{f.name}: dx {dx:+.3f} px, dy {dy:+.3f} px (peak {peak:.3f})')
     if a.output:
