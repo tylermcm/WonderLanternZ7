@@ -448,6 +448,39 @@ at the calibrated corners `(0,0)`, `(20,0)`, `(20,18)`, `(0,18)`:
 10 offline checks. In-camera merge and NX Studio tags are not ported; the
 set is merged on the computer.
 
+## First real series result (Nov 27)
+
+Build `f4e46989` ran on a tripod and was restored.
+
+- **Mechanics: perfect.** 95 requests, 0 refused, 0 timeouts.
+  - All four frames (`DSC_8526`-`DSC_8529`) were re-confirmed at the exact
+    calibrated targets after the 0.5 s settle (`(0,0,0)`, `(-80,0,0)`,
+    `(-80,-72,-72)`, `(0,-72,-72)`, measured within 8 counts) and released.
+  - The D2 apply restore ended the hold at once, for the third time on the
+    camera.
+- **Image shift**, preview JPEGs, median of the 11 most-textured 768-px
+  tiles:
+
+| Frame | Expected (px) | Measured (px) |
+| --- | --- | --- |
+| 2 | (-1, 0) | (-0.78, +0.16) |
+| 3 | (-1, +1) | (-1.64, +0.26) |
+| 4 | (0, +1) | (-0.08, +0.20) |
+
+  On the calibration run the same tile method gives a clean x-80 -> +4.64,
+  y+72 -> +4.14, y-72 -> -3.74. So large steps are linear, but **18-step y
+  moves have measured 0 to 0.6 px across three runs** instead of about 1,
+  while 36 and 72 steps were proportional. Either the vertical actuators
+  have a small dead zone, or one-pixel structure cannot be measured on the
+  NEF's demosaiced preview. Correlation peaks are low (0.13-0.19), and the
+  preview is demosaiced, which blurs exactly the colour-filter-scale detail
+  pixel shift relies on.
+
+**Next:** decode the raw Bayer data, and check each frame's shift on the
+raw colour channels. That also gives the merge tool. If y really has a dead
+zone, a larger step that lands on the next same-phase site (e.g. 3 px), or
+an approach from a fixed direction, would be the fix.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,

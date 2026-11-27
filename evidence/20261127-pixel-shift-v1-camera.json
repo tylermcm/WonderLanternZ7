@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-v1-camera",
+  "module_sha256": "f4e46989e29645835b30f0086322e3622bd3191487a406e07809ff82d0f18b3f",
+  "restored_module": "8dcee0e0",
+  "camera_access": true,
+  "photos": [
+    "DSC_8526.NEF",
+    "DSC_8527.NEF",
+    "DSC_8528.NEF",
+    "DSC_8529.NEF"
+  ],
+  "log": {
+    "sends": 95,
+    "refused": 0,
+    "timeouts": 0,
+    "frames": 4,
+    "restore_method": "apply flags",
+    "state_after_restore": 1
+  },
+  "targets_reconfirmed": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      -80,
+      0,
+      0
+    ],
+    [
+      -80,
+      -72,
+      -72
+    ],
+    [
+      0,
+      -72,
+      -72
+    ]
+  ],
+  "image_shift_px_strong_tiles": [
+    [
+      0,
+      0
+    ],
+    [
+      -0.78,
+      0.16
+    ],
+    [
+      -1.64,
+      0.26
+    ],
+    [
+      -0.08,
+      0.2
+    ]
+  ],
+  "expected_px": [
+    [
+      0,
+      0
+    ],
+    [
+      -1,
+      0
+    ],
+    [
+      -1,
+      1
+    ],
+    [
+      0,
+      1
+    ]
+  ],
+  "calibration_same_method": {
+    "x-80": 4.64,
+    "y+72": 4.14,
+    "y-72": -3.74
+  },
+  "finding": "18-step y moves under-deliver (0-0.6 px over three runs) while 36/72 are linear; preview-JPEG measurement may be the limit",
+  "next": "raw Bayer decode for per-channel shift and merge"
+}
