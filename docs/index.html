@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nikon Z7 Extensions — Pixel Shift &amp; Custom Firmware for the Original Nikon Z7</title>
-<meta name="description" content="Experimental firmware extensions for the original Nikon Z7 (C 3.80): four-shot pixel shift with a raw merge, a shutter sound in Silent photography, upside-down photo playback, custom grids and battery percentage. Open source.">
+<meta name="description" content="I got pixel shift working on the original Nikon Z7, plus a shutter sound in silent mode, upside-down photo playback, custom grids and battery percentage. Open-source firmware extensions for the Z7 (C 3.80).">
 <meta name="keywords" content="Nikon Z7 pixel shift, Nikon Z7 custom firmware, Nikon Z7 firmware mod, Nikon Z7 silent shutter sound, Nikon Z7 firmware hack, Z7 extensions, IBIS pixel shift">
 <link rel="canonical" href="https://tylermcm.github.io/nikon-z7-extensions/">
 <meta name="robots" content="index, follow">
@@ -12,12 +12,12 @@
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Nikon Z7 Extensions">
-<meta property="og:title" content="Pixel shift on the original Nikon Z7 — it works*">
-<meta property="og:description" content="Open-source firmware extensions for the original Nikon Z7: module-fired four-shot pixel shift within 0.15 px, a raw merge tool, silent-mode shutter sound and more.">
+<meta property="og:title" content="I got pixel shift working on the original Nikon Z7">
+<meta property="og:description" content="Four shots, one pixel apart, using the Z7's own stabilisation, then merged on a computer. Plus a silent-mode shutter sound, upside-down playback and more. Open source.">
 <meta property="og:url" content="https://tylermcm.github.io/nikon-z7-extensions/">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Pixel shift on the original Nikon Z7 — it works*">
-<meta name="twitter:description" content="Open-source firmware extensions for the original Nikon Z7: pixel shift, silent-mode shutter sound, upside-down playback, custom grids.">
+<meta name="twitter:title" content="I got pixel shift working on the original Nikon Z7">
+<meta name="twitter:description" content="Pixel shift, a silent-mode shutter sound and upside-down playback for the original Nikon Z7. Open source.">
 
 <script type="application/ld+json">
 {
@@ -39,15 +39,15 @@
   "@type": "FAQPage",
   "mainEntity": [
     {"@type": "Question", "name": "Can the original Nikon Z7 do pixel shift?",
-     "acceptedAnswer": {"@type": "Answer", "text": "Nikon never added pixel shift to the original Z7. This project's experimental SD-card modules move the sensor in one-pixel steps through the camera's own in-body stabilisation, fire four shots, and a computer tool merges the raw files. The latest series landed within 0.15 px of every target on the owner's Z7 (C 3.80). It is a test build, not yet a menu feature."}},
-    {"@type": "Question", "name": "Can the Nikon Z7 play a shutter sound in Silent photography?",
-     "acceptedAnswer": {"@type": "Answer", "text": "Yes, with the experimental LCD module: it plays a WAV from the memory card on each photo and burst frame, with volume OFF or 1 to 9 and up to ten selectable sounds."}},
-    {"@type": "Question", "name": "Why does the Nikon Z7 show upside-down photos the wrong way up?",
-     "acceptedAnswer": {"@type": "Answer", "text": "The stock Z7 firmware saves upside-down shots as EXIF Orientation 1 and its playback has no half-turn. The module writes Orientation 3 and rotates those photos in in-camera playback."}},
-    {"@type": "Question", "name": "Does it work on the Nikon Z7 II?",
-     "acceptedAnswer": {"@type": "Answer", "text": "No. It targets the original Z7 on firmware C 3.80. Z7 II owners should look at JKWTCN's z7ii-extensions, the project this port follows."}},
-    {"@type": "Question", "name": "Is there a firmware file to download?",
-     "acceptedAnswer": {"@type": "Answer", "text": "No. The project is source only: no stock or modified Nikon firmware and no compiled module binaries are distributed. Experimental camera firmware work can damage a camera; read the risk notice first."}}
+     "acceptedAnswer": {"@type": "Answer", "text": "Not from Nikon, no. With this project, yes. It's experimental, but it's real: four shots one pixel apart using the camera's own stabilisation, merged on a computer. The latest run landed within 0.15 px on every shot. It's still a test build, not a menu option."}},
+    {"@type": "Question", "name": "Can the Z7 play a shutter sound in silent mode?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Yes, with the LCD module. It plays a WAV from the card every time you take a photo. You pick the volume (off to 9) and the sound (up to ten)."}},
+    {"@type": "Question", "name": "Why does my Z7 show upside-down photos the wrong way up?",
+     "acceptedAnswer": {"@type": "Answer", "text": "The stock firmware saves them as if they were the right way up, and playback can't rotate 180 degrees. The module fixes both."}},
+    {"@type": "Question", "name": "Will it work on a Z7 II?",
+     "acceptedAnswer": {"@type": "Answer", "text": "No, this is for the original Z7 only. For the Z7 II, check out JKWTCN's z7ii-extensions, the project this one is based on."}},
+    {"@type": "Question", "name": "Is there a firmware file I can download?",
+     "acceptedAnswer": {"@type": "Answer", "text": "No. It's source only: no Nikon firmware and no compiled modules are shared. Read the risk notice before trying to build anything."}}
   ]
 }
 </script>
@@ -125,60 +125,61 @@
 
 <main>
   <div class="wrap hero">
-    <span class="eyebrow">Open-source firmware extensions · original Nikon Z7 · C 3.80</span>
-    <h1>Pixel shift on the original Nikon Z7 — it works*</h1>
+    <span class="eyebrow">original Nikon Z7 · firmware C 3.80</span>
+    <h1>I got pixel shift working on the original Nikon Z7*</h1>
     <p class="lede">
-      Experimental SD-card modules for the first-generation Nikon Z7. They add
-      <strong>four-shot pixel shift</strong>, a <strong>shutter sound in Silent
-      photography</strong>, <strong>upside-down photo playback</strong>, custom
-      framing grids and more, by building on Nikon's own firmware services.
+      The first Z7 never got pixel shift. It also never got a shutter sound you
+      can hear in silent mode, or upside-down photos that play back the right way
+      up. This project adds those, plus custom grids, a battery percentage and a
+      few other things. It all comes from small modules that load off the SD
+      card and lean on Nikon's own firmware underneath.
     </p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/tylermcm/nikon-z7-extensions/releases/tag/v0.2.0-pixel-shift-preview.1">Read the pixel-shift release</a>
-      <a class="btn" href="https://github.com/tylermcm/nikon-z7-extensions">View the source on GitHub</a>
+      <a class="btn primary" href="https://github.com/tylermcm/nikon-z7-extensions/releases/tag/v0.2.0-pixel-shift-preview.1">Read the release notes</a>
+      <a class="btn" href="https://github.com/tylermcm/nikon-z7-extensions">Source on GitHub</a>
     </div>
   </div>
 
   <section id="pixel-shift">
     <div class="wrap">
-      <h2>Pixel shift on a camera that never had it</h2>
+      <h2>How the pixel shift works</h2>
       <p>
-        Nikon brought pixel shift to newer bodies such as the Z8, Z9 and Zf, but
-        never to the original Z7. This project drives the Z7's in-body
-        stabilisation (IBIS) through Nikon's own BodyVr service. It moves the image
-        sensor exactly one pixel at a time and fires the shutter itself at each
-        position. A computer tool then merges the four raw files into one
-        full-colour image, with no demosaicing.
+        The Z7's in-body stabilisation can already move the sensor around.
+        Nikon just never used it for this. The module borrows the stabiliser,
+        nudges the sensor exactly one pixel at a time, and fires the shutter
+        itself at each spot. After four shots, a script on my computer combines
+        the raw files into one image where every pixel has real red, green and
+        blue data, instead of the camera guessing the missing colours.
       </p>
       <div class="stats" role="list">
-        <div class="stat" role="listitem"><b>0.15 px</b><span>worst error of the four shots, measured on raw data</span></div>
-        <div class="stat" role="listitem"><b>20 / 18</b><span>sensor steps per pixel, horizontal / vertical</span></div>
-        <div class="stat" role="listitem"><b>4 shots</b><span>one per colour-filter phase: R, G, G, B at every pixel</span></div>
-        <div class="stat" role="listitem"><b>5 / 5</b><span>camera runs with stabilisation restored afterwards</span></div>
+        <div class="stat" role="listitem"><b>0.15 px</b><span>furthest any of the four shots landed from its target</span></div>
+        <div class="stat" role="listitem"><b>20 / 18</b><span>sensor steps per pixel, sideways / up-down</span></div>
+        <div class="stat" role="listitem"><b>4 shots</b><span>enough for red, green and blue at every pixel</span></div>
+        <div class="stat" role="listitem"><b>5 for 5</b><span>runs where stabilisation came back on afterwards</span></div>
       </div>
-      <h3>How a series runs</h3>
+      <h3>What a pixel-shift series looks like</h3>
       <ol class="steps">
-        <li>Half-press to arm. The module waits until stabilisation is active, then for the camera to settle once you let go.</li>
-        <li>For each of four positions — (0,0), (1,0), (1,1), (0,1) pixels — it moves the sensor, approaching from above, confirms the position from the stabiliser's telemetry, and releases.</li>
-        <li>It clicks once per shot, recentres the sensor and hands stabilisation back to Nikon.</li>
-        <li>On a computer, <code>merge_z7_pixel_shift.py</code> measures and combines the four NEFs.</li>
+        <li>Camera on a tripod. Half-press for a few seconds, then let go and step back.</li>
+        <li>It waits about 7 seconds for the camera to stop wobbling, then takes four shots, each one pixel apart. You hear a click for each one.</li>
+        <li>It puts the sensor back where it was and hands stabilisation back to the camera.</li>
+        <li>Back home, run <code>merge_z7_pixel_shift.py</code> on the four NEFs.</li>
       </ol>
       <p>
-        Compared with a single shot of the same scene, the merge resolves fine
-        printed halftone with far less false-colour speckle, and gives smoother,
-        cleaner gradients. The full measurement history, including what didn't
-        work, is in
+        On a printed page, the merged image shows the halftone dots cleanly, where
+        a normal shot turns them into coloured speckle. Smooth areas come out
+        noticeably cleaner too. Getting here took a lot of wrong turns, like the
+        camera still settling when the first shot fired, and every one of them is
+        written up in
         <a href="https://github.com/tylermcm/nikon-z7-extensions/blob/main/PIXEL_SHIFT_RESEARCH.md">PIXEL_SHIFT_RESEARCH.md</a>.
       </p>
       <div class="note">
-        <strong>* What "works" means.</strong> It is an experiment, owner-tested on
-        one camera:
+        <strong>*The fine print.</strong> It works on my camera, on a tripod,
+        pointed at something that doesn't move. Some honest limits:
         <ul>
-          <li>so far, one clean series with every correction in place;</li>
-          <li>a test build, not yet a menu option;</li>
-          <li>the merge runs on a computer, with no in-camera merge;</li>
-          <li>a faint striping remains from about 0.1 px residual misalignment;</li>
-          <li>it needs a tripod and a still subject, as every pixel-shift camera does.</li>
+          <li>I've had one fully clean run with every fix in place, so I'd like a few more before calling it reliable.</li>
+          <li>It's a test build you put on the card, not a menu option yet.</li>
+          <li>The merge happens on a computer, not in the camera.</li>
+          <li>There's still a faint striping in bright flat areas, from a misalignment of about a tenth of a pixel. I'm working on it.</li>
         </ul>
       </div>
     </div>
@@ -186,22 +187,22 @@
 
   <section id="features">
     <div class="wrap">
-      <h2>Features and status</h2>
+      <h2>What's in it</h2>
       <div class="table">
         <table>
           <thead><tr><th>Feature</th><th>Status</th><th>Notes</th></tr></thead>
           <tbody>
-            <tr><td>Pixel shift (4 shots + raw merge)</td><td><span class="tag exp">Experimental</span></td><td>Module-fired series within 0.15 px; computer merge.</td></tr>
-            <tr><td>Shutter sound in Silent photography</td><td><span class="tag ok">Owner-tested</span></td><td>Every photo and burst frame; volume OFF/1–9; up to ten sounds from a <code>SHUTTER</code> folder.</td></tr>
-            <tr><td>Upside-down photos</td><td><span class="tag ok">Owner-tested</span></td><td>Saved with EXIF Orientation 3 and shown the right way up in playback.</td></tr>
-            <tr><td>Custom framing grids</td><td><span class="tag ok">Owner-tested</span></td><td>4×4, 3×3, Golden ratio, Center cross, 6×6, Off; the choice is saved.</td></tr>
-            <tr><td>Rear-LCD battery percentage</td><td><span class="tag ok">Owner-tested</span></td><td>On/off with the preference retained.</td></tr>
-            <tr><td>Four LCD DISP presets</td><td><span class="tag ok">Owner-tested</span></td><td>Choose what each DISP page shows.</td></tr>
-            <tr><td>AF-area buttons</td><td><span class="tag exp">Camera test pending</span></td><td>One-press AF-area mode on Fn1, Fn2, AF-ON, sub-selector and movie button.</td></tr>
+            <tr><td>Pixel shift (4 shots + merge on a computer)</td><td><span class="tag exp">Experimental</span></td><td>All four shots within 0.15 px on my camera.</td></tr>
+            <tr><td>Shutter sound in silent mode</td><td><span class="tag ok">Works on my Z7</span></td><td>Clicks on every photo and burst frame. Volume off to 9, and up to ten sounds you drop in a <code>SHUTTER</code> folder.</td></tr>
+            <tr><td>Upside-down photos</td><td><span class="tag ok">Works on my Z7</span></td><td>Saved with the right orientation and shown the right way up in playback.</td></tr>
+            <tr><td>Custom framing grids</td><td><span class="tag ok">Works on my Z7</span></td><td>4×4, 3×3, golden ratio, centre cross, 6×6 or off, and it remembers your pick.</td></tr>
+            <tr><td>Battery percentage on the rear screen</td><td><span class="tag ok">Works on my Z7</span></td><td>Turn it on or off; the setting sticks.</td></tr>
+            <tr><td>Four DISP presets</td><td><span class="tag ok">Works on my Z7</span></td><td>Choose what each DISP screen shows.</td></tr>
+            <tr><td>AF-area buttons</td><td><span class="tag exp">Not camera-tested yet</span></td><td>One press on Fn1, Fn2, AF-ON, the sub-selector or the movie button switches AF-area mode.</td></tr>
           </tbody>
         </table>
       </div>
-      <p>Target: original Nikon Z7, firmware C 3.80, without the paid RAW-video upgrade. Hardware results come from the project owner's camera only.</p>
+      <p>It's built for the original Nikon Z7 on firmware C 3.80, without the paid RAW video upgrade. Everything marked "works" has only been tested on my one camera.</p>
     </div>
   </section>
 
@@ -209,40 +210,43 @@
     <div class="wrap">
       <h2>FAQ</h2>
       <details open><summary>Can the original Nikon Z7 do pixel shift?</summary>
-        <p>Not from Nikon. With this project's experimental modules, yes: four shots one pixel apart through the camera's own IBIS, merged on a computer. The latest series landed within 0.15 px of target. It is still a test build.</p></details>
-      <details><summary>Can the Nikon Z7 play a shutter sound in Silent photography?</summary>
-        <p>Yes, with the LCD module. It plays a WAV from the card on each photo, with volume 1–9 and up to ten selectable sounds.</p></details>
-      <details><summary>Why does the Z7 show upside-down photos the wrong way up?</summary>
-        <p>The stock firmware saves them as Orientation 1 and playback has no half-turn. The module writes Orientation 3 and rotates them in playback.</p></details>
-      <details><summary>Does it work on the Nikon Z7 II?</summary>
-        <p>No. It targets the original Z7 on C 3.80. Z7 II owners should see <a href="https://github.com/JKWTCN/z7ii-extensions">JKWTCN's z7ii-extensions</a>, the project this port follows.</p></details>
-      <details><summary>Can I download a firmware file?</summary>
-        <p>No. The project is source only: no Nikon firmware and no compiled modules are distributed. Read the risk notice before building anything.</p></details>
+        <p>Not from Nikon, no. With this, yes. It's experimental, but it's real: four shots one pixel apart using the camera's own stabilisation, merged on a computer. My latest run landed within 0.15 px on every shot.</p></details>
+      <details><summary>Can the Z7 play a shutter sound in silent mode?</summary>
+        <p>Yes, with the LCD module. It plays a WAV from the card every time you take a photo. You pick the volume and the sound.</p></details>
+      <details><summary>Why does my Z7 show upside-down photos the wrong way up?</summary>
+        <p>The stock firmware saves them as if they were the right way up, and playback can't rotate 180°. The module fixes both.</p></details>
+      <details><summary>Will it work on a Z7 II?</summary>
+        <p>No, this is for the original Z7 only. For the Z7 II, check out <a href="https://github.com/JKWTCN/z7ii-extensions">JKWTCN's z7ii-extensions</a>. That's the project I based this on.</p></details>
+      <details><summary>Is there a firmware file I can download?</summary>
+        <p>No. It's source only. I don't share Nikon's firmware or any compiled modules. Please read the risk notice before you try building anything.</p></details>
     </div>
   </section>
 
   <section id="safety">
     <div class="wrap">
       <div class="note danger">
-        <strong>Experimental camera firmware research.</strong> A failed or incorrect
-        install can permanently damage a camera, destroy data, or require paid
-        repair. Use entirely at your own risk; there is no warranty and no verified
-        emergency recovery. Read the
-        <a href="https://github.com/tylermcm/nikon-z7-extensions/blob/main/RISK_NOTICE.md">risk notice</a>.
-        Not affiliated with or endorsed by Nikon.
+        <strong>Please read this first.</strong> This is experimental camera
+        firmware hacking. If something goes wrong you could brick your camera or
+        lose data, and I can't fix it for you. There's no warranty and no
+        guaranteed way back. The full
+        <a href="https://github.com/tylermcm/nikon-z7-extensions/blob/main/RISK_NOTICE.md">risk notice</a>
+        is worth reading before you try anything. I'm not affiliated with Nikon
+        in any way.
       </div>
     </div>
   </section>
 
   <section id="credits">
     <div class="wrap">
-      <h2>Credits</h2>
+      <h2>Thanks</h2>
       <p>
-        This work follows <a href="https://github.com/JKWTCN/z7ii-extensions">JKWTCN's MIT-licensed Z7 II extensions</a>,
-        including its module framework and pixel-shift approach, and grew from
-        <a href="https://github.com/WonderLantern/z7-qemu">WonderLantern's z7-qemu</a> emulator.
-        The original-Z7 bindings, calibration and tools are independent work. Component
-        licenses and notices are preserved; see
+        None of this would exist without
+        <a href="https://github.com/JKWTCN/z7ii-extensions">JKWTCN's Z7 II extensions</a>.
+        The module system and the pixel shift idea both come from there. The other
+        is <a href="https://github.com/WonderLantern/z7-qemu">WonderLantern's z7-qemu</a>
+        emulator, which is where I started poking at the Z7's firmware. The
+        original-Z7 side is separate work. Licences and notices for everything I
+        built on are kept in
         <a href="https://github.com/tylermcm/nikon-z7-extensions/blob/main/CREDITS.md">CREDITS.md</a>.
       </p>
     </div>
@@ -252,7 +256,7 @@
 <footer>
   <div class="wrap">
     Nikon Z7 Extensions · <a href="https://github.com/tylermcm/nikon-z7-extensions">github.com/tylermcm/nikon-z7-extensions</a> ·
-    Nikon and Z7 are trademarks of Nikon Corporation; this is an independent project.
+    Nikon and Z7 are trademarks of Nikon Corporation. This is an independent hobby project.
   </div>
 </footer>
 </body>
