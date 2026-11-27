@@ -48,7 +48,15 @@ static void z7_vs_still(uint32_t key)
 #ifdef Z7_PIXEL_SHIFT_V1
 /* Z7 scale measured by the calibration run 73567658 (Nov 27): about 20 steps
  * per pixel in x and 18 in y, independent axes. */
+#ifdef Z7_PIXEL_SHIFT_V2
+/* Dead-zone run 615cf144: the body settles for about 5 s after the button is
+ * released (about 1 px), and upward y moves fall about 0.3 px short while the
+ * same target reached from above is exact. V2: 7 s start settle, and every
+ * frame is approached from VS_APPROACH_Y steps above its y target. */
+enum { VS_STEP_X=20, VS_STEP_Y=18, VS_SETTLE_START_MS=7000u, VS_SETTLE_FRAME_MS=500u, VS_APPROACH_Y=36, VS_PH_PRE=0x17u };
+#else
 enum { VS_STEP_X=20, VS_STEP_Y=18, VS_SETTLE_START_MS=2000u, VS_SETTLE_FRAME_MS=500u };
+#endif
 #else
 enum { VS_STEP_X=21, VS_STEP_Y=18 };   /* upstream's Z7II values */
 #endif
@@ -83,6 +91,20 @@ static int z7_vs_follow(uint32_t frame, int x, int y)
     }
     return 0;
 }
+#ifdef Z7_PIXEL_SHIFT_V2
+/* Pre-position VS_APPROACH_Y steps above the frame's y target, so the target
+ * is always reached moving down. 1 followed, 0 not followed, -1 stop. */
+static int z7_vs_preposition(uint32_t frame)
+{
+    int x,y; z7_vs_target(frame,&x,&y); y+=VS_APPROACH_Y;
+    z7_vs_payload[1]=(uint8_t)x; z7_vs_payload[3]=(uint8_t)y;
+    uint32_t s=z7_vm_exchange(VM_POSITION,z7_vs_payload);
+    z7_vm_record(VS_PH_PRE,frame,s,0);
+    if (z7_vm_applied(s)) z7_vm_log.flags|=VM_MOVE_SENT;
+    if (s) return z7_vm_applied(s) ? -1 : 0;
+    return z7_vs_follow(frame,x,y);
+}
+#endif
 /* Send the position for this frame; 1 followed, 0 not followed, -1 stop. */
 static int z7_vs_position(uint32_t frame, uint32_t phase)
 {
@@ -194,6 +216,9 @@ static void z7_vr_note_event(uint32_t frame)
 /* One frame: position, confirm, fire, wait for Nikon's completion and the file. */
 static int z7_vr_frame(uint32_t frame)
 {
+#ifdef Z7_PIXEL_SHIFT_V2
+    if (z7_vs_preposition(frame)<=0) { z7_vm_log.flags|=VS_POSITION_MISSED; return 0; }
+#endif
     int r=z7_vs_position(frame,VS_PH_SEND);
     if (r<=0) { if (!r && z7_vs_resends<VS_RESENDS) { ++z7_vs_resends; z7_vm_log.resends=z7_vs_resends; r=z7_vs_position(frame,VS_PH_RESEND); } }
     if (r<=0) return 0;

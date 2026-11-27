@@ -587,6 +587,17 @@ planes agree within about 0.2-0.4 px):
    +36 first). This removes the 0.3 px upward shortfall.
 3. Keep x 20 / y 18.
 
+## Series v2 built
+
+[LCD_PIXEL_SHIFT2_TEST.md](LCD_PIXEL_SHIFT2_TEST.md), build `9814fb58`
+(`--pixel-shift2`, `Z7_PIXEL_SHIFT_V2`). Changes from v1:
+- a 7 s start settle;
+- every corner approached from 36 y-steps above, as `(x, y+36)` then
+  `(x, y)`.
+
+Unchanged: the calibrated x 20 / y 18 corners, the 0.5 s settle with a
+re-check, one click per frame, and the D2 apply restore. 11 offline checks.
+
 ## Safety plan
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,
