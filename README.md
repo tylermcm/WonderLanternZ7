@@ -1,4 +1,4 @@
-# WonderLantern Z7 — Nikon Z7 Firmware Extensions: Pixel Shift, Shutter Sound, Custom Grids
+# Nikon Z7 Extensions — Pixel Shift, Shutter Sound and Custom Grids for the Original Nikon Z7
 
 Experimental, source-only firmware extensions for the **original Nikon Z7
 (C 3.80)**:
@@ -15,8 +15,12 @@ authors/contributors accept no liability. No warranty or verified emergency
 recovery is provided. Read [RISK_NOTICE.md](RISK_NOTICE.md).**
 
 Independent, modified research workspace for the **original Nikon Z7 C 3.80**.
+It grew from [WonderLantern's z7-qemu](https://github.com/WonderLantern/z7-qemu)
+emulator and follows [JKWTCN's Z7 II extensions](https://github.com/JKWTCN/z7ii-extensions).
+This repository was previously named WonderLanternZ7; old links redirect.
 This is not an official Nikon or Wonder Lantern release. Component licenses,
-credits and notices are preserved; see [UPSTREAMS.json](UPSTREAMS.json).
+credits and notices are preserved; see [CREDITS.md](CREDITS.md) and
+[UPSTREAMS.json](UPSTREAMS.json).
 
 ## News: pixel shift works* on the original Nikon Z7 (November 27, 2026)
 
@@ -85,7 +89,7 @@ licenses remain intact. See [CREDITS.md](CREDITS.md) and
 
 ## Frequently asked questions
 
-### Is WonderLantern Z7 custom firmware for the original Nikon Z7?
+### Is Nikon Z7 Extensions custom firmware for the original Nikon Z7?
 
 It is an experimental firmware-extension research project for the original Z7
 on C 3.80. The current work includes an installed module host and SD-loaded LCD
@@ -140,7 +144,7 @@ considering a local build with your own matching official firmware.
 
 ## Earlier published 3x3 grid preview
 
-[Experimental source/patcher prerelease v0.1.0-grid-preview.1](https://github.com/tylermcm/WonderLanternZ7/releases/tag/v0.1.0-grid-preview.1)
+[Experimental source/patcher prerelease v0.1.0-grid-preview.1](https://github.com/tylermcm/nikon-z7-extensions/releases/tag/v0.1.0-grid-preview.1)
 
 The preview adds **3x3 / 4x4 / Off** to the native framing-grid menu, with the
 choice stored in the camera's existing internal settings. It has no timed

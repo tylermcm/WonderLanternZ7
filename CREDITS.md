@@ -1,7 +1,8 @@
 # Credits and provenance
 
-WonderLanternZ7 is an independent, modified research workspace for the original
-Nikon Z7. It builds on the projects below. Their authors' copyright notices and
+Nikon Z7 Extensions (`tylermcm/nikon-z7-extensions`, formerly WonderLanternZ7)
+is an independent, modified research workspace for the original Nikon Z7. It
+started from WonderLantern's z7-qemu emulator and builds on the projects below. Their authors' copyright notices and
 licenses remain in the component directories; this repository does not replace
 them with a single blanket license or claim endorsement by their maintainers.
 

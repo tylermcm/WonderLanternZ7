@@ -5,7 +5,7 @@ distributed.** Read the [risk notice](RISK_NOTICE.md) before trying anything.
 
 Nikon brought pixel shift to newer bodies such as the Z8, Z9 and Zf, but never
 to the original Z7. (The Z7 II only has it through JKWTCN's community
-extensions.) WonderLantern Z7 now takes a real
+extensions.) Nikon Z7 Extensions now takes a real
 **four-shot pixel-shift series on an original Z7 (firmware C 3.80)**, and a
 computer-side merge turns the four raw files into a full-colour image with
 no demosaicing.
