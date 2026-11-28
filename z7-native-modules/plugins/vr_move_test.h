@@ -241,6 +241,17 @@ enum {
     VM_RESTORE_SENT=1u<<11, VM_RESTORE_CALLED_BACK=1u<<12, VM_RESTORED=1u<<13,
     VM_NO_D2=1u<<14, VM_D2_CHANGED=1u<<15
 };
+/* True while a moved sensor has not been handed back to Nikon. Camera run
+ * 13e0ce7d (Nov 27): the centre hold never read within 8 units (tripod noise
+ * up to 19), so requiring CENTRE_FOLLOWED left the settings unrestored and
+ * showed Reboot although Nikon's normal VR was confirmed. In the Nikon menu
+ * build the confirmed native restore (state no longer hold) is what counts. */
+#ifdef Z7_PIXEL_NIKON_MENU
+#define Z7_VM_CLEANUP_PENDING() ((z7_vm_log.flags&VM_MOVE_SENT) && !(z7_vm_log.flags&VM_RESTORED))
+#else
+#define Z7_VM_CLEANUP_PENDING() ((z7_vm_log.flags&VM_MOVE_SENT) && \
+    (z7_vm_log.flags&(VM_CENTRE_FOLLOWED|VM_RESTORED))!=(VM_CENTRE_FOLLOWED|VM_RESTORED))
+#endif
 #define VM_B(a) (*(volatile uint8_t *)(uintptr_t)(a))
 static uint8_t z7_vm_selection[4];
 static uint32_t z7_vm_d2_flags;

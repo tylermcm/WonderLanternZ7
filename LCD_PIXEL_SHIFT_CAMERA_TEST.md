@@ -1,9 +1,10 @@
 # Pixel shift shooting: camera test candidate
 
-Status: **third build `13e0ce7d`, prepared, not staged.** The first build
-(`ede43437`) stopped before moving or firing, and the second (`8e1da6c8`) froze
-the camera after the shutter press; both are explained below. It passes every
-offline and emulator check. It is your everyday module (`8dcee0e0`:
+Status: **fourth build `7a536ea7`, prepared, not staged.** Earlier builds:
+`ede43437` stopped before moving or firing, `8e1da6c8` froze the camera after
+the shutter press, and `13e0ce7d` took one frame, then stopped and showed
+Reboot. All three are explained below. It passes every offline and emulator
+check. It is your everyday module (`8dcee0e0`:
 display features, shutter sound, upside-down EXIF and playback) plus the full
 pixel-shift menu. This continues
 [LCD_PIXEL_NATIVE_TEST.md](LCD_PIXEL_NATIVE_TEST.md), which was frozen before
@@ -12,7 +13,7 @@ AE bracketing, the automatic setup and J-cancel were finished.
 | Candidate | Value |
 | --- | --- |
 | Source | `z7-native-modules/plugins/lcd_pixel_nikon_checkpoint.c` (`--pixel-nikon-menu`) |
-| Module | 48,100 bytes, SHA-256 `13e0ce7d3aa904f48f6ac0562904f408448719b3d9544feb6eae88f4b0de897c` |
+| Module | 48,100 bytes, SHA-256 `7a536ea71f94f8c4a9926018552bdd80223684049e83659c281c52186f23f018` |
 | Host | Existing installed host; no firmware update |
 | Settings file | `A:\Z7PXL.DAT` (count, delay, interval, folder options, AE choices) |
 | Log | `A:\Z7PIX.DAT` (decode with `tools/decode_z7_pixel_menu_log.py`) |
@@ -119,12 +120,38 @@ reads the table from the firmware instead of a hand-written list. It sends the
 real press order (half down, full down, full up, half up) and fails if Nikon
 is left half-pressed. Run against `8e1da6c8`, it fails with exactly that.
 
+## Third camera run (`13e0ce7d`, Nov 27): one frame, then Reboot
+
+The full press worked: no freeze, the group armed, and it waited the 7 s
+settle. The first frame was taken with the sensor held at its position. The
+log (`Z7PIX.DAT`, job error 2) then shows two problems:
+1. **After the shot, Nikon gave stabilisation back to its normal mode.** It
+   does this after every capture. This build checked the hold again *after*
+   each photo and stopped when it found Nikon's normal mode. The proven v2
+   series, which took 4 good frames, never made that check; it just sent the
+   next position. The hold is still checked immediately before every release.
+2. **The centring check never passed.** Tripod noise put each reading up to
+   19 units off, and this build allowed only 8. Stabilisation was confirmed
+   back in Nikon's normal mode, but the cleanup still waited for a centring
+   check that never passed. So it left image quality and the other temporary
+   settings unrestored and showed **Reboot**.
+
+**Fix (`7a536ea7`).** After a photo, the module only logs the stabilisation
+state. Cleanup, the next AE group and a new group now wait only for Nikon's
+normal stabilisation to be confirmed, so settings are restored even when
+centring is noisy. The simulator now does what the camera does: it hands VR
+back after every capture, and centring reads up to 19 units off. Run against
+`13e0ce7d`, it stops after the first frame, as the camera did. The older
+builds still rebuild byte for byte.
+
 ## Verified before the camera
 
 All on this exact module, except the exposure, folder and repository checks,
 which test the firmware bindings and tools it uses:
 
-- **Capture and settings: 121 checks.**
+- **Capture and settings: 124 checks.**
+  - Nikon's normal-VR handback after each capture, and noisy centring, with
+    settings still restored and no Reboot;
   - shutter callbacks taken from Nikon's own registration code, half down and
     up always passed to Nikon, and Nikon never left half-pressed;
   - 4/8/16/32 positions, with single and series modes;

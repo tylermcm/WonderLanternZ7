@@ -88,8 +88,7 @@ static void z7_pn_quality_worker(void)
     if (!z7_pn_mode) {
         z7_pn_raw_ready=0;
         /* Never change quality while cleanup still owns a moved sensor. */
-        if ((z7_vm_log.flags&VM_MOVE_SENT) &&
-            (z7_vm_log.flags&(VM_CENTRE_FOLLOWED|VM_RESTORED))!=(VM_CENTRE_FOLLOWED|VM_RESTORED)) return;
+        if (Z7_VM_CLEANUP_PENDING()) return;
         if (!z7_pn_quality_matches()) { z7_pn_raw_error=2;return; }
         if (z7_pn_raw_error==2u) return;
         if (!z7_pn_setup_restore()) { z7_pn_raw_error=2;return; }

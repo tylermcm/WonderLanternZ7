@@ -34,8 +34,7 @@ static const char *z7_pm_status(void)
     if (z7_pm_requested) return "Armed";
     if (z7_vm_stage==2u) return "Wait";
     if (z7_vm_log.flags&VM_TIMED_OUT) return "Restart";
-    if ((z7_vm_log.flags&VM_MOVE_SENT) &&
-        (z7_vm_log.flags&(VM_CENTRE_FOLLOWED|VM_RESTORED))!=(VM_CENTRE_FOLLOWED|VM_RESTORED)) return "Restart";
+    if (Z7_VM_CLEANUP_PENDING()) return "Restart";
     if (z7_vm_log.flags&VS_SERIES_COMPLETE) return "Done";
     if (z7_vm_log.flags) return "Stopped";
     return "Ready";
@@ -60,8 +59,7 @@ static void z7_pm_arm(void)
         __atomic_store_n(&z7_pm_lock,0u,__ATOMIC_RELEASE); return;
     }
     /* After any sensor move, a new group needs confirmed centering AND restore. */
-    if ((z7_vm_log.flags&VM_MOVE_SENT) &&
-        (z7_vm_log.flags&(VM_CENTRE_FOLLOWED|VM_RESTORED))!=(VM_CENTRE_FOLLOWED|VM_RESTORED)) {
+    if (Z7_VM_CLEANUP_PENDING()) {
         __atomic_store_n(&z7_pm_lock,0u,__ATOMIC_RELEASE); return;
     }
 #ifdef Z7_PIXEL_NIKON_MENU

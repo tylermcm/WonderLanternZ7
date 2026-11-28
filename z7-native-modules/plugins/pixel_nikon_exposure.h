@@ -154,8 +154,7 @@ static uint32_t z7_pn_group_exposure(uint32_t group)
 static void z7_pn_job_finish(void)
 {
     if (!z7_pn_job_active) return;
-    if ((z7_vm_log.flags&VM_MOVE_SENT) &&
-        (z7_vm_log.flags&(VM_CENTRE_FOLLOWED|VM_RESTORED))!=(VM_CENTRE_FOLLOWED|VM_RESTORED)) {
+    if (Z7_VM_CLEANUP_PENDING()) {
         z7_pn_job_error=2;return;
     }
     z7_pn_exp_restore();

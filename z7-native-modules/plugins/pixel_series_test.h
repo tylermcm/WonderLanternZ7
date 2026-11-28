@@ -337,7 +337,13 @@ static int z7_vr_frame(uint32_t frame)
         uint32_t done=__atomic_load_n(&z7_vr_done,__ATOMIC_ACQUIRE);
         if (done==2u) { z7_vr_note_event(frame); z7_vm_log.flags|=VR_FRAME_FAILED; return 0; }
         if (done && __atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE)>photos) {
-#ifdef Z7_PIXEL_MENU
+#if defined(Z7_PIXEL_NIKON_MENU)
+            /* Camera run 13e0ce7d: once the capture completes Nikon returns VR to
+             * normal (state 1), as the proven v2 series also tolerated. The hold
+             * was verified immediately before the release and the next frame
+             * re-sends its position, so only log the post-capture state. */
+            (void)z7_vs_matches_now(frame);
+#elif defined(Z7_PIXEL_MENU)
             if (!z7_vs_matches_now(frame)) { z7_vm_log.flags|=VS_HOLD_LOST; return 0; }
 #endif
 #ifdef Z7_PIXEL_NIKON_MENU
@@ -379,7 +385,7 @@ static void z7_vr_series(void)
             uint32_t group=frame>>z7_pn_job_shift;
             if (group) {
                 z7_vs_finish();
-                if ((z7_vm_log.flags&(VM_CENTRE_FOLLOWED|VM_RESTORED))!=(VM_CENTRE_FOLLOWED|VM_RESTORED) || z7_vr_touched()) break;
+                if (!(z7_vm_log.flags&VM_RESTORED) || z7_vr_touched()) break;
                 z7_pm_running=1;z7_vm_stage=4;
             }
             if (!z7_pn_group_exposure(group) || !z7_pn_start_folder()) break;

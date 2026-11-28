@@ -39,7 +39,7 @@ class NikonUnit(MenuUnit):
         self.effective_bias={}
         self.external_exposure=None;self.reject_property_value=None;self.j_after=None
         self.capture_latency_ms=0;self.remaining_capture_ms=0
-        self.reject_log=False;self.short_log=False
+        self.reject_log=False;self.short_log=False;self.centre_noise=False;self.noise_reads=0
         self.u.mem_write(0xa238c1b4,struct.pack('<I',0x1005f757))
         self.u.mem_write(0xa1829b0c,struct.pack('<I',0x1030da57))
         self.u.mem_write(0xa238c140,struct.pack('<4I',*self.shutter_callbacks()))
@@ -54,6 +54,13 @@ class NikonUnit(MenuUnit):
             table.append(struct.unpack('<I',bytes(self.u.mem_read(literal,4)))[0])
         assert table==[0x10062a53,0x10062a37,0x10060a0d,0x100609d9],[hex(t) for t in table]
         return table
+    def telemetry(self):
+        # Camera run 13e0ce7d: the centre hold read up to 19 units off on the tripod.
+        b=bytearray(super().telemetry())
+        if self.centre_noise and self.read(self.base+self.symbols['z7_vm_stage'])==2 and b[0x22]==0x40 and self.target==[0,0,0]:
+            self.noise_reads+=1
+            struct.pack_into('<3h',b,0x24,*([19,-19,19] if self.noise_reads%2 else [-19,19,-19]))
+        return bytes(b)
     def nikon_half_pressed(self):
         # Nikon's view of S1 from the events the module let through (bit0 down, bit3 up).
         held=False
@@ -184,7 +191,8 @@ def main():
         checks.append(name);print(name,flush=True)
     def load(files=None):
         NikonUnit.sound_files={WAV:a.clip.read_bytes(),**(files or {})}
-        f=NikonUnit(raw,h,packet,{NEW[0]:v3record((3,15,1,0,5,0,127,7,0,127,4),0)},no_press=True)
+        # Camera run 13e0ce7d: Nikon hands VR back (state 1) after every capture.
+        f=NikonUnit(raw,h,packet,{NEW[0]:v3record((3,15,1,0,5,0,127,7,0,127,4),0)},no_press=True,post_capture_loss=True)
         f.u.mem_write(0xa238c1b4,struct.pack('<I',0x1005f757))
         f.u.mem_write(0xa238c140,struct.pack('<4I',*f.shutter_callbacks()))
         f.file_paths=PATHS+NEW;f.u.mem_write(SLOT,bytes(4));f.u.mem_write(BUSY,bytes(4))
@@ -258,6 +266,13 @@ def main():
     check('Off-cancels-pending-and-owned-full-release-stays-consumed',not word(f,'z7_pn_full_pending') and not word(f,'z7_pn_full_owned') and f.input_forwarded==[1])
     f.call(f.base+symbols['z7_pn_input_dispatch'],8)
     check('half-up-always-reaches-Nikon-so-it-never-stays-half-pressed',f.input_forwarded==[1,8] and not f.nikon_half_pressed())
+    f=restore();choose(f,0,1);trigger(f)
+    check('post-capture-VR-handback-does-not-stop-the-group',len(f.fires)==4 and word(f,'z7_pn_job_error')==0 and
+          all(x['state']==0x40 for x in f.fires))
+    f=restore();f.centre_noise=True;choose(f,0,1);trigger(f);tick(f,40)
+    check('noisy-centre-still-restores-settings-once-VR-is-normal',f.noise_reads>=20 and len(f.fires)==4 and word(f,'z7_pn_job_error')==0 and
+          f.properties[0x501]==0 and not word(f,'z7_pn_raw_owned') and not word(f,'z7_pn_job_active'))
+    put(f,'z7_settings_view',7);check('noisy-centre-shows-Off-not-Reboot','Off' in labels(f).values() and 'Reboot' not in labels(f).values())
     f=restore();choose(f,0,1);trigger(f)
     check('full-press-cycle-forwards-half-down-and-up-and-owns-only-full',f.input_forwarded[:2]==[1,8] and
           not any(x&6 for x in f.input_forwarded) and not f.nikon_half_pressed() and len(f.fires)==4)

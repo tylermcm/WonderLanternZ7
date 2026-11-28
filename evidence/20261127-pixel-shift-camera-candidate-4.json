@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-candidate-4",
+  "module_sha256": "7a536ea71f94f8c4a9926018552bdd80223684049e83659c281c52186f23f018",
+  "module_bytes": 48100,
+  "fix": [
+    "log, do not reject, the post-capture VR state (hold verified before each release)",
+    "cleanup, AE groups and new groups gate on confirmed native VR restore, not centre follow"
+  ],
+  "offline": {
+    "capture_settings": 124,
+    "display": 277,
+    "native_menu": 59,
+    "exposure_conversion": 34,
+    "native_folder": 12
+  },
+  "negative_control": "capture audit stops 13e0ce7d after its first frame, as on the camera",
+  "baselines_byte_identical": [
+    "8ec66cea (default)",
+    "e33474d1",
+    "3b2bb075",
+    "f4e46989",
+    "9814fb58",
+    "201235a6 (pixel-menu)"
+  ],
+  "repository_tests": 119,
+  "camera_tested": false,
+  "staged": false
+}

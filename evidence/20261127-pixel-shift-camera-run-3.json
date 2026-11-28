@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-run-3",
+  "module_sha256": "13e0ce7d3aa904f48f6ac0562904f408448719b3d9544feb6eae88f4b0de897c",
+  "camera_access": true,
+  "owner_report": "after the press and about 7 s, one image, then it stopped; the mode row showed Reboot",
+  "log": {
+    "version": 5,
+    "frames": 1,
+    "sends": 74,
+    "refused": 0,
+    "timeouts": 0,
+    "job_error": 2,
+    "flags": [
+      "armed",
+      "move_sent",
+      "move_ack",
+      "move_followed",
+      "centre_sent",
+      "centre_ack",
+      "normal_again",
+      "done",
+      "restore_sent",
+      "restore_callback",
+      "restored",
+      "hold_lost",
+      "fired"
+    ]
+  },
+  "full_press": "worked; no freeze; Nikon half-press state balanced",
+  "cause": [
+    "post-capture hold check: Nikon returns VR to normal (state 1) after the capture; the frame was held (state 64) at release",
+    "centre follow tolerance 8 vs measured noise up to 19: CENTRE_FOLLOWED never set, so settings restore was withheld (job error 2, Reboot) although native VR was restored and normal"
+  ],
+  "fix_module": "7a536ea7"
+}
