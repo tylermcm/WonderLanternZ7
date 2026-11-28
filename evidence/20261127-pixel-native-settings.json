@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "module_sha256": "59975c6a75cfcff0459218239acd6ee28d06588bfdf099e7ffd738aa17ceecd8",
+  "module_bytes": 42116,
+  "reproducible": true,
+  "native_parity_complete": false,
+  "camera_tested": false,
+  "card_staged": false,
+  "firmware_update": false,
+  "root_tests": 115,
+  "merge_log_tests": 11,
+  "capture_settings_checks": 88,
+  "display_checks": 277,
+  "emulator_checks": 53,
+  "emulator_frames": 29,
+  "native_folder_checks": 12,
+  "exposure_conversion_checks": 23,
+  "exposure_bracketing_implemented": false,
+  "counts": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "modes": [
+    "Off",
+    "On (series)",
+    "On (single photo)"
+  ],
+  "delay_choices_seconds": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    10
+  ],
+  "z7_minimum_settling_seconds": 7,
+  "interval_numeric_seconds": {
+    "minimum": 0,
+    "maximum": 30
+  },
+  "preferences": {
+    "file": "A:\\Z7PXL.DAT",
+    "bytes": 16,
+    "version": 3,
+    "persisted": [
+      "count",
+      "delay",
+      "interval",
+      "new_folder",
+      "reset_numbering"
+    ],
+    "boot_mode": "Off"
+  },
+  "new_folder": true,
+  "reset_file_numbering": true,
+  "quality": "Reversible NEF-only selection on worker",
+  "physical_input_verified": false,
+  "trigger": "Full-down queues worker; fresh press per group",
+  "menu_location": "Photo shooting / Pixel shift shooting; Extras remains available",
+  "upstream_bug": {
+    "issue": "https://github.com/JKWTCN/z7ii-extensions/issues/7",
+    "state_at_check": "open",
+    "reproduced_on_Z7": false,
+    "claimed_fixed": false
+  },
+  "expanded_capture_validation": "Software fixtures and synthetic merge only",
+  "baselines_byte_identical": {
+    "everyday": "8dcee0e026017de282288635ef92ea4bf544caa81863125c6c68f0ff995d611a",
+    "simplified_menu": "201235a678c3485ff3301af85d3592958849d9b3cc8069fd54c5cfcc44246e8e"
+  },
+  "review": "LCD_PIXEL_NATIVE_TEST.md"
+}

@@ -149,6 +149,24 @@ static void persistence_worker(void)
     z7_vp_worker();
 #endif
 #ifdef Z7_VR_MOVE
+#ifdef Z7_PIXEL_MENU
+#ifdef Z7_PIXEL_NIKON_MENU
+    z7_pn_save_worker();
+    z7_pn_quality_worker();
+    z7_pn_poll_trigger();
+#endif
+    uint32_t free=0;
+    if (__atomic_compare_exchange_n(&z7_pm_lock,&free,1u,0,__ATOMIC_ACQ_REL,__ATOMIC_ACQUIRE)) {
+        z7_vm_worker();
+#ifdef Z7_PIXEL_NIKON_MENU
+        z7_pn_after_worker();
+        z7_pn_quality_worker();
+        z7_pn_cleanup_log();
+#endif
+        __atomic_store_n(&z7_pm_lock,0u,__ATOMIC_RELEASE);
+    }
+#else
     z7_vm_worker();
+#endif
 #endif
 }

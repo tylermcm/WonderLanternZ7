@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "module_sha256": "723809cd9ecb8a9c3cf7dc1eb8b0584e2a35377d27b965966d3fc3f9becc4d76",
+  "module_bytes": 38824,
+  "reproducible": true,
+  "camera_tested": false,
+  "card_staged": false,
+  "firmware_update": false,
+  "root_tests": 115,
+  "merge_log_tests": 11,
+  "capture_settings_checks": 49,
+  "display_checks": 277,
+  "emulator_checks": 46,
+  "emulator_frames": 25,
+  "counts": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "modes": [
+    "Off",
+    "On (single photo)",
+    "On (series)"
+  ],
+  "delay_presets_seconds": [
+    0,
+    2,
+    5,
+    7,
+    10,
+    20,
+    30
+  ],
+  "z7_minimum_delay_seconds": 7,
+  "interval_presets_seconds": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    10,
+    30
+  ],
+  "preferences": {
+    "file": "A:\\Z7PXL.DAT",
+    "bytes": 16,
+    "persisted": [
+      "count",
+      "delay",
+      "interval"
+    ],
+    "boot_mode": "Off"
+  },
+  "ae_bracketing": false,
+  "new_folder": false,
+  "reset_file_numbering": false,
+  "trigger": "Half-press and release; fresh trigger per group",
+  "menu_location": "Custom settings / h Display settings / Extras / Pixel shift",
+  "expanded_capture_validation": "Software fixtures and synthetic merge only",
+  "review": "LCD_PIXEL_NIKON_MENU_TEST.md"
+}

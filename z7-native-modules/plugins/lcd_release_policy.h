@@ -25,6 +25,18 @@ static inline uint32_t z7_lcd_release_filter(struct z7_display_settings *s)
 }
 static inline uint32_t z7_lcd_release_rows(uint32_t view)
 {
+#ifdef Z7_PIXEL_MENU
+#ifdef Z7_PIXEL_NIKON_MENU
+    if (view==7u || view==10u) return 7;
+    if (view==11u) return 1;
+    if (view==16u || view==17u) return 1;
+    if (view==15u) return 4;
+    if (view==8u) return 4;
+    if (view==9u) return 5;
+    if (view==12u || view==13u || view==14u) return 3;
+#endif
+    if (view==5 || view==7) return 4;
+#endif
 #ifdef Z7_AF_BUTTONS_MENU
     if (view==5) return 4;
     if (view==6) return 6;
@@ -55,6 +67,19 @@ static inline uint32_t z7_lcd_release_rows(uint32_t view)
 /* Physical compact-menu row -> existing settings action/label index. */
 static inline uint32_t z7_lcd_release_row(uint32_t view,uint32_t row)
 {
+#ifdef Z7_PIXEL_MENU
+#ifdef Z7_PIXEL_NIKON_MENU
+    if (view==7u || view==10u) return row<7u ? row : UINT32_MAX;
+    if (view==11u) return row==0u ? 0u : UINT32_MAX;
+    if (view==16u || view==17u) return row==0u ? 0u : UINT32_MAX;
+    if (view==15u) return row<3u ? row : row==3u ? 6u : UINT32_MAX;
+    if (view>=8u && view<=14u) {
+        uint32_t n=view==9u ? 4u : view==8u ? 3u : 2u;
+        return row<n ? row : row==n ? 6u : UINT32_MAX;
+    }
+#endif
+    if (view==5 || view==7) return row<3u ? row : row==3u ? 6u : UINT32_MAX;
+#endif
 #ifdef Z7_AF_BUTTONS_MENU
     if (view==5) return row<3u ? row : row==3u ? 6u : UINT32_MAX;
     if (view==6) return row<5u ? row : row==5u ? 6u : UINT32_MAX;

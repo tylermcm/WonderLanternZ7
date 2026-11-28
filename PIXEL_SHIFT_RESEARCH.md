@@ -1,5 +1,10 @@
 # Pixel shift on the original Z7: research
 
+This is the chronological research record. For current November 27 behavior,
+camera measurements and remaining limits, see the later sections below and
+[the current native-menu candidate](LCD_PIXEL_NATIVE_TEST.md). The initial
+November 26 status immediately below is historical.
+
 Status: **research only, November 26, 2026.** Nothing has been built or run on
 the camera. Target: JKWTCN's MIT Z7II pixel shift (`8aad350`, released
 November 25, 2026). The Z7 and Z7II use the same 45.7 MP sensor size
@@ -638,6 +643,24 @@ in the merge, NX Studio tags, an in-camera merge, a menu entry, and 16-shot
 mode.
 
 ## Safety plan
+
+Current native-menu continuation: [LCD_PIXEL_NATIVE_TEST.md](LCD_PIXEL_NATIVE_TEST.md)
+documents the Photo shooting entry, full-press worker bridge, Nikon delay choices,
+numeric 00–30 second interval, original DCF folder/reset helper and reversible
+NEF-only quality setup. These are offline implementations, not camera results.
+AE bracketing remains unavailable. The new native exposure audit verifies
+compensation units (sixths of EV) and shutter units (24 per EV) through the
+original PTP conversion paths, with property boundaries supplied; it does not
+prove metering lock, Auto ISO behavior, exposure settling or restoration.
+Whole-group AE integration still requires those pieces and expanded logging.
+
+November 27 continuation: the revised [computer merge](PIXEL_SHIFT_MERGE.md)
+reduces the first set's striping through fractional registration and spatial
+illumination matching. A separate [menu candidate](LCD_PIXEL_MENU_TEST.md)
+adds explicit arming, 4/16/32-shot choices and tighter capture/centering guards
+after review of upstream issue #7. Its software checks pass; the new workflow
+and 16/32 half-step geometry still need camera tests. Earlier run descriptions
+above remain the historical measurement record.
 
 Moving the sensor is the riskiest experiment so far, so it goes in small,
 reversible steps, each needing your approval:

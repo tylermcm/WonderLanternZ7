@@ -66,6 +66,23 @@ class SettingsFileFixtureTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             SettingsFileFixture(self.fixture.packet, paths=PATHS + (b'A:\\OTHER.DAT',))
 
+    def test_pixel_preferences_have_separate_bounded_io(self):
+        paths=PATHS+(b'A:\\Z7DSP0.DAT',b'A:\\Z7DSP1.DAT',b'A:\\Z7PXL.DAT')
+        self.fixture=SettingsFileFixture(self.fixture.packet,files={0:b'legacy'},paths=paths)
+        self.loaded()
+        self.memory.write_memory(self.path,paths[4]+b'\0')
+        fd=self.request(13,**{'4':self.path})
+        self.memory.write_memory(self.buffer,bytes(range(16)))
+        self.assertEqual(self.request(9,**{'7':fd,'10':self.buffer,'11':16,'12':self.actual}),0)
+        self.request(6,**{'7':fd})
+        self.assertEqual(self.fixture.files,{0:b'legacy',4:bytes(range(16))})
+        fd=self.request(5,**{'4':self.path})
+        with self.assertRaises(AssertionError):
+            self.request(8,**{'7':fd,'10':self.buffer,'11':81,'12':self.actual})
+        self.assertEqual(self.request(8,**{'7':fd,'10':self.buffer,'11':64,'12':self.actual}),0)
+        self.assertEqual(struct.unpack('<I',self.memory.memory(self.actual,4))[0],16)
+        self.request(6,**{'7':fd})
+
     def test_explicit_open_error_is_not_absence_and_preserves_unread_slots(self):
         self.loaded(); self.path_for(0)
         self.fixture.files = {0: b'old0', 1: b'old1'}

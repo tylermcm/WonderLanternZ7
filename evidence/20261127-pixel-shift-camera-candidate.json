@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-test-candidate",
+  "module_sha256": "ede43437747aafe14939e70109568687ac19e274d329f132e86ee9f548206f08",
+  "module_bytes": 48100,
+  "reproducible": true,
+  "menu": "Photo shooting > Pixel shift shooting (also Extras)",
+  "counts": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "ae_bracketing": "whole groups, 2F-9F, 0.3-3.0 EV, one exposure per group",
+  "temporary_setup": [
+    "NEF only",
+    "single frame, bracketing off",
+    "Silent photography on",
+    "AF-C to AF-S, Dynamic to Single-point",
+    "P/S/A and Auto ISO frozen in temporary Manual"
+  ],
+  "trigger": "full press; J, shutter touch or Off cancels",
+  "offline": {
+    "capture_settings": 116,
+    "display": 277,
+    "exposure_conversion": 34,
+    "native_folder": 12,
+    "native_menu": 59
+  },
+  "repository_tests": 119,
+  "baselines_byte_identical": [
+    "8dcee0e0",
+    "e33474d1",
+    "9814fb58",
+    "f4e46989",
+    "3b2bb075"
+  ],
+  "camera_tested": false,
+  "staged": false
+}

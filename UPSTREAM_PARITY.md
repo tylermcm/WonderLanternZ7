@@ -40,3 +40,13 @@ continues without making that cosmetic issue a prerequisite. Camera updates
 still require an exact installation/recovery assessment and explicit approval.
 Offline checks do not establish camera appearance, recording behavior, AF/IBIS
 behavior, card durability or recovery.
+
+The November 27 [native-menu pixel-shift candidate](LCD_PIXEL_NATIVE_TEST.md) and
+[revised computer merge](PIXEL_SHIFT_MERGE.md) supersede the earlier
+pixel-shift research-only status. Four shots have a camera result; the
+mode/count/timing controls and 8/16/32-shot geometry remain offline candidates.
+Photo shooting entry, full-press bridge, numeric interval, native folder controls
+and reversible RAW setup are implemented offline. AE bracketing remains
+unavailable; physical input, timing, folder durability and recovery are unverified. The
+upstream preview.42 centering/capture report was reviewed separately;
+no model-specific native setters were copied from the Z7 II.

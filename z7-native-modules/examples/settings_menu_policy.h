@@ -69,6 +69,10 @@ static uint32_t sm_activate(void) { return sm_action(0xa1833548u); }
 static uint32_t sm_back_event(void) { return sm_back(0xa1833548u); }
 static uint32_t sm_zero(uint32_t object) { (void)object; return 0; }
 static uint32_t sm_one(uint32_t object) { (void)object; return 1; }
+#ifdef Z7_PIXEL_NIKON_MENU
+static uint32_t sm_owned(uint32_t object);
+#include "../plugins/pixel_nikon_photo_menu.h"
+#endif
 static void sm_bind_text(uint32_t object, uint32_t label)
 {
     if (!object) return;
@@ -88,6 +92,9 @@ static uint32_t sm_owned(uint32_t object)
 static uint32_t sm_open(void)
 {
     if (!sm_owned(0xa1833548u)) return 0;
+#ifdef Z7_PIXEL_NIKON_MENU
+    z7_pn_photo_origin=0;
+#endif
 #ifdef Z7_LCD_FIRST_RELEASE
     sm_lcd_prepare_rows();
 #endif
@@ -151,6 +158,27 @@ static uint32_t sm_back(uint32_t object)
     if (!sm_owned(object)) return 0;
     uint32_t old = z7_settings_view;
     if (!old) return F(0x104025edu, uint32_t, uint32_t)(0x3a1);
+#ifdef Z7_PIXEL_MENU
+#ifdef Z7_PIXEL_NIKON_MENU
+    if (old>=15u && old<=17u) {
+        z7_settings_view=old==15u ? 12u : 15u;
+        sm_render(object);sm_focus(object,old==15u ? 0u : old-16u);
+        sm_redraw_request();return 0;
+    }
+    if (old>=8u && old<=14u) {
+        uint32_t row=old<=13u ? old-8u : z7_pn_help_focus;
+        z7_settings_view=7;sm_render(object);sm_focus(object,row);
+        sm_redraw_request();return 0;
+    }
+#endif
+    if (old == 7) {
+#ifdef Z7_PIXEL_NIKON_MENU
+        if (z7_pn_photo_origin) { z7_pn_photo_origin=0;return F(0x104025edu,uint32_t,uint32_t)(0x3a1); }
+#endif
+        z7_settings_view = 5; sm_render(object); sm_focus(object, 2);
+        sm_redraw_request(); return 0;
+    }
+#endif
 #ifdef Z7_AF_BUTTONS_MENU
     if (old == 6) {
         z7_settings_view = 5; sm_render(object); sm_focus(object, 2);
@@ -174,6 +202,30 @@ static uint32_t sm_back(uint32_t object)
     sm_redraw_request();
     return 0;
 }
+#ifdef Z7_PIXEL_NIKON_MENU
+static uint32_t sm_pn_interval_change(int step)
+{
+    if (!sm_owned(0xa1833548u)) return 0;
+    volatile uint32_t *draft=0;uint32_t maximum=0;
+    if (z7_settings_view==11u) { draft=&z7_pn_interval_draft;maximum=30; }
+    if (z7_settings_view==16u) { draft=&z7_pn_ae_draft_count;maximum=8; }
+    if (z7_settings_view==17u) { draft=&z7_pn_ae_draft_step;maximum=11; }
+    if (!draft) return 0;
+    if (z7_settings_view==17u) {
+        int next=(int)*draft+step;
+        while (next>=0 && next<=11 && !z7_pn_step_allowed((uint32_t)next)) next+=step;
+        if (next>=0 && next<=11) *draft=(uint32_t)next;
+        if (z7_pn_ae_sixths[*draft]>=12u && z7_pn_ae_draft_count>=7u) z7_pn_ae_draft_count=6u;
+    } else {
+        if (step>0 && *draft<maximum) ++*draft;
+        if (step<0 && *draft) --*draft;
+        if (z7_settings_view==16u && z7_pn_ae_sixths[z7_pn_ae_draft_step]>=12u && *draft>=7u) *draft=6u;
+    }
+    sm_render(0xa1833548u);sm_redraw_request();return 0;
+}
+static uint32_t sm_pn_interval_up(void) { return sm_pn_interval_change(1); }
+static uint32_t sm_pn_interval_down(void) { return sm_pn_interval_change(-1); }
+#endif
 static uint32_t sm_action(uint32_t object)
 {
     if (!sm_owned(object) || !z7_settings_valid(&z7_menu_settings)) return 0;
@@ -183,6 +235,35 @@ static uint32_t sm_action(uint32_t object)
 #endif
 #ifdef Z7_SHUTTER_SOUND_MENU
     /* Sound level is not a display setting: own file, no display journal edit. */
+#ifdef Z7_PIXEL_MENU
+#ifdef Z7_PIXEL_NIKON_MENU
+    if (z7_settings_view>=7u && z7_settings_view<=17u) {
+        if (z7_settings_view==7u && row==6u && z7_pn_photo_origin) return sm_back(object);
+        uint32_t previous_view=z7_settings_view,view=previous_view;
+        uint32_t focus=z7_pn_action(&view,row);
+        z7_settings_view=view;
+        ++z7_settings_actions;sm_render(object);
+        sm_focus(object,view==7u || view==5u || (view==13u && previous_view==13u) || (view==15u && previous_view>=15u) ? focus : z7_pn_entry_row(view));
+        sm_redraw_request();return 0;
+    }
+#else
+    if (z7_settings_view == 7) {
+        if (row == 0) z7_pm_next_count();
+        else if (row == 1) z7_pm_arm();
+        else if (row == 6) z7_settings_view = 5;
+        ++z7_settings_actions;
+        sm_render(object);
+        if (z7_settings_view == 5) sm_focus(object, 2);
+        sm_redraw_request(); return 0;
+    }
+#endif
+    if (z7_settings_view == 5 && row == 2) {
+        z7_settings_view = 7;
+        ++z7_settings_actions;
+        sm_render(object); sm_focus(object, 0);
+        sm_redraw_request(); return 0;
+    }
+#endif
 #ifdef Z7_AF_BUTTONS_MENU
     if (z7_settings_view == 6) {
         if (row < AB_ROWS) z7_ab_menu_next(row);
@@ -294,6 +375,13 @@ static uint32_t sm_render(uint32_t object)
 #ifdef Z7_AF_BUTTONS_MENU
         && z7_settings_view != 6
 #endif
+#ifdef Z7_PIXEL_MENU
+#ifdef Z7_PIXEL_NIKON_MENU
+        && !(z7_settings_view>=7u && z7_settings_view<=17u)
+#else
+        && z7_settings_view != 7
+#endif
+#endif
         ) || z7_settings_preset >= 4 || !sm_label_ownership()) return 0;
     static const char *const roots[7] = {"Custom pages", "Standard", "Minimal", "Composition", "Exposure", "Information display", "Battery percentage"};
     static const char *const preset[7] = {"Page enabled", "Shooting information", "Framing grid", "Histogram", "Virtual horizon", "Photo highlights", "Reset preset"};
@@ -310,7 +398,12 @@ static uint32_t sm_render(uint32_t object)
 #endif
     const char *title = !z7_settings_view ? "Display settings" : z7_settings_view == 1 ? roots[z7_settings_preset + 1] : "Shooting information";
 #ifdef Z7_SOUND_FOLDER
-#ifdef Z7_AF_BUTTONS_MENU
+#ifdef Z7_PIXEL_MENU
+    static const char *const sound_rows[7] = {"Shutter volume", "Shutter sound", "Pixel shift", "", "", "", "Back"};
+    static const char *const pixel_rows[7] = {"Frames", "Arm series", "Status", "", "", "", "Back"};
+    if (z7_settings_view == 5) { names = sound_rows; title = "Extras"; }
+    if (z7_settings_view == 7) { names = pixel_rows; title = "Pixel shift"; }
+#elif defined(Z7_AF_BUTTONS_MENU)
     static const char *const sound_rows[7] = {"Shutter volume", "Shutter sound", "AF-area buttons", "", "", "", "Back"};
     static const char *const af_rows[7] = {"Fn1 button", "Fn2 button", "AF-ON button", "Sub-selector center", "Movie-record button", "", "Back"};
     if (z7_settings_view == 5) { names = sound_rows; title = "Extras"; }
@@ -325,7 +418,13 @@ static uint32_t sm_render(uint32_t object)
 #endif
 #ifdef Z7_SETTINGS_PERSISTENCE
     uint32_t save_status = persistence_display_status();
-#ifdef Z7_AF_BUTTONS_MENU
+#ifdef Z7_PIXEL_MENU
+#ifdef Z7_PIXEL_NIKON_MENU
+    if (z7_settings_view>=5u) title=z7_settings_view>=7u ? z7_pn_title(z7_settings_view) : "Extras"; else
+#else
+    if (z7_settings_view >= 5) title = z7_settings_view == 7 ? "Pixel shift" : "Extras"; else
+#endif
+#elif defined(Z7_AF_BUTTONS_MENU)
     if (z7_settings_view >= 5) title = z7_settings_view == 6 ? "AF-area buttons" : "Extras"; else  /* own files */
 #elif defined(Z7_SOUND_FOLDER)
     if (z7_settings_view == 5) title = "Shutter sound"; else  /* not a display setting: no save status */
@@ -350,13 +449,28 @@ static uint32_t sm_render(uint32_t object)
         }
 #ifdef Z7_SHUTTER_SOUND_MENU
         if (!z7_settings_view && row==7) {
-#ifdef Z7_AF_BUTTONS_MENU
+#if defined(Z7_AF_BUTTONS_MENU) || defined(Z7_PIXEL_MENU)
             sm_text_put(231+physical_row,"Extras");sm_text_put(238+physical_row,"");
 #else
             sm_text_put(231+physical_row,"Shutter sound");sm_text_put(238+physical_row,z7_sl_value_text());
 #endif
             continue;
         }
+#ifdef Z7_PIXEL_MENU
+#ifdef Z7_PIXEL_NIKON_MENU
+        if (z7_settings_view>=7u && z7_settings_view<=17u) {
+            sm_text_put(231+physical_row,z7_pn_label(z7_settings_view,row));
+            sm_text_put(238+physical_row,z7_pn_value(z7_settings_view,row));
+            continue;
+        }
+#endif
+        if (z7_settings_view==7) {
+            sm_text_put(231+physical_row,names[row]);
+            sm_text_put(238+physical_row,row==0 ? z7_pm_count_text() : row==1 ?
+                (z7_pm_requested || z7_pm_running ? "Cancel" : "OK") : row==2 ? z7_pm_status() : "");
+            continue;
+        }
+#endif
 #ifdef Z7_AF_BUTTONS_MENU
         if (z7_settings_view==6) {
             sm_text_put(231+physical_row,names[row]);
@@ -411,6 +525,19 @@ static uint32_t sm_render(uint32_t object)
         sm_events[i][1] = (uint32_t)(uintptr_t)sm_back_event;
         sm_events[i][3] = 0x3a0;
     }
+#ifdef Z7_PIXEL_NIKON_MENU
+    for (uint32_t i=0;i<14;++i) {
+        uint32_t event=sm_events[i][0];
+        if (event==0x236u || event==0x250u) {
+            sm_events[i][1]=(z7_settings_view==11u || z7_settings_view==16u || z7_settings_view==17u) ? (uint32_t)(uintptr_t)sm_pn_interval_up : 0x10404f6fu;
+        } else if (event==0x237u || event==0x251u) {
+            sm_events[i][1]=(z7_settings_view==11u || z7_settings_view==16u || z7_settings_view==17u) ? (uint32_t)(uintptr_t)sm_pn_interval_down : 0x10404f7bu;
+        } else continue;
+        /* Numeric editor owns held-key repeats too, without a second native
+         * cursor move. Other pages retain their original wheel/hold guard. */
+        sm_events[i][2]=z7_settings_view==11u || z7_settings_view==16u || z7_settings_view==17u || event<0x250u ? 0u : 0x10405009u;
+    }
+#endif
     uint32_t pool_pointer = W(object + 36);
     if (pool_pointer) for (uint32_t row = 0; row < 7; ++row) {
         uint32_t label = F(0x103fcf0fu, uint32_t, uint32_t, uint32_t, uint32_t)(pool_pointer, 1, row);
@@ -471,6 +598,9 @@ static void persistence_menu_notify(void)
 #endif
 static uint32_t sm_prepare(void)
 {
+#ifdef Z7_PIXEL_NIKON_MENU
+    if (!z7_pn_photo_prepare()) return 0;
+#endif
 #ifdef Z7_SETTINGS_ROOT_ENTRY
     if (!sm_root_prepare()) return 0;
 #endif
@@ -499,6 +629,9 @@ static uint32_t sm_prepare(void)
         sm_boxes[row][0] = 72; sm_boxes[row][1] = y; sm_boxes[row][2] = 702; sm_boxes[row][3] = y + 48;
         sm_labels[row][0] = 78; sm_labels[row][1] = y + 4; sm_labels[row][2] = 560; sm_labels[row][3] = y + 44;
         sm_values[row][0] = 570; sm_values[row][1] = y; sm_values[row][2] = 696; sm_values[row][3] = y + 48;
+#ifdef Z7_PIXEL_NIKON_MENU
+        sm_labels[row][2]=600;sm_values[row][0]=610;
+#endif
     }
     sm_geometry[0] = 7; sm_geometry[1] = (uint32_t)(uintptr_t)sm_boxes; sm_geometry[2] = (uint32_t)(uintptr_t)sm_labels; sm_geometry[3] = (uint32_t)(uintptr_t)sm_values;
     for (uint32_t i = 0; i < 7; ++i) sm_meta[i] = meta[i];
@@ -520,6 +653,9 @@ static uint32_t sm_prepare(void)
 }
 static void sm_publish(void)
 {
+#ifdef Z7_PIXEL_NIKON_MENU
+    z7_pn_photo_publish();
+#endif
 #ifdef Z7_SETTINGS_ROOT_ENTRY
     sm_root_publish();
 #endif

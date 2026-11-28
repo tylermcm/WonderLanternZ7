@@ -38,6 +38,17 @@ no menu option or in-camera merge yet. Read the
 **[pixel-shift release note](RELEASE_NOTES_2026-11-27_PIXEL_SHIFT.md)** for
 what works, how it was measured and the limits.
 
+The [computer merge](PIXEL_SHIFT_MERGE.md) now corrects fractional alignment
+and changing illumination to reduce the stripes in the first test set. A
+separate [camera-menu candidate](LCD_PIXEL_MENU_TEST.md) adds 4/16/32-shot
+choices and explicit arming. Its menu and capture simulations are checked
+offline; the new workflow and 16/32-shot geometry still need camera tests.
+
+The newer [Nikon-style settings candidate](LCD_PIXEL_NIKON_MENU_TEST.md) adds
+Off/single/series modes, 4/8/16/32 shots, selectable delay and interval, and
+saved count/timing preferences. Its bracketing and folder-management entries
+are unavailable pending original-Z7 integration. It remains an offline candidate.
+
 ## Nikon Z7 LCD features and compatibility
 
 These are development checkpoints, separate from the older released grid preview.
@@ -283,6 +294,8 @@ capture timing, recording, recovery or compatibility with other camera models.
 - [SHUTTER_SOUND_SD_PORT.md](SHUTTER_SOUND_SD_PORT.md): SD-module shutter sound (no firmware patch): sound-service bindings, playback module, trigger probe; camera field tests in [SHUTTER_SOUND_FIELD_TEST.md](SHUTTER_SOUND_FIELD_TEST.md); sound-on-photo test in [SHUTTER_SOUND_ON_PHOTO_TEST.md](SHUTTER_SOUND_ON_PHOTO_TEST.md); LCD module with a volume setting in [LCD_SHUTTER_SOUND_TEST.md](LCD_SHUTTER_SOUND_TEST.md); with the upside-down EXIF fix in [LCD_EXIF_ORIENTATION_TEST.md](LCD_EXIF_ORIENTATION_TEST.md); sound folder in [LCD_SOUND_FOLDER_TEST.md](LCD_SOUND_FOLDER_TEST.md); upside-down playback in [LCD_INVERTED_PLAYBACK_TEST.md](LCD_INVERTED_PLAYBACK_TEST.md).
 - [RELEASE_NOTES_2026-11-27_PIXEL_SHIFT.md](RELEASE_NOTES_2026-11-27_PIXEL_SHIFT.md): pixel shift works* on the original Z7 (what works, measurements, limits).
 - [PIXEL_SHIFT_RESEARCH.md](PIXEL_SHIFT_RESEARCH.md): the full pixel-shift build and measurement history, from the first telemetry read to the calibrated series and merge; tools [`merge_z7_pixel_shift.py`](tools/merge_z7_pixel_shift.py) and [`measure_z7_raw_shift.py`](tools/measure_z7_raw_shift.py).
+- [LCD_PIXEL_SHIFT_CAMERA_TEST.md](LCD_PIXEL_SHIFT_CAMERA_TEST.md): the pixel-shift camera-test candidate: Photo shooting → Pixel shift shooting with 4/8/16/32 shots, delay and interval, AE bracketing by whole groups, new-folder option, full-press trigger, J to cancel, and automatic RAW/release/Silent/AF/exposure setup with restore. Passes all offline and emulator checks; not yet camera-tested.
+- [LCD_PIXEL_NATIVE_TEST.md](LCD_PIXEL_NATIVE_TEST.md): the earlier frozen native-menu candidate, before AE bracketing and the automatic setup.
 - [EXIF_ORIENTATION_RESEARCH.md](EXIF_ORIENTATION_RESEARCH.md): upside-down photos saved with EXIF Orientation 3 (original-Z7 IFD0 bindings; measured in the field test).
 - [CAPTURE_START_FIX.md](CAPTURE_START_FIX.md): normal-callback correction after the silent/mechanical diagnostic comparison.
 - [SILENT_PROPERTY_FIX.md](SILENT_PROPERTY_FIX.md): verified native Z7 silent-mode property and tests through the original getter.

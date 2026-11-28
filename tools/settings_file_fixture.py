@@ -16,8 +16,9 @@ NOT_FOUND = 0x80000010
 class SettingsFileFixture:
     def __init__(self, packet, files=None, paths=PATHS):
         self.paths = tuple(paths)
-        if self.paths not in (PATHS, PATHS + (b'A:\\Z7DSP0.DAT', b'A:\\Z7DSP1.DAT')):
-            raise ValueError('Only legacy and optional v3 display journal paths are allowed')
+        if self.paths not in (PATHS, PATHS + (b'A:\\Z7DSP0.DAT', b'A:\\Z7DSP1.DAT'),
+                              PATHS + (b'A:\\Z7DSP0.DAT', b'A:\\Z7DSP1.DAT', b'A:\\Z7PXL.DAT')):
+            raise ValueError('Only selected display journals and the optional pixel preferences are allowed')
         self.module = ModuleFileFixture(packet)
         self.events = self.module.events
         self.files = {slot: bytes(data) for slot, data in (files or {}).items()}
@@ -101,7 +102,8 @@ class SettingsFileFixture:
         if operation not in (8, 9) or handle['writable'] != (operation == 9):
             raise AssertionError('Unexpected journal operation or handle permission')
         buffer, capacity, actual = words[10:13]
-        if buffer % 64 or not self.ram(buffer, capacity) or actual % 4 or not self.ram(actual, 4) or capacity != (81 if operation == 8 else 80):
+        expected=(64 if operation==8 else 16) if self.paths[slot]==b'A:\\Z7PXL.DAT' else (81 if operation==8 else 80)
+        if buffer % 64 or not self.ram(buffer, capacity) or actual % 4 or not self.ram(actual, 4) or capacity != expected:
             raise AssertionError('Unexpected journal buffer, length or count pointer')
         if operation == 8:
             chunk = self.files[slot][handle['position']:handle['position'] + capacity]

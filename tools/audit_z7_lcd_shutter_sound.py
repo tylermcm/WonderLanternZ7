@@ -29,6 +29,8 @@ FOLDER_PREFIX='A:'+chr(92)+'SHUTTER'+chr(92)  # A:\SHUTTER\ sound folder
 DEBUGFILE='A:'+chr(92)+'Z7IPDBG.DAT'
 VRLOG='A:'+chr(92)+'Z7VRLOG.DAT'
 VRMOVE='A:'+chr(92)+'Z7VRMOV.DAT'
+PIXLOG='A:'+chr(92)+'Z7PIX.DAT'
+PIXPREF='A:'+chr(92)+'Z7PXL.DAT'
 AFB='A:'+chr(92)+'Z7AFB.DAT'
 SLOT,NATIVE,EXPOSURE=0xa18d1bd8,0x101426a9,0x0419000b
 START_SLOT,MAILBOX,SND_STATE=0xa188d278,0xa18852ac,0xa188d190
@@ -73,7 +75,7 @@ class SoundAware(PersistenceFixture):
         if self.files_enabled and address==0x1027beae:
             p=self.r(UC_ARM_REG_R0);words=struct.unpack('<42I',u.mem_read(p,168));op=bytes(u.mem_read(p+0x9c,1))[0]
             path=self.cstring(words[4]) if op in (5,13) else None
-            if path in (WAV,LEVEL,INVERTED,DEBUGFILE,VRLOG,VRMOVE,AFB) or (path or '').startswith(FOLDER_PREFIX) or (op in (6,8,9) and words[7] in self.sound_handles):
+            if path in (WAV,LEVEL,INVERTED,DEBUGFILE,VRLOG,VRMOVE,PIXLOG,PIXPREF,AFB) or (path or '').startswith(FOLDER_PREFIX) or (op in (6,8,9) and words[7] in self.sound_handles):
                 result=0
                 if op in (5,13):
                     self.sound_events.append(('open' if op==5 else 'create',path))

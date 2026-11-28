@@ -34,13 +34,43 @@ enum {
 static const uint8_t z7_vs_corner[4][2]={{0,0},{1,0},{1,1},{0,1}};
 static uint8_t z7_vs_payload[10]={0,0,0,0,0,16,16,0,0,2};
 volatile uint32_t z7_vs_photos, z7_vs_seen, z7_vs_last_key, z7_vs_frame, z7_vs_wait, z7_vs_resends, z7_vs_last_wait_state;
+#ifdef Z7_PIXEL_MENU
+#include "pixel_shift_menu.h"
+#ifdef Z7_PIXEL_NIKON_MENU
+#include "pixel_nikon_menu.h"
+#endif
+#ifdef Z7_PIXEL_NIKON_MENU
+#define Z7_VS_FRAME_COUNT (z7_pn_job_active ? z7_pn_job_total : z7_pm_count())
+#else
+#define Z7_VS_FRAME_COUNT z7_pm_count()
+#endif
+#else
+#define Z7_VS_FRAME_COUNT VS_FRAMES
+#endif
 
 /* Still-file hook (Nikon's task): one count per new photo record. */
 static void z7_vs_still(uint32_t key)
 {
-    if (__atomic_load_n(&z7_vm_stage,__ATOMIC_ACQUIRE)!=4u) return;
+    uint32_t stage=__atomic_load_n(&z7_vm_stage,__ATOMIC_ACQUIRE);
+    if (stage!=4u
+#ifdef Z7_PIXEL_NIKON_MENU
+        && stage!=5u
+#endif
+        ) return;
+#ifdef Z7_PIXEL_MENU
+    if (!key || key==z7_vs_last_key) return;
+    z7_vs_last_key=key;
+#endif
     uint32_t n=__atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE);
-    if (n<VS_FRAMES) z7_vm_log.keys[n]=key;
+#ifdef Z7_PIXEL_NIKON_MENU
+    uint32_t invalid=n>=Z7_VS_FRAME_COUNT;
+    for (uint32_t i=0;i<n && i<288u;++i) if (z7_vm_log.keys[i]==key) invalid=1;
+    if (invalid) {
+        __atomic_fetch_or(&z7_vm_log.flags,1u<<30,__ATOMIC_RELEASE);
+        __atomic_store_n(&z7_pm_cancel,1u,__ATOMIC_RELEASE);return;
+    }
+#endif
+    if (n<Z7_VS_FRAME_COUNT) z7_vm_log.keys[n]=key;
     __atomic_store_n(&z7_vs_photos,n+1u,__ATOMIC_RELEASE);
 }
 #define Z7_STILL_KEY_HOOK(key) z7_vs_still(key)
@@ -63,11 +93,27 @@ enum { VS_STEP_X=21, VS_STEP_Y=18 };   /* upstream's Z7II values */
 static void z7_vs_target(uint32_t frame, int *x, int *y)
 {
     *x=VS_STEP_X*(int)z7_vs_corner[frame&3u][0]; *y=VS_STEP_Y*(int)z7_vs_corner[frame&3u][1];
+#ifdef Z7_PIXEL_MENU
+    /* Four Bayer corners at each of four half-pixel offsets. 32 repeats
+     * the 16 positions for averaging. Half steps 10/9 are experimental on Z7.
+     * Max approach remains y=18+9+36=63 steps (252 telemetry counts).
+     */
+    if (z7_pm_count()>=16u) {
+        *x+=10*(int)z7_vs_corner[(frame>>2)&3u][0];
+        *y+=9*(int)z7_vs_corner[(frame>>2)&3u][1];
+    }
+#endif
 }
 static int z7_vs_matches(const uint8_t *t, int x, int y)
 {
     return t[VM_STATE]==VM_HOLD && z7_vm_word(t)==-4*x && z7_vm_word(t+2)==-4*y &&
-        z7_vm_word(t+4)==-4*y && z7_vm_settled(t,24);
+        z7_vm_word(t+4)==-4*y && z7_vm_settled(t,
+#ifdef Z7_PIXEL_MENU
+        8
+#else
+        24
+#endif
+        );
 }
 #ifdef Z7_PIXEL_SHIFT_V1
 static int z7_vs_matches(const uint8_t *t, int x, int y);
@@ -120,8 +166,21 @@ static int z7_vs_position(uint32_t frame, uint32_t phase)
     return r;
 }
 /* Centre, restore D2, then hand over to the watch stage. */
+#ifdef Z7_PIXEL_NIKON_MENU
+static uint32_t z7_vr_callback(uint32_t,const uint32_t *,uint32_t,uint32_t);
+static uint32_t z7_pn_capture_pending(void) { return !!VM_W(0xa238bb28u); }
+#endif
 static void z7_vs_finish(void)
 {
+#ifdef Z7_PIXEL_MENU
+    __atomic_store_n(&z7_pm_requested,0u,__ATOMIC_RELEASE);
+#endif
+#ifdef Z7_PIXEL_NIKON_MENU
+    if ((z7_vm_log.flags&VM_MOVE_SENT) && z7_pn_capture_pending()) {
+        z7_vm_stage=5u;z7_pm_running=0;z7_pn_job_error=5u;
+        z7_vm_save();return; /* Native exposure still owns the body: don't move. */
+    }
+#endif
     z7_vm_stage=2;                                  /* stop counting photos */
     uint32_t s=0x100u;
     if (z7_vm_log.flags&VM_MOVE_SENT) for (uint32_t i=0;i<5u;++i) {
@@ -138,6 +197,9 @@ static void z7_vs_finish(void)
     if (z7_vm_log.flags&VM_MOVE_SENT) z7_vm_restore();
     z7_vm_log.frames=__atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE);
     z7_vm_save();
+#ifdef Z7_PIXEL_MENU
+    __atomic_store_n(&z7_pm_running,0u,__ATOMIC_RELEASE);
+#endif
 }
 #ifdef Z7_PIXEL_RELEASE
 /* MODULE-FIRED SERIES (step 3b). The step-3a camera run showed that a
@@ -202,12 +264,19 @@ static uint32_t z7_vr_callback(uint32_t event, const uint32_t *arg, uint32_t c, 
     __atomic_add_fetch(&z7_vr_events,1u,__ATOMIC_RELEASE);
     return 0;
 }
-static uint32_t z7_vr_touched(void) { return VM_W(VR_SW0)&VR_SHUTTER_BITS; }
+static uint32_t z7_vr_touched(void) { return (VM_W(VR_SW0)&VR_SHUTTER_BITS)
+#ifdef Z7_PIXEL_MENU
+    || __atomic_load_n(&z7_pm_cancel,__ATOMIC_ACQUIRE)
+#endif
+    ; }
 static void z7_vr_note_event(uint32_t frame)
 {
     if (z7_vm_log.entries>=VM_ENTRIES) return;
     struct z7_vm_entry *e=&z7_vm_log.entry[z7_vm_log.entries++];
     e->tick=z7_vm_tick; e->phase=VR_PH_EVENT; e->poll=(uint8_t)frame; e->status=(uint16_t)z7_vr_last_event;
+#ifdef Z7_PIXEL_NIKON_MENU
+    e->pad[0]=(uint8_t)frame;e->pad[1]=(uint8_t)(frame>>8);
+#endif
     uint32_t v[4]={z7_vr_last_event,z7_vr_arg0,z7_vr_arg1,z7_vr_events};
     for (uint32_t i=0;i<16u;++i) e->bytes[i]=(uint8_t)(v[i>>2]>>(8*(i&3u)));
     for (uint32_t i=16u;i<VM_TELEMETRY_BYTES;++i) e->bytes[i]=0;
@@ -216,6 +285,13 @@ static void z7_vr_note_event(uint32_t frame)
 /* One frame: position, confirm, fire, wait for Nikon's completion and the file. */
 static int z7_vr_frame(uint32_t frame)
 {
+#ifdef Z7_PIXEL_MENU
+    if (!z7_pm_capture_ready() || z7_vr_touched()
+#ifdef Z7_PIXEL_NIKON_MENU
+        || !z7_pn_exposure_matches() || z7_pn_capture_pending()
+#endif
+        ) return 0;
+#endif
 #ifdef Z7_PIXEL_SHIFT_V2
     if (z7_vs_preposition(frame)<=0) { z7_vm_log.flags|=VS_POSITION_MISSED; return 0; }
 #endif
@@ -224,22 +300,49 @@ static int z7_vr_frame(uint32_t frame)
     if (r<=0) return 0;
 #ifdef Z7_PIXEL_SHIFT_V1
     z7_vm_sleep(VS_SETTLE_FRAME_MS);              /* let the body settle on the new position */
+#ifdef Z7_PIXEL_NIKON_MENU
+    while (frame && z7_pn_now()-z7_pn_frame_started<z7_pn_interval_ms()) {
+        z7_vm_sleep(100);
+        if (z7_vr_touched() || !z7_pm_capture_ready()) return 0;
+    }
+#endif
     if (!z7_vs_matches_now(frame)) { z7_vm_log.flags|=VS_HOLD_LOST; return 0; }
 #endif
     if (z7_vr_touched()) { z7_vm_log.flags|=VR_TOUCHED; return 0; }
+#ifdef Z7_PIXEL_MENU
+    if (!z7_pm_capture_ready()) { z7_vm_log.flags|=VR_FRAME_FAILED; return 0; }
+#endif
+#ifdef Z7_PIXEL_NIKON_MENU
+    if (!z7_pn_exposure_matches()) { z7_vm_log.flags|=VR_FRAME_FAILED;return 0; }
+#endif
     if (VM_W(VR_SLOT)) { z7_vm_log.flags|=VR_SLOT_BUSY; return 0; }
     uint32_t photos=__atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE), mark=z7_vr_sound_mark();
+#ifdef Z7_PIXEL_NIKON_MENU
+    z7_pn_frame_started=z7_pn_now();
+#endif
     __atomic_store_n(&z7_vr_done,0u,__ATOMIC_RELEASE);
     uint32_t result=VM_F(VR_RELEASE,uint32_t,const struct z7_vr_request *,
         uint32_t (*)(uint32_t,const uint32_t *,uint32_t,uint32_t))(&z7_vr_request,z7_vr_callback);
     z7_vm_record(VR_PH_FIRE,frame,result,0);
     if (result) { z7_vm_log.flags|=VR_REFUSED; return 0; }
     z7_vm_log.flags|=VR_FIRED;
-    for (uint32_t i=0;i<300u;++i) {                /* up to 15 s */
+    for (uint32_t i=0;i<
+#ifdef Z7_PIXEL_NIKON_MENU
+        z7_pn_capture_wait_polls()
+#else
+        300u
+#endif
+        ;++i) {
         z7_vm_sleep(50);
         uint32_t done=__atomic_load_n(&z7_vr_done,__ATOMIC_ACQUIRE);
         if (done==2u) { z7_vr_note_event(frame); z7_vm_log.flags|=VR_FRAME_FAILED; return 0; }
         if (done && __atomic_load_n(&z7_vs_photos,__ATOMIC_ACQUIRE)>photos) {
+#ifdef Z7_PIXEL_MENU
+            if (!z7_vs_matches_now(frame)) { z7_vm_log.flags|=VS_HOLD_LOST; return 0; }
+#endif
+#ifdef Z7_PIXEL_NIKON_MENU
+            if (!z7_pn_exposure_matches() || !z7_pm_capture_ready()) { z7_vm_log.flags|=VR_FRAME_FAILED;return 0; }
+#endif
             z7_vr_note_event(frame);
             z7_vm_record(VS_PH_FRAME,frame+1u,0,0);
             z7_vr_count_click(mark);
@@ -256,14 +359,58 @@ static void z7_vr_series(void)
     z7_vm_record(VR_PH_FREE,free_polls,0,0);
     if (free_polls<5u) { z7_vm_log.flags|=VR_NOT_FREED; z7_vs_finish(); return; }
 #ifdef Z7_PIXEL_SHIFT_V1
+#ifdef Z7_PIXEL_NIKON_MENU
+    uint32_t settle_started=z7_pn_now();
+    z7_pn_elapsed=0;
+    while (z7_pn_now()-settle_started<VS_SETTLE_START_MS ||
+           z7_pn_now()-z7_pn_pressed_at<z7_pn_delay_ms()) {
+#else
     for (uint32_t i=0;i<VS_SETTLE_START_MS/100u;++i) {
+#endif
         z7_vm_sleep(100);
         if (z7_vr_touched()) { z7_vm_log.flags|=VR_TOUCHED; z7_vs_finish(); return; }
     }
 #endif
     uint32_t frame=0;
-    while (frame<VS_FRAMES && z7_vr_frame(frame)) ++frame;
-    if (frame==VS_FRAMES) z7_vm_log.flags|=VS_SERIES_COMPLETE;
+#ifdef Z7_PIXEL_NIKON_MENU
+    if (!z7_pm_capture_ready()) { z7_vs_finish();return; }
+    while (frame<Z7_VS_FRAME_COUNT) {
+        if (!(frame&(z7_pn_job_shots-1u))) {
+            uint32_t group=frame>>z7_pn_job_shift;
+            if (group) {
+                z7_vs_finish();
+                if ((z7_vm_log.flags&(VM_CENTRE_FOLLOWED|VM_RESTORED))!=(VM_CENTRE_FOLLOWED|VM_RESTORED) || z7_vr_touched()) break;
+                z7_pm_running=1;z7_vm_stage=4;
+            }
+            if (!z7_pn_group_exposure(group) || !z7_pn_start_folder()) break;
+            z7_pn_log_exposure();z7_vm_save();
+            if (z7_pn_log_error) { z7_pn_job_error=4;break; }
+            if (group) {
+                /* Exposure setters may reapply native VR. Verify normal state,
+                 * snapshot the new native D2 selection and settle before hold. */
+                uint32_t stable=0;
+                for (uint32_t n=0;n<VM_POLLS;++n) {
+                    z7_vm_sleep(100);
+                    uint32_t s=z7_vm_sample(VM_PH_ARM,n);
+                    stable=!s && z7_vm_output[VM_STATE]==VM_NORMAL && z7_vm_settled(z7_vm_output,48) ? stable+1u : 0u;
+                    if (stable==2u || z7_vr_touched()) break;
+                }
+                if (stable!=2u || z7_vr_touched() || !z7_vm_snapshot()) break;
+                for (uint32_t n=0;n<VS_SETTLE_START_MS/100u;++n) {
+                    z7_vm_sleep(100);if (z7_vr_touched()) break;
+                }
+                if (z7_vr_touched()) break;
+                z7_vm_log.flags&=~(VM_MOVE_SENT|VM_MOVE_ACK|VM_MOVE_FOLLOWED|VM_CENTRE_SENT|VM_CENTRE_ACK|VM_CENTRE_FOLLOWED|VM_RESTORED);
+            }
+        }
+        if (!z7_vr_frame(frame)) break;
+        ++frame;
+        if (!(frame&(z7_pn_job_shots-1u))) z7_vm_log.groups_complete=frame>>z7_pn_job_shift;
+    }
+#else
+    while (frame<Z7_VS_FRAME_COUNT && z7_vr_frame(frame)) ++frame;
+#endif
+    if (frame==Z7_VS_FRAME_COUNT) z7_vm_log.flags|=VS_SERIES_COMPLETE;
     z7_vs_finish();
 }
 #endif /* !Z7_PIXEL_PROBE */
@@ -370,7 +517,13 @@ static int z7_vp_fire(uint32_t v)
     z7_vm_record(VR_PH_FIRE,v,result,0);
     if (result) { z7_vm_log.flags|=VR_REFUSED; return 0; }
     z7_vm_log.flags|=VR_FIRED;
-    for (uint32_t i=0;i<300u;++i) {
+    for (uint32_t i=0;i<
+#ifdef Z7_PIXEL_NIKON_MENU
+        z7_pn_capture_wait_polls()
+#else
+        300u
+#endif
+        ;++i) {
         z7_vm_sleep(50);
         uint32_t done=__atomic_load_n(&z7_vr_done,__ATOMIC_ACQUIRE);
         if (done==2u) break;
@@ -460,6 +613,12 @@ static void z7_vp_series(void)
 /* Resident worker only (replaces the one-move worker in this build). */
 static void z7_vm_worker(void)
 {
+#ifdef Z7_PIXEL_NIKON_MENU
+    if (z7_vm_stage==5u) { if (!z7_pn_capture_pending()) z7_vs_finish();return; }
+#endif
+#ifdef Z7_PIXEL_MENU
+    if (!z7_vm_stage && (!__atomic_load_n(&z7_pm_requested,__ATOMIC_ACQUIRE) || !z7_pm_capture_ready())) return;
+#endif
     if (z7_vm_stage==3u || !z7_vm_native_ok()) return;
 #ifdef Z7_PIXEL_RELEASE
     if (!z7_vr_native_ok()) return;
@@ -480,7 +639,7 @@ static void z7_vm_worker(void)
         z7_vm_last_state=state;
         if (s==VM_PENDING) { z7_vm_log.flags|=VM_DONE; z7_vm_stage=3; z7_vm_save(); return; }
         z7_vm_armed=!s && state==VM_NORMAL && z7_vm_settled(t,48);
-#ifdef Z7_PIXEL_RELEASE
+#if defined(Z7_PIXEL_RELEASE) && !defined(Z7_PIXEL_NIKON_MENU)
         if (!(VM_W(VR_SW0)&VR_HALF_BITS)) z7_vm_armed=0;   /* only on a deliberate half-press */
 #endif
         if (z7_vm_armed) {
@@ -492,6 +651,9 @@ static void z7_vm_worker(void)
         if (!z7_vm_armed) { if (z7_vm_tick%30u==0u) z7_vm_save(); return; }
         if (!z7_vm_snapshot()) { z7_vm_log.flags|=VM_DONE; z7_vm_stage=3; z7_vm_save(); return; }
         z7_vm_log.flags|=VM_ARMED|VS_SERIES_STARTED;
+#ifdef Z7_PIXEL_MENU
+        __atomic_store_n(&z7_pm_running,1u,__ATOMIC_RELEASE);
+#endif
         z7_vs_frame=0; z7_vs_seen=0; z7_vs_wait=0;
         __atomic_store_n(&z7_vs_photos,0u,__ATOMIC_RELEASE);
         __atomic_store_n(&z7_vm_stage,4u,__ATOMIC_RELEASE);  /* count photos from here */

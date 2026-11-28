@@ -104,6 +104,9 @@ static void focal_note_update(uint32_t changed);
 #undef Z7_GRID_DEFER_MASKS
 #ifdef Z7_SETTINGS_MENU_PROBE
 #include "../examples/settings_menu_policy.h"
+#ifdef Z7_PIXEL_NIKON_MENU
+#include "pixel_nikon_storage.h"
+#endif
 #ifdef Z7_PIXEL_RELEASE
 /* Pixel-shift series: one click per module-fired frame. If the shutter-sound
  * hook already queued one for this exposure, nothing more; otherwise play the
@@ -304,6 +307,9 @@ uint32_t z7_main(const struct z7_module_api *api)
 #ifdef Z7_SHUTTER_SOUND_MENU
     /* Cannot fail the module: a missing WAV or mismatch leaves sound off. */
     z7_sl_prepare();
+#ifdef Z7_PIXEL_NIKON_MENU
+    z7_pn_prepare();
+#endif
 #endif
 #ifdef Z7_AF_BUTTONS_MENU
     z7_ab_prepare();  /* mismatch or no file: every button OFF */
@@ -325,6 +331,9 @@ uint32_t z7_main(const struct z7_module_api *api)
 #endif
 #ifdef Z7_SETTINGS_MENU_PROBE
     sm_publish();
+#endif
+#ifdef Z7_PIXEL_NIKON_MENU
+    z7_pn_input_publish();
 #endif
 #ifdef Z7_DISP_KEY_PROBE
     __asm__ volatile("dmb sy" ::: "memory");

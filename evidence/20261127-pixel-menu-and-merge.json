@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "module_sha256": "201235a678c3485ff3301af85d3592958849d9b3cc8069fd54c5cfcc44246e8e",
+  "module_bytes": 35452,
+  "reproducible": true,
+  "camera_tested": false,
+  "card_staged": false,
+  "firmware_update": false,
+  "root_tests": 113,
+  "capture_simulation_checks": 60,
+  "display_preset_checks": 277,
+  "emulator_menu_checks": 31,
+  "merge_tests": 10,
+  "merge_rejection_checks": 3,
+  "actual_merge": {
+    "frames": [
+      "DSC_8550.NEF",
+      "DSC_8551.NEF",
+      "DSC_8552.NEF",
+      "DSC_8553.NEF"
+    ],
+    "size": [
+      8256,
+      5504
+    ],
+    "same_colour_registration": true,
+    "spatial_illumination_matching": true,
+    "phase_mean_range_before": [
+      0.03304404,
+      0.01190953,
+      0.02716798
+    ],
+    "phase_mean_range_after": [
+      0.00396302,
+      0.00402319,
+      0.00817877
+    ],
+    "limits": "One fixed smooth-background crop; lighting mechanism unmeasured."
+  },
+  "expanded_merge": {
+    "counts": [
+      16,
+      32
+    ],
+    "size": [
+      16512,
+      11008
+    ],
+    "validation": "Synthetic only; no real expanded set yet"
+  },
+  "upstream_issue": "https://github.com/JKWTCN/z7ii-extensions/issues/7",
+  "upstream_issue_state": "open",
+  "review": "LCD_PIXEL_MENU_TEST.md",
+  "merge_review": "PIXEL_SHIFT_MERGE.md"
+}

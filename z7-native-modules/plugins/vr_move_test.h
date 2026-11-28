@@ -40,7 +40,11 @@ enum {
     VM_TELEMETRY=0x0fe0u, VM_TELEMETRY_BYTES=42u, VM_STATE=0x22u, VM_MEASURED=0x24u,
     VM_NORMAL=1u, VM_HOLD=0x40u, VM_STEP=4u,
     VM_PENDING=0x102u, VM_ARM_TICKS=600u, VM_WATCH_TICKS=30u, VM_POLLS=20u,
-#ifdef Z7_PIXEL_PROBE
+#ifdef Z7_PIXEL_NIKON_MENU
+    VM_ENTRIES=4608u, VM_ARM_ENTRIES=48u,
+#elif defined(Z7_PIXEL_MENU)
+    VM_ENTRIES=512u, VM_ARM_ENTRIES=48u,
+#elif defined(Z7_PIXEL_PROBE)
     VM_ENTRIES=192u, VM_ARM_ENTRIES=48u,
 #else
     VM_ENTRIES=128u, VM_ARM_ENTRIES=48u,
@@ -57,7 +61,11 @@ enum {
 /* Phase codes in each log entry. */
 enum { VM_PH_ARM=1u, VM_PH_MOVE=2u, VM_PH_CENTRE=3u, VM_PH_WATCH=4u,
        VM_PH_MOVE_SEND=0x12u, VM_PH_CENTRE_SEND=0x13u };
+#ifdef Z7_PIXEL_MENU
+static const char z7_vm_path[]="A:\\Z7PIX.DAT";
+#else
 static const char z7_vm_path[]="A:\\Z7VRMOV.DAT";
+#endif
 static const uint8_t z7_vm_move[10]={0,VM_STEP,0,0,0,16,16,0,0,2};
 static const uint8_t z7_vm_centre[10]={0,0,0,0,0,16,16,0,0,2};
 
@@ -77,7 +85,20 @@ struct z7_vm_log {
     uint32_t d2, restore, restore_state, restore_event;
 #endif
 #ifdef Z7_PIXEL_SERIES
-    uint32_t frames, resends, keys[4];
+    uint32_t frames, resends, keys[
+#ifdef Z7_PIXEL_NIKON_MENU
+        288
+#elif defined(Z7_PIXEL_MENU)
+        32
+#else
+        4
+#endif
+    ];
+#endif
+#ifdef Z7_PIXEL_NIKON_MENU
+    uint32_t group_count,group_shots,groups_complete;
+    int32_t ev_sixths[9];
+    uint32_t exposure_saved[6],exposure_applied[6],exposure_owned,job_error,setup_error;
 #endif
     struct z7_vm_entry entry[VM_ENTRIES];
 };
@@ -85,6 +106,9 @@ static _Alignas(64) struct z7_vm_log z7_vm_log;
 static _Alignas(64) uint8_t z7_vm_output[64];
 static struct z7_vm_request z7_vm_request;
 volatile uint32_t z7_vm_reply, z7_vm_tick, z7_vm_stage, z7_vm_armed, z7_vm_watch, z7_vm_arm_logged, z7_vm_last_state;
+#ifdef Z7_PIXEL_NIKON_MENU
+volatile uint32_t z7_pn_log_error;
+#endif
 
 static uint32_t z7_vm_native_ok(void)
 {
@@ -93,7 +117,15 @@ static uint32_t z7_vm_native_ok(void)
         VM_W(VM_CREATE-1u)==0xb0abb530u &&
         VM_W(VM_WRITE-1u)==0xb0abb5f0u && VM_W(VM_CLOSE-1u)==0xb0aab510u;
 }
-static void z7_vm_sleep(uint32_t ms) { VM_F(VM_DELAY,void,uint32_t)(ms); }
+#ifdef Z7_PIXEL_NIKON_MENU
+extern volatile uint32_t z7_pn_elapsed;
+#endif
+static void z7_vm_sleep(uint32_t ms) {
+    VM_F(VM_DELAY,void,uint32_t)(ms);
+#ifdef Z7_PIXEL_NIKON_MENU
+    z7_pn_elapsed+=ms;
+#endif
+}
 /* BodyVr task: completion of our request. */
 static void z7_vm_complete(uint32_t event, const uint8_t *result)
 {
@@ -101,7 +133,11 @@ static void z7_vm_complete(uint32_t event, const uint8_t *result)
     __atomic_store_n(&z7_vm_reply,status,__ATOMIC_RELEASE);
 }
 static uint32_t z7_vm_idle(void) { return VM_W(VM_BUSY)!=1u && !VM_W(VM_CALLBACK_SLOT); }
-#ifdef Z7_PIXEL_SERIES
+#ifdef Z7_PIXEL_NIKON_MENU
+#define VM_LOG_VERSION 5u
+#elif defined(Z7_PIXEL_MENU)
+#define VM_LOG_VERSION 4u
+#elif defined(Z7_PIXEL_SERIES)
 #define VM_LOG_VERSION 3u
 #elif defined(Z7_VR_RESTORE)
 #define VM_LOG_VERSION 2u
@@ -113,9 +149,17 @@ static void z7_vm_save(void)
     z7_vm_log.magic=VM_MAGIC; z7_vm_log.version=VM_LOG_VERSION; ++z7_vm_log.writes;
     VM_F(VM_CLEAN,void,void *,uint32_t)(&z7_vm_log,sizeof(z7_vm_log));
     uint32_t fd=VM_F(VM_CREATE,uint32_t,const char *,uint32_t)(z7_vm_path,0), actual=0;
+#ifdef Z7_PIXEL_NIKON_MENU
+    z7_pn_log_error=0;
+    if ((int32_t)fd<0) { z7_pn_log_error=fd;return; }
+    uint32_t result=VM_F(VM_WRITE,uint32_t,uint32_t,const void *,uint32_t,uint32_t *)(fd,&z7_vm_log,sizeof(z7_vm_log),&actual);
+    uint32_t closed=VM_F(VM_CLOSE,uint32_t,uint32_t)(fd);
+    if (result || closed || actual!=sizeof(z7_vm_log)) z7_pn_log_error=result ? result : closed ? closed : 0x5407e000u;
+#else
     if ((int32_t)fd<0) return;
     VM_F(VM_WRITE,uint32_t,uint32_t,const void *,uint32_t,uint32_t *)(fd,&z7_vm_log,sizeof(z7_vm_log),&actual);
     VM_F(VM_CLOSE,uint32_t,uint32_t)(fd);
+#endif
 }
 /* Send one request and wait (100 x 20 ms) for its completion.
  * 0x100 not idle, 0x101 refused, 0x102 timed out; else the device status. */
@@ -155,6 +199,9 @@ static void z7_vm_record(uint32_t phase, uint32_t poll, uint32_t status, const u
     if (z7_vm_log.entries>=VM_ENTRIES) return;
     struct z7_vm_entry *e=&z7_vm_log.entry[z7_vm_log.entries++];
     e->tick=z7_vm_tick; e->phase=(uint8_t)phase; e->poll=(uint8_t)poll; e->status=(uint16_t)status;
+#ifdef Z7_PIXEL_NIKON_MENU
+    e->pad[0]=(uint8_t)poll;e->pad[1]=(uint8_t)(poll>>8);
+#endif
     for (uint32_t i=0;i<VM_TELEMETRY_BYTES;++i) e->bytes[i]=t && !status ? t[i] : 0;
 }
 /* Read telemetry and log it; the bytes stay in z7_vm_output. */
@@ -174,7 +221,13 @@ static int z7_vm_follow(uint32_t phase, int x)
         if (s==VM_PENDING) return 0;
         const uint8_t *t=z7_vm_output;
         int ok=!s && t[VM_STATE]==VM_HOLD && z7_vm_word(t)==x && !z7_vm_word(t+2) && !z7_vm_word(t+4) &&
-            z7_vm_settled(t,24);
+            z7_vm_settled(t,
+#ifdef Z7_PIXEL_MENU
+            8
+#else
+            24
+#endif
+            );
         run=ok ? run+1 : 0;
         if (run==2) return 1;
     }
