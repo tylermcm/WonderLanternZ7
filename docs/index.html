@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nikon Z7 Extensions — Pixel Shift &amp; Custom Firmware for the Original Nikon Z7</title>
-<meta name="description" content="I got pixel shift working on the original Nikon Z7, plus a shutter sound in silent mode, upside-down photo playback, custom grids and battery percentage. Open-source firmware extensions for the Z7 (C 3.80).">
+<meta name="description" content="Pixel shift on the original Nikon Z7, right in the Photo shooting menu and tested on my camera. Plus a shutter sound in silent mode, upside-down photo playback, custom grids and battery percentage. Open-source firmware extensions for the Z7 (C 3.80).">
 <meta name="keywords" content="Nikon Z7 pixel shift, Nikon Z7 custom firmware, Nikon Z7 firmware mod, Nikon Z7 silent shutter sound, Nikon Z7 firmware hack, Z7 extensions, IBIS pixel shift">
 <link rel="canonical" href="https://tylermcm.github.io/nikon-z7-extensions/">
 <meta name="robots" content="index, follow">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Nikon Z7 Extensions">
 <meta property="og:title" content="I got pixel shift working on the original Nikon Z7">
-<meta property="og:description" content="Four shots, one pixel apart, using the Z7's own stabilisation, then merged on a computer. Plus a silent-mode shutter sound, upside-down playback and more. Open source.">
+<meta property="og:description" content="4, 8 or 16 shots from the Photo shooting menu, moved by the Z7's own stabilisation, then merged on a computer. Tested on my camera. Plus a silent-mode shutter sound, upside-down playback and more. Open source.">
 <meta property="og:url" content="https://tylermcm.github.io/nikon-z7-extensions/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="I got pixel shift working on the original Nikon Z7">
@@ -39,7 +39,7 @@
   "@type": "FAQPage",
   "mainEntity": [
     {"@type": "Question", "name": "Can the original Nikon Z7 do pixel shift?",
-     "acceptedAnswer": {"@type": "Answer", "text": "Not from Nikon, no. With this project, yes. It's experimental, but it's real: four shots one pixel apart using the camera's own stabilisation, merged on a computer. The latest run landed within 0.15 px on every shot. It's still a test build, not a menu option."}},
+     "acceptedAnswer": {"@type": "Answer", "text": "Not from Nikon, no. With this project, yes. It's in the Photo shooting menu: one full press takes 4, 8 or 16 shots moved by the camera's own stabilisation, and a computer merges them. It's hardware verified on my Z7, but still experimental."}},
     {"@type": "Question", "name": "Can the Z7 play a shutter sound in silent mode?",
      "acceptedAnswer": {"@type": "Answer", "text": "Yes, with the LCD module. It plays a WAV from the card every time you take a photo. You pick the volume (off to 9) and the sound (up to ten)."}},
     {"@type": "Question", "name": "Why does my Z7 show upside-down photos the wrong way up?",
@@ -126,7 +126,7 @@
 <main>
   <div class="wrap hero">
     <span class="eyebrow">original Nikon Z7 · firmware C 3.80</span>
-    <h1>I got pixel shift working on the original Nikon Z7*</h1>
+    <h1>Pixel shift on the original Nikon Z7, right in the menu*</h1>
     <p class="lede">
       The first Z7 never got pixel shift. It also never got a shutter sound you
       can hear in silent mode, or upside-down photos that play back the right way
@@ -135,7 +135,7 @@
       card and lean on Nikon's own firmware underneath.
     </p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/tylermcm/nikon-z7-extensions/releases/tag/v0.2.0-pixel-shift-preview.1">Read the release notes</a>
+      <a class="btn primary" href="https://github.com/tylermcm/nikon-z7-extensions/blob/main/RELEASE_NOTES_2026-11-28_PIXEL_SHIFT_HARDWARE_VERIFIED.md">Read the release notes</a>
       <a class="btn" href="https://github.com/tylermcm/nikon-z7-extensions">Source on GitHub</a>
     </div>
   </div>
@@ -147,22 +147,31 @@
         The Z7's in-body stabilisation can already move the sensor around.
         Nikon just never used it for this. The module borrows the stabiliser,
         nudges the sensor exactly one pixel at a time, and fires the shutter
-        itself at each spot. After four shots, a script on my computer combines
+        itself at each spot. After the group, a script on my computer combines
         the raw files into one image where every pixel has real red, green and
         blue data, instead of the camera guessing the missing colours.
       </p>
+      <p>
+        It now lives in Nikon's own menu: <strong>MENU → Photo shooting →
+        Pixel shift shooting</strong>. You pick 4, 8 or 16 shots, a delay, an
+        interval, optional AE bracketing and a new folder per group. Then one
+        full press does the rest. I tested every one of those on my camera over
+        eight sessions, fixing what broke each time, and the raw files show the
+        sensor landing where it should.
+      </p>
       <div class="stats" role="list">
-        <div class="stat" role="listitem"><b>0.15 px</b><span>furthest any of the four shots landed from its target</span></div>
+        <div class="stat" role="listitem"><b>4 · 8 · 16</b><span>shots per group, picked in the menu</span></div>
+        <div class="stat" role="listitem"><b>1 press</b><span>a full press starts the group; OK cancels it</span></div>
         <div class="stat" role="listitem"><b>20 / 18</b><span>sensor steps per pixel, sideways / up-down</span></div>
-        <div class="stat" role="listitem"><b>4 shots</b><span>enough for red, green and blue at every pixel</span></div>
-        <div class="stat" role="listitem"><b>5 for 5</b><span>runs where stabilisation came back on afterwards</span></div>
+        <div class="stat" role="listitem"><b>0.15 px</b><span>closest early test: how near the four shots landed to target</span></div>
       </div>
-      <h3>What a pixel-shift series looks like</h3>
+      <h3>What a pixel-shift group looks like</h3>
       <ol class="steps">
-        <li>Camera on a tripod. Half-press for a few seconds, then let go and step back.</li>
-        <li>It waits about 7 seconds for the camera to stop wobbling, then takes four shots, each one pixel apart. You hear a click for each one.</li>
-        <li>It puts the sensor back where it was and hands stabilisation back to the camera.</li>
-        <li>Back home, run <code>merge_z7_pixel_shift.py</code> on the four NEFs.</li>
+        <li>Camera on a tripod, mode dial on M, manual focus. Turn Pixel shift shooting on and pick your number of shots.</li>
+        <li>Leave the menu, fully press the shutter once, and step back.</li>
+        <li>It waits about 7 seconds for the camera to stop wobbling, then takes the group, one click per shot. It switches to RAW, single frame and silent mode for the group, then puts your settings back.</li>
+        <li>It puts the sensor back where it was and hands stabilisation back to the camera. Press OK any time to stop early.</li>
+        <li>Back home, run <code>merge_z7_pixel_shift.py</code> on the NEFs.</li>
       </ol>
       <p>
         On a printed page, the merged image shows the halftone dots cleanly, where
@@ -173,13 +182,13 @@
         <a href="https://github.com/tylermcm/nikon-z7-extensions/blob/main/PIXEL_SHIFT_RESEARCH.md">PIXEL_SHIFT_RESEARCH.md</a>.
       </p>
       <div class="note">
-        <strong>*The fine print.</strong> It works on my camera, on a tripod,
-        pointed at something that doesn't move. Some honest limits:
+        <strong>*The fine print.</strong> It's hardware verified on my one
+        camera, on a tripod, pointed at something that doesn't move. Some honest limits:
         <ul>
-          <li>I've had one fully clean run with every fix in place, so I'd like a few more before calling it reliable.</li>
-          <li>It's a test build you put on the card, not a menu option yet.</li>
+          <li>The menu row's name shows up blank on the camera right now. The option works; I'm still chasing the label.</li>
+          <li>32 shots uses the same code as 16, but I haven't run it on the camera yet.</li>
           <li>The merge happens on a computer, not in the camera.</li>
-          <li>There's still a faint striping in bright flat areas, from a misalignment of about a tenth of a pixel. I'm working on it.</li>
+          <li>It's still experimental, source-only firmware research. Read the risk notice first.</li>
         </ul>
       </div>
     </div>
@@ -192,7 +201,7 @@
         <table>
           <thead><tr><th>Feature</th><th>Status</th><th>Notes</th></tr></thead>
           <tbody>
-            <tr><td>Pixel shift (4 shots + merge on a computer)</td><td><span class="tag exp">Experimental</span></td><td>All four shots within 0.15 px on my camera.</td></tr>
+            <tr><td>Pixel shift (Photo shooting menu + merge on a computer)</td><td><span class="tag ok">Works on my Z7</span></td><td>4, 8 or 16 shots, AE bracketing, new folder, OK to cancel. Settings put back after each group.</td></tr>
             <tr><td>Shutter sound in silent mode</td><td><span class="tag ok">Works on my Z7</span></td><td>Clicks on every photo and burst frame. Volume off to 9, and up to ten sounds you drop in a <code>SHUTTER</code> folder.</td></tr>
             <tr><td>Upside-down photos</td><td><span class="tag ok">Works on my Z7</span></td><td>Saved with the right orientation and shown the right way up in playback.</td></tr>
             <tr><td>Custom framing grids</td><td><span class="tag ok">Works on my Z7</span></td><td>4×4, 3×3, golden ratio, centre cross, 6×6 or off, and it remembers your pick.</td></tr>
@@ -210,7 +219,7 @@
     <div class="wrap">
       <h2>FAQ</h2>
       <details open><summary>Can the original Nikon Z7 do pixel shift?</summary>
-        <p>Not from Nikon, no. With this, yes. It's experimental, but it's real: four shots one pixel apart using the camera's own stabilisation, merged on a computer. My latest run landed within 0.15 px on every shot.</p></details>
+        <p>Not from Nikon, no. With this, yes. It's in the Photo shooting menu: one full press takes 4, 8 or 16 shots moved by the camera's own stabilisation, and a computer merges them. It's hardware verified on my Z7, but still experimental.</p></details>
       <details><summary>Can the Z7 play a shutter sound in silent mode?</summary>
         <p>Yes, with the LCD module. It plays a WAV from the card every time you take a photo. You pick the volume and the sound.</p></details>
       <details><summary>Why does my Z7 show upside-down photos the wrong way up?</summary>
