@@ -1,9 +1,9 @@
 # Pixel shift shooting: camera test candidate
 
-Status: **sixth build `860b64f5`, prepared, not staged.** On the camera, `cb8cb929`
-did 4-shot groups, AE bracketing and new folders correctly (runs 5 and 6,
-below). It failed OK (J) cancel, and ignored a new shot count chosen right
-after a group. This build fixes both. The Photo shooting row label is still
+Status: **seventh build `d7efbd21`, prepared, not staged.** On the camera:
+4, 8 and 16 shots, AE bracketing and new folders all work (sessions 6 and 7,
+below). OK (J) cancel did not work in `860b64f5`: it read the wrong switch
+word. This build reads the right one. The Photo shooting row label is still
 blank on the camera. Earlier builds:
 `ede43437` stopped before moving or firing, `8e1da6c8` froze the camera after
 the shutter press, `13e0ce7d` took one frame and showed Reboot, and `7a536ea7`
@@ -17,7 +17,7 @@ AE bracketing, the automatic setup and J-cancel were finished.
 | Candidate | Value |
 | --- | --- |
 | Source | `z7-native-modules/plugins/lcd_pixel_nikon_checkpoint.c` (`--pixel-nikon-menu`) |
-| Module | 48,036 bytes, SHA-256 `860b64f56df25b1ff7130b10db0c070cf577765697d06900ffeb45250c373537` |
+| Module | 48,036 bytes, SHA-256 `d7efbd2159d4c6bf9527172d543a6eb9183f18f0b4a14c2d32edb39ebe363857` |
 | Host | Existing installed host; no firmware update |
 | Settings file | `A:\Z7PXL.DAT` (count, delay, interval, folder options, AE choices) |
 | Log | `A:\Z7PIX.DAT` (decode with `tools/decode_z7_pixel_menu_log.py`) |
@@ -148,6 +148,23 @@ back after every capture, and centring reads up to 19 units off. Run against
 `13e0ce7d`, it stops after the first frame, as the camera did. The older
 builds still rebuild byte for byte.
 
+## Camera test session 7 (`860b64f5`, Nov 28)
+
+| Test | Result |
+| --- | --- |
+| Cancel with OK (J) | **Failed again**: all 4 frames fired (`112NCZ_7`). |
+| 8 shots right after a group | **Works**: the count took, and 8 frames landed in `113NCZ_7`. They repeat the 4-position pattern twice, as designed. |
+| 16 shots | **Works**: 16 frames in `114NCZ_7` cover the 16 planned positions in order, the four corners at each of four half-pixel offsets. The half steps measure 0.2-0.3 px against 0.5 px planned, the measuring tool's known bias toward whole plane samples. |
+
+**Cause and fix (`d7efbd21`).** Nikon's switch object at `0xA1F90AA0` keeps
+one 0x14-byte record per switch word: current, previous, changed, pressed and
+released. SW1 current is `0xA1F90AB8`, which is the word the AF shortcut
+feature reads. `860b64f5` read `0xA1F90AA8`, which is SW0's *previous* word,
+so OK never registered. Both the group cancel and the menu-key hook now read
+SW1 current. The simulator now presses OK at `0xA1F90AB8`, and checks that
+the SW0 previous word never cancels. Run against `860b64f5`, it fails on OK
+cancel.
+
 ## Camera test session 6 (`cb8cb929`, Nov 27)
 
 | Test | Result |
@@ -200,7 +217,7 @@ against `7a536ea7`, it stops as the camera did.
 All on this exact module, except the exposure, folder and repository checks,
 which test the firmware bindings and tools it uses:
 
-- **Capture and settings: 131 checks.**
+- **Capture and settings: 132 checks.**
   - physical OK cancelling in the settle and mid-group, and menu changes
     accepted seconds after a group;
   - camera-level hold noise (±19) completing 4 and 8 shots, and noise past the

@@ -15,11 +15,12 @@ volatile uint32_t z7_pn_full_owned,z7_pn_input_requests,z7_pn_input_refused;
 volatile uint32_t z7_pn_j_cancels;
 static uint32_t z7_pn_gui_key(uint32_t key,uint32_t a,uint32_t b,uint32_t c)
 {
-    /* Original AO entry74 (ID_SW_OK) is enabled, group1/mask1: SW1 bit0.
+    /* Original AO entry74 (ID_SW_OK) is enabled, group1/mask1: SW1 bit0,
+     * SW1 current = 0xA1F90AB8 (0x14-byte switch groups from 0xA1F90AA4).
      * Latch in the native key callback so a short J press survives worker sleeps.
      * Menus and ordinary shooting retain the original four-argument callback. */
     if ((z7_pm_running || z7_pn_job_active || z7_pn_full_pending) &&
-        VM_W(0xa201d510u)==0u && !sm_menu_visible() && (VM_W(0xa1f90aa8u)&1u)) {
+        VM_W(0xa201d510u)==0u && !sm_menu_visible() && (VM_W(0xa1f90ab8u)&1u)) {
         __atomic_store_n(&z7_pm_cancel,1u,__ATOMIC_RELEASE);++z7_pn_j_cancels;return 0;
     }
     return VM_F(0x1030da57u,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t)(key,a,b,c);

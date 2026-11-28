@@ -55,9 +55,10 @@ class NikonUnit(MenuUnit):
         assert table==[0x10062a53,0x10062a37,0x10060a0d,0x100609d9],[hex(t) for t in table]
         return table
     def ok_press(self,address):
-        # Physical OK (SW1 bit0) pressed once this many frames have fired.
+        # Physical OK (SW1 current 0xA1F90AB8, bit0) pressed once this many frames have fired.
+        # 860b64f5 read SW0's previous-state word (0xA1F90AA8) instead.
         if self.ok_after is not None and address==DELAY and len(self.fires)>=self.ok_after:
-            self.u.mem_write(0xa1f90aa8,struct.pack('<I',1))
+            self.u.mem_write(0xa1f90ab8,struct.pack('<I',1))
     def telemetry(self):
         # Camera run 13e0ce7d: the centre hold read up to 19 units off on the tripod; 30 keeps centring unconfirmed past the tolerance.
         b=bytearray(super().telemetry())
@@ -285,10 +286,10 @@ def main():
               all(x['state']==0x40 for x in f.fires) and word(f,'z7_pn_job_error')==0 and f.properties[0x501]==0 and not word(f,'z7_pn_job_active'))
     f=restore();f.hold_noise=40;choose(f,0,1);trigger(f);tick(f,40)
     check('hold-noise-beyond-tolerance-never-fires-and-restores',not f.fires and f.properties[0x501]==0 and not word(f,'z7_pn_job_active'))
-    f=restore();f.ok_after=1;choose(f,0,1);trigger(f);f.u.mem_write(0xa1f90aa8,bytes(4));tick(f,5)
+    f=restore();f.ok_after=1;choose(f,0,1);trigger(f);f.u.mem_write(0xa1f90ab8,bytes(4));tick(f,5)
     check('physical-OK-during-group-cancels-after-first-frame',len(f.fires)==1 and word(f,'z7_pn_ok_cancels')==1 and
           word(f,'z7_pn_mode')==0 and f.properties[0x501]==0 and not word(f,'z7_pn_job_active'))
-    f=restore();f.ok_after=0;choose(f,0,1);trigger(f);f.u.mem_write(0xa1f90aa8,bytes(4));tick(f,5)
+    f=restore();f.ok_after=0;choose(f,0,1);trigger(f);f.u.mem_write(0xa1f90ab8,bytes(4));tick(f,5)
     check('physical-OK-in-settle-cancels-before-any-frame',not f.fires and word(f,'z7_pn_mode')==0 and not word(f,'z7_pn_job_active'))
     f=restore();choose(f,0,1);trigger(f);tick(f,3)
     check('watch-ends-once-VR-is-normal',word(f,'z7_vm_stage')==3)
@@ -427,8 +428,10 @@ def main():
     f=restore();put(f,'z7_pn_ae_enabled',1);put(f,'z7_pn_ae_count',0);f.reject_property_value=(0x204,72);choose(f,0,1);trigger(f)
     check('failed-exposure-restore-latches-ownership-and-blocks-rearm',len(f.fires)==8 and word(f,'z7_pn_exposure_owned') and word(f,'z7_pn_job_error')==2 and word(f,'z7_pn_mode')==0)
     choose(f,0,1);check('failed-exposure-restore-cannot-enable-mode',word(f,'z7_pn_mode')==0)
-    f=restore();put(f,'z7_pm_running',1);f.u.mem_write(SW0+4,struct.pack('<I',1));f.call(f.base+symbols['z7_pn_gui_key'],0,1,2,3)
+    f=restore();put(f,'z7_pm_running',1);f.u.mem_write(0xa1f90ab8,struct.pack('<I',1));f.call(f.base+symbols['z7_pn_gui_key'],0,1,2,3)
     check('physical-J-key-callback-latches-cancellation',word(f,'z7_pm_cancel')==1 and word(f,'z7_pn_j_cancels')==1)
+    f=restore();f.u.mem_write(SW0+4,struct.pack('<I',1));choose(f,0,1);trigger(f);f.u.mem_write(SW0+4,bytes(4));tick(f,5)
+    check('SW0-previous-word-is-not-OK-and-never-cancels',len(f.fires)==4 and not word(f,'z7_pn_ok_cancels'))
     if a.warm_only:
         out.write_text(json.dumps(dict(passed=True,count=len(checks),checks=checks,module_sha256=m['module_sha256'],cold_preferences_tested=False,camera_access=False),indent=2)+'\n')
         print(json.dumps(dict(passed=True,checks=len(checks),cold_preferences_tested=False)));return

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "date": "2026-11-28",
+  "feature": "pixel-shift-camera-candidate-7",
+  "module_sha256": "d7efbd2159d4c6bf9527172d543a6eb9183f18f0b4a14c2d32edb39ebe363857",
+  "module_bytes": 48036,
+  "fix": [
+    "OK cancel and GUI key hook read SW1 current 0xA1F90AB8 (0x14-byte switch groups from 0xA1F90AA4)"
+  ],
+  "offline": {
+    "capture_settings": 132,
+    "display": 277,
+    "native_menu": 59,
+    "exposure_conversion": 34,
+    "native_folder": 12
+  },
+  "negative_control": "capture audit fails 860b64f5 on physical OK cancel",
+  "repository_tests": 119,
+  "camera_tested": false,
+  "staged": false
+}

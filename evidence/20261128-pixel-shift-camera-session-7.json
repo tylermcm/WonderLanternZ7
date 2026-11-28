@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "date": "2026-11-28",
+  "feature": "pixel-shift-camera-session-7",
+  "module_sha256": "860b64f56df25b1ff7130b10db0c070cf577765697d06900ffeb45250c373537",
+  "camera_access": true,
+  "photos_kept_private": true,
+  "cancel_ok": {
+    "result": "failed",
+    "frames": 4,
+    "folder": "112NCZ_7",
+    "cause": "read 0xA1F90AA8 (SW0 previous) instead of SW1 current 0xA1F90AB8"
+  },
+  "count_change_after_group": "works",
+  "eight_shots": {
+    "result": "works",
+    "folder": "113NCZ_7",
+    "frames": 8,
+    "pattern": "4 positions repeated twice"
+  },
+  "sixteen_shots": {
+    "result": "works",
+    "folder": "114NCZ_7",
+    "frames": 16,
+    "mean_plane_shift_px": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.73,
+        0.0
+      ],
+      [
+        -0.79,
+        0.71
+      ],
+      [
+        -0.01,
+        0.72
+      ],
+      [
+        -0.25,
+        -0.04
+      ],
+      [
+        -1.39,
+        -0.04
+      ],
+      [
+        -1.43,
+        0.65
+      ],
+      [
+        -0.22,
+        0.7
+      ],
+      [
+        -0.21,
+        0.21
+      ],
+      [
+        -1.37,
+        0.23
+      ],
+      [
+        -1.4,
+        1.27
+      ],
+      [
+        -0.16,
+        1.12
+      ],
+      [
+        0.05,
+        0.23
+      ],
+      [
+        -0.64,
+        0.23
+      ],
+      [
+        -0.73,
+        1.06
+      ],
+      [
+        0.08,
+        0.96
+      ]
+    ]
+  },
+  "fix_module": "d7efbd21"
+}

@@ -261,11 +261,14 @@ static uint32_t z7_vr_callback(uint32_t event, const uint32_t *arg, uint32_t c, 
 #ifdef Z7_PIXEL_NIKON_MENU
 /* Camera test (cb8cb929, Nov 27): OK (J) did not cancel a running group; the
  * GUI key callback is not called while shooting. Read the physical OK switch
- * (SW1 bit0, ID_SW1_OK) directly, as the shutter is, and latch the cancel. */
+ * (ID_SW1_OK, SW1 bit0) directly, as the shutter is, and latch the cancel.
+ * Switch object 0xA1F90AA0 holds 0x14-byte groups (+0 current, +4 previous):
+ * SW1 current is 0xA1F90AB8, as the camera-built AF shortcut reads it. Build
+ * 860b64f5 read 0xA1F90AA8 (SW0 previous) and OK still did not cancel. */
 volatile uint32_t z7_pn_ok_cancels;
 static uint32_t z7_pn_ok_down(void)
 {
-    if (!(VM_W(0xa1f90aa8u)&1u)) return 0;
+    if (!(VM_W(0xa1f90ab8u)&1u)) return 0;
     if (!__atomic_exchange_n(&z7_pm_cancel,1u,__ATOMIC_ACQ_REL)) ++z7_pn_ok_cancels;
     return 1;
 }
