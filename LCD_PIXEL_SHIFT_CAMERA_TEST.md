@@ -1,8 +1,10 @@
 # Pixel shift shooting: camera test candidate
 
-Status: **fifth build `cb8cb929` works on the camera for 4 shots** (run 5,
-below). Still to test on the camera: AE bracketing, new folder, 8/16/32
-shots and J cancel. Earlier builds:
+Status: **sixth build `860b64f5`, prepared, not staged.** On the camera, `cb8cb929`
+did 4-shot groups, AE bracketing and new folders correctly (runs 5 and 6,
+below). It failed OK (J) cancel, and ignored a new shot count chosen right
+after a group. This build fixes both. The Photo shooting row label is still
+blank on the camera. Earlier builds:
 `ede43437` stopped before moving or firing, `8e1da6c8` froze the camera after
 the shutter press, `13e0ce7d` took one frame and showed Reboot, and `7a536ea7`
 took one frame and stopped cleanly. All four are explained below. It passes every offline and emulator
@@ -15,7 +17,7 @@ AE bracketing, the automatic setup and J-cancel were finished.
 | Candidate | Value |
 | --- | --- |
 | Source | `z7-native-modules/plugins/lcd_pixel_nikon_checkpoint.c` (`--pixel-nikon-menu`) |
-| Module | 48,164 bytes, SHA-256 `cb8cb9295475984781ef15da88f9bbb57d83e80967d88027dc0cca295c926754` |
+| Module | 48,036 bytes, SHA-256 `860b64f56df25b1ff7130b10db0c070cf577765697d06900ffeb45250c373537` |
 | Host | Existing installed host; no firmware update |
 | Settings file | `A:\Z7PXL.DAT` (count, delay, interval, folder options, AE choices) |
 | Log | `A:\Z7PIX.DAT` (decode with `tools/decode_z7_pixel_menu_log.py`) |
@@ -146,6 +148,24 @@ back after every capture, and centring reads up to 19 units off. Run against
 `13e0ce7d`, it stops after the first frame, as the camera did. The older
 builds still rebuild byte for byte.
 
+## Camera test session 6 (`cb8cb929`, Nov 27)
+
+| Test | Result |
+| --- | --- |
+| Cancel with OK (J) | **Failed**: all 4 frames fired. The GUI key hook is not called while shooting. |
+| AE bracketing 3F, 1.0 EV, 4 shots | **Works**: 12 frames, f/4 ISO 500, groups at 1/3 s, 1/6 s and 0.625 s (Nikon order 0, -1, +1 EV). About 10 s between groups (re-settle). |
+| New folder | **Works**: each group started a new DCIM folder (`109NCZ_7`, `110NCZ_7`). |
+| 8 / 16 shots | **Not reached**: the count stayed on 4. For 30 s after a group the module watched stabilisation and treated the menu as busy, so it ignored the change. |
+| Menu row label | Blank on the camera; the emulator draws it in a fallback font. Not fixed yet. |
+
+**Fixes (`860b64f5`).** During a group the module now reads the physical OK
+switch directly (SW1 bit 0), the same way it watches the shutter, and the
+cancel stays latched. The watch after a group ends as soon as Nikon's normal
+stabilisation is confirmed, about a second, so the menu takes changes almost
+immediately. The simulator now presses OK during the settle and after the
+first frame, and changes the count seconds after a group. Run against
+`cb8cb929`, it fails on OK cancel.
+
 ## Fifth camera run (`cb8cb929`, Nov 27): 4 shots, working
 
 One full press. After the settle the camera took four frames, finished the
@@ -180,7 +200,9 @@ against `7a536ea7`, it stops as the camera did.
 All on this exact module, except the exposure, folder and repository checks,
 which test the firmware bindings and tools it uses:
 
-- **Capture and settings: 127 checks.**
+- **Capture and settings: 131 checks.**
+  - physical OK cancelling in the settle and mid-group, and menu changes
+    accepted seconds after a group;
   - camera-level hold noise (±19) completing 4 and 8 shots, and noise past the
     tolerance never firing;
   - Nikon's normal-VR handback after each capture, and noisy centring, with

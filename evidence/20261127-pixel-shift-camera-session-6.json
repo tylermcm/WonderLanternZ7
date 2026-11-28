@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-session-6",
+  "module_sha256": "cb8cb9295475984781ef15da88f9bbb57d83e80967d88027dc0cca295c926754",
+  "camera_access": true,
+  "photos_kept_private": true,
+  "cancel_ok": {
+    "result": "failed",
+    "frames": 4,
+    "cause": "GUI key callback not invoked while shooting"
+  },
+  "ae_bracketing": {
+    "result": "works",
+    "frames": 12,
+    "aperture": 4.0,
+    "iso": 500,
+    "group_shutter_s": [
+      0.3333,
+      0.1667,
+      0.625
+    ],
+    "order": "Nikon 0, -1, +1 EV",
+    "gap_s": 10
+  },
+  "new_folder": {
+    "result": "works",
+    "folders": [
+      "109NCZ_7",
+      "110NCZ_7"
+    ]
+  },
+  "count_change": {
+    "result": "ignored",
+    "cause": "30-tick post-group watch kept z7_pn_busy() true; worker tick is 1 s"
+  },
+  "menu_label": "blank on the camera; fallback font in the emulator; open",
+  "last_log": {
+    "frames": 4,
+    "sends": 68,
+    "refused": 0,
+    "timeouts": 0,
+    "flags_include": [
+      "series_complete",
+      "restored",
+      "done"
+    ]
+  },
+  "fix_module": "860b64f5"
+}

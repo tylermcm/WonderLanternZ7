@@ -258,7 +258,22 @@ static uint32_t z7_vr_callback(uint32_t event, const uint32_t *arg, uint32_t c, 
     __atomic_add_fetch(&z7_vr_events,1u,__ATOMIC_RELEASE);
     return 0;
 }
+#ifdef Z7_PIXEL_NIKON_MENU
+/* Camera test (cb8cb929, Nov 27): OK (J) did not cancel a running group; the
+ * GUI key callback is not called while shooting. Read the physical OK switch
+ * (SW1 bit0, ID_SW1_OK) directly, as the shutter is, and latch the cancel. */
+volatile uint32_t z7_pn_ok_cancels;
+static uint32_t z7_pn_ok_down(void)
+{
+    if (!(VM_W(0xa1f90aa8u)&1u)) return 0;
+    if (!__atomic_exchange_n(&z7_pm_cancel,1u,__ATOMIC_ACQ_REL)) ++z7_pn_ok_cancels;
+    return 1;
+}
+#endif
 static uint32_t z7_vr_touched(void) { return (VM_W(VR_SW0)&VR_SHUTTER_BITS)
+#ifdef Z7_PIXEL_NIKON_MENU
+    || z7_pn_ok_down()
+#endif
 #ifdef Z7_PIXEL_MENU
     || __atomic_load_n(&z7_pm_cancel,__ATOMIC_ACQUIRE)
 #endif
@@ -716,7 +731,14 @@ static void z7_vm_worker(void)
     /* WATCH (stage 2), as the one-move test. */
     uint32_t s=z7_vm_sample(VM_PH_WATCH,0);
     if (!s && z7_vm_output[VM_STATE]==VM_NORMAL) z7_vm_log.flags|=VM_NORMAL_AGAIN;
-    if (s==VM_PENDING || ++z7_vm_watch>=VM_WATCH_TICKS) { z7_vm_log.flags|=VM_DONE; z7_vm_stage=3; }
+    if (s==VM_PENDING || ++z7_vm_watch>=VM_WATCH_TICKS
+#ifdef Z7_PIXEL_NIKON_MENU
+        /* Camera test (cb8cb929): the 30 s watch kept the menu busy, so picking
+         * a new shot count right after a group was ignored. Normal VR is the
+         * watch's purpose; end it as soon as that is seen. */
+        || (z7_vm_log.flags&VM_NORMAL_AGAIN)
+#endif
+        ) { z7_vm_log.flags|=VM_DONE; z7_vm_stage=3; }
     if (z7_vm_stage==3u || z7_vm_watch%10u==0u) z7_vm_save();
 }
 #endif

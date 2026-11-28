@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-candidate-6",
+  "module_sha256": "860b64f56df25b1ff7130b10db0c070cf577765697d06900ffeb45250c373537",
+  "module_bytes": 48036,
+  "fix": [
+    "physical OK (SW1 bit0) polled with the shutter during a group, cancel latched",
+    "post-group watch ends once normal VR is seen"
+  ],
+  "offline": {
+    "capture_settings": 131,
+    "display": 277,
+    "native_menu": 59,
+    "exposure_conversion": 34,
+    "native_folder": 12
+  },
+  "negative_control": "capture audit fails cb8cb929 on physical OK cancel",
+  "repository_tests": 119,
+  "camera_tested": false,
+  "staged": false
+}

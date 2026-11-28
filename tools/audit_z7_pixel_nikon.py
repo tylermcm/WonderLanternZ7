@@ -39,7 +39,7 @@ class NikonUnit(MenuUnit):
         self.effective_bias={}
         self.external_exposure=None;self.reject_property_value=None;self.j_after=None
         self.capture_latency_ms=0;self.remaining_capture_ms=0
-        self.reject_log=False;self.short_log=False;self.centre_noise=False;self.noise_reads=0;self.hold_noise=0;self.hold_reads=0
+        self.reject_log=False;self.short_log=False;self.centre_noise=False;self.noise_reads=0;self.hold_noise=0;self.hold_reads=0;self.ok_after=None
         self.u.mem_write(0xa238c1b4,struct.pack('<I',0x1005f757))
         self.u.mem_write(0xa1829b0c,struct.pack('<I',0x1030da57))
         self.u.mem_write(0xa238c140,struct.pack('<4I',*self.shutter_callbacks()))
@@ -54,6 +54,10 @@ class NikonUnit(MenuUnit):
             table.append(struct.unpack('<I',bytes(self.u.mem_read(literal,4)))[0])
         assert table==[0x10062a53,0x10062a37,0x10060a0d,0x100609d9],[hex(t) for t in table]
         return table
+    def ok_press(self,address):
+        # Physical OK (SW1 bit0) pressed once this many frames have fired.
+        if self.ok_after is not None and address==DELAY and len(self.fires)>=self.ok_after:
+            self.u.mem_write(0xa1f90aa8,struct.pack('<I',1))
     def telemetry(self):
         # Camera run 13e0ce7d: the centre hold read up to 19 units off on the tripod; 30 keeps centring unconfirmed past the tolerance.
         b=bytearray(super().telemetry())
@@ -74,6 +78,7 @@ class NikonUnit(MenuUnit):
             if flags&8:held=False
         return held
     def hook(self,u,address,size,context):
+        self.ok_press(address)
         pending_any=self.pending_frame if address==DELAY and self.sym else None
         pending=self.pending_frame if address==DELAY and self.sym and self.complete not in ('none','fail') else None
         previous_photos=self.r_('z7_vs_photos') if pending else 0
@@ -280,6 +285,15 @@ def main():
               all(x['state']==0x40 for x in f.fires) and word(f,'z7_pn_job_error')==0 and f.properties[0x501]==0 and not word(f,'z7_pn_job_active'))
     f=restore();f.hold_noise=40;choose(f,0,1);trigger(f);tick(f,40)
     check('hold-noise-beyond-tolerance-never-fires-and-restores',not f.fires and f.properties[0x501]==0 and not word(f,'z7_pn_job_active'))
+    f=restore();f.ok_after=1;choose(f,0,1);trigger(f);f.u.mem_write(0xa1f90aa8,bytes(4));tick(f,5)
+    check('physical-OK-during-group-cancels-after-first-frame',len(f.fires)==1 and word(f,'z7_pn_ok_cancels')==1 and
+          word(f,'z7_pn_mode')==0 and f.properties[0x501]==0 and not word(f,'z7_pn_job_active'))
+    f=restore();f.ok_after=0;choose(f,0,1);trigger(f);f.u.mem_write(0xa1f90aa8,bytes(4));tick(f,5)
+    check('physical-OK-in-settle-cancels-before-any-frame',not f.fires and word(f,'z7_pn_mode')==0 and not word(f,'z7_pn_job_active'))
+    f=restore();choose(f,0,1);trigger(f);tick(f,3)
+    check('watch-ends-once-VR-is-normal',word(f,'z7_vm_stage')==3)
+    choose(f,1,1);put(f,'z7_settings_view',7)
+    check('shot-count-can-change-seconds-after-a-group',word(f,'z7_pm_count_index')==1 and labels(f).get(239)=='8')
     f=restore();f.centre_noise=True;choose(f,0,1);trigger(f);tick(f,40)
     check('noisy-centre-still-restores-settings-once-VR-is-normal',f.noise_reads>=20 and len(f.fires)==4 and word(f,'z7_pn_job_error')==0 and
           f.properties[0x501]==0 and not word(f,'z7_pn_raw_owned') and not word(f,'z7_pn_job_active'))
