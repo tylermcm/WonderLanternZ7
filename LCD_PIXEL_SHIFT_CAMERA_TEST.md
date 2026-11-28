@@ -1,10 +1,9 @@
 # Pixel shift shooting: camera test candidate
 
-Status: **seventh build `d7efbd21`, prepared, not staged.** On the camera:
-4, 8 and 16 shots, AE bracketing and new folders all work (sessions 6 and 7,
-below). OK (J) cancel did not work in `860b64f5`: it read the wrong switch
-word. This build reads the right one. The Photo shooting row label is still
-blank on the camera. Earlier builds:
+Status: **seventh build `d7efbd21` works on the camera.** Verified there: the
+full-press trigger, 4, 8 and 16 shots, AE bracketing, new folder, OK (J)
+cancel, and the temporary setup and restore. Still open: the Photo shooting
+row label is blank on the camera, and 32 shots has not been run there. Earlier builds:
 `ede43437` stopped before moving or firing, `8e1da6c8` froze the camera after
 the shutter press, `13e0ce7d` took one frame and showed Reboot, and `7a536ea7`
 took one frame and stopped cleanly. All four are explained below. It passes every offline and emulator
@@ -147,6 +146,12 @@ centring is noisy. The simulator now does what the camera does: it hands VR
 back after every capture, and centring reads up to 19 units off. Run against
 `13e0ce7d`, it stops after the first frame, as the camera did. The older
 builds still rebuild byte for byte.
+
+## Camera test session 8 (`d7efbd21`, Nov 28): OK cancel works
+
+A 4-shot group was cancelled with OK after the first click. The log shows
+one frame, then the sensor centred, stabilisation restored, settings put
+back and the mode Off. No refusals or timeouts.
 
 ## Camera test session 7 (`860b64f5`, Nov 28)
 

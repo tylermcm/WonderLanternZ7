@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "date": "2026-11-28",
+  "feature": "pixel-shift-camera-session-8",
+  "module_sha256": "d7efbd2159d4c6bf9527172d543a6eb9183f18f0b4a14c2d32edb39ebe363857",
+  "camera_access": true,
+  "owner_report": "yep that worked this time",
+  "cancel_ok": {
+    "result": "works",
+    "frames": 1,
+    "log": {
+      "sends": 15,
+      "refused": 0,
+      "timeouts": 0,
+      "flags": [
+        "armed",
+        "move_sent",
+        "move_ack",
+        "move_followed",
+        "centre_sent",
+        "centre_ack",
+        "centre_followed",
+        "normal_again",
+        "done",
+        "restore_sent",
+        "restore_callback",
+        "restored",
+        "fired"
+      ]
+    }
+  },
+  "camera_verified_features": [
+    "full-press trigger",
+    "4/8/16 shots",
+    "AE bracketing",
+    "new folder",
+    "OK cancel",
+    "temporary setup and restore"
+  ],
+  "open": [
+    "Photo shooting row label blank on the camera",
+    "32 shots not yet run on the camera"
+  ]
+}
