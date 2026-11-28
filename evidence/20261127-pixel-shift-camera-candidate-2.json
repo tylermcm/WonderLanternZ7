@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-candidate-2",
+  "module_sha256": "8e1da6c8bdc019b54d6acdee06f96973ae14882bfd12872c0099051e0048ab6c",
+  "module_bytes": 48100,
+  "first_run": {
+    "module": "ede43437",
+    "result": "stopped before moving or firing; PTP exposure-mode write refused (dial on A); settings restored",
+    "log": {
+      "job_error": 1,
+      "saved_mode": 2,
+      "frames": 0
+    }
+  },
+  "fix": [
+    "require mode dial on M (job error 6, Use M), nothing written otherwise",
+    "mode labels at most 6 characters",
+    "simulator models the dial as read-only"
+  ],
+  "offline": {
+    "capture_settings": 116,
+    "display": 277,
+    "native_menu": 59,
+    "exposure_conversion": 34,
+    "native_folder": 12
+  },
+  "camera_tested": false,
+  "staged": false
+}

@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-run-1",
+  "module_sha256": "ede43437747aafe14939e70109568687ac19e274d329f132e86ee9f548206f08",
+  "restored_module": "8dcee0e0",
+  "camera_access": true,
+  "attempts": 2,
+  "display": "Stopped (clipped)",
+  "log": {
+    "version": 5,
+    "frames": 0,
+    "sends": 0,
+    "job_error": 1,
+    "exposure_saved": [
+      2,
+      0,
+      152,
+      96,
+      0,
+      232
+    ],
+    "restore_pending": 0
+  },
+  "cause": "exposure mode follows the physical dial; PTP mode write from A to M refused"
+}

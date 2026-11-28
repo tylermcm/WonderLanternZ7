@@ -112,7 +112,9 @@ static const char *z7_pn_label(uint32_t view,uint32_t row)
 static const char *z7_pn_value(uint32_t view,uint32_t row)
 {
     if (view==7u) {
-        if (!row) return z7_vm_stage==5u ? "Wait" : z7_pn_raw_error || z7_pn_exposure_owned || z7_pn_job_error==2u ? "Restart" : z7_pn_mode ? "On" : z7_pn_job_error ? "Stopped" : "Off";
+        /* Six characters fit the value column ("Stopped" clipped on the camera). */
+        if (!row) return z7_vm_stage==5u ? "Wait" : z7_pn_raw_error || z7_pn_exposure_owned || z7_pn_job_error==2u ? "Reboot" : z7_pn_mode ? "On" :
+            z7_pn_job_error==6u ? "Use M" : z7_pn_job_error ? "Failed" : "Off";
         if (row==1u) return z7_pm_count_text();
         if (row==2u) return z7_pn_delay_text();
         if (row==3u) return z7_pn_interval_text();

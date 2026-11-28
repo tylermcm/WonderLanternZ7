@@ -1,5 +1,7 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 C 3.80 exposure job.
- * Freeze effective P/S/A exposure in temporary manual mode, with Auto ISO off.
+ * The Z7's exposure mode comes from the physical mode dial: the camera run of
+ * ede43437 (Nov 27) showed the PTP mode write is refused in A. Pixel shift
+ * therefore requires the dial on M (job error 6, nothing written otherwise).
  * In M, preserve the user's configured shutter/aperture and freeze Auto ISO.
  * A bracket changes shutter only BETWEEN complete pixel groups. All property
  * changes are worker-owned, checked and restored in reverse order. Native
@@ -110,7 +112,8 @@ static uint32_t z7_pn_job_prepare(void)
     z7_pn_job_error=0;
     for (uint32_t i=0;i<6u;++i) z7_pn_exp_saved[i]=z7_pn_exp_applied[i]=z7_pn_exp_read(i);
     uint32_t mode=z7_pn_exp_saved[0],automatic=z7_pn_exp_saved[1];
-    if (mode>3u || automatic>1u || (mode==3u && z7_pn_exp_saved[4])) return 0;
+    if (mode!=3u) { z7_pn_job_error=6u;return 0; }   /* dial not on M: nothing written */
+    if (automatic>1u || z7_pn_exp_saved[4]) return 0;
     z7_pn_base_tv=(int32_t)z7_pn_exp_saved[5];z7_pn_base_av=(int32_t)z7_pn_exp_saved[3];
     if (mode!=3u && (!z7_pn_effective(0x1308u,&z7_pn_base_tv) || !z7_pn_effective(0x1303u,&z7_pn_base_av))) return 0;
     int32_t effective_iso=(int32_t)z7_pn_exp_saved[2];

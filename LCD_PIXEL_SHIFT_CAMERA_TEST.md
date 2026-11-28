@@ -1,7 +1,8 @@
 # Pixel shift shooting: camera test candidate
 
-Status: **prepared, not staged.** It passes every offline and emulator check,
-and nothing has run on the camera yet. It is your everyday module (`8dcee0e0`:
+Status: **second build `8e1da6c8`, prepared, not staged.** The first build
+(`ede43437`) stopped on the camera before moving or firing; see "First camera
+run" below. It passes every offline and emulator check. It is your everyday module (`8dcee0e0`:
 display features, shutter sound, upside-down EXIF and playback) plus the full
 pixel-shift menu. This continues
 [LCD_PIXEL_NATIVE_TEST.md](LCD_PIXEL_NATIVE_TEST.md), which was frozen before
@@ -10,7 +11,7 @@ AE bracketing, the automatic setup and J-cancel were finished.
 | Candidate | Value |
 | --- | --- |
 | Source | `z7-native-modules/plugins/lcd_pixel_nikon_checkpoint.c` (`--pixel-nikon-menu`) |
-| Module | 48,100 bytes, SHA-256 `ede43437747aafe14939e70109568687ac19e274d329f132e86ee9f548206f08` |
+| Module | 48,100 bytes, SHA-256 `8e1da6c8bdc019b54d6acdee06f96973ae14882bfd12872c0099051e0048ab6c` |
 | Host | Existing installed host; no firmware update |
 | Settings file | `A:\Z7PXL.DAT` (count, delay, interval, folder options, AE choices) |
 | Log | `A:\Z7PIX.DAT` (decode with `tools/decode_z7_pixel_menu_log.py`) |
@@ -29,6 +30,12 @@ Custom settings → h → Extras.
 | Options → AE bracketing | 2F, 3F, 5F, 7F or 9F groups, from 0.3 to 3.0 EV. Each group of 4/8/16/32 shots keeps **one** exposure; the exposure only changes between groups. |
 | Starting storage folder | New folder (and Reset file numbering) before each group. |
 
+**Mode dial on M.** The Z7's exposure mode comes from the dial, which the
+module cannot change. In P, S or A it refuses before touching anything, and
+the mode row shows **Use M**. Other status values: **Failed** means a setting
+was refused and the run stopped safely. **Reboot** means something could not
+be put back, so power-cycle the camera.
+
 **Trigger:** a full press of the shutter while the mode is On. A half-press
 alone does nothing. **Cancel:** press J, touch the shutter, or set the mode to
 Off. The sensor is then recentred and stabilisation restored.
@@ -38,8 +45,8 @@ Off. The sensor is then recentred and stabilisation restored.
 - release mode → single frame, with in-camera bracketing off;
 - Silent photography → On;
 - AF-C → AF-S, and Dynamic-area → Single-point;
-- exposure frozen: P/S/A are held at the metered exposure in temporary
-  Manual, and Auto ISO is fixed at the metered ISO.
+- exposure: your M shutter speed and aperture are kept. If Auto ISO is on,
+  it is fixed at the metered ISO for the group.
 
 Each change is checked before the shutter fires. If anything doesn't stick,
 or you change a setting yourself mid-group, it stops without firing and keeps
@@ -50,7 +57,7 @@ after restart.
 ## Camera test, in order
 
 Use a sturdy tripod, a still subject with fine detail, steady light, manual
-focus, and FX image area. Stop after any step that misbehaves and bring the
+focus, FX image area, and the **mode dial on M**. Stop after any step that misbehaves and bring the
 card back.
 
 1. **4 shots, single, no bracketing, no new folder.** Mode On (single photo),
@@ -73,6 +80,17 @@ log, the raw alignment and the merge.
 don't stop), power off. Take the battery out if needed. Then check your image
 quality, release mode, Silent photography, AF and exposure settings.
 
+## First camera run (`ede43437`, Nov 27)
+
+Both attempts showed **Stopped** on the mode row, which was also clipped. The
+log (`Z7PIX.DAT`, job error 1) shows the module tried to switch the exposure
+mode from A (the dial) to Manual. The camera refused, because the mode
+follows the physical dial. The module then did what it should on a refusal:
+it stopped before moving the sensor or firing, and restored the settings.
+The simulator had modelled the mode as writable. It now models the dial, and
+the build requires M instead. The labels are now at most six characters
+(**Use M**, **Failed**, **Reboot**).
+
 ## Verified before the camera
 
 All on this exact module, except the exposure, folder and repository checks,
@@ -84,7 +102,8 @@ which test the firmware bindings and tools it uses:
   - RAW, release, Silent and AF setup and restore;
   - AE groups holding one exposure each, up to 9 groups × 32 shots (288
     distinct files);
-  - P/S/A/Auto ISO frozen and restored;
+  - P, S and A refused before any write (the dial is read-only), and Auto ISO
+    in M fixed and restored;
   - an external change aborting and being preserved;
   - refusals stopping before the shutter;
   - J cancelling;

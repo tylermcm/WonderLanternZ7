@@ -59,7 +59,12 @@ class NikonUnit(MenuUnit):
             length=u.reg_read(UC_ARM_REG_R2)-1
             self.sound_files[LOG]=bytes(u.mem_read(u.reg_read(UC_ARM_REG_R1),length))
             u.mem_write(u.reg_read(UC_ARM_REG_R3),struct.pack('<I',length));self.ret(0);return
-        if address==0x1033de5c:self.ret(0x2001);return
+        if address==0x1033de5c:
+            # Camera run ede43437: the exposure mode follows the physical dial; the PTP
+            # mode write (key 0) is refused unless it would not change anything.
+            if u.reg_read(UC_ARM_REG_R0)==0 and u.reg_read(UC_ARM_REG_R1)!=self.properties[0x136f]:
+                self.mode_write_refusals=getattr(self,'mode_write_refusals',0)+1;self.ret(0x2019);return
+            self.ret(0x2001);return
         if address==0x103fe8d8:
             key=u.reg_read(UC_ARM_REG_R0)
             assert key in (0x1308,0x1303,0x1309),hex(key)
@@ -333,8 +338,10 @@ def main():
     check('AE-largest-log-retains-final-frame-beyond-byte-index',any(e['phase']==7 and e['poll']==288 for e in log['entries']) and log['entries_used']<4608)
     for mode in (0,1,2):
         f=restore();f.properties.update({0x136f:mode,0x508:1,0xb08:168});choose(f,0,1);trigger(f)
-        check(f'auto-mode-{mode}-freezes-effective-exposure-in-manual',f.exposures==[(3,96,72,168,0)]*4)
-        check(f'auto-mode-{mode}-restores-original-mode-AutoISO-and-settings',all(f.properties[k]==v for k,v in {0x136f:mode,0x508:1,0x207:120,0x205:48,0x204:72}.items()))
+        check(f'dial-mode-{mode}-refused-before-any-write-or-move',not f.fires and not f.exposures and word(f,'z7_pn_job_error')==6 and
+              not getattr(f,'mode_write_refusals',0) and not any(k in (1,0x508,0x207,0x205,0x20d,0x204) for k,_ in f.property_writes))
+        check(f'dial-mode-{mode}-leaves-settings-and-shows-Use-M',all(f.properties[k]==v for k,v in {0x136f:mode,0x508:1,0x207:120,0x205:48,0x204:72}.items()) and
+              not word(f,'z7_pn_exposure_owned') and word(f,'z7_pn_mode')==0)
     f=restore();f.properties.update({0x567:2,0x568:2,0x209:2,0x008:1,0x576:0});choose(f,0,1);trigger(f)
     check('AF-C-dynamic-and-release-setup-restored-after-group',len(f.fires)==4 and all(f.properties[k]==v for k,v in {0x567:2,0x568:2,0x209:2,0x008:1,0x576:0}.items()))
     f=restore();f.external_exposure={0x204:60};choose(f,0,1);trigger(f)
