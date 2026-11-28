@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-candidate-3",
+  "module_sha256": "13e0ce7d3aa904f48f6ac0562904f408448719b3d9544feb6eae88f4b0de897c",
+  "module_bytes": 48100,
+  "second_run": {
+    "module": "8e1da6c8",
+    "result": "froze after the shutter press; menus and playback locked until power cycle",
+    "cause": "shutter callbacks swapped: half up (100609D9) owned as full down, full down (10062A37) treated as full up; Nikon never saw half up"
+  },
+  "firmware_table": {
+    "slot0_half_down": "0x10062a53",
+    "slot1_full_down": "0x10062a37",
+    "slot2_full_up": "0x10060a0d",
+    "slot3_half_up": "0x100609d9",
+    "registration": "10060A38, literal pool 10060CBC..10060CC8"
+  },
+  "fix": [
+    "own only the real full down/up; half down/up always forwarded",
+    "verify registration literals before publishing the dispatcher",
+    "simulator derives the table from firmware, sends the real press order, fails if Nikon stays half-pressed (fails on 8e1da6c8)"
+  ],
+  "offline": {
+    "capture_settings": 121,
+    "display": 277,
+    "native_menu": 59,
+    "exposure_conversion": 34,
+    "native_folder": 12
+  },
+  "repository_tests": 119,
+  "camera_tested": false,
+  "staged": false
+}

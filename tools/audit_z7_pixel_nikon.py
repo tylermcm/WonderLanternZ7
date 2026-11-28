@@ -42,8 +42,25 @@ class NikonUnit(MenuUnit):
         self.reject_log=False;self.short_log=False
         self.u.mem_write(0xa238c1b4,struct.pack('<I',0x1005f757))
         self.u.mem_write(0xa1829b0c,struct.pack('<I',0x1030da57))
-        self.u.mem_write(0xa238c140,struct.pack('<3I',0x10062a53,0x100609d9,0x10062a37))
+        self.u.mem_write(0xa238c140,struct.pack('<4I',*self.shutter_callbacks()))
         self.quality_writes=[];self.quality_reject=None;self.quality_partial=False
+    def shutter_callbacks(self):
+        # Derive the table from Nikon's own registration code (10060A38), not from a
+        # hand-written list: run 8e1da6c8 froze because the list had full down and
+        # half up swapped. Each literal is loaded right before "movs r0,#slot".
+        table=[]
+        for slot,(insn,literal) in enumerate(((0x10060a4c,0x10060cbc),(0x10060a7a,0x10060cc4),(0x10060a84,0x10060cc8),(0x10060a66,0x10060cc0))):
+            assert struct.unpack('<H',bytes(self.u.mem_read(insn,2)))[0]==0x2000|slot,(slot,hex(insn))
+            table.append(struct.unpack('<I',bytes(self.u.mem_read(literal,4)))[0])
+        assert table==[0x10062a53,0x10062a37,0x10060a0d,0x100609d9],[hex(t) for t in table]
+        return table
+    def nikon_half_pressed(self):
+        # Nikon's view of S1 from the events the module let through (bit0 down, bit3 up).
+        held=False
+        for flags in self.input_forwarded:
+            if flags&1:held=True
+            if flags&8:held=False
+        return held
     def hook(self,u,address,size,context):
         pending_any=self.pending_frame if address==DELAY and self.sym else None
         pending=self.pending_frame if address==DELAY and self.sym and self.complete not in ('none','fail') else None
@@ -169,7 +186,7 @@ def main():
         NikonUnit.sound_files={WAV:a.clip.read_bytes(),**(files or {})}
         f=NikonUnit(raw,h,packet,{NEW[0]:v3record((3,15,1,0,5,0,127,7,0,127,4),0)},no_press=True)
         f.u.mem_write(0xa238c1b4,struct.pack('<I',0x1005f757))
-        f.u.mem_write(0xa238c140,struct.pack('<3I',0x10062a53,0x100609d9,0x10062a37))
+        f.u.mem_write(0xa238c140,struct.pack('<4I',*f.shutter_callbacks()))
         f.file_paths=PATHS+NEW;f.u.mem_write(SLOT,bytes(4));f.u.mem_write(BUSY,bytes(4))
         assert f.call(h['symbols']['z7_module_load_once'],STATE)==8
         f.base=f.words()[12];f.symbols=symbols;f.setword(40,8)
@@ -193,9 +210,14 @@ def main():
     def trigger(f):
         f.arm_fires=len(f.fires);f.press_polls=0;f.long_delays=0
         f.u.mem_write(SW0,bytes(4));tick(f)
+        # The real order from 10060A38: half down, full down, full up, half up.
+        f.u.mem_write(SW0,struct.pack('<I',0x80000000));f.call(f.base+symbols['z7_pn_input_dispatch'],1)
         f.u.mem_write(SW0,struct.pack('<I',0xc0000000))
         f.call(f.base+symbols['z7_pn_input_dispatch'],2)
-        f.u.mem_write(SW0,bytes(4));f.call(f.base+symbols['z7_pn_input_dispatch'],4);tick(f)
+        f.u.mem_write(SW0,struct.pack('<I',0x80000000));f.call(f.base+symbols['z7_pn_input_dispatch'],4)
+        f.u.mem_write(SW0,bytes(4));f.call(f.base+symbols['z7_pn_input_dispatch'],8)
+        assert not f.nikon_half_pressed(),'Nikon left half-pressed'
+        tick(f)
     def moves(f):return [r['payload'] for r in f.requests if r['opcode']==0xf1f1]
     f=load();restore=snapshot(f)
     f.call(0x1049d133)
@@ -223,6 +245,7 @@ def main():
     f=restore();f.properties[0x501]=99;choose(f,0,1);trigger(f)
     check('unknown-quality-refuses-without-movement-or-write',not f.requests and not f.fires and not f.quality_writes and word(f,'z7_pn_mode')==0)
     f=restore()
+    check('shutter-callback-table-derived-from-Nikon-registration-code',f.read(0xa238c140+4)==0x10062a37 and f.read(0xa238c140+12)==0x100609d9)
     check('native-input-slot-published',f.read(0xa238c1b4)==(f.base+symbols['z7_pn_input_dispatch']|1) and word(f,'z7_pn_input_ready')==1)
     f.call(f.base+symbols['z7_pn_input_dispatch'],2|4|0x4000)
     check('mode-Off-preserves-normal-full-down-up-and-other-events',f.input_forwarded==[2,4,0x4000] and not word(f,'z7_pn_full_pending'))
@@ -233,6 +256,19 @@ def main():
     check('full-press-queues-once-without-native-capture-or-worker-work',word(f,'z7_pn_full_pending')==1 and word(f,'z7_pn_input_requests')==1 and not f.requests and not f.fires and f.input_forwarded==[1])
     choose(f,0,2);f.call(f.base+symbols['z7_pn_input_dispatch'],4)
     check('Off-cancels-pending-and-owned-full-release-stays-consumed',not word(f,'z7_pn_full_pending') and not word(f,'z7_pn_full_owned') and f.input_forwarded==[1])
+    f.call(f.base+symbols['z7_pn_input_dispatch'],8)
+    check('half-up-always-reaches-Nikon-so-it-never-stays-half-pressed',f.input_forwarded==[1,8] and not f.nikon_half_pressed())
+    f=restore();choose(f,0,1);trigger(f)
+    check('full-press-cycle-forwards-half-down-and-up-and-owns-only-full',f.input_forwarded[:2]==[1,8] and
+          not any(x&6 for x in f.input_forwarded) and not f.nikon_half_pressed() and len(f.fires)==4)
+    f=restore();choose(f,0,1)
+    for bit in (1,8,1,8):f.call(f.base+symbols['z7_pn_input_dispatch'],bit)
+    check('half-press-and-release-never-arms-a-group',f.input_forwarded==[1,8,1,8] and not word(f,'z7_pn_full_pending') and not word(f,'z7_pn_input_requests'))
+    f=restore();choose(f,0,1)
+    for bit in (1,2):f.call(f.base+symbols['z7_pn_input_dispatch'],bit)
+    for bit in (4,8):f.call(f.base+symbols['z7_pn_input_dispatch'],bit)
+    for bit in (1,2,4,8):f.call(f.base+symbols['z7_pn_input_dispatch'],bit)
+    check('second-press-while-armed-is-consumed-but-half-stays-balanced',f.input_forwarded==[1,8,1,8] and word(f,'z7_pn_input_requests')==1 and not f.nikon_half_pressed())
     f=restore();f.u.mem_write(0xa238c1b4,struct.pack('<I',0x10001));f.call(f.base+symbols['z7_pn_input_publish'])
     check('input-publication-never-overwrites-foreign-owner',f.read(0xa238c1b4)==0x10001)
     f=restore()

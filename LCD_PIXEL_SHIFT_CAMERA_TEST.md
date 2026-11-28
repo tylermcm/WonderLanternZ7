@@ -1,8 +1,9 @@
 # Pixel shift shooting: camera test candidate
 
-Status: **second build `8e1da6c8`, prepared, not staged.** The first build
-(`ede43437`) stopped on the camera before moving or firing; see "First camera
-run" below. It passes every offline and emulator check. It is your everyday module (`8dcee0e0`:
+Status: **third build `13e0ce7d`, prepared, not staged.** The first build
+(`ede43437`) stopped before moving or firing, and the second (`8e1da6c8`) froze
+the camera after the shutter press; both are explained below. It passes every
+offline and emulator check. It is your everyday module (`8dcee0e0`:
 display features, shutter sound, upside-down EXIF and playback) plus the full
 pixel-shift menu. This continues
 [LCD_PIXEL_NATIVE_TEST.md](LCD_PIXEL_NATIVE_TEST.md), which was frozen before
@@ -11,7 +12,7 @@ AE bracketing, the automatic setup and J-cancel were finished.
 | Candidate | Value |
 | --- | --- |
 | Source | `z7-native-modules/plugins/lcd_pixel_nikon_checkpoint.c` (`--pixel-nikon-menu`) |
-| Module | 48,100 bytes, SHA-256 `8e1da6c8bdc019b54d6acdee06f96973ae14882bfd12872c0099051e0048ab6c` |
+| Module | 48,100 bytes, SHA-256 `13e0ce7d3aa904f48f6ac0562904f408448719b3d9544feb6eae88f4b0de897c` |
 | Host | Existing installed host; no firmware update |
 | Settings file | `A:\Z7PXL.DAT` (count, delay, interval, folder options, AE choices) |
 | Log | `A:\Z7PIX.DAT` (decode with `tools/decode_z7_pixel_menu_log.py`) |
@@ -103,17 +104,29 @@ cleared it. The log (`Z7PIX.DAT`) shows what happened:
    cancelled before any sensor move or release (0 moves, 0 frames).
 4. Stabilisation stayed normal throughout.
 
-The freeze comes from the **full-press trigger**: wrapping Nikon's capture
-input and consuming the full press mid-sequence leaves Nikon's capture state
-waiting for a shot. Every successful run used the half-press arm and a
-module-fired release, which never froze the camera.
+**Cause, found in the firmware.** Nikon's shutter-switch handler
+(`10060A38`) registers four callbacks: half down, full down, full up and half
+up. The module had two of their addresses swapped. It took Nikon's **half-up**
+for the full press and swallowed it, so Nikon believed the shutter was still
+half-pressed. That is why Menu and Play stopped working. The module then armed
+on the release, and it ate the next real full press. The simulator used the
+same wrong table, so it could not see the problem.
+
+**Fix (`13e0ce7d`).** The module now owns only the real full-down and
+full-up. Half down and half up always reach Nikon. Before it hooks anything,
+it checks Nikon's own registration code for the addresses. The simulator now
+reads the table from the firmware instead of a hand-written list. It sends the
+real press order (half down, full down, full up, half up) and fails if Nikon
+is left half-pressed. Run against `8e1da6c8`, it fails with exactly that.
 
 ## Verified before the camera
 
 All on this exact module, except the exposure, folder and repository checks,
 which test the firmware bindings and tools it uses:
 
-- **Capture and settings: 116 checks.**
+- **Capture and settings: 121 checks.**
+  - shutter callbacks taken from Nikon's own registration code, half down and
+    up always passed to Nikon, and Nikon never left half-pressed;
   - 4/8/16/32 positions, with single and series modes;
   - delay and interval timing, and the folder helper;
   - RAW, release, Silent and AF setup and restore;

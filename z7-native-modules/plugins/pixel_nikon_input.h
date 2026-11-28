@@ -1,11 +1,16 @@
 /* SPDX-License-Identifier: MIT. Independent original-Z7 C 3.80 input binding.
  * CapStQue invokes the scalar dispatcher stored at event-task +0x2C. Its first fourteen
- * callbacks are registered by 10060A38: half down, full down, full up, half up.
- * Only full-down/full-up are owned; physical switch words are never changed.
+ * callbacks are registered by 10060A38 (literal pool 10060CBC..CC8):
+ *   slot 0 half down 10062A53 (event 16), slot 1 full down 10062A37 (event 17),
+ *   slot 2 full up 10060A0D (event 19), slot 3 half up 100609D9 (event 18).
+ * Camera run 8e1da6c8 (Nov 27) owned 100609D9 by mistake: the module swallowed
+ * Nikon's half-up, so Nikon stayed half-pressed (menus/playback locked) until a
+ * power cycle. Only full-down/full-up are owned; half down/up always reach Nikon,
+ * and the registration literals are verified before publishing.
  * Input task publishes a request. Capture/log reset stays on the worker.
  */
 enum { PN_INPUT_SLOT=0xa238c1b4u,PN_INPUT_NATIVE=0x1005f757u,PN_INPUT_CALLBACKS=0xa238c140u,
-       PN_FULL_DOWN=0x100609d9u,PN_FULL_UP=0x10062a37u };
+       PN_FULL_DOWN=0x10062a37u,PN_FULL_UP=0x10060a0du };
 volatile uint32_t z7_pn_full_owned,z7_pn_input_requests,z7_pn_input_refused;
 volatile uint32_t z7_pn_j_cancels;
 static uint32_t z7_pn_gui_key(uint32_t key,uint32_t a,uint32_t b,uint32_t c)
@@ -26,8 +31,9 @@ static uint32_t z7_pn_input_matches(void)
         VM_W(0x106345e4u)==1u && VM_W(0x106345ecu)==1u && VM_W(0x106345f0u)==1u &&
         VM_W(PN_INPUT_NATIVE-1u)==0x41f0e92du &&
         VM_W(0x1005f7e0u)==0x483d4933u &&
-        VM_W(PN_FULL_DOWN-1u)==0x4ca5b510u &&
-        VM_W(PN_FULL_UP-1u)==0xb508489eu && VM_W(0x101f50ccu)==0x4604b51cu;
+        VM_W(0x10060cc4u)==PN_FULL_DOWN && VM_W(0x10060cc8u)==PN_FULL_UP &&
+        VM_W(PN_FULL_DOWN-1u)==0xb508489eu &&
+        VM_W(PN_FULL_UP-1u)==0x4c98b510u && VM_W(0x101f50ccu)==0x4604b51cu;
 }
 static void z7_pn_input_dispatch(uint32_t flags)
 {
