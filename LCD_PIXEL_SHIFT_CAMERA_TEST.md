@@ -1,6 +1,8 @@
 # Pixel shift shooting: camera test candidate
 
-Status: **fifth build `cb8cb929`, prepared, not staged.** Earlier builds:
+Status: **fifth build `cb8cb929` works on the camera for 4 shots** (run 5,
+below). Still to test on the camera: AE bracketing, new folder, 8/16/32
+shots and J cancel. Earlier builds:
 `ede43437` stopped before moving or firing, `8e1da6c8` froze the camera after
 the shutter press, `13e0ce7d` took one frame and showed Reboot, and `7a536ea7`
 took one frame and stopped cleanly. All four are explained below. It passes every offline and emulator
@@ -143,6 +145,18 @@ centring is noisy. The simulator now does what the camera does: it hands VR
 back after every capture, and centring reads up to 19 units off. Run against
 `13e0ce7d`, it stops after the first frame, as the camera did. The older
 builds still rebuild byte for byte.
+
+## Fifth camera run (`cb8cb929`, Nov 27): 4 shots, working
+
+One full press. After the settle the camera took four frames, finished the
+group, centred the sensor, restored stabilisation and the temporary settings,
+and showed **Off**. The log has no errors: 4 frames, 48 sends, nothing
+refused, nothing timed out.
+
+The raw colour planes moved by the intended one-pixel steps: about (-1, 0),
+(-1, +1) and (0, +1) px against frame 1, close to the camera-verified v2
+series. Merging the four frames resolves printed halftone with less colour
+speckle than a single frame. The photos stay private.
 
 ## Fourth camera run (`7a536ea7`, Nov 27): one frame, then a clean stop
 

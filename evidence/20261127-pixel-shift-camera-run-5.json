@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-run-5",
+  "module_sha256": "cb8cb9295475984781ef15da88f9bbb57d83e80967d88027dc0cca295c926754",
+  "camera_access": true,
+  "owner_report": "that worked that time",
+  "menu": "Photo shooting > Pixel shift shooting, On (single photo), 4 shots, delay Off, interval 0, dial on M",
+  "trigger": "one full press",
+  "log": {
+    "version": 5,
+    "frames": 4,
+    "sends": 48,
+    "refused": 0,
+    "timeouts": 0,
+    "job_error": 0,
+    "setup_error": 0,
+    "flags": [
+      "armed",
+      "move_sent",
+      "move_ack",
+      "move_followed",
+      "centre_sent",
+      "centre_ack",
+      "centre_followed",
+      "normal_again",
+      "restore_sent",
+      "restore_callback",
+      "restored",
+      "series_complete",
+      "fired"
+    ]
+  },
+  "photos": [
+    "DSC_8611.NEF",
+    "DSC_8612.NEF",
+    "DSC_8613.NEF",
+    "DSC_8614.NEF"
+  ],
+  "photos_kept_private": true,
+  "targets_px": [
+    [
+      -1,
+      0
+    ],
+    [
+      -1,
+      1
+    ],
+    [
+      0,
+      1
+    ]
+  ],
+  "raw_plane_shifts_px": {
+    "R": [
+      [
+        -1.1,
+        -0.04
+      ],
+      [
+        -1.0,
+        0.92
+      ],
+      [
+        0.06,
+        0.74
+      ]
+    ],
+    "G": [
+      [
+        -1.02,
+        -0.04
+      ],
+      [
+        -0.52,
+        0.48
+      ],
+      [
+        0.04,
+        0.64
+      ]
+    ],
+    "G2": [
+      [
+        -0.76,
+        0.0
+      ],
+      [
+        -0.74,
+        0.78
+      ],
+      [
+        0.04,
+        0.72
+      ]
+    ],
+    "B": [
+      [
+        -0.74,
+        0.0
+      ],
+      [
+        -0.94,
+        0.72
+      ],
+      [
+        0.08,
+        0.8
+      ]
+    ]
+  },
+  "merge": {
+    "tool": "tools/merge_z7_pixel_shift.py",
+    "measured_shifts": [
+      [
+        -0.89,
+        -0.02
+      ],
+      [
+        -0.84,
+        0.75
+      ],
+      [
+        0.05,
+        0.73
+      ]
+    ],
+    "integer_shifts": [
+      [
+        0,
+        0
+      ],
+      [
+        -1,
+        0
+      ],
+      [
+        -1,
+        1
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "result": "halftone resolved with less colour speckle than a single frame, as in the v2 run"
+  },
+  "mode_after": "Off",
+  "settings_restored": true,
+  "remaining": [
+    "AE bracketing on camera",
+    "new folder on camera",
+    "8/16/32 shots on camera",
+    "J cancel on camera"
+  ]
+}
