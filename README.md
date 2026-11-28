@@ -2,7 +2,8 @@
 
 Experimental, source-only firmware extensions for the **original Nikon Z7
 (C 3.80)**:
-- **pixel shift** (a four-shot series with a computer merge);
+- **pixel shift**, hardware verified: 4/8/16-shot groups from Nikon's Photo
+  shooting menu, with a computer merge;
 - a **shutter sound in Silent photography**;
 - **upside-down photo orientation** and in-camera playback;
 - custom framing grids, rear-LCD battery percentage, configurable LCD DISP
@@ -24,7 +25,22 @@ This is not an official Nikon or Wonder Lantern release. Component licenses,
 credits and notices are preserved; see [CREDITS.md](CREDITS.md) and
 [UPSTREAMS.json](UPSTREAMS.json).
 
-## News: pixel shift works* on the original Nikon Z7 (November 27, 2026)
+## News: pixel shift is hardware verified on the original Nikon Z7 (November 28, 2026)
+
+Pixel shift is now a menu feature: **MENU → Photo shooting → Pixel shift
+shooting**. One full press takes a group of 4, 8 or 16 shots, each moved by
+the Z7's own stabilisation. Optional AE bracketing, a new folder per group
+and OK-to-cancel are included. The module sets NEF, single frame, Silent
+photography and AF-S for the group, then puts your settings back. All of
+this has been **verified on the camera**, and the raw files show the planned
+shift patterns. Read the
+**[hardware-verified release note](RELEASE_NOTES_2026-11-28_PIXEL_SHIFT_HARDWARE_VERIFIED.md)**.
+
+Still experimental and source-only. It was verified on one original Z7
+(C 3.80) on a tripod. The menu row's label is blank on the camera for now,
+and 32 shots hasn't been run there yet.
+
+## Earlier: pixel shift works* on the original Nikon Z7 (November 27, 2026)
 
 An SD-card module now moves the Z7's image sensor in one-pixel steps through
 Nikon's own stabilisation (IBIS) service. It fires the shutter itself at each
@@ -61,7 +77,7 @@ Hardware observations below are limited to the project owner's original Z7.
 | Four configurable LCD DISP presets | Custom pages retention, menu navigation and DISP cycling owner-tested; a combined owner smoke test also covered the conditional focal-display step. Individual lens/telemetry coverage remains limited. |
 | Saved grid shape and display settings | Center cross and 6x6 restored after shutdown; Center cross also after battery removal. Both v3 slots verified, with prior record and older files preserved. Representative combined LCD smoke test passed; exhaustive hardware combinations remain unverified. |
 | Basic shooting and playback | Combined owner smoke pass for autofocus, single photos, playback/photo zoom, return to shooting and normal restart; not a full capture/lifecycle validation. |
-| Pixel shift (4 shots, computer merge) | Owner-tested experimental series: four module-fired shots within 0.15 px of target, merged with [`merge_z7_pixel_shift.py`](tools/merge_z7_pixel_shift.py). No menu option or in-camera merge yet. See the [release note](RELEASE_NOTES_2026-11-27_PIXEL_SHIFT.md). |
+| Pixel shift (Photo shooting menu, computer merge) | **Hardware verified** on the owner's camera: 4/8/16 shots, AE bracketing, new folder, OK cancel, and temporary setup with restore. Raw files show the planned shift patterns; merge with [`merge_z7_pixel_shift.py`](tools/merge_z7_pixel_shift.py). Menu row label blank; 32 shots and in-camera merge not available. See the [release note](RELEASE_NOTES_2026-11-28_PIXEL_SHIFT_HARDWARE_VERIFIED.md). |
 | Shutter sound in Silent photography | Owner-tested: a click on every photo and burst frame, volume OFF/1–9, up to ten selectable sounds in a `SHUTTER` folder. |
 | Upside-down photos | Owner-tested: saved with EXIF Orientation 3 and shown the right way up in in-camera playback. |
 | AF-area buttons (Fn1, Fn2, AF-ON, sub-selector, movie) | Built; offline and emulator checks pass. Camera test pending. |
@@ -112,11 +128,11 @@ and recovery are not guaranteed safe.
 ### Can the original Nikon Z7 do pixel shift?
 
 Nikon never added pixel shift to the original Z7. This project's experimental
-modules do it on a Z7 running C 3.80. The camera takes four shots one pixel
-apart through its own in-body stabilisation, and a computer merges them. The
-owner's latest series landed within 0.15 px of target. It is a test build,
-not a menu feature yet; see the
-[pixel-shift release note](RELEASE_NOTES_2026-11-27_PIXEL_SHIFT.md).
+module adds it to Nikon's Photo shooting menu on a Z7 running C 3.80. One
+full press takes 4, 8 or 16 shots moved by the camera's own in-body
+stabilisation, and a computer merges them. It is hardware verified on the
+owner's camera; see the
+[hardware-verified release note](RELEASE_NOTES_2026-11-28_PIXEL_SHIFT_HARDWARE_VERIFIED.md).
 
 ### Can the Nikon Z7 play a shutter sound in Silent photography?
 
@@ -292,9 +308,10 @@ capture timing, recording, recovery or compatibility with other camera models.
 - [FLASH_ASSESSMENT.md](FLASH_ASSESSMENT.md): private EG preparation, updater evidence and hardware recovery limits.
 - [SHUTTER_TRIGGER_FIX.md](SHUTTER_TRIGGER_FIX.md): capture-hook correction and diagnostics after working Preview but silent capture.
 - [SHUTTER_SOUND_SD_PORT.md](SHUTTER_SOUND_SD_PORT.md): SD-module shutter sound (no firmware patch): sound-service bindings, playback module, trigger probe; camera field tests in [SHUTTER_SOUND_FIELD_TEST.md](SHUTTER_SOUND_FIELD_TEST.md); sound-on-photo test in [SHUTTER_SOUND_ON_PHOTO_TEST.md](SHUTTER_SOUND_ON_PHOTO_TEST.md); LCD module with a volume setting in [LCD_SHUTTER_SOUND_TEST.md](LCD_SHUTTER_SOUND_TEST.md); with the upside-down EXIF fix in [LCD_EXIF_ORIENTATION_TEST.md](LCD_EXIF_ORIENTATION_TEST.md); sound folder in [LCD_SOUND_FOLDER_TEST.md](LCD_SOUND_FOLDER_TEST.md); upside-down playback in [LCD_INVERTED_PLAYBACK_TEST.md](LCD_INVERTED_PLAYBACK_TEST.md).
-- [RELEASE_NOTES_2026-11-27_PIXEL_SHIFT.md](RELEASE_NOTES_2026-11-27_PIXEL_SHIFT.md): pixel shift works* on the original Z7 (what works, measurements, limits).
+- [RELEASE_NOTES_2026-11-28_PIXEL_SHIFT_HARDWARE_VERIFIED.md](RELEASE_NOTES_2026-11-28_PIXEL_SHIFT_HARDWARE_VERIFIED.md): pixel shift is hardware verified as a Photo shooting menu feature (what was tested, fixes, limits).
+- [RELEASE_NOTES_2026-11-27_PIXEL_SHIFT.md](RELEASE_NOTES_2026-11-27_PIXEL_SHIFT.md): pixel shift works* on the original Z7 (the first test series, measurements, limits).
 - [PIXEL_SHIFT_RESEARCH.md](PIXEL_SHIFT_RESEARCH.md): the full pixel-shift build and measurement history, from the first telemetry read to the calibrated series and merge; tools [`merge_z7_pixel_shift.py`](tools/merge_z7_pixel_shift.py) and [`measure_z7_raw_shift.py`](tools/measure_z7_raw_shift.py).
-- [LCD_PIXEL_SHIFT_CAMERA_TEST.md](LCD_PIXEL_SHIFT_CAMERA_TEST.md): the pixel-shift camera-test candidate: Photo shooting → Pixel shift shooting with 4/8/16/32 shots, delay and interval, AE bracketing by whole groups, new-folder option, full-press trigger, J to cancel, and automatic RAW/release/Silent/AF/exposure setup with restore. Passes all offline and emulator checks; not yet camera-tested.
+- [LCD_PIXEL_SHIFT_CAMERA_TEST.md](LCD_PIXEL_SHIFT_CAMERA_TEST.md): the pixel-shift camera-test candidate: Photo shooting → Pixel shift shooting with 4/8/16/32 shots, delay and interval, AE bracketing by whole groups, new-folder option, full-press trigger, J to cancel, and automatic RAW/release/Silent/AF/exposure setup with restore. Hardware verified on the owner's camera (see the release note).
 - [LCD_PIXEL_NATIVE_TEST.md](LCD_PIXEL_NATIVE_TEST.md): the earlier frozen native-menu candidate, before AE bracketing and the automatic setup.
 - [EXIF_ORIENTATION_RESEARCH.md](EXIF_ORIENTATION_RESEARCH.md): upside-down photos saved with EXIF Orientation 3 (original-Z7 IFD0 bindings; measured in the field test).
 - [CAPTURE_START_FIX.md](CAPTURE_START_FIX.md): normal-callback correction after the silent/mechanical diagnostic comparison.
