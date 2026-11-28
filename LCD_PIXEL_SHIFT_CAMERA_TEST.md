@@ -91,6 +91,23 @@ The simulator had modelled the mode as writable. It now models the dial, and
 the build requires M instead. The labels are now at most six characters
 (**Use M**, **Failed**, **Reboot**).
 
+## Second camera run (`8e1da6c8`, Nov 27): the full-press trigger froze the camera
+
+The owner's report: after the full press, no photo was taken, Play and Menu
+stopped responding, and a second press blanked the display. A power cycle
+cleared it. The log (`Z7PIX.DAT`) shows what happened:
+1. The module took the full press and armed: dial on M, exposure untouched,
+   no setup error.
+2. It saw the button released and began the 7 s settle.
+3. It saw the button pressed again during the settle, the second press, and
+   cancelled before any sensor move or release (0 moves, 0 frames).
+4. Stabilisation stayed normal throughout.
+
+The freeze comes from the **full-press trigger**: wrapping Nikon's capture
+input and consuming the full press mid-sequence leaves Nikon's capture state
+waiting for a shot. Every successful run used the half-press arm and a
+module-fired release, which never froze the camera.
+
 ## Verified before the camera
 
 All on this exact module, except the exposure, folder and repository checks,

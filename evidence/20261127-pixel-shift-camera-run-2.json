@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-run-2",
+  "module_sha256": "8e1da6c8bdc019b54d6acdee06f96973ae14882bfd12872c0099051e0048ab6c",
+  "restored_module": "8dcee0e0",
+  "camera_access": true,
+  "owner_report": "after the full press the camera froze: no photo, Play and Menu unresponsive; a second press blanked the display; power cycle needed",
+  "log": {
+    "version": 5,
+    "flags": [
+      "armed",
+      "normal_again",
+      "touched_or_cancelled"
+    ],
+    "frames": 0,
+    "sends": 12,
+    "moves": 0,
+    "exposure_saved": [
+      3,
+      0,
+      176,
+      96,
+      0,
+      40
+    ],
+    "job_error": 0,
+    "setup_error": 0,
+    "restore_pending": 0
+  },
+  "timeline": [
+    "full press consumed by the module input wrapper, group armed",
+    "button free for 0.5 s, 7 s settle started",
+    "during the settle Nikon UI stayed locked mid-capture (full-down consumed)",
+    "a second press within the settle cancelled the group before any move or release",
+    "capture state stayed stuck until power cycle; VR normal throughout"
+  ],
+  "cause": "the full-press trigger (wrapped CapStQue dispatcher) consumes Nikon's full-down mid-sequence and leaves the capture state machine waiting; the half-press arm + module release used by every successful run never froze the camera",
+  "safe_next": "return to the camera-proven half-press arm and module-fired release; keep the menu, counts, timings, AE, folder and setup/restore"
+}
