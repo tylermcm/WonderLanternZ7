@@ -39,7 +39,7 @@ class NikonUnit(MenuUnit):
         self.effective_bias={}
         self.external_exposure=None;self.reject_property_value=None;self.j_after=None
         self.capture_latency_ms=0;self.remaining_capture_ms=0
-        self.reject_log=False;self.short_log=False;self.centre_noise=False;self.noise_reads=0
+        self.reject_log=False;self.short_log=False;self.centre_noise=False;self.noise_reads=0;self.hold_noise=0;self.hold_reads=0
         self.u.mem_write(0xa238c1b4,struct.pack('<I',0x1005f757))
         self.u.mem_write(0xa1829b0c,struct.pack('<I',0x1030da57))
         self.u.mem_write(0xa238c140,struct.pack('<4I',*self.shutter_callbacks()))
@@ -55,11 +55,16 @@ class NikonUnit(MenuUnit):
         assert table==[0x10062a53,0x10062a37,0x10060a0d,0x100609d9],[hex(t) for t in table]
         return table
     def telemetry(self):
-        # Camera run 13e0ce7d: the centre hold read up to 19 units off on the tripod.
+        # Camera run 13e0ce7d: the centre hold read up to 19 units off on the tripod; 30 keeps centring unconfirmed past the tolerance.
         b=bytearray(super().telemetry())
         if self.centre_noise and self.read(self.base+self.symbols['z7_vm_stage'])==2 and b[0x22]==0x40 and self.target==[0,0,0]:
             self.noise_reads+=1
-            struct.pack_into('<3h',b,0x24,*([19,-19,19] if self.noise_reads%2 else [-19,19,-19]))
+            struct.pack_into('<3h',b,0x24,*([30,-30,30] if self.noise_reads%2 else [-30,30,-30]))
+        if self.hold_noise and b[0x22]==0x40:
+            # Camera run 7a536ea7: held readings 13-19 units off target on the tripod.
+            self.hold_reads+=1;d=self.hold_noise if self.hold_reads%2 else -self.hold_noise
+            target=struct.unpack_from('<3h',b,0)
+            struct.pack_into('<3h',b,0x24,*(v+d for v in target))
         return bytes(b)
     def nikon_half_pressed(self):
         # Nikon's view of S1 from the events the module let through (bit0 down, bit3 up).
@@ -269,6 +274,12 @@ def main():
     f=restore();choose(f,0,1);trigger(f)
     check('post-capture-VR-handback-does-not-stop-the-group',len(f.fires)==4 and word(f,'z7_pn_job_error')==0 and
           all(x['state']==0x40 for x in f.fires))
+    for count_index,count in enumerate((4,8)):
+        f=restore();f.hold_noise=19;choose(f,1,count_index);choose(f,0,1);trigger(f);tick(f,40)
+        check(f'camera-hold-noise-19-completes-{count}-frames-and-restores',f.hold_reads>=count*3 and len(f.fires)==count and
+              all(x['state']==0x40 for x in f.fires) and word(f,'z7_pn_job_error')==0 and f.properties[0x501]==0 and not word(f,'z7_pn_job_active'))
+    f=restore();f.hold_noise=40;choose(f,0,1);trigger(f);tick(f,40)
+    check('hold-noise-beyond-tolerance-never-fires-and-restores',not f.fires and f.properties[0x501]==0 and not word(f,'z7_pn_job_active'))
     f=restore();f.centre_noise=True;choose(f,0,1);trigger(f);tick(f,40)
     check('noisy-centre-still-restores-settings-once-VR-is-normal',f.noise_reads>=20 and len(f.fires)==4 and word(f,'z7_pn_job_error')==0 and
           f.properties[0x501]==0 and not word(f,'z7_pn_raw_owned') and not word(f,'z7_pn_job_active'))

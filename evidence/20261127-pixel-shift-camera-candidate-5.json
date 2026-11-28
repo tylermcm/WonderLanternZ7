@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "feature": "pixel-shift-camera-candidate-5",
+  "module_sha256": "cb8cb9295475984781ef15da88f9bbb57d83e80967d88027dc0cca295c926754",
+  "module_bytes": 48164,
+  "fix": [
+    "hold tolerance 24 (camera-verified v2 value) in the Nikon menu build",
+    "pre-release hold check retried up to 5 reads 100 ms apart"
+  ],
+  "offline": {
+    "capture_settings": 127,
+    "display": 277,
+    "native_menu": 59,
+    "exposure_conversion": 34,
+    "native_folder": 12
+  },
+  "negative_control": "capture audit stops 7a536ea7 under camera hold noise",
+  "repository_tests": 119,
+  "camera_tested": false,
+  "staged": false
+}

@@ -1,9 +1,9 @@
 # Pixel shift shooting: camera test candidate
 
-Status: **fourth build `7a536ea7`, prepared, not staged.** Earlier builds:
+Status: **fifth build `cb8cb929`, prepared, not staged.** Earlier builds:
 `ede43437` stopped before moving or firing, `8e1da6c8` froze the camera after
-the shutter press, and `13e0ce7d` took one frame, then stopped and showed
-Reboot. All three are explained below. It passes every offline and emulator
+the shutter press, `13e0ce7d` took one frame and showed Reboot, and `7a536ea7`
+took one frame and stopped cleanly. All four are explained below. It passes every offline and emulator
 check. It is your everyday module (`8dcee0e0`:
 display features, shutter sound, upside-down EXIF and playback) plus the full
 pixel-shift menu. This continues
@@ -13,7 +13,7 @@ AE bracketing, the automatic setup and J-cancel were finished.
 | Candidate | Value |
 | --- | --- |
 | Source | `z7-native-modules/plugins/lcd_pixel_nikon_checkpoint.c` (`--pixel-nikon-menu`) |
-| Module | 48,100 bytes, SHA-256 `7a536ea71f94f8c4a9926018552bdd80223684049e83659c281c52186f23f018` |
+| Module | 48,164 bytes, SHA-256 `cb8cb9295475984781ef15da88f9bbb57d83e80967d88027dc0cca295c926754` |
 | Host | Existing installed host; no firmware update |
 | Settings file | `A:\Z7PXL.DAT` (count, delay, interval, folder options, AE choices) |
 | Log | `A:\Z7PIX.DAT` (decode with `tools/decode_z7_pixel_menu_log.py`) |
@@ -144,12 +144,31 @@ back after every capture, and centring reads up to 19 units off. Run against
 `13e0ce7d`, it stops after the first frame, as the camera did. The older
 builds still rebuild byte for byte.
 
+## Fourth camera run (`7a536ea7`, Nov 27): one frame, then a clean stop
+
+No freeze, and the mode row read **Off**: settings and stabilisation were
+restored correctly. Frame 1 was taken. The sensor then moved to frame 2's
+position and the follow check passed. But the single check right before the
+release read 13 to 16 units off the target, and this build allowed only 8, so
+it stopped before firing (log flag `hold_lost`, no error). On the tripod the
+held sensor reads up to about 19 units off. The v2 series, which took four
+good frames, allowed 24, and its frames landed within 0.15 px.
+
+**Fix (`cb8cb929`).** The hold tolerance is now 24, as in v2. The check before
+each release takes up to five readings 100 ms apart, so one noisy reading
+can't end the group. A real loss (Nikon's normal mode, or another target)
+still never passes. The simulator now adds ±19 to every held reading. With
+that noise, 4 and 8 shots complete; ±40 never fires and still restores. Run
+against `7a536ea7`, it stops as the camera did.
+
 ## Verified before the camera
 
 All on this exact module, except the exposure, folder and repository checks,
 which test the firmware bindings and tools it uses:
 
-- **Capture and settings: 124 checks.**
+- **Capture and settings: 127 checks.**
+  - camera-level hold noise (±19) completing 4 and 8 shots, and noise past the
+    tolerance never firing;
   - Nikon's normal-VR handback after each capture, and noisy centring, with
     settings still restored and no Reboot;
   - shutter callbacks taken from Nikon's own registration code, half down and

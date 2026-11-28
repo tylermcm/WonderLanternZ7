@@ -107,13 +107,7 @@ static void z7_vs_target(uint32_t frame, int *x, int *y)
 static int z7_vs_matches(const uint8_t *t, int x, int y)
 {
     return t[VM_STATE]==VM_HOLD && z7_vm_word(t)==-4*x && z7_vm_word(t+2)==-4*y &&
-        z7_vm_word(t+4)==-4*y && z7_vm_settled(t,
-#ifdef Z7_PIXEL_MENU
-        8
-#else
-        24
-#endif
-        );
+        z7_vm_word(t+4)==-4*y && z7_vm_settled(t,VM_HOLD_TOLERANCE);
 }
 #ifdef Z7_PIXEL_SHIFT_V1
 static int z7_vs_matches(const uint8_t *t, int x, int y);
@@ -306,7 +300,20 @@ static int z7_vr_frame(uint32_t frame)
         if (z7_vr_touched() || !z7_pm_capture_ready()) return 0;
     }
 #endif
+#ifdef Z7_PIXEL_NIKON_MENU
+    /* One noisy read must not end the group: up to five reads 100 ms apart.
+     * A real loss (normal state or another target) never matches. */
+    {
+        uint32_t held=0;
+        for (uint32_t n=0;n<5u && !(held=(uint32_t)z7_vs_matches_now(frame));++n) {
+            z7_vm_sleep(100);
+            if (z7_vr_touched()) break;
+        }
+        if (!held) { z7_vm_log.flags|=VS_HOLD_LOST; return 0; }
+    }
+#else
     if (!z7_vs_matches_now(frame)) { z7_vm_log.flags|=VS_HOLD_LOST; return 0; }
+#endif
 #endif
     if (z7_vr_touched()) { z7_vm_log.flags|=VR_TOUCHED; return 0; }
 #ifdef Z7_PIXEL_MENU

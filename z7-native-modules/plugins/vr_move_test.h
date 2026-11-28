@@ -194,6 +194,17 @@ static int z7_vm_settled(const uint8_t *t, int limit)
         if (z7_vm_abs(z7_vm_word(t+2*a)-z7_vm_word(t+VM_MEASURED+2*a))>limit) return 0;
     return 1;
 }
+/* Hold tolerance (target - measured). Camera run 7a536ea7 (Nov 27): on the
+ * tripod the held sensor read 13-19 units off, so the Nikon menu build's 8
+ * stopped the group before frame 2. The camera-verified v2 series used 24
+ * and its frames landed within 0.15 px of target. */
+#if defined(Z7_PIXEL_NIKON_MENU)
+#define VM_HOLD_TOLERANCE 24
+#elif defined(Z7_PIXEL_MENU)
+#define VM_HOLD_TOLERANCE 8
+#else
+#define VM_HOLD_TOLERANCE 24
+#endif
 static void z7_vm_record(uint32_t phase, uint32_t poll, uint32_t status, const uint8_t *t)
 {
     if (z7_vm_log.entries>=VM_ENTRIES) return;
@@ -221,13 +232,7 @@ static int z7_vm_follow(uint32_t phase, int x)
         if (s==VM_PENDING) return 0;
         const uint8_t *t=z7_vm_output;
         int ok=!s && t[VM_STATE]==VM_HOLD && z7_vm_word(t)==x && !z7_vm_word(t+2) && !z7_vm_word(t+4) &&
-            z7_vm_settled(t,
-#ifdef Z7_PIXEL_MENU
-            8
-#else
-            24
-#endif
-            );
+            z7_vm_settled(t,VM_HOLD_TOLERANCE);
         run=ok ? run+1 : 0;
         if (run==2) return 1;
     }
