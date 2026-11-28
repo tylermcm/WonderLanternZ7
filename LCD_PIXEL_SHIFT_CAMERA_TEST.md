@@ -147,6 +147,26 @@ back after every capture, and centring reads up to 19 units off. Run against
 `13e0ce7d`, it stops after the first frame, as the camera did. The older
 builds still rebuild byte for byte.
 
+## Open: blank Photo shooting row label
+
+The row works but shows no name on the camera. The emulator draws it in the
+same fallback font it uses for the Display settings row, which renders fine
+on the camera. So the camera blank most likely comes from label 47 not being
+registered when the row is built, the cold-start problem Display settings
+had (commit 101e67e).
+
+A fix modelled on that repair was tried: reseed the text and rebind the row
+from Nikon's Photo menu paint callback (`10494F0C`), finding the row with
+`10402B96` as Nikon does. Every variant stops the emulator when the
+pixel-shift submenu opens. Nikon's RAM-resident code (pc `0xA2A40652`,
+outside the module at `0xA2BF67C0`) writes the NOR-flash unlock sequence
+(`0xAA` to `0x10000AAA`), which QEMU does not model. These all leave it
+unchanged: padding the module by 512 bytes of data or 1.3 KB of code, adding
+data words, and adding the prepare-time callback check alone. Variants
+where the new paint code never runs still trigger it, so the cause is not
+found. No label fix is staged, and the probe now records the module load
+address (`module_base`) for this investigation.
+
 ## Camera test session 8 (`d7efbd21`, Nov 28): OK cancel works
 
 A 4-shot group was cancelled with OK after the first click. The log shows

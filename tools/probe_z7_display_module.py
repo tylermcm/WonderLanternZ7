@@ -455,6 +455,7 @@ def main():
                 advance()
             check('grid-menu-published-on-gui-path', state()[35] == 1)
         base = state()[12]
+        result['module_base'] = '0x%08x' % base  # locates guest faults in module code
         if args.view == 'focal':
             if args.information_lifecycle:
                 from information_lifecycle_probe import run_information_lifecycle_probe
